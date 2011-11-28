@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="mp3player" default="compile" basedir=".">
+    
+    <property name="src.dir" value="src"/>
+    <property name="build.dir" value="build"/>
+    <property name="lib.dir" value="lib"/>
+    <property name="conf.dir" value="conf"/>
+    
+    <path id="project.classpath">
+        <pathelement location="${build.dir}"/>
+    </path>
+    
+    <target name="compile" description="Compile project.">
+        <mkdir dir="${build.dir}"/>
+        <javac srcdir="${src.dir}" destdir="${build.dir}" classpathref="project.classpath" debug="true" deprecation="true" includeantruntime="false"/>
+<!--
+	<copy todir="${build.dir}">
+            <fileset dir="${src.dir}">
+                <include name="*.properties"/>
+            </fileset>
+	</copy>
+-->
+    </target>
+	
+    <target name="clean" description="Clean build products.">
+        <delete dir="${build.dir}"/>
+    </target>
+    
+    <target name="rebuild" depends="clean, compile" description="Clean and build products."/>
+</project>
