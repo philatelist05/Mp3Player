@@ -5,12 +5,13 @@
     <property name="build.dir" value="build"/>
     <property name="lib.dir" value="lib"/>
     <property name="conf.dir" value="conf"/>
+    <property name="mainclass" value=""/>
     
     <path id="project.classpath">
         <pathelement location="${build.dir}"/>
     </path>
     
-    <target name="compile" description="Compile project.">
+    <target name="compile" description="compile project">
         <mkdir dir="${build.dir}"/>
         <javac srcdir="${src.dir}" destdir="${build.dir}" classpathref="project.classpath" debug="true" deprecation="true" includeantruntime="false"/>
 <!--
@@ -21,6 +22,14 @@
 	</copy>
 -->
     </target>
+    
+    <target name="run" depends="compile" description="run project">
+        <java classname="${mainclass}" fork="true" classpathref="project.classpath">
+
+        </java>
+    </target>
+      
+    
 	
     <target name="clean" description="Clean build products.">
         <delete dir="${build.dir}"/>
