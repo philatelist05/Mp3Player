@@ -6,6 +6,53 @@
   <artifactId>mp3player</artifactId>
   <version>0.0.1-SNAPSHOT</version>
   <packaging>jar</packaging>
+  
+  <developers>
+		<developer>
+			<id>s_gamerith</id>
+			<name>Stefan Gamerith</name>
+			<email>steff7@gmx.com</email>
+			<roles>
+				<role>Release &amp; Buildmanager</role>
+			</roles>
+		</developer>
+		<developer>
+			<id>c_ohrfandl</id>
+			<name>Christian Ohrfandl</name>
+			<email>christian.ohrfandl@drei.at</email>
+			<roles>
+				<role>Projektmanager</role>
+			</roles>
+		</developer>
+		<developer>
+			<id>j_juef</id>
+			<name>Johannes Luef</name>
+			<roles>
+				<role>Dokumentationsbeauftragter</role>
+			</roles>
+			<email>johannes.luef@gmail</email>
+		</developer>
+		<developer>
+			<id>k_krapfenbauer</id>
+			<name>Klaus Krapfenbauer</name>
+			<roles>
+				<role>Technischer Architekt</role>
+			</roles>
+			<email>klaus.krapfenbauer@gmx.com</email>
+		</developer>
+		<developer>
+			<id>o_hubmer</id>
+			<name>Oliver Hubmer</name>
+			<roles>
+				<role>Testmanager</role>
+			</roles>
+			<email>e0842138@student.tuwien.ac.at</email>
+		</developer>
+	</developers>
+	<organization>
+		<name>TU Wien</name>
+		<url>www.tuwien.ac.at</url>
+	</organization>
 
   <name>mp3player</name>
   <url>http://maven.apache.org</url>
@@ -13,6 +60,8 @@
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
   </properties>
+  
+  
 
   <dependencies>
     <dependency>
