@@ -1,13 +1,37 @@
 package at.ac.tuwien.sepm2011ws.mp3player;
 
+import java.awt.EventQueue;
+
+import javax.swing.UIManager;
+
+import org.apache.log4j.Logger;
+import org.apache.log4j.xml.DOMConfigurator;
+
+import at.ac.tuwien.sepm2011ws.mp3player.gui.MainWindow;
+
 /**
  * Hello world!
  *
  */
 public class App 
 {
-    public static void main( String[] args )
+	private static Logger logger = Logger.getLogger(App.class);
+	
+	public static void main( String[] args )
     {
-        System.out.println( "Hello World!" );
+		DOMConfigurator.configureAndWatch( "log4j-4.xml", 60*1000 );
+		EventQueue.invokeLater(new Runnable() {
+			public void run() {
+				try {
+					logger.info("Logger successfully initialized");
+					logger.info("Starting MainWindow...");
+					UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
+					new MainWindow();
+				} catch (Exception e) {
+					e.printStackTrace();
+					logger.error("Error starting Main Window");
+				}
+			}
+		});
     }
 }
