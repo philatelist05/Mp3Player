@@ -83,10 +83,10 @@ public class MainWindow extends JFrame implements ActionListener {
 		songTable.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
 		songTable.setModel(new DefaultTableModel(
 			new Object[][] {
-				{"1", "The Hero", "Amon Amarth", "Twilight Of The Tundergod", "04:04", "Melodic Death Metal", "5", "12"},
+				{"1", "The Hero", "Amon Amarth", "Twilight Of The Tundergod", "2008", "04:04", "Melodic Death Metal", "5", "12"},
 			},
 			new String[] {
-				"Track Nr.", "Title", "Artist", "Album", "Length", "Genre", "Rating", "Playcount"
+				"Track Nr.", "Title", "Artist", "Album", "Date", "Genre", "Length", "Rating", "Playcount"
 			}
 		));
 		
