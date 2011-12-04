@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<testsuite failures="0" time="0.023" errors="0" skipped="0" tests="1" name="at.ac.tuwien.sepm2011ws.mp3player.AppTest">
+<testsuite failures="0" time="0.186" errors="0" skipped="0" tests="1" name="at.ac.tuwien.sepm2011ws.mp3player.AppTest">
   <properties>
     <property name="java.runtime.name" value="Java(TM) SE Runtime Environment"/>
     <property name="sun.boot.library.path" value="/System/Library/Java/JavaVirtualMachines/1.6.0.jdk/Contents/Libraries"/>
@@ -22,7 +22,7 @@
     <property name="basedir" value="/Users/stefangamerith/Dropbox/Studium/SEPM/Gruppe/repository/qse-sepm-ws11-08/mp3player"/>
     <property name="java.endorsed.dirs" value="/System/Library/Java/JavaVirtualMachines/1.6.0.jdk/Contents/Home/lib/endorsed"/>
     <property name="os.arch" value="x86_64"/>
-    <property name="surefire.real.class.path" value="/Users/stefangamerith/Dropbox/Studium/SEPM/Gruppe/repository/qse-sepm-ws11-08/mp3player/target/surefire/surefirebooter407943682234915195.jar"/>
+    <property name="surefire.real.class.path" value="/Users/stefangamerith/Dropbox/Studium/SEPM/Gruppe/repository/qse-sepm-ws11-08/mp3player/target/surefire/surefirebooter6537499665689616922.jar"/>
     <property name="java.io.tmpdir" value="/var/folders/fc/8yx40vgs3ql1pnt_nnyyyktc0000gn/T/"/>
     <property name="line.separator" value="
 "/>
@@ -30,7 +30,7 @@
     <property name="os.name" value="Mac OS X"/>
     <property name="sun.jnu.encoding" value="MacRoman"/>
     <property name="java.library.path" value=".:/Library/Java/Extensions:/System/Library/Java/Extensions:/usr/lib/java"/>
-    <property name="surefire.test.class.path" value="/Users/stefangamerith/Dropbox/Studium/SEPM/Gruppe/repository/qse-sepm-ws11-08/mp3player/target/test-classes:/Users/stefangamerith/Dropbox/Studium/SEPM/Gruppe/repository/qse-sepm-ws11-08/mp3player/target/classes:/Users/stefangamerith/.m2/repository/junit/junit/3.8.1/junit-3.8.1.jar:"/>
+    <property name="surefire.test.class.path" value="/Users/stefangamerith/Dropbox/Studium/SEPM/Gruppe/repository/qse-sepm-ws11-08/mp3player/target/test-classes:/Users/stefangamerith/Dropbox/Studium/SEPM/Gruppe/repository/qse-sepm-ws11-08/mp3player/target/classes:/Users/stefangamerith/.m2/repository/junit/junit/4.10/junit-4.10.jar:/Users/stefangamerith/.m2/repository/org/hamcrest/hamcrest-core/1.1/hamcrest-core-1.1.jar:/Users/stefangamerith/.m2/repository/com/miglayout/miglayout-swing/4.1/miglayout-swing-4.1.jar:/Users/stefangamerith/.m2/repository/com/miglayout/miglayout-core/4.1/miglayout-core-4.1.jar:/Users/stefangamerith/.m2/repository/log4j/log4j/1.2.16/log4j-1.2.16.jar:"/>
     <property name="java.specification.name" value="Java Platform API Specification"/>
     <property name="java.class.version" value="50.0"/>
     <property name="sun.management.compiler" value="HotSpot 64-Bit Tiered Compilers"/>
@@ -41,11 +41,11 @@
     <property name="java.specification.version" value="1.6"/>
     <property name="file.encoding" value="MacRoman"/>
     <property name="user.name" value="stefangamerith"/>
-    <property name="java.class.path" value="/Users/stefangamerith/Dropbox/Studium/SEPM/Gruppe/repository/qse-sepm-ws11-08/mp3player/target/test-classes:/Users/stefangamerith/Dropbox/Studium/SEPM/Gruppe/repository/qse-sepm-ws11-08/mp3player/target/classes:/Users/stefangamerith/.m2/repository/junit/junit/3.8.1/junit-3.8.1.jar:"/>
+    <property name="java.class.path" value="/Users/stefangamerith/Dropbox/Studium/SEPM/Gruppe/repository/qse-sepm-ws11-08/mp3player/target/test-classes:/Users/stefangamerith/Dropbox/Studium/SEPM/Gruppe/repository/qse-sepm-ws11-08/mp3player/target/classes:/Users/stefangamerith/.m2/repository/junit/junit/4.10/junit-4.10.jar:/Users/stefangamerith/.m2/repository/org/hamcrest/hamcrest-core/1.1/hamcrest-core-1.1.jar:/Users/stefangamerith/.m2/repository/com/miglayout/miglayout-swing/4.1/miglayout-swing-4.1.jar:/Users/stefangamerith/.m2/repository/com/miglayout/miglayout-core/4.1/miglayout-core-4.1.jar:/Users/stefangamerith/.m2/repository/log4j/log4j/1.2.16/log4j-1.2.16.jar:"/>
     <property name="java.vm.specification.version" value="1.0"/>
     <property name="sun.arch.data.model" value="64"/>
     <property name="java.home" value="/System/Library/Java/JavaVirtualMachines/1.6.0.jdk/Contents/Home"/>
-    <property name="sun.java.command" value="/Users/stefangamerith/Dropbox/Studium/SEPM/Gruppe/repository/qse-sepm-ws11-08/mp3player/target/surefire/surefirebooter407943682234915195.jar /Users/stefangamerith/Dropbox/Studium/SEPM/Gruppe/repository/qse-sepm-ws11-08/mp3player/target/surefire/surefire1916199752354534973tmp /Users/stefangamerith/Dropbox/Studium/SEPM/Gruppe/repository/qse-sepm-ws11-08/mp3player/target/surefire/surefire2116114765178466314tmp"/>
+    <property name="sun.java.command" value="/Users/stefangamerith/Dropbox/Studium/SEPM/Gruppe/repository/qse-sepm-ws11-08/mp3player/target/surefire/surefirebooter6537499665689616922.jar /Users/stefangamerith/Dropbox/Studium/SEPM/Gruppe/repository/qse-sepm-ws11-08/mp3player/target/surefire/surefire1224122022877712405tmp /Users/stefangamerith/Dropbox/Studium/SEPM/Gruppe/repository/qse-sepm-ws11-08/mp3player/target/surefire/surefire6590594919917256152tmp"/>
     <property name="java.specification.vendor" value="Sun Microsystems Inc."/>
     <property name="user.language" value="de"/>
     <property name="awt.toolkit" value="apple.awt.CToolkit"/>
