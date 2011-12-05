@@ -1,4 +1,4 @@
-package at.ac.tuwien.sepm2011ws.mp3player.PresentationLayer;
+package at.ac.tuwien.sepm2011ws.mp3player.presentationLayer;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;

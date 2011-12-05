@@ -1,18 +1,18 @@
 /**
  * 
  */
-package at.ac.tuwien.sepm2011ws.mp3player.DomainObjects;
+package at.ac.tuwien.sepm2011ws.mp3player.domainObjects;
 
 /**
  * @author klaus
  *
  */
-public class Song {
+public class Playlist {
 
 	/**
 	 * 
 	 */
-	public Song() {
+	public Playlist() {
 		// TODO Auto-generated constructor stub
 	}
 

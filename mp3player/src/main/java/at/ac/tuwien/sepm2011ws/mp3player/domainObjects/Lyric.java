@@ -1,7 +1,7 @@
 /**
  * 
  */
-package at.ac.tuwien.sepm2011ws.mp3player.DomainObjects;
+package at.ac.tuwien.sepm2011ws.mp3player.domainObjects;
 
 /**
  * @author klaus
