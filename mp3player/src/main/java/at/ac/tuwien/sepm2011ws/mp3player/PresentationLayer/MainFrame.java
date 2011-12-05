@@ -1,4 +1,4 @@
-package at.ac.tuwien.sepm2011ws.mp3player.gui;
+package at.ac.tuwien.sepm2011ws.mp3player.PresentationLayer;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -24,28 +24,18 @@ import net.miginfocom.swing.MigLayout;
 
 import org.apache.log4j.Logger;
 
-public class MainWindow extends JFrame implements ActionListener {
+public class MainFrame extends JFrame implements ActionListener {
     /**
 	 * 
 	 */
     private static final long serialVersionUID = -959319978002415594L;
-    private static Logger logger = Logger.getLogger(MainWindow.class);
+    private static Logger logger = Logger.getLogger(MainFrame.class);
     private JTable songTable;
-
-    /**
-     * Launch the application.
-     */
-    /*
-     * public static void main(String[] args) { EventQueue.invokeLater(new
-     * Runnable() { public void run() { try { MainWindow window = new
-     * MainWindow(); window.frame.setVisible(true); } catch (Exception e) {
-     * e.printStackTrace(); } } }); }
-     */
 
     /**
      * Create the application.
      */
-    public MainWindow() {
+    public MainFrame() {
 
 	JPanel playerPanel = new JPanel(new MigLayout("", "[][grow][grow]",
 		"[][grow][][][][][][]"));
