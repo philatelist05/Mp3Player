@@ -93,8 +93,8 @@ public class MainFrame extends JFrame implements ActionListener {
 	JScrollPane playlist_sp = new JScrollPane(playlistsList);
 	playerPanel.add(playlist_sp, "cell 0 3,grow");
 
-	JLabel lblInteligentPlaylists = new JLabel("Inteligent Playlists");
-	playerPanel.add(lblInteligentPlaylists, "cell 0 4");
+	JLabel lblIntelligentPlaylists = new JLabel("Intelligent Playlists");
+	playerPanel.add(lblIntelligentPlaylists, "cell 0 4");
 
 	JList intplaylistsList = new JList();
 	intplaylistsList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
