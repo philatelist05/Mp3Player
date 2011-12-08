@@ -16,7 +16,7 @@ public class DBConnection{
     public static Connection getConnection() {
 	if (instance == null) {
 	    try {
-		ApplicationContext context = new ClassPathXmlApplicationContext("settings.xml");
+		ApplicationContext context = new ClassPathXmlApplicationContext("DBSettings.xml");
 		DataSource source = (DataSource) context.getBean("DataSource");
 		instance = source.getConnection();
 	    } catch (Exception e) {
