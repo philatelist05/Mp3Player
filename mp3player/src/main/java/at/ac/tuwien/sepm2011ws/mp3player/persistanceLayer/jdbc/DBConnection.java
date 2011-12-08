@@ -1,9 +1,11 @@
 package at.ac.tuwien.sepm2011ws.mp3player.persistanceLayer.jdbc;
 
 import java.sql.Connection;
-import java.sql.SQLException;
 
-import org.postgresql.ds.PGSimpleDataSource;
+import javax.sql.DataSource;
+
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 public class DBConnection{
     private static Connection instance;
@@ -11,17 +13,13 @@ public class DBConnection{
     private DBConnection() {
     }
 
-    public static synchronized Connection getConnection() {
+    public static Connection getConnection() {
 	if (instance == null) {
-	    // TODO: Properties reading from a properties file
 	    try {
-		PGSimpleDataSource ds = new PGSimpleDataSource();
-		ds.setDatabaseName("mp3player");
-		ds.setServerName("localhost");
-		ds.setUser("postgres");
-		ds.setPassword("12345");
-		instance = ds.getConnection();
-	    } catch (SQLException e) {
+		ApplicationContext context = new ClassPathXmlApplicationContext("settings.xml");
+		DataSource source = (DataSource) context.getBean("DataSource");
+		instance = source.getConnection();
+	    } catch (Exception e) {
 		e.printStackTrace();
 	    }
 	}

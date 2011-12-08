@@ -13,7 +13,6 @@ public class Lyric {
 	 * 
 	 */
 	public Lyric() {
-		// TODO Auto-generated constructor stub
 	}
 
 }
