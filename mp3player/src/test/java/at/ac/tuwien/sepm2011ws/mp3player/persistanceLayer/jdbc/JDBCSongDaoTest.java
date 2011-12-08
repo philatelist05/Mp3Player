@@ -3,12 +3,9 @@
  */
 package at.ac.tuwien.sepm2011ws.mp3player.persistanceLayer.jdbc;
 
-import java.sql.Connection;
-
 import org.junit.After;
 import org.junit.Before;
 
-import at.ac.tuwien.sepm2011ws.mp3player.persistanceLayer.DBConnection;
 import at.ac.tuwien.sepm2011ws.mp3player.persistanceLayer.SongDaoTest;
 
 /**
@@ -17,14 +14,14 @@ import at.ac.tuwien.sepm2011ws.mp3player.persistanceLayer.SongDaoTest;
  */
 public class JDBCSongDaoTest extends SongDaoTest {
 
-	private Connection con;
+	private java.sql.Connection con;
 
 	/**
 	 * @throws java.lang.Exception
 	 */
 	@Before
 	public void setUp() throws Exception {
-		con = DBConnection.getInstance();
+		con = DBConnection.getConnection();
 		con.setAutoCommit(false);
 
 		setSongDao(new JDBCSongDao());
