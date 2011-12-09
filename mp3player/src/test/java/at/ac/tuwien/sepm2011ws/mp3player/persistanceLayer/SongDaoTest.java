@@ -11,7 +11,7 @@ import java.util.List;
 import org.junit.Test;
 
 import at.ac.tuwien.sepm2011ws.mp3player.domainObjects.Song;
-import at.ac.tuwien.sepm2011ws.mp3player.persistanceLayer.jdbc.DaoFactory;
+import at.ac.tuwien.sepm2011ws.mp3player.persistanceLayer.db.DaoFactory;
 
 /**
  * @author klaus

@@ -1,4 +1,4 @@
-package at.ac.tuwien.sepm2011ws.mp3player.persistanceLayer.jdbc;
+package at.ac.tuwien.sepm2011ws.mp3player.persistanceLayer.db;
 
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
