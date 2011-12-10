@@ -12,7 +12,7 @@ import at.ac.tuwien.sepm2011ws.mp3player.serviceLayer.PlaylistService;
  * @author klaus
  *
  */
-public class VVVPlaylistService implements PlaylistService {
+class VVVPlaylistService implements PlaylistService {
 
 	public Playlist getLibrary() {
 		Playlist lib = new Playlist();
