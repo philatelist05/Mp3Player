@@ -8,17 +8,17 @@ package at.ac.tuwien.sepm2011ws.mp3player.domainObjects;
  *
  */
 public class Song {
-	int id;
-	String title;
-	int duration; // in seconds
-	int playcount;
-	int rating;
-	String url;
-	int year;
-	String artist;
-	String genre;
-	Album album;
-	Lyric lyric;
+	private int id;
+	private String title;
+	private int duration; // in seconds
+	private int playcount;
+	private int rating;
+	private String url;
+	private int year;
+	private String artist;
+	private String genre;
+	private Album album;
+	private Lyric lyric;
 
 	/**
 	 * 
