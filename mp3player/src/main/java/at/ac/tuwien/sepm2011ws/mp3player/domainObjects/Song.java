@@ -13,7 +13,7 @@ public class Song {
 	private int duration; // in seconds
 	private int playcount;
 	private int rating;
-	private String url;
+	private String path;
 	private int year;
 	private String artist;
 	private String genre;
@@ -24,6 +24,7 @@ public class Song {
 	 * 
 	 */
 	public Song() {
+		this(-1, null, 0, 0, -1, null, -1, null, null, null, null);
 	}
 
 	/**
@@ -32,7 +33,7 @@ public class Song {
 	 * @param duration
 	 * @param playcount
 	 * @param rating
-	 * @param url
+	 * @param path
 	 * @param year
 	 * @param artist
 	 * @param genre
@@ -40,14 +41,14 @@ public class Song {
 	 * @param lyric
 	 */
 	public Song(int id, String title, int duration, int playcount, int rating,
-			String url, int year, String artist, String genre, Album album,
+			String path, int year, String artist, String genre, Album album,
 			Lyric lyric) {
 		this.id = id;
 		this.title = title;
 		this.duration = duration;
 		this.playcount = playcount;
 		this.rating = rating;
-		this.url = url;
+		this.path = path;
 		this.year = year;
 		this.artist = artist;
 		this.genre = genre;
@@ -126,17 +127,17 @@ public class Song {
 	}
 
 	/**
-	 * @return the url
+	 * @return the path
 	 */
-	public String getUrl() {
-		return url;
+	public String getPath() {
+		return path;
 	}
 
 	/**
-	 * @param url the url to set
+	 * @param path the path to set
 	 */
-	public void setUrl(String url) {
-		this.url = url;
+	public void setPath(String path) {
+		this.path = path;
 	}
 
 	/**

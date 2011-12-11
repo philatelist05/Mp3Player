@@ -28,14 +28,14 @@ class DBSongDao implements SongDao {
 
 			Connection con = source.getConnection();
 			readStmt = con.prepareStatement("SELECT "
-					+ "title, artist, url, year, "
+					+ "title, artist, path, year, "
 					+ "duration, playcount, rating, genre, "
-					+ "album FROM song WHERE id=?;");
+					+ "album FROM song join is_on on id = song WHERE id=?;");
 
 			readAllStmt = con.prepareStatement("SELECT id, "
-					+ "title, artist, url, year, "
+					+ "title, artist, path, year, "
 					+ "duration, playcount, rating, genre, "
-					+ "album FROM song;");
+					+ "album FROM song join is_on on id = song;");
 
 		} catch (SQLException e) {
 			e.printStackTrace();
@@ -60,14 +60,16 @@ class DBSongDao implements SongDao {
 			s.setId(id);
 			s.setTitle(result.getString("title"));
 			s.setArtist(result.getString("artist"));
-			s.setUrl(result.getString("url"));
+			s.setPath(result.getString("path"));
 			s.setYear(result.getInt("year"));
 			s.setDuration(result.getInt("duration"));
 			s.setPlaycount(result.getInt("playcount"));
 			s.setRating(result.getInt("rating"));
 			s.setGenre(result.getString("genre"));
 			// TODO: Add album of song as soon as AlbumDao is implemented
-			s.setAlbum(null);
+			// DaoFactory df = DaoFactory.getInstance();
+			// AlbumDao ad = df.getAlbumDao();
+			// s.setAlbum(ad.read(result.getInt("album")));
 
 			result.close();
 
@@ -91,15 +93,17 @@ class DBSongDao implements SongDao {
 				s.setId(result.getInt("id"));
 				s.setTitle(result.getString("title"));
 				s.setArtist(result.getString("artist"));
-				s.setUrl(result.getString("url"));
+				s.setPath(result.getString("path"));
 				s.setYear(result.getInt("year"));
 				s.setDuration(result.getInt("duration"));
 				s.setPlaycount(result.getInt("playcount"));
 				s.setRating(result.getInt("rating"));
 				s.setGenre(result.getString("genre"));
 				// TODO: Add album of song as soon as AlbumDao is implemented
-				s.setAlbum(null);
-				
+				// DaoFactory df = DaoFactory.getInstance();
+				// AlbumDao ad = df.getAlbumDao();
+				// s.setAlbum(ad.read(result.getInt("album")));
+
 				sList.add(s);
 			}
 			result.close();
