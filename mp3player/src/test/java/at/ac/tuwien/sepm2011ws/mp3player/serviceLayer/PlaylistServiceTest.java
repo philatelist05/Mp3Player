@@ -34,7 +34,7 @@ public class PlaylistServiceTest {
 	}
 
 	@Test
-	public void testGetLibrary() {
+	public void testGetLibrary_AtLeastOneSong() {
 		ServiceFactory sf = ServiceFactory.getInstance();
 		PlaylistService ps = sf.getPlaylistService();
 		Playlist lib = ps.getLibrary();

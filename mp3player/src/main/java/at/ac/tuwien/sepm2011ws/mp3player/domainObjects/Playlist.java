@@ -12,26 +12,31 @@ import java.util.List;
  */
 public class Playlist {
 
+	private int id;
 	private String title;
 	private List<Song> songs;
 	private boolean readonly;
 
 	/**
-	 * 
+	 * @param title
 	 */
-	public Playlist() {
-		this("Untitled Playlist", new ArrayList<Song>(), false);
+	public Playlist(String title) {
+		this.setTitle(title);
+		this.setSongs(new ArrayList<Song>());
+		this.setReadonly(false);
 	}
 
 	/**
+	 * @param id
 	 * @param title
 	 * @param songs
 	 * @param readonly
 	 */
-	public Playlist(String title, List<Song> songs, boolean readonly) {
-		this.title = title;
-		this.songs = songs;
-		this.readonly = readonly;
+	public Playlist(int id, String title, List<Song> songs, boolean readonly) {
+		this.setId(id);
+		this.setTitle(title);
+		this.setSongs(songs);
+		this.setReadonly(readonly);
 	}
 
 	/**
@@ -55,6 +60,22 @@ public class Playlist {
 	}
 
 	/**
+	 * @return the id
+	 */
+	public int getId() {
+		return this.id;
+	}
+
+	/**
+	 * @param id the id to set
+	 */
+	public void setId(int id) {
+		if (id < 0)
+			throw new IllegalArgumentException("ID must be greater or equal 0");
+		this.id = id;
+	}
+
+	/**
 	 * @return the title
 	 */
 	public String getTitle() {
@@ -66,6 +87,8 @@ public class Playlist {
 	 *            the title to set
 	 */
 	public void setTitle(String title) {
+		if (title == null || title.isEmpty())
+			throw new IllegalArgumentException("Title must not be empty");
 		this.title = title;
 	}
 

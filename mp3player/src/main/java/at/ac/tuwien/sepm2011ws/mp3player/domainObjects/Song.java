@@ -21,10 +21,17 @@ public class Song {
 	private Lyric lyric;
 
 	/**
-	 * 
+	 * @param title
+	 * @param duration
+	 * @param path
+	 * @param artist
 	 */
-	public Song() throws IllegalArgumentException {
-		this(-1, null, -1, 0, -1, null, -1, null, null, null, null);
+	public Song(String artist, String title, int duration, String path) {
+		this.setArtist(artist);
+		this.setTitle(title);
+		this.setDuration(duration);
+		this.setPath(path);
+		this.setRating(-1);
 	}
 
 	/**
@@ -43,17 +50,17 @@ public class Song {
 	public Song(int id, String title, int duration, int playcount, int rating,
 			String path, int year, String artist, String genre, Album album,
 			Lyric lyric) throws IllegalArgumentException {
-	    	this.setId(id);
-	    	this.setTitle(title);
-	    	this.setDuration(duration);
-	    	this.setPlaycount(playcount);
-	    	this.setRating(rating);
-	    	this.setPath(path);
-	    	this.setYear(year);
-	    	this.setArtist(artist);
-	    	this.setGenre(genre);
-	    	this.setAlbum(album);
-	    	this.setLyric(lyric);
+		this.setId(id);
+		this.setTitle(title);
+		this.setDuration(duration);
+		this.setPlaycount(playcount);
+		this.setRating(rating);
+		this.setPath(path);
+		this.setYear(year);
+		this.setArtist(artist);
+		this.setGenre(genre);
+		this.setAlbum(album);
+		this.setLyric(lyric);
 	}
 
 	/**
@@ -68,9 +75,9 @@ public class Song {
 	 *            the id to set
 	 */
 	public void setId(int id) throws IllegalArgumentException {
-	    if (id < 0)
-		throw new IllegalArgumentException("ID must be greater or equal 0");
-	    this.id = id;
+		if (id < 0)
+			throw new IllegalArgumentException("ID must be greater or equal 0");
+		this.id = id;
 	}
 
 	/**
@@ -85,9 +92,9 @@ public class Song {
 	 *            the title to set
 	 */
 	public void setTitle(String title) throws IllegalArgumentException {
-	    if (title == null || title.isEmpty())
-		throw new IllegalArgumentException("Title must contain characters");
-	    this.title = title;
+		if (title == null || title.isEmpty())
+			throw new IllegalArgumentException("Title must not be empty");
+		this.title = title;
 	}
 
 	/**
@@ -102,9 +109,10 @@ public class Song {
 	 *            the duration to set
 	 */
 	public void setDuration(int duration) throws IllegalArgumentException {
-	    if(duration < 0)
-		throw new IllegalArgumentException("Duration must be greater than 0");
-	    this.duration = duration;
+		if (duration < 0)
+			throw new IllegalArgumentException(
+					"Duration must be greater than 0");
+		this.duration = duration;
 	}
 
 	/**
@@ -119,9 +127,10 @@ public class Song {
 	 *            the playcount to set
 	 */
 	public void setPlaycount(int playcount) throws IllegalArgumentException {
-	    if (playcount < 0)
-		throw new IllegalArgumentException("PlayCount must be grater than 0");
-	    this.playcount = playcount;
+		if (playcount < 0)
+			throw new IllegalArgumentException(
+					"PlayCount must be grater than 0");
+		this.playcount = playcount;
 	}
 
 	/**
@@ -136,8 +145,9 @@ public class Song {
 	 *            the rating to set
 	 */
 	public void setRating(int rating) throws IllegalArgumentException {
-	    if (rating < -1 || rating > 10)
-		throw new IllegalArgumentException("Rating must be between -1 and 10");
+		if (rating < -1 || rating > 10)
+			throw new IllegalArgumentException(
+					"Rating must be between -1 and 10");
 		this.rating = rating;
 	}
 
@@ -153,9 +163,9 @@ public class Song {
 	 *            the path to set
 	 */
 	public void setPath(String path) throws IllegalArgumentException {
-	    if (path == null || path.isEmpty())
-		throw new IllegalArgumentException("Path must contain characters");
-	    this.path = path;
+		if (path == null || path.isEmpty())
+			throw new IllegalArgumentException("Path must not be empty");
+		this.path = path;
 	}
 
 	/**
@@ -170,9 +180,9 @@ public class Song {
 	 *            the year to set
 	 */
 	public void setYear(int year) throws IllegalArgumentException {
-	    if (year < -1 || year > 9999)
-		throw new IllegalArgumentException("Year must have 4 digits");
-	    this.year = year;
+		if (year < -1 || year > 9999)
+			throw new IllegalArgumentException("Year must have 4 digits");
+		this.year = year;
 	}
 
 	/**

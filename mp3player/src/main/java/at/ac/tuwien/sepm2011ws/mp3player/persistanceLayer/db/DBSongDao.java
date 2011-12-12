@@ -37,31 +37,30 @@ class DBSongDao implements SongDao {
 					+ "playcount, rating, genre) "
 					+ "VALUES (?, ?, ?, ?, ?, ?, ?, ?);",
 					Statement.RETURN_GENERATED_KEYS);
-			createIsOnStmt = con.prepareStatement("INSERT INTO is_on ( " +
-					"song, album) " +
-					"VALUES (?, ?);");
+			createIsOnStmt = con.prepareStatement("INSERT INTO is_on ( "
+					+ "song, album) " + "VALUES (?, ?);");
 			readStmt = con.prepareStatement("SELECT "
 					+ "title, artist, path, year, "
 					+ "duration, playcount, rating, genre, "
 					+ "album FROM song join is_on on id = song WHERE id=?;");
-
 			readAllStmt = con.prepareStatement("SELECT id, "
 					+ "title, artist, path, year, "
 					+ "duration, playcount, rating, genre, "
 					+ "album FROM song join is_on on id = song;");
 			updateStmt = con.prepareStatement("UPDATE song SET "
-					+ "title=?, artist=?, path=?, year=?, duration=?, " +
-					"playcount=?, rating=?, genre=? "
-					+ "WHERE id = ?;");
+					+ "title=?, artist=?, path=?, year=?, duration=?, "
+					+ "playcount=?, rating=?, genre=? " + "WHERE id = ?;");
 			deleteStmt = con.prepareStatement("DELETE FROM song "
 					+ "WHERE id = ?;");
 
 		} catch (SQLException e) {
+			// TODO Exception throwing instead of outputting
 			e.printStackTrace();
 		}
 	}
 
 	public int create(Song s) throws IllegalArgumentException {
+		ResultSet result = null;
 		int id = -1;
 
 		if (s == null)
@@ -76,25 +75,31 @@ class DBSongDao implements SongDao {
 			createStmt.setInt(6, s.getPlaycount());
 			createStmt.setInt(7, s.getRating());
 			createStmt.setString(8, s.getGenre());
-			
+
 			createStmt.executeUpdate();
 
-			ResultSet result = createStmt.getGeneratedKeys();
+			result = createStmt.getGeneratedKeys();
 			if (!result.next()) {
 				return -1;
 			}
 			id = result.getInt(1);
-			result.close();
-			
-			if(s.getAlbum() != null) {
+
+			if (s.getAlbum() != null) {
 				createIsOnStmt.setInt(1, id);
 				createIsOnStmt.setInt(2, s.getAlbum().getId());
-				
+
 				createIsOnStmt.executeUpdate();
 			}
-			
+
 		} catch (SQLException e) {
+			// TODO Exception throwing instead of outputting
 			e.printStackTrace();
+		} finally {
+			try {
+				if (result != null)
+					result.close();
+			} catch (SQLException e) {
+			}
 		}
 
 		return id;
@@ -111,26 +116,25 @@ class DBSongDao implements SongDao {
 	}
 
 	public Song read(int id) throws IllegalArgumentException {
+		ResultSet result = null;
 
 		if (id < 0) {
 			throw new IllegalArgumentException();
 		}
 
-		Song s = new Song();
+		Song s;
 
 		try {
 			readStmt.setInt(1, id);
-			ResultSet result = readStmt.executeQuery();
+			result = readStmt.executeQuery();
 			if (!result.next()) {
 				return null;
 			}
 
+			s = new Song(result.getString("artist"), result.getString("title"),
+					result.getInt("duration"), result.getString("path"));
 			s.setId(id);
-			s.setTitle(result.getString("title"));
-			s.setArtist(result.getString("artist"));
-			s.setPath(result.getString("path"));
 			s.setYear(result.getInt("year"));
-			s.setDuration(result.getInt("duration"));
 			s.setPlaycount(result.getInt("playcount"));
 			s.setRating(result.getInt("rating"));
 			s.setGenre(result.getString("genre"));
@@ -142,28 +146,34 @@ class DBSongDao implements SongDao {
 			result.close();
 
 		} catch (SQLException e) {
+			// TODO Exception throwing instead of outputting
 			e.printStackTrace();
 			return null;
+		} finally {
+			try {
+				if (result != null)
+					result.close();
+			} catch (SQLException e) {
+			}
 		}
 
 		return s;
 	}
 
 	public List<Song> readAll() {
+		ResultSet result = null;
 		ArrayList<Song> sList = new ArrayList<Song>();
 		Song s;
 		try {
-			ResultSet result = readAllStmt.executeQuery();
+			result = readAllStmt.executeQuery();
 
 			while (result.next()) {
-				s = new Song();
+				s = new Song(result.getString("artist"),
+						result.getString("title"), result.getInt("duration"),
+						result.getString("path"));
 
 				s.setId(result.getInt("id"));
-				s.setTitle(result.getString("title"));
-				s.setArtist(result.getString("artist"));
-				s.setPath(result.getString("path"));
 				s.setYear(result.getInt("year"));
-				s.setDuration(result.getInt("duration"));
 				s.setPlaycount(result.getInt("playcount"));
 				s.setRating(result.getInt("rating"));
 				s.setGenre(result.getString("genre"));
@@ -176,8 +186,15 @@ class DBSongDao implements SongDao {
 			}
 			result.close();
 		} catch (SQLException e) {
+			// TODO Exception throwing instead of outputting
 			e.printStackTrace();
 			return null;
+		} finally {
+			try {
+				if (result != null)
+					result.close();
+			} catch (SQLException e) {
+			}
 		}
 		return sList;
 	}

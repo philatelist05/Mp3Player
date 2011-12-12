@@ -39,19 +39,16 @@ public class SongDaoTest {
 	}
 	
 	@Test
-	public void testReadAll() {
+	public void testReadAll_AtLeastOne() {
 		List<Song> dList = sd.readAll();
+		
 		assertFalse(dList == null);
 		assertTrue(dList.size() >= 1);
 	}
 	
 	@Test
-	public void testCreate() {
-		Song s = new Song();
-		s.setArtist("Machine Head");
-		s.setTitle("Halo");
-		s.setDuration(300);
-		s.setPath("C:\\music\\halo");
+	public void testCreate_CreateValidSong() {
+		Song s = new Song("Machine Head", "Halo", 300, "C:\\music\\halo");
 		
 		int id = sd.create(s);
 		

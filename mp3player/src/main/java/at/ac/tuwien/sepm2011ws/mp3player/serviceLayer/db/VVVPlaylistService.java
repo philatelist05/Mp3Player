@@ -15,8 +15,7 @@ import at.ac.tuwien.sepm2011ws.mp3player.serviceLayer.PlaylistService;
 class VVVPlaylistService implements PlaylistService {
 
 	public Playlist getLibrary() {
-		Playlist lib = new Playlist();
-		lib.setTitle("Library");
+		Playlist lib = new Playlist("Library");
 		lib.setReadonly(true);
 		
 		DaoFactory df = DaoFactory.getInstance();
