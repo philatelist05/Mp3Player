@@ -67,7 +67,7 @@ public class Song {
 	 * @param id
 	 *            the id to set
 	 */
-	public void setId(int id) {
+	public void setId(int id) throws IllegalArgumentException {
 	    if (id < 0)
 		throw new IllegalArgumentException("ID must be greater or equal 0");
 	    this.id = id;
@@ -84,7 +84,7 @@ public class Song {
 	 * @param title
 	 *            the title to set
 	 */
-	public void setTitle(String title) {
+	public void setTitle(String title) throws IllegalArgumentException {
 	    if (title == null || title.isEmpty())
 		throw new IllegalArgumentException("Title must contain characters");
 	    this.title = title;
@@ -101,7 +101,7 @@ public class Song {
 	 * @param duration
 	 *            the duration to set
 	 */
-	public void setDuration(int duration) {
+	public void setDuration(int duration) throws IllegalArgumentException {
 	    if(duration < 0)
 		throw new IllegalArgumentException("Duration must be greater than 0");
 	    this.duration = duration;
@@ -118,7 +118,7 @@ public class Song {
 	 * @param playcount
 	 *            the playcount to set
 	 */
-	public void setPlaycount(int playcount) {
+	public void setPlaycount(int playcount) throws IllegalArgumentException {
 	    if (playcount < 0)
 		throw new IllegalArgumentException("PlayCount must be grater than 0");
 	    this.playcount = playcount;
@@ -135,7 +135,7 @@ public class Song {
 	 * @param rating
 	 *            the rating to set
 	 */
-	public void setRating(int rating) {
+	public void setRating(int rating) throws IllegalArgumentException {
 	    if (rating < -1 || rating > 10)
 		throw new IllegalArgumentException("Rating must be between -1 and 10");
 		this.rating = rating;
@@ -152,7 +152,7 @@ public class Song {
 	 * @param path
 	 *            the path to set
 	 */
-	public void setPath(String path) {
+	public void setPath(String path) throws IllegalArgumentException {
 	    if (path == null || path.isEmpty())
 		throw new IllegalArgumentException("Path must contain characters");
 	    this.path = path;
@@ -169,7 +169,7 @@ public class Song {
 	 * @param year
 	 *            the year to set
 	 */
-	public void setYear(int year) {
+	public void setYear(int year) throws IllegalArgumentException {
 	    if (year < -1 || year > 9999)
 		throw new IllegalArgumentException("Year must have 4 digits");
 	    this.year = year;
