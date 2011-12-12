@@ -5,7 +5,7 @@ package at.ac.tuwien.sepm2011ws.mp3player.domainObjects;
 
 /**
  * @author klaus
- *
+ * 
  */
 public class Song {
 	private int id;
@@ -24,7 +24,7 @@ public class Song {
 	 * 
 	 */
 	public Song() {
-		this(-1, null, 0, 0, -1, null, -1, null, null, null, null);
+		this(-1, null, -1, 0, -1, null, -1, null, null, null, null);
 	}
 
 	/**
@@ -64,7 +64,8 @@ public class Song {
 	}
 
 	/**
-	 * @param id the id to set
+	 * @param id
+	 *            the id to set
 	 */
 	public void setId(int id) {
 		this.id = id;
@@ -78,7 +79,8 @@ public class Song {
 	}
 
 	/**
-	 * @param title the title to set
+	 * @param title
+	 *            the title to set
 	 */
 	public void setTitle(String title) {
 		this.title = title;
@@ -92,7 +94,8 @@ public class Song {
 	}
 
 	/**
-	 * @param duration the duration to set
+	 * @param duration
+	 *            the duration to set
 	 */
 	public void setDuration(int duration) {
 		this.duration = duration;
@@ -106,7 +109,8 @@ public class Song {
 	}
 
 	/**
-	 * @param playcount the playcount to set
+	 * @param playcount
+	 *            the playcount to set
 	 */
 	public void setPlaycount(int playcount) {
 		this.playcount = playcount;
@@ -120,7 +124,8 @@ public class Song {
 	}
 
 	/**
-	 * @param rating the rating to set
+	 * @param rating
+	 *            the rating to set
 	 */
 	public void setRating(int rating) {
 		this.rating = rating;
@@ -134,7 +139,8 @@ public class Song {
 	}
 
 	/**
-	 * @param path the path to set
+	 * @param path
+	 *            the path to set
 	 */
 	public void setPath(String path) {
 		this.path = path;
@@ -148,7 +154,8 @@ public class Song {
 	}
 
 	/**
-	 * @param year the year to set
+	 * @param year
+	 *            the year to set
 	 */
 	public void setYear(int year) {
 		this.year = year;
@@ -162,7 +169,8 @@ public class Song {
 	}
 
 	/**
-	 * @param artist the artist to set
+	 * @param artist
+	 *            the artist to set
 	 */
 	public void setArtist(String artist) {
 		this.artist = artist;
@@ -176,7 +184,8 @@ public class Song {
 	}
 
 	/**
-	 * @param genre the genre to set
+	 * @param genre
+	 *            the genre to set
 	 */
 	public void setGenre(String genre) {
 		this.genre = genre;
@@ -190,7 +199,8 @@ public class Song {
 	}
 
 	/**
-	 * @param album the album to set
+	 * @param album
+	 *            the album to set
 	 */
 	public void setAlbum(Album album) {
 		this.album = album;
@@ -204,10 +214,45 @@ public class Song {
 	}
 
 	/**
-	 * @param lyric the lyric to set
+	 * @param lyric
+	 *            the lyric to set
 	 */
 	public void setLyric(Lyric lyric) {
 		this.lyric = lyric;
+	}
+
+	/**
+	 * Check if the one of the fields of the song has an invalid value (incl. id)
+	 * 
+	 * @return true if the song contains invalid values, otherwise false
+	 */
+	public boolean hasInvalidValues() {
+		return hasInvalidValues(true);
+	}
+
+	/**
+	 * Check if the one of the fields of the song has an invalid value
+	 * 
+	 * @param withId
+	 *            check id too?
+	 * @return true if the song contains invalid values, otherwise false
+	 */
+	public boolean hasInvalidValues(boolean withId) {
+		if (withId && id < 0)
+			return true;
+		if (title == null || title.isEmpty())
+			return true;
+		if (duration < 0)
+			return true;
+		if (playcount < 0)
+			return true;
+		if (rating < -1 || rating > 10)
+			return true;
+		if (path == null || path.isEmpty())
+			return true;
+		if (year < -1 || year > 9999)
+			return true;
+		return false;
 	}
 
 }

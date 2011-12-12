@@ -9,23 +9,54 @@ package at.ac.tuwien.sepm2011ws.mp3player.domainObjects;
  */
 public class Album {
 	
+	private int id;
 	private String title;
 	private int year;
-	private String albumart_path;
+	private String albumartPath;
 
 	public Album() {
-		this("Untitled Album", 0, null);
+		this(-1, "Untitled Album", 0, null);
 	}
 
 	/**
+	 * @param id
 	 * @param title
 	 * @param year
-	 * @param albumart_path
+	 * @param albumartPath
 	 */
-	public Album(String title, int year, String albumart_path) {
+	public Album(int id, String title, int year, String albumartPath) {
+		this.id = id;
 		this.title = title;
 		this.year = year;
-		this.albumart_path = albumart_path;
+		this.albumartPath = albumartPath;
+	}
+
+	/**
+	 * @return the id
+	 */
+	public int getId() {
+		return this.id;
+	}
+
+	/**
+	 * @param id the id to set
+	 */
+	public void setId(int id) {
+		this.id = id;
+	}
+
+	/**
+	 * @return the albumartPath
+	 */
+	public String getAlbumartPath() {
+		return this.albumartPath;
+	}
+
+	/**
+	 * @param albumartPath the albumartPath to set
+	 */
+	public void setAlbumartPath(String albumartPath) {
+		this.albumartPath = albumartPath;
 	}
 
 	/**
@@ -76,22 +107,22 @@ public class Album {
 	 * 
 	 * Returns the path of the Album Cover
 	 * 
-	 * @return albumart_path
+	 * @return albumartPath
 	 * 
 	 */
 	public String getAlbumartpath() {
-		return this.albumart_path;
+		return this.albumartPath;
 	}
 
 	/**
 	 * 
 	 * Sets the path of the Album Cover
 	 * 
-	 * @param albumart_path
+	 * @param albumartPath
 	 * 
 	 */
 	public void setAlbumartpath(String albumart_path) {
-		this.albumart_path = albumart_path;
+		this.albumartPath = albumart_path;
 	}
 
 }

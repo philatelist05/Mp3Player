@@ -10,8 +10,8 @@ CREATE TABLE Song (
   year		INTEGER		NOT NULL,
   path  	VARCHAR(512)	NOT NULL,
   artist  	VARCHAR(255)	NOT NULL,
-  genre		VARCHAR(255)	NOT NULL,
-  CHECK (rating BETWEEN 0 AND 10)
+  genre		VARCHAR(255),
+  CHECK (rating BETWEEN -1 AND 10)
 );
 ALTER SEQUENCE song_sequence OWNED BY Song.ID;
 
@@ -22,7 +22,7 @@ CREATE TABLE Album (
   ID		INTEGER	PRIMARY KEY DEFAULT nextval('album_sequence'),
   title		VARCHAR(255)	NOT NULL,
   year		INTEGER		NOT NULL,
-  albumart_path	VARCHAR(512)	NOT NULL
+  albumart_path	VARCHAR(512)
 );
 ALTER SEQUENCE album_sequence OWNED BY Album.ID;
 
@@ -37,12 +37,12 @@ ALTER SEQUENCE playlist_sequence OWNED BY Playlist.ID;
 
 -- is_on (album:Album.ID, song:Song.ID)
 CREATE TABLE is_on (
-  album		INTEGER	REFERENCES Album(ID),
-  song		INTEGER	REFERENCES Song(ID)
+  album		INTEGER	REFERENCES Album(ID) ON DELETE CASCADE,
+  song		INTEGER	REFERENCES Song(ID) ON DELETE CASCADE
 );
 
 -- contains (playlist:Playlist.ID, song:Song.ID)
 CREATE TABLE contains (
-  playlist	INTEGER	REFERENCES Playlist(ID),
-  song		INTEGER	REFERENCES Song(ID)
+  playlist	INTEGER	REFERENCES Playlist(ID) ON DELETE CASCADE,
+  song		INTEGER	REFERENCES Song(ID) ON DELETE CASCADE
 );
