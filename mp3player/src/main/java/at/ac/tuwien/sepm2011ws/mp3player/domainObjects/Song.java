@@ -23,7 +23,7 @@ public class Song {
 	/**
 	 * 
 	 */
-	public Song() {
+	public Song() throws IllegalArgumentException {
 		this(-1, null, -1, 0, -1, null, -1, null, null, null, null);
 	}
 
@@ -42,18 +42,18 @@ public class Song {
 	 */
 	public Song(int id, String title, int duration, int playcount, int rating,
 			String path, int year, String artist, String genre, Album album,
-			Lyric lyric) {
-		this.id = id;
-		this.title = title;
-		this.duration = duration;
-		this.playcount = playcount;
-		this.rating = rating;
-		this.path = path;
-		this.year = year;
-		this.artist = artist;
-		this.genre = genre;
-		this.album = album;
-		this.lyric = lyric;
+			Lyric lyric) throws IllegalArgumentException {
+	    	this.setId(id);
+	    	this.setTitle(title);
+	    	this.setDuration(duration);
+	    	this.setPlaycount(playcount);
+	    	this.setRating(rating);
+	    	this.setPath(path);
+	    	this.setYear(year);
+	    	this.setArtist(artist);
+	    	this.setGenre(genre);
+	    	this.setAlbum(album);
+	    	this.setLyric(lyric);
 	}
 
 	/**
@@ -68,7 +68,9 @@ public class Song {
 	 *            the id to set
 	 */
 	public void setId(int id) {
-		this.id = id;
+	    if (id < 0)
+		throw new IllegalArgumentException("ID must be greater or equal 0");
+	    this.id = id;
 	}
 
 	/**
@@ -83,7 +85,9 @@ public class Song {
 	 *            the title to set
 	 */
 	public void setTitle(String title) {
-		this.title = title;
+	    if (title == null || title.isEmpty())
+		throw new IllegalArgumentException("Title must contain characters");
+	    this.title = title;
 	}
 
 	/**
@@ -98,7 +102,9 @@ public class Song {
 	 *            the duration to set
 	 */
 	public void setDuration(int duration) {
-		this.duration = duration;
+	    if(duration < 0)
+		throw new IllegalArgumentException("Duration must be greater than 0");
+	    this.duration = duration;
 	}
 
 	/**
@@ -113,7 +119,9 @@ public class Song {
 	 *            the playcount to set
 	 */
 	public void setPlaycount(int playcount) {
-		this.playcount = playcount;
+	    if (playcount < 0)
+		throw new IllegalArgumentException("PlayCount must be grater than 0");
+	    this.playcount = playcount;
 	}
 
 	/**
@@ -128,6 +136,8 @@ public class Song {
 	 *            the rating to set
 	 */
 	public void setRating(int rating) {
+	    if (rating < -1 || rating > 10)
+		throw new IllegalArgumentException("Rating must be between -1 and 10");
 		this.rating = rating;
 	}
 
@@ -143,7 +153,9 @@ public class Song {
 	 *            the path to set
 	 */
 	public void setPath(String path) {
-		this.path = path;
+	    if (path == null || path.isEmpty())
+		throw new IllegalArgumentException("Path must contain characters");
+	    this.path = path;
 	}
 
 	/**
@@ -158,7 +170,9 @@ public class Song {
 	 *            the year to set
 	 */
 	public void setYear(int year) {
-		this.year = year;
+	    if (year < -1 || year > 9999)
+		throw new IllegalArgumentException("Year must have 4 digits");
+	    this.year = year;
 	}
 
 	/**
@@ -220,39 +234,4 @@ public class Song {
 	public void setLyric(Lyric lyric) {
 		this.lyric = lyric;
 	}
-
-	/**
-	 * Check if the one of the fields of the song has an invalid value (incl. id)
-	 * 
-	 * @return true if the song contains invalid values, otherwise false
-	 */
-	public boolean hasInvalidValues() {
-		return hasInvalidValues(true);
-	}
-
-	/**
-	 * Check if the one of the fields of the song has an invalid value
-	 * 
-	 * @param withId
-	 *            check id too?
-	 * @return true if the song contains invalid values, otherwise false
-	 */
-	public boolean hasInvalidValues(boolean withId) {
-		if (withId && id < 0)
-			return true;
-		if (title == null || title.isEmpty())
-			return true;
-		if (duration < 0)
-			return true;
-		if (playcount < 0)
-			return true;
-		if (rating < -1 || rating > 10)
-			return true;
-		if (path == null || path.isEmpty())
-			return true;
-		if (year < -1 || year > 9999)
-			return true;
-		return false;
-	}
-
 }

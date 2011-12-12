@@ -64,12 +64,8 @@ class DBSongDao implements SongDao {
 	public int create(Song s) throws IllegalArgumentException {
 		int id = -1;
 
-		if (s == null) {
+		if (s == null)
 			throw new IllegalArgumentException();
-		} else if (s.hasInvalidValues(false)) {
-			throw new IllegalArgumentException();
-		}
-		
 
 		try {
 			createStmt.setString(1, s.getTitle());
