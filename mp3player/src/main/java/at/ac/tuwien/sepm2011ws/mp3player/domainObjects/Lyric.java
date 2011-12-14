@@ -9,38 +9,38 @@ package at.ac.tuwien.sepm2011ws.mp3player.domainObjects;
  */
 public class Lyric {
 
-	private String lyrics;
+	private String text;
 	
 	public Lyric() {
 		this("Unkown");
 	}
 	
 	/**
-	 * @param lyrics
+	 * @param text
 	 */
-	public Lyric(String lyrics) {
-		this.lyrics = lyrics;
+	public Lyric(String text) {
+		this.setText(text);
 	}
 
 	/**
 	 * 
-	 * Returns the lyrics
+	 * Returns the text
 	 * 
-	 * @return lyrics
+	 * @return text
 	 * 
 	 */
-	public String getLyrics() {
-		return this.lyrics;
+	public String getText() {
+		return this.text;
 	}
 	
 	/**
 	 * 
-	 * Sets the lyrics
+	 * Sets the text
 	 * 
-	 * @param lyrics
+	 * @param text
 	 * 
 	 */
-	public void setLyrics(String lyrics) {
-		this.lyrics = lyrics;
+	public void setText(String text) {
+		this.text = text;
 	}
 }

@@ -19,19 +19,20 @@ import at.ac.tuwien.sepm2011ws.mp3player.persistanceLayer.SongDao;
  */
 
 class DBSongDao implements SongDao {
+	private Connection con;
 
-	PreparedStatement createStmt;
-	PreparedStatement createIsOnStmt;
-	PreparedStatement readStmt;
-	PreparedStatement readAllStmt;
-	PreparedStatement updateStmt;
-	PreparedStatement deleteStmt;
+	private PreparedStatement createStmt;
+	private PreparedStatement createIsOnStmt;
+	private PreparedStatement readStmt;
+	private PreparedStatement readAllStmt;
+	private PreparedStatement updateStmt;
+	private PreparedStatement deleteStmt;
 
 	DBSongDao(DataSource source) {
 
 		try {
 
-			Connection con = source.getConnection();
+			con = source.getConnection();
 			createStmt = con.prepareStatement("INSERT INTO song ( "
 					+ "title, artist, path, year, duration, "
 					+ "playcount, rating, genre) "
@@ -64,7 +65,7 @@ class DBSongDao implements SongDao {
 		int id = -1;
 
 		if (s == null)
-			throw new IllegalArgumentException();
+			throw new IllegalArgumentException("Song must not be null");
 
 		try {
 			createStmt.setString(1, s.getTitle());
@@ -85,6 +86,7 @@ class DBSongDao implements SongDao {
 			id = result.getInt(1);
 
 			if (s.getAlbum() != null) {
+				// TODO What should we do if album doesn't already exist?
 				createIsOnStmt.setInt(1, id);
 				createIsOnStmt.setInt(2, s.getAlbum().getId());
 
@@ -105,13 +107,45 @@ class DBSongDao implements SongDao {
 		return id;
 	}
 
-	public void update(Song newS) throws IllegalArgumentException {
-		// TODO Add update method
+	public void update(Song s) throws IllegalArgumentException {
+		
+		if(s == null) {
+			throw new IllegalArgumentException("Song must not be null");
+		}
+		
+		try {
+			updateStmt.setString(1, s.getTitle());
+			updateStmt.setString(2, s.getArtist());
+			updateStmt.setString(3, s.getPath());
+			updateStmt.setInt(4, s.getYear());
+			updateStmt.setInt(5, s.getDuration());
+			updateStmt.setInt(6, s.getPlaycount());
+			updateStmt.setInt(7, s.getRating());
+			updateStmt.setString(8, s.getGenre());
+			updateStmt.setInt(9, s.getId());
+
+			updateStmt.executeUpdate();
+			
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
 
 	}
 
-	public void delete(int song) throws IllegalArgumentException {
-		// TODO Add delete method
+	public void delete(int id) throws IllegalArgumentException {
+
+		if (id < 0) {
+			throw new IllegalArgumentException("ID must be greater or equal 0");
+		}
+
+		try {
+
+			deleteStmt.setInt(1, id);
+			deleteStmt.executeUpdate();
+		} catch (SQLException e) {
+			// TODO Exception throwing instead of outputting
+			e.printStackTrace();
+		}
 
 	}
 
@@ -119,7 +153,7 @@ class DBSongDao implements SongDao {
 		ResultSet result = null;
 
 		if (id < 0) {
-			throw new IllegalArgumentException();
+			throw new IllegalArgumentException("ID must be greater or equal 0");
 		}
 
 		Song s;
@@ -197,5 +231,12 @@ class DBSongDao implements SongDao {
 			}
 		}
 		return sList;
+	}
+
+	/**
+	 * @return the connection
+	 */
+	public Connection getConnection() {
+		return this.con;
 	}
 }

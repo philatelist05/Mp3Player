@@ -3,6 +3,7 @@
  */
 package at.ac.tuwien.sepm2011ws.mp3player.persistanceLayer;
 
+import java.sql.Connection;
 import java.util.List;
 
 import at.ac.tuwien.sepm2011ws.mp3player.domainObjects.Song;
@@ -25,21 +26,21 @@ public interface SongDao {
 	/**
 	 * Updates a song.
 	 * 
-	 * @param newS
+	 * @param s
 	 *            The song with the new values and the id of the old
 	 *            song.
 	 * @throws IllegalArgumentException
 	 */
-	public void update(Song newS) throws IllegalArgumentException;
+	public void update(Song s) throws IllegalArgumentException;
 
 	/**
 	 * Deletes a song.
 	 * 
-	 * @param song
+	 * @param id
 	 *            The id of the song which should be deleted.
 	 * @throws IllegalArgumentException
 	 */
-	public void delete(int song) throws IllegalArgumentException;
+	public void delete(int id) throws IllegalArgumentException;
 	
 
 	/**
@@ -58,4 +59,9 @@ public interface SongDao {
 	 * @return A List of all songs from the DB.
 	 */
 	public List<Song> readAll();
+	
+	/**
+	 * @return the connection used by this dao
+	 */
+	public Connection getConnection();
 }
