@@ -11,19 +11,22 @@ import org.junit.Before;
 import org.junit.Test;
 
 import at.ac.tuwien.sepm2011ws.mp3player.domainObjects.Playlist;
-import at.ac.tuwien.sepm2011ws.mp3player.serviceLayer.db.ServiceFactory;
+import at.ac.tuwien.sepm2011ws.mp3player.serviceLayer.vvv.ServiceFactory;
 
 /**
  * @author klaus
  *
  */
 public class PlaylistServiceTest {
+	private PlaylistService ps;
 
 	/**
 	 * @throws java.lang.Exception
 	 */
 	@Before
 	public void setUp() throws Exception {
+		ServiceFactory sf = ServiceFactory.getInstance();
+		ps = sf.getPlaylistService();
 	}
 
 	/**
@@ -35,8 +38,6 @@ public class PlaylistServiceTest {
 
 	@Test
 	public void testGetLibrary_AtLeastOneSong() {
-		ServiceFactory sf = ServiceFactory.getInstance();
-		PlaylistService ps = sf.getPlaylistService();
 		Playlist lib = ps.getLibrary();
 		
 		assertNotNull(lib.getSongs());

@@ -1,7 +1,7 @@
 /**
  * Veni Vidi Vici PlaylistService
  */
-package at.ac.tuwien.sepm2011ws.mp3player.serviceLayer.db;
+package at.ac.tuwien.sepm2011ws.mp3player.serviceLayer.vvv;
 
 import at.ac.tuwien.sepm2011ws.mp3player.domainObjects.Playlist;
 import at.ac.tuwien.sepm2011ws.mp3player.persistanceLayer.SongDao;
