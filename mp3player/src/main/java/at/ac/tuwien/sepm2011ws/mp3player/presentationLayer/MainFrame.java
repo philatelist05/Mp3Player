@@ -46,7 +46,7 @@ public class MainFrame extends JFrame implements ActionListener {
 	private JButton btnPlayPause;
 	private JButton btnNext;
 	private JSlider volume;
-	
+	private JSlider progress;
 	
 	ServiceFactory sf = ServiceFactory.getInstance();
 	private PlaylistService ps;
@@ -132,7 +132,14 @@ public class MainFrame extends JFrame implements ActionListener {
 		cis = sf.getCoreInteractionService();
 		cis.setVolume(x);
 	}
-    
+
+    private  void setMediaTime(int value) {
+		// TODO Auto-generated method stub
+    	cis = sf.getCoreInteractionService();
+    	cis.seek(value);
+		
+	}
+	
     /**
      * Starts the MainFrame
      */
@@ -257,8 +264,13 @@ public class MainFrame extends JFrame implements ActionListener {
 		 * JSliders
 		 */
 		// ProgressBar
-		JSlider progress = new JSlider();
+		progress = new JSlider(0,100);
 		playerPanel.add(progress, "flowx,cell 0 2 3 1");
+		progress.addChangeListener(new ChangeListener() {
+			public void stateChanged(ChangeEvent e) {
+				setMediaTime(progress.getValue());
+			}
+		});
 		
 		// Volume
 		volume = new JSlider(0, 50);
@@ -331,7 +343,8 @@ public class MainFrame extends JFrame implements ActionListener {
 		mnHelp.add(mntmAbout);
 	}
 
-    public void actionPerformed(ActionEvent e) {
+
+	public void actionPerformed(ActionEvent e) {
     	if(e.getActionCommand().equals("previous")){
 			previous();
 		}
