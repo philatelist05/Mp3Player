@@ -17,7 +17,7 @@ public class Main {
 	private static Logger logger = Logger.getLogger(Main.class);
 
 	public static void main(String[] args) {
-		DOMConfigurator.configureAndWatch("log4j-4.xml", 60 * 1000);
+		DOMConfigurator.configureAndWatch("src/main/resources/log4j-4.xml", 60 * 1000);
 		startMainFrame();
 	}
 
