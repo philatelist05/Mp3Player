@@ -1,4 +1,4 @@
-package at.ac.tuwien.sepm2011ws.mp3player.serviceLayer.vvv;
+package at.ac.tuwien.sepm2011ws.mp3player.serviceLayer;
 
 /**
  * The Playmodes of the player

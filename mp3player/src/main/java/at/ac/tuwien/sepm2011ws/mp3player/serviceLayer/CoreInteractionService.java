@@ -4,7 +4,6 @@
 package at.ac.tuwien.sepm2011ws.mp3player.serviceLayer;
 
 import at.ac.tuwien.sepm2011ws.mp3player.domainObjects.Song;
-import at.ac.tuwien.sepm2011ws.mp3player.serviceLayer.vvv.PlayMode;
 
 /**
  * @author klaus
@@ -89,21 +88,6 @@ public interface CoreInteractionService {
 	public boolean isPaused();
 
 	/**
-	 * Sets the play mode.
-	 * 
-	 * @param playMode
-	 *            The desired PlayMode.
-	 */
-	public void setPlayMode(PlayMode playMode);
-
-	/**
-	 * Returns the current play mode.
-	 * 
-	 * @return the current play mode.
-	 */
-	public PlayMode getPlayMode();
-
-	/**
 	 * Seeks the song to x% of the songs duration, where x is the value of the
 	 * parameter. (for GUI Slider)
 	 * 
@@ -114,7 +98,7 @@ public interface CoreInteractionService {
 	/**
 	 * Gets the duration of the current song.
 	 * 
-	 * @return The duration of the current song <b>in seconds</b>
+	 * @return the duration of the current song <b>in seconds</b>
 	 */
 	public double getDuration();
 
@@ -124,10 +108,18 @@ public interface CoreInteractionService {
 	 * 
 	 * @param percent
 	 *            The percentage of the duration
-	 * @return The percentage of the duration of the current song <b>in
+	 * @return the percentage of the duration of the current song <b>in
 	 *         seconds</b>
 	 */
 	public double getDurationAt(int percent);
+
+	/**
+	 * Gets the percentage of the play time in relation to the duration of current
+	 * song. The value is between 0 (just started) and 100 (at the end).
+	 * 
+	 * @return the percentage of the current play time
+	 */
+	public int getPlayTime();
 
 	/**
 	 * Returns the current active song.

@@ -26,7 +26,6 @@ class VVVCoreInteractionService implements CoreInteractionService {
 	private boolean isMute;
 	private boolean isPause;
 	private boolean isStop;
-	private PlayMode playMode;
 	private Song currentSong;
 
 	/**
@@ -48,7 +47,6 @@ class VVVCoreInteractionService implements CoreInteractionService {
 		this.isPause = false;
 		this.isStop = true;
 		this.currentSong = null;
-		this.playMode = PlayMode.NORMAL;
 	}
 
 	public void playPause() {
@@ -57,6 +55,8 @@ class VVVCoreInteractionService implements CoreInteractionService {
 
 	public void playPause(Song song) {
 		if (song == null) {
+			// TODO If song is null, call playNext to play the first song of the
+			// playlist
 			throw new IllegalArgumentException("Cannot play unexisting song");
 		}
 
@@ -100,12 +100,10 @@ class VVVCoreInteractionService implements CoreInteractionService {
 
 	public void playNext() {
 		// TODO Get next song from PlaylistService and play it
-
 	}
 
 	public void playPrevious() {
 		// TODO Get previous song from PlaylistService and play it
-
 	}
 
 	public void stop() {
@@ -165,15 +163,6 @@ class VVVCoreInteractionService implements CoreInteractionService {
 		return isStop;
 	}
 
-	public void setPlayMode(PlayMode playMode) {
-		logger.debug("Current PlayMode set to: " + playMode);
-		this.playMode = playMode;
-	}
-
-	public PlayMode getPlayMode() {
-		return this.playMode;
-	}
-
 	public void seek(int percent) {
 		player.setMediaTime(new Time(getDurationAt(percent)));
 	}
@@ -192,6 +181,13 @@ class VVVCoreInteractionService implements CoreInteractionService {
 
 	public Song getCurrentSong() {
 		return this.currentSong;
+	}
+	
+	public int getPlayTime() {
+		double duration = getDuration();
+		double playTime = player.getMediaTime().getSeconds();
+		
+		return (int) (playTime / duration);
 	}
 
 	private class VVVControllerListener implements ControllerListener {
