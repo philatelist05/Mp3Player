@@ -57,6 +57,9 @@ class VVVCoreInteractionService implements CoreInteractionService {
 		if (song == null) {
 			// TODO If song is null, call playNext to play the first song of the
 			// playlist
+			// TODO If new song is different to the previous one, stop previous
+			// song, play new song (should also work, while previous song is
+			// still playing!)
 			throw new IllegalArgumentException("Cannot play unexisting song");
 		}
 
@@ -129,6 +132,13 @@ class VVVCoreInteractionService implements CoreInteractionService {
 	}
 
 	public void setVolume(int level) {
+		// TODO Class variable for setVolume (You can't set the volume before
+		// playing a song (facepalm ;) ))
+		// TODO e.g. a parameter of 100 exceeds the level of max loudness, which
+		// leads to an exception...
+		// TODO setting the volume takes very long... If you set the volume,
+		// while a song is paused, after pressing play the songs' loudness
+		// remains the same. After about half a second, the volume switches...
 		if (player != null) {
 			float fLevel = (float) level / 100f;
 
@@ -182,11 +192,11 @@ class VVVCoreInteractionService implements CoreInteractionService {
 	public Song getCurrentSong() {
 		return this.currentSong;
 	}
-	
+
 	public int getPlayTime() {
 		double duration = getDuration();
 		double playTime = player.getMediaTime().getSeconds();
-		
+
 		return (int) (playTime / duration);
 	}
 
