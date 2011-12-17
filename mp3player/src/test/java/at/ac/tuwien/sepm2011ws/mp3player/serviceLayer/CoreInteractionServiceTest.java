@@ -84,4 +84,18 @@ public class CoreInteractionServiceTest {
 		assertTrue(cs.getCurrentSong().equals(temp.getSongs().get(1)));
 		cs.stop();
 	}
+	
+	@Test
+	public void testPlayPause_ShouldPauseAndContinue() throws InterruptedException {
+		File sPath = new File("music/dummy-message.wav");
+		Song s = new Song("dummy", "dummy", 300, sPath.getAbsolutePath());
+		
+		cs.playPause(s);
+		Thread.sleep(1000);
+		cs.playPause(s);
+		Thread.sleep(1000);
+		cs.playPause(s);
+		Thread.sleep(1000);
+		cs.stop();
+	}
 }

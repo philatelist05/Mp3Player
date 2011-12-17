@@ -80,7 +80,7 @@ class VVVCoreInteractionService implements CoreInteractionService {
 	}
 
 	public void playPause(Song song) {
-		if (song != null && song.equals(this.currentSong) && isPlaying()) {
+		if (song != null && song.equals(this.currentSong) && !isStopped) {
 			// If song is the current song, toggle pause
 			togglePause();
 		} else {
