@@ -31,6 +31,12 @@ class VVVCoreInteractionService implements CoreInteractionService {
 	/**
 	 * 
 	 */
+	// TODO public Song getActiveSong ()... return song (if any; else null)
+	// TODO Method (maybe event?) for syncing UI and ServiceLayer (e.g. if end
+	// of song, play next song --> send acknoledge do UI... (in that manner).
+	// The goal: The UI should get known of Song changing (and should also be
+	// provided the new song information...))
+
 	public VVVCoreInteractionService() {
 		// Register the mp3 plugin
 		// Format input1 = new AudioFormat(AudioFormat.MPEGLAYER3);

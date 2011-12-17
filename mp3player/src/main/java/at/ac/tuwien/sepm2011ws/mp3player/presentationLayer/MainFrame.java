@@ -316,8 +316,8 @@ public class MainFrame extends JFrame implements ActionListener {
 		 */
 		// ProgressBar
 		progress = new JSlider(0, 100, 0);
-		progress.setMajorTickSpacing(100);
-        progress.setMinorTickSpacing(1);
+		progress.setMajorTickSpacing(20);
+        progress.setMinorTickSpacing(5);
 		progress.setPaintTicks(true);
 		progress.setSnapToTicks(false);
 		progress.putClientProperty("JSlider.isFilled",Boolean.TRUE);
@@ -335,7 +335,10 @@ public class MainFrame extends JFrame implements ActionListener {
 		playerPanel.add(lblVolume, "cell 0 3 3 1,alignx center,aligny center");
 		
 		// Volume
-		volume = new JSlider(0, 50);
+		volume = new JSlider(0, 50, 25);
+		volume.setMajorTickSpacing(25);
+        volume.setMinorTickSpacing(5);
+		volume.setSnapToTicks(false);
 		volume.addChangeListener(new ChangeListener() {
 			public void stateChanged(ChangeEvent e) {
 				setVol(volume.getValue());
