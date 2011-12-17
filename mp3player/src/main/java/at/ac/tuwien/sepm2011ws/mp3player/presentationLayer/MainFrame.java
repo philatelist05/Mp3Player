@@ -1,5 +1,10 @@
 package at.ac.tuwien.sepm2011ws.mp3player.presentationLayer;
 
+
+import java.awt.Graphics;
+import java.awt.Image;
+import java.awt.LayoutManager;
+
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -7,9 +12,13 @@ import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowStateListener;
+import java.io.IOException;
 
+import javax.imageio.ImageIO;
+import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JFrame;
@@ -214,10 +223,14 @@ public class MainFrame extends JFrame implements ActionListener {
 		 * JPanels
 		 */
 		// playerPanel
-		JPanel playerPanel = new JPanel(new MigLayout("", "[][grow][grow]", "[][grow][][]"));
+		Image image = null;
+		try {
+			image=ImageIO.read(getClass().getResource("img/background.png"));
+		} catch (IOException e1) {
+		}
+		JPanel playerPanel = new ImagePanel(new MigLayout("", "[][grow][grow]", "[][grow][][]"), image);
 		getContentPane().add(playerPanel);
-		
-		
+
 		/**
 		 * JLabels
 		 */
@@ -316,12 +329,14 @@ public class MainFrame extends JFrame implements ActionListener {
 		 */
 		// ProgressBar
 		progress = new JSlider(0, 100, 0);
-		progress.setMajorTickSpacing(20);
-        progress.setMinorTickSpacing(5);
+		progress.setOpaque(false);
+		progress.setMajorTickSpacing(10);
+        progress.setMinorTickSpacing(1);
 		progress.setPaintTicks(true);
 		progress.setSnapToTicks(false);
 		progress.putClientProperty("JSlider.isFilled",Boolean.TRUE);
 		playerPanel.add(progress, "flowx,cell 0 2 3 1,alignx center,aligny center");
+
 		progress.addChangeListener(new ChangeListener() {
 			public void stateChanged(ChangeEvent e) {
 				setMediaTime(progress.getValue());
@@ -332,20 +347,21 @@ public class MainFrame extends JFrame implements ActionListener {
 		
 		// lblVolume
 		lblVolume = new JLabel("Volume:");
-		playerPanel.add(lblVolume, "cell 0 3 3 1,alignx center,aligny center");
+		playerPanel.add(lblVolume, "cell 2 3,alignx right,aligny center");
 		
 		// Volume
 		volume = new JSlider(0, 50, 25);
 		volume.setMajorTickSpacing(25);
         volume.setMinorTickSpacing(5);
 		volume.setSnapToTicks(false);
+		volume.setOpaque(false);
 		volume.addChangeListener(new ChangeListener() {
 			public void stateChanged(ChangeEvent e) {
 				setVol(volume.getValue());
 			}
 		});
 		volume.setPreferredSize(new Dimension(playerPanel.getWidth(),25));
-		playerPanel.add(volume, "cell 0 3 3 1,alignx center,aligny center");
+		playerPanel.add(volume, "cell 2 3,alignx right,aligny center");
 		
 		
 		/**
@@ -353,11 +369,22 @@ public class MainFrame extends JFrame implements ActionListener {
 		 */
 		// Repeat
 		JCheckBox chckbxRepeat = new JCheckBox("Repeat");
-		playerPanel.add(chckbxRepeat, "cell 0 3 3 1,alignx center,aligny center");
+
+		chckbxRepeat.setOpaque(false);
+		chckbxRepeat.setContentAreaFilled(false);
+		chckbxRepeat.setBorderPainted(false); 
+		chckbxRepeat.setFocusPainted(false);
+		playerPanel.add(chckbxRepeat, "cell 2 3,alignx right,aligny center");
 		
 		// Shuffle
 		JCheckBox chckbxShuffle = new JCheckBox("Shuffle");
-		playerPanel.add(chckbxShuffle, "cell 0 3 3 1,alignx center,aligny center");
+		chckbxShuffle.setOpaque(false);
+		chckbxShuffle.setContentAreaFilled(false);
+		chckbxShuffle.setBorderPainted(false); 
+		chckbxShuffle.setFocusPainted(false);
+
+		playerPanel.add(chckbxShuffle, "cell 2 3,alignx right,aligny center");
+
 		
 		
 		/**
@@ -431,5 +458,47 @@ public class MainFrame extends JFrame implements ActionListener {
 		else if(e.getActionCommand().equals("next")){
 			next();
 		}
+    }
+}
+
+@SuppressWarnings("serial")
+class ImagePanel extends JPanel {
+    private Image image;
+    private boolean tile;
+
+    ImagePanel(MigLayout migLayout, Image image) {
+    	super(migLayout);
+        this.image = image;
+        this.tile = false;
+        //final JCheckBox checkBox = new JCheckBox();
+        //checkBox.setAction(new AbstractAction("Tile") {
+        //    public void actionPerformed(ActionEvent e) {
+        //        tile = checkBox.isSelected();
+        //        repaint();
+        //    }
+        //});
+        //add(checkBox, BorderLayout.SOUTH);
+    };
+
+    ImagePanel(MigLayout migLayout) {
+    	super(migLayout);
+	}
+
+	@Override
+    public void paintComponent(Graphics g) {
+        super.paintComponent(g);
+        if (tile) {
+            int iw = image.getWidth(this);
+            int ih = image.getHeight(this);
+            if (iw > 0 && ih > 0) {
+                for (int x = 0; x < getWidth(); x += iw) {
+                    for (int y = 0; y < getHeight(); y += ih) {
+                        g.drawImage(image, x, y, iw, ih, this);
+                    }
+                }
+            }
+        } else {
+            g.drawImage(image, 0, 0, getWidth(), getHeight(), this);
+        }
     }
 }
