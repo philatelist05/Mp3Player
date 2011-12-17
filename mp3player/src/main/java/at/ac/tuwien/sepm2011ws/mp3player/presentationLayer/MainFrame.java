@@ -1,9 +1,14 @@
 package at.ac.tuwien.sepm2011ws.mp3player.presentationLayer;
 
+import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.ComponentAdapter;
+import java.awt.event.ComponentEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.awt.event.WindowEvent;
+import java.awt.event.WindowStateListener;
 
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
@@ -47,8 +52,11 @@ public class MainFrame extends JFrame implements ActionListener {
 	private JButton btnNext;
 	private JSlider volume;
 	private JSlider progress;
+	private JLabel lblHeader;
+	private JLabel lblCurrentStateSong;
+	private JLabel lblVolume;
 	
-	ServiceFactory sf = ServiceFactory.getInstance();
+	private ServiceFactory sf = ServiceFactory.getInstance();
 	private PlaylistService ps;
 	private CoreInteractionService cis;
 
@@ -81,8 +89,14 @@ public class MainFrame extends JFrame implements ActionListener {
 	private void previous() {
 		cis = sf.getCoreInteractionService();
 		
+		btnPlayPause.setActionCommand("play");
 		btnPlayPause.setText("Play");
+		lblCurrentStateSong.setText("");
+		
 		cis.playPrevious();
+		lblCurrentStateSong.setText("Currently playing: TODO");
+		
+		btnPlayPause.setActionCommand("pause");
 		btnPlayPause.setText("Pause");
 	}
 	
@@ -95,8 +109,12 @@ public class MainFrame extends JFrame implements ActionListener {
 		
 		btnPlayPause.setActionCommand("play");
 		btnPlayPause.setText("Play");
+		
 		cis = sf.getCoreInteractionService();
 		cis.playPause(x);
+		
+		lblCurrentStateSong.setText("Currently playing: "+x.getArtist()+" - "+x.getTitle()+"");
+		
 		btnPlayPause.setActionCommand("pause");
 		btnPlayPause.setText("Pause");
 		
@@ -109,6 +127,7 @@ public class MainFrame extends JFrame implements ActionListener {
 		cis = sf.getCoreInteractionService();
 		
 		cis.pause();
+		lblCurrentStateSong.setText(lblCurrentStateSong.getText().concat(" (Paused)"));
 		btnPlayPause.setActionCommand("play");
 		btnPlayPause.setText("Play");
 	}
@@ -119,13 +138,19 @@ public class MainFrame extends JFrame implements ActionListener {
 	private void next () {
 		cis = sf.getCoreInteractionService();
 		
+		btnPlayPause.setActionCommand("play");
 		btnPlayPause.setText("Play");
+		lblCurrentStateSong.setText("");
+		
 		cis.playNext();
+		lblCurrentStateSong.setText("Currently playing: TODO");
+		
+		btnPlayPause.setActionCommand("pause");
 		btnPlayPause.setText("Pause");
 	}
 	
 	/**
-	 * Sends the volume action to the ServiceLayser
+	 * Sends the volume action to the ServiceLayer
 	 * @param x the volume from 0 - 50
 	 */
 	private void setVol (int x) {
@@ -133,8 +158,11 @@ public class MainFrame extends JFrame implements ActionListener {
 		cis.setVolume(x);
 	}
 
-    private  void setMediaTime(int value) {
-		// TODO Auto-generated method stub
+    /**
+     * Sends the Specified time position of the song to the ServiceLayer
+     * @param time position from 0 - 100
+     */
+	private  void setMediaTime(int value) {
     	cis = sf.getCoreInteractionService();
     	cis.seek(value);
 		
@@ -145,7 +173,7 @@ public class MainFrame extends JFrame implements ActionListener {
      */
     public MainFrame() {
 
-    	setBounds(100, 100, 900, 600);
+    	setBounds(100, 100, 1000, 600);
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		
 		cis = sf.getCoreInteractionService();
@@ -164,6 +192,24 @@ public class MainFrame extends JFrame implements ActionListener {
 	 * Initializes the contents of the frame
 	 */
 	private void initialize() {
+		
+		/**
+		 * MainFrame
+		 */
+		addComponentListener(new ComponentAdapter() {
+			@Override
+			public void componentResized(ComponentEvent e) {
+				progress.setPreferredSize(new Dimension(getWidth(), 25));
+			}
+		});
+		
+		addWindowStateListener(new WindowStateListener() {
+			public void windowStateChanged(WindowEvent arg0) {
+				progress.setPreferredSize(new Dimension(getWidth(), 25));
+			}
+		});
+		
+		
 		/**
 		 * JPanels
 		 */
@@ -171,13 +217,18 @@ public class MainFrame extends JFrame implements ActionListener {
 		JPanel playerPanel = new JPanel(new MigLayout("", "[][grow][grow]", "[][grow][][]"));
 		getContentPane().add(playerPanel);
 		
+		
 		/**
 		 * JLabels
 		 */
 		// lblHeader
-		JLabel lblHeader = new JLabel("mp3@player");
+		lblHeader = new JLabel("mp3@player");
 		playerPanel.add(lblHeader, "cell 0 0");
 		
+		// lblCurrentStateSong
+		lblCurrentStateSong = new JLabel("");
+		playerPanel.add(lblCurrentStateSong, "cell 1 0");
+
 		
 		/**
 		 * JTrees
@@ -243,19 +294,19 @@ public class MainFrame extends JFrame implements ActionListener {
 		 */
 		// Previous
 		btnPrevious = new JButton("Previous");
-		playerPanel.add(btnPrevious, "flowx,cell 1 3");
+		playerPanel.add(btnPrevious, "flowx,cell 0 3 3 1,alignx center,aligny center");
 		btnPrevious.addActionListener(this);
 		btnPrevious.setActionCommand("previous");
 		
 		// Play_Pause		
 		btnPlayPause = new JButton("Play");
-		playerPanel.add(btnPlayPause, "cell 1 3");
+		playerPanel.add(btnPlayPause, "cell 0 3 3 1,alignx center,aligny center");
 		btnPlayPause.addActionListener(this);
 		btnPlayPause.setActionCommand("play");
 		
 		// Next
 		btnNext = new JButton("Next");
-		playerPanel.add(btnNext, "cell 1 3");
+		playerPanel.add(btnNext, "cell 0 3 3 1,alignx center,aligny center");
 		btnNext.addActionListener(this);
 		btnNext.setActionCommand("next");
 		
@@ -264,13 +315,24 @@ public class MainFrame extends JFrame implements ActionListener {
 		 * JSliders
 		 */
 		// ProgressBar
-		progress = new JSlider(0,100);
-		playerPanel.add(progress, "flowx,cell 0 2 3 1");
+		progress = new JSlider(0, 100, 0);
+		progress.setMajorTickSpacing(100);
+        progress.setMinorTickSpacing(1);
+		progress.setPaintTicks(true);
+		progress.setSnapToTicks(false);
+		progress.putClientProperty("JSlider.isFilled",Boolean.TRUE);
+		playerPanel.add(progress, "flowx,cell 0 2 3 1,alignx center,aligny center");
 		progress.addChangeListener(new ChangeListener() {
 			public void stateChanged(ChangeEvent e) {
 				setMediaTime(progress.getValue());
 			}
 		});
+		
+		progress.setPreferredSize(new Dimension(getWidth(),25));
+		
+		// lblVolume
+		lblVolume = new JLabel("Volume:");
+		playerPanel.add(lblVolume, "cell 0 3 3 1,alignx center,aligny center");
 		
 		// Volume
 		volume = new JSlider(0, 50);
@@ -279,7 +341,8 @@ public class MainFrame extends JFrame implements ActionListener {
 				setVol(volume.getValue());
 			}
 		});
-		playerPanel.add(volume, "cell 1 3");
+		volume.setPreferredSize(new Dimension(playerPanel.getWidth(),25));
+		playerPanel.add(volume, "cell 0 3 3 1,alignx center,aligny center");
 		
 		
 		/**
@@ -287,11 +350,11 @@ public class MainFrame extends JFrame implements ActionListener {
 		 */
 		// Repeat
 		JCheckBox chckbxRepeat = new JCheckBox("Repeat");
-		playerPanel.add(chckbxRepeat, "cell 1 3");
+		playerPanel.add(chckbxRepeat, "cell 0 3 3 1,alignx center,aligny center");
 		
 		// Shuffle
 		JCheckBox chckbxShuffle = new JCheckBox("Shuffle");
-		playerPanel.add(chckbxShuffle, "cell 1 3");
+		playerPanel.add(chckbxShuffle, "cell 0 3 3 1,alignx center,aligny center");
 		
 		
 		/**
@@ -342,7 +405,6 @@ public class MainFrame extends JFrame implements ActionListener {
 		JMenuItem mntmAbout = new JMenuItem("About...");
 		mnHelp.add(mntmAbout);
 	}
-
 
 	public void actionPerformed(ActionEvent e) {
     	if(e.getActionCommand().equals("previous")){
