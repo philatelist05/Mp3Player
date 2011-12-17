@@ -18,6 +18,7 @@ import java.awt.event.WindowStateListener;
 import java.io.IOException;
 
 import javax.imageio.ImageIO;
+import javax.swing.Icon;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
@@ -56,9 +57,9 @@ public class MainFrame extends JFrame implements ActionListener {
     private static Logger logger = Logger.getLogger(MainFrame.class);
 	private JTable songTable;
 	private SongTableModel songmodel = new SongTableModel(new String[] { "Track Nr.", "Title", "Artist", "Album", "Year", "Genre", "Duration", "Rating", "Playcount" }, 0);
-	private JButton btnPrevious;
-	private JButton btnPlayPause;
-	private JButton btnNext;
+	private RectButton btnPrevious;
+	private RoundButton btnPlayPause;
+	private RectButton btnNext;
 	private JSlider volume;
 	private JSlider progress;
 	private JLabel lblHeader;
@@ -99,14 +100,12 @@ public class MainFrame extends JFrame implements ActionListener {
 		cis = sf.getCoreInteractionService();
 		
 		btnPlayPause.setActionCommand("play");
-		btnPlayPause.setText("Play");
 		lblCurrentStateSong.setText("");
 		
 		cis.playPrevious();
 		lblCurrentStateSong.setText("Currently playing: TODO");
 		
 		btnPlayPause.setActionCommand("pause");
-		btnPlayPause.setText("Pause");
 	}
 	
 	/**
@@ -115,18 +114,12 @@ public class MainFrame extends JFrame implements ActionListener {
 	 */
 	private void play (Song x) {
 		cis = sf.getCoreInteractionService();
-		
-		btnPlayPause.setActionCommand("play");
-		btnPlayPause.setText("Play");
-		
 		cis = sf.getCoreInteractionService();
 		cis.playPause(x);
 		
 		lblCurrentStateSong.setText("Currently playing: "+x.getArtist()+" - "+x.getTitle()+"");
 		
-		btnPlayPause.setActionCommand("pause");
-		btnPlayPause.setText("Pause");
-		
+		btnPlayPause.setActionCommand("pause");	
 	}
 	
 	/**
@@ -138,7 +131,6 @@ public class MainFrame extends JFrame implements ActionListener {
 		cis.pause();
 		lblCurrentStateSong.setText(lblCurrentStateSong.getText().concat(" (Paused)"));
 		btnPlayPause.setActionCommand("play");
-		btnPlayPause.setText("Play");
 	}
 	
 	/**
@@ -148,14 +140,12 @@ public class MainFrame extends JFrame implements ActionListener {
 		cis = sf.getCoreInteractionService();
 		
 		btnPlayPause.setActionCommand("play");
-		btnPlayPause.setText("Play");
 		lblCurrentStateSong.setText("");
 		
 		cis.playNext();
 		lblCurrentStateSong.setText("Currently playing: TODO");
 		
 		btnPlayPause.setActionCommand("pause");
-		btnPlayPause.setText("Pause");
 	}
 	
 	/**
@@ -305,20 +295,31 @@ public class MainFrame extends JFrame implements ActionListener {
 		/**
 		 * JButtons
 		 */
+		
+		
 		// Previous
-		btnPrevious = new JButton("Previous");
+		Icon l1 =  new ImageIcon(getClass().getResource("img/left_blue.png"));
+        Icon l2 =  new ImageIcon(getClass().getResource("img/left_orange.png"));
+        Icon l3 =  new ImageIcon(getClass().getResource("img/left_orange_pressed.png"));
+		btnPrevious = new RectButton(l1, l2, l3);
 		playerPanel.add(btnPrevious, "flowx,cell 0 3 3 1,alignx center,aligny center");
 		btnPrevious.addActionListener(this);
 		btnPrevious.setActionCommand("previous");
 		
-		// Play_Pause		
-		btnPlayPause = new JButton("Play");
+		// Play_Pause
+		Icon m1 =  new ImageIcon(getClass().getResource("img/play_blue.png"));
+        Icon m2 =  new ImageIcon(getClass().getResource("img/play_orange.png"));
+        Icon m3 =  new ImageIcon(getClass().getResource("img/play_orange_pressed.png"));
+		btnPlayPause = new RoundButton(m1, m2, m3);
 		playerPanel.add(btnPlayPause, "cell 0 3 3 1,alignx center,aligny center");
 		btnPlayPause.addActionListener(this);
 		btnPlayPause.setActionCommand("play");
 		
 		// Next
-		btnNext = new JButton("Next");
+		Icon r1 =  new ImageIcon(getClass().getResource("img/right_blue.png"));
+        Icon r2 =  new ImageIcon(getClass().getResource("img/right_orange.png"));
+        Icon r3 =  new ImageIcon(getClass().getResource("img/right_orange_pressed.png"));
+		btnNext = new RectButton(r1, r2, r3);
 		playerPanel.add(btnNext, "cell 0 3 3 1,alignx center,aligny center");
 		btnNext.addActionListener(this);
 		btnNext.setActionCommand("next");
