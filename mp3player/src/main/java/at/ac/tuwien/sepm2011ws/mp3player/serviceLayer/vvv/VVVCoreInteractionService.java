@@ -74,6 +74,10 @@ class VVVCoreInteractionService implements CoreInteractionService {
 			logger.info("Playing: " + song.getTitle());
 		}
 	}
+	
+	public void playPause() {
+		playPause(this.currentSong);
+	}
 
 	public void playPause(Song song) {
 		if (song != null && song.equals(this.currentSong) && isPlaying()) {

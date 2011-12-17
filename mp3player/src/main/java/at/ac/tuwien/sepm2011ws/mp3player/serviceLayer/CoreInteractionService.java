@@ -21,6 +21,12 @@ public interface CoreInteractionService {
 	public void playFromBeginning(Song song);
 
 	/**
+	 * Plays or pauses the playing song.
+	 * 
+	 */
+	public void playPause();
+
+	/**
 	 * Plays the song or pauses the playing if the song is the current playing
 	 * song.
 	 * 
@@ -28,7 +34,7 @@ public interface CoreInteractionService {
 	 *            The song containing the path to the file that should be played
 	 */
 	public void playPause(Song song);
-	
+
 	/**
 	 * Pauses the currently playing song
 	 */
