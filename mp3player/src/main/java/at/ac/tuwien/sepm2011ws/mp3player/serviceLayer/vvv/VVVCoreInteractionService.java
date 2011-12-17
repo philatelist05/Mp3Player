@@ -180,7 +180,8 @@ class VVVCoreInteractionService implements CoreInteractionService {
 	}
 
 	public void seek(int percent) {
-		player.setMediaTime(new Time(getDurationAt(percent)));
+		if(player!=null)
+			player.setMediaTime(new Time(getDurationAt(percent)));
 	}
 
 	public double getDuration() {
