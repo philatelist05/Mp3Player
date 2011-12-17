@@ -70,8 +70,24 @@ public class MainFrame extends JFrame implements ActionListener {
 	private JCheckBox chckbxMute;
 	private JCheckBox chckbxRepeat;
 	private JCheckBox chckbxShuffle;
+	
+	private Icon l1 = new ImageIcon(getClass().getResource("img/left_blue.png"));
+	private Icon l2 = new ImageIcon(getClass().getResource("img/left_orange.png"));
+	private Icon l3 = new ImageIcon(getClass().getResource("img/left_orange_pressed.png"));
+	
+	private Icon m1 = new ImageIcon(getClass().getResource("img/play_blue.png"));
+	private Icon m2 = new ImageIcon(getClass().getResource("img/play_orange.png"));
+	private Icon m3 = new ImageIcon(getClass().getResource("img/play_orange_pressed.png"));
+	
+	private Icon r1 = new ImageIcon(getClass().getResource("img/right_blue.png"));
+	private Icon r2 = new ImageIcon(getClass().getResource("img/right_orange.png"));
+	private Icon r3 = new ImageIcon(getClass().getResource("img/right_orange_pressed.png"));
+	
+	private Icon mp1 = new ImageIcon(getClass().getResource("img/pause_blue.png"));
+	private Icon mp2 = new ImageIcon(getClass().getResource("img/pause_orange.png"));
+	private Icon mp3 = new ImageIcon(getClass().getResource("img/pause_orange_pressed.png"));
 
-	private ServiceFactory sf = ServiceFactory.getInstance();
+	ServiceFactory sf = ServiceFactory.getInstance();
 	private PlaylistService ps;
 	private CoreInteractionService cis;
 
@@ -101,7 +117,25 @@ public class MainFrame extends JFrame implements ActionListener {
 					x.getAlbum(), x.getYear(), x.getGenre(), x.getDuration(),
 					x.getRating(), x.getPlaycount() });
 	}
-
+	
+	/**
+	 * Switches the Button Icons to Pause
+	 */
+	private void setPauseIcons() {
+		btnPlayPause.setStandardIcon(mp1);
+		btnPlayPause.settRolloverIcon(mp2);
+		btnPlayPause.settPressedIcon(mp3);
+	}
+	
+	/**
+	 * Switches the Button Icons to Play
+	 */
+	private void setPlayIcons() {
+		btnPlayPause.setStandardIcon(m1);
+		btnPlayPause.settRolloverIcon(m2);
+		btnPlayPause.settPressedIcon(m3);
+	}
+	
 	/**
 	 * Sends the "previous Song" Signal to the Service Layer
 	 */
@@ -112,6 +146,7 @@ public class MainFrame extends JFrame implements ActionListener {
 		Song temp = cis.getCurrentSong();
 
 		btnPlayPause.setActionCommand("play");
+		setPlayIcons();
 		lblCurrentStateSong.setText("");
 
 		cis.playPrevious();
@@ -121,6 +156,7 @@ public class MainFrame extends JFrame implements ActionListener {
 					+ temp.getArtist() + " - " + temp.getTitle() + "");
 
 			btnPlayPause.setActionCommand("pause");
+			setPauseIcons();
 		}
 		// }
 	}
@@ -141,6 +177,7 @@ public class MainFrame extends JFrame implements ActionListener {
 			lblCurrentStateSong.setText("Currently playing: "
 					+ temp.getArtist() + " - " + temp.getTitle() + "");
 			btnPlayPause.setActionCommand("pause");
+			setPauseIcons();
 		}
 	}
 
@@ -157,6 +194,7 @@ public class MainFrame extends JFrame implements ActionListener {
 			lblCurrentStateSong.setText("Currently playing: "
 					+ temp.getArtist() + " - " + temp.getTitle() + "");
 			btnPlayPause.setActionCommand("pause");
+			setPauseIcons();
 		}
 	}
 
@@ -169,9 +207,9 @@ public class MainFrame extends JFrame implements ActionListener {
 		cis.pause();
 
 		if (cis.isPaused()) {
-			lblCurrentStateSong.setText(lblCurrentStateSong.getText().concat(
-					" (Paused)"));
+			lblCurrentStateSong.setText(lblCurrentStateSong.getText().concat("(Paused)"));
 			btnPlayPause.setActionCommand("pauseplay");
+			setPlayIcons();
 		}
 	}
 
@@ -185,6 +223,7 @@ public class MainFrame extends JFrame implements ActionListener {
 		Song temp = cis.getCurrentSong();
 
 		btnPlayPause.setActionCommand("play");
+		setPlayIcons();
 		lblCurrentStateSong.setText("");
 
 		cis.playNext();
@@ -194,6 +233,7 @@ public class MainFrame extends JFrame implements ActionListener {
 					+ temp.getArtist() + " - " + temp.getTitle() + "");
 
 			btnPlayPause.setActionCommand("pause");
+			setPauseIcons();
 		}
 		// }
 	}
@@ -379,31 +419,19 @@ public class MainFrame extends JFrame implements ActionListener {
 		 * JButtons
 		 */
 
-		// Previous
-		Icon l1 = new ImageIcon(getClass().getResource("img/left_blue.png"));
-		Icon l2 = new ImageIcon(getClass().getResource("img/left_orange.png"));
-		Icon l3 = new ImageIcon(getClass().getResource(
-				"img/left_orange_pressed.png"));
+		// Previous		
 		btnPrevious = new RectButton(l1, l2, l3);
 		playerPanel.add(btnPrevious, "cell 0 3,alignx center,aligny center");
 		btnPrevious.addActionListener(this);
 		btnPrevious.setActionCommand("previous");
 
-		// Play_Pause
-		Icon m1 = new ImageIcon(getClass().getResource("img/play_blue.png"));
-		Icon m2 = new ImageIcon(getClass().getResource("img/play_orange.png"));
-		Icon m3 = new ImageIcon(getClass().getResource(
-				"img/play_orange_pressed.png"));
+		// Play_Pause		
 		btnPlayPause = new RoundButton(m1, m2, m3);
 		playerPanel.add(btnPlayPause, "cell 0 3,alignx center,aligny center");
 		btnPlayPause.addActionListener(this);
-		btnPlayPause.setActionCommand("play");
+		btnPlayPause.setActionCommand("play");		
 
 		// Next
-		Icon r1 = new ImageIcon(getClass().getResource("img/right_blue.png"));
-		Icon r2 = new ImageIcon(getClass().getResource("img/right_orange.png"));
-		Icon r3 = new ImageIcon(getClass().getResource(
-				"img/right_orange_pressed.png"));
 		btnNext = new RectButton(r1, r2, r3);
 		playerPanel.add(btnNext, "cell 0 3,alignx center,aligny center");
 		btnNext.addActionListener(this);
@@ -564,57 +592,15 @@ public class MainFrame extends JFrame implements ActionListener {
 		}
 
 		else if (e.getActionCommand().equals("pauseplay")) {
-			pauseplay();
+			pauseplay();			
 		}
 
 		else if (e.getActionCommand().equals("pause")) {
-			pause();
+			pause();			
 		}
 
 		else if (e.getActionCommand().equals("next")) {
 			next();
-		}
-	}
-}
-
-@SuppressWarnings("serial")
-class ImagePanel extends JPanel {
-	private Image image;
-	private boolean tile;
-
-	ImagePanel(MigLayout migLayout, Image image) {
-		super(migLayout);
-		this.image = image;
-		this.tile = false;
-		// final JCheckBox checkBox = new JCheckBox();
-		// checkBox.setAction(new AbstractAction("Tile") {
-		// public void actionPerformed(ActionEvent e) {
-		// tile = checkBox.isSelected();
-		// repaint();
-		// }
-		// });
-		// add(checkBox, BorderLayout.SOUTH);
-	};
-
-	ImagePanel(MigLayout migLayout) {
-		super(migLayout);
-	}
-
-	@Override
-	public void paintComponent(Graphics g) {
-		super.paintComponent(g);
-		if (tile) {
-			int iw = image.getWidth(this);
-			int ih = image.getHeight(this);
-			if (iw > 0 && ih > 0) {
-				for (int x = 0; x < getWidth(); x += iw) {
-					for (int y = 0; y < getHeight(); y += ih) {
-						g.drawImage(image, x, y, iw, ih, this);
-					}
-				}
-			}
-		} else {
-			g.drawImage(image, 0, 0, getWidth(), getHeight(), this);
 		}
 	}
 }

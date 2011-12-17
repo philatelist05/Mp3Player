@@ -68,6 +68,18 @@ public class RoundButton extends JButton
         initShape();
     }
     
+    public void setStandardIcon(Icon standardIcon) {
+    	this.setIcon(standardIcon);
+    }
+    
+    public void settRolloverIcon(Icon rolloverIcon) {
+        this.setRolloverIcon(rolloverIcon);    	
+    }
+    
+    public void settPressedIcon(Icon pressedIcon) {
+        this.setPressedIcon(pressedIcon);    	
+    }
+    
     protected void initShape() 
     {
     	Dimension s = this.getPreferredSize();
