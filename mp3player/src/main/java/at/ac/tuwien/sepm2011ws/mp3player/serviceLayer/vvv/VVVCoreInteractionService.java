@@ -18,25 +18,26 @@ import org.apache.log4j.Logger;
 
 import at.ac.tuwien.sepm2011ws.mp3player.domainObjects.Song;
 import at.ac.tuwien.sepm2011ws.mp3player.serviceLayer.CoreInteractionService;
+import at.ac.tuwien.sepm2011ws.mp3player.serviceLayer.PlaylistService;
 
 class VVVCoreInteractionService implements CoreInteractionService {
 	private static final Logger logger = Logger
 			.getLogger(VVVCoreInteractionService.class);
 	private Player player;
 	private boolean isMute;
-	private boolean isPause;
-	private boolean isStop;
+	private boolean isPaused;
+	private boolean isStopped;
+	private float volume;
 	private Song currentSong;
+
+	// TODO Method (maybe event?) for syncing UI and ServiceLayer (e.g. if end
+	// of song, play next song --> send acknowledge to UI... (in that manner).
+	// The goal: The UI should get known of Song changing (and should also be
+	// provided the new song information...))
 
 	/**
 	 * 
 	 */
-	// TODO public Song getActiveSong ()... return song (if any; else null)
-	// TODO Method (maybe event?) for syncing UI and ServiceLayer (e.g. if end
-	// of song, play next song --> send acknoledge do UI... (in that manner).
-	// The goal: The UI should get known of Song changing (and should also be
-	// provided the new song information...))
-
 	public VVVCoreInteractionService() {
 		// Register the mp3 plugin
 		// Format input1 = new AudioFormat(AudioFormat.MPEGLAYER3);
@@ -50,121 +51,136 @@ class VVVCoreInteractionService implements CoreInteractionService {
 		// );
 
 		this.isMute = false;
-		this.isPause = false;
-		this.isStop = true;
+		this.isPaused = false;
+		this.isStopped = true;
 		this.currentSong = null;
+		this.volume = 1;
 	}
 
-	public void playPause() {
-		playPause(currentSong);
+	public void playFromBeginning(Song song) {
+		if (song == null) {
+			// If no song is provided, play the next song of the playlist
+			playNext();
+		} else {
+			isStopped = false;
+			isPaused = false;
+
+			this.currentSong = song;
+
+			initialzePlayer(song);
+
+			player.start();
+
+			logger.info("Playing: " + song.getTitle());
+		}
 	}
 
 	public void playPause(Song song) {
+		if (song != null && song.equals(this.currentSong) && isPlaying()) {
+			// If song is the current song, toggle pause
+			togglePause();
+		} else {
+			// Play the song from the beginning
+			playFromBeginning(song);
+		}
+	}
+
+	private void initialzePlayer(Song song) {
+
 		if (song == null) {
-			// TODO If song is null, call playNext to play the first song of the
-			// playlist
-			// TODO If new song is different to the previous one, stop previous
-			// song, play new song (should also work, while previous song is
-			// still playing!)
-			throw new IllegalArgumentException("Cannot play unexisting song");
+			throw new IllegalArgumentException(
+					"Cannot initialize player without a song");
 		}
 
-		// If no player has been initialized yet, or if the player is playing
-		if (player == null
-				|| (!isPause && player.getState() != Controller.Started)) {
-			try {
-				isStop = false;
-				isPause = false;
-
-				this.currentSong = song;
-
-				player = Manager.createPlayer(new URL("file:///"
-						+ song.getPath()));
-				player.addControllerListener(new VVVControllerListener());
-				player.realize();
-
-				logger.debug("Playing: " + song.getTitle());
-			} catch (NoPlayerException ex) {
-				logger.error(ex.getMessage());
-			} catch (IOException ex) {
-				logger.error(ex.getMessage());
+		try {
+			if (player != null) {
+				player.stop();
+				player.close();
 			}
-		} else {
-			if (isPause) {
-				isPause = false;
 
+			player = Manager.createPlayer(new URL("file:///" + song.getPath()));
+			player.addControllerListener(new VVVControllerListener());
+			player.realize();
+
+		} catch (NoPlayerException ex) {
+			logger.error("Error while initializing player:\n" + ex.getMessage());
+		} catch (IOException ex) {
+			logger.error("Error while initializing player:\n" + ex.getMessage());
+		}
+	}
+
+	private void togglePause() {
+		if (player != null) {
+			if (!isPaused && !isStopped) {
+				isPaused = true;
+				player.stop();
+			} else if (isPaused && !isStopped) {
+				isPaused = false;
 				player.start();
-
-			} else if (player.getState() == Controller.Started) {
-				pause();
 			}
 		}
 	}
 
 	public void pause() {
-		player.stop();
-		isPause = true;
-		isStop = false;
+		if (!isPaused)
+			togglePause();
 	}
 
 	public void playNext() {
-		// TODO Get next song from PlaylistService and play it
+		ServiceFactory sf = ServiceFactory.getInstance();
+		PlaylistService ps = sf.getPlaylistService();
+		Song nextSong = ps.getNextSong();
+
+		if (nextSong != null)
+			playPause(nextSong);
 	}
 
 	public void playPrevious() {
-		// TODO Get previous song from PlaylistService and play it
+		ServiceFactory sf = ServiceFactory.getInstance();
+		PlaylistService ps = sf.getPlaylistService();
+		Song previousSong = ps.getPreviousSong();
+
+		if (previousSong != null)
+			playPause(previousSong);
 	}
 
 	public void stop() {
-		if (player != null) {
+		if (player != null && !isStopped) {
+			isPaused = false;
+			isStopped = true;
+
 			player.stop();
 			player.close();
-			isPause = false;
-			isStop = true;
 		}
 	}
 
 	public boolean isPlaying() {
-		return player != null && player.getState() == Controller.Started;
+		return !isStopped && !isPaused;
 	}
 
 	public void toggleMute() {
+		isMute = !isMute;
+
 		if (player != null) {
-			player.getGainControl().setMute(!isMute);
-			isMute = !isMute;
-		} else {
-			isMute = true;
+			player.getGainControl().setMute(isMute);
 		}
 	}
 
 	public void setVolume(int level) {
-		// TODO Class variable for setVolume (You can't set the volume before
-		// playing a song (facepalm ;) ))
-		// TODO e.g. a parameter of 100 exceeds the level of max loudness, which
-		// leads to an exception...
-		// TODO setting the volume takes very long... If you set the volume,
-		// while a song is paused, after pressing play the songs' loudness
-		// remains the same. After about half a second, the volume switches...
+
+		if (level < 0 || level > MAX_VOLUME)
+			throw new IllegalArgumentException("Volume level out of range");
+
+		this.volume = (float) level / 100f;
+		logger.debug("Volume set to " + this.volume);
+
 		if (player != null) {
-			float fLevel = (float) level / 100f;
-
-			player.getGainControl().setLevel(fLevel);
-
-			logger.debug("Volume set to " + fLevel);
-		} else {
-			logger.debug("Setting volume failed: player is null");
+			player.getGainControl().setLevel(this.volume);
 		}
 	}
 
 	public int getVolume() {
-		if (player != null) {
-			float level = player.getGainControl().getLevel();
-
-			return (int) level * 100;
-		} else {
-			logger.debug("Getting volume failed: player is null");
-			return 0;
-		}
+		return (int) this.volume * 100;
 	}
 
 	public boolean isMute() {
@@ -172,15 +188,17 @@ class VVVCoreInteractionService implements CoreInteractionService {
 	}
 
 	public boolean isPaused() {
-		return isPause;
+		return isPaused;
 	}
 
 	public boolean isStopped() {
-		return isStop;
+		return isStopped;
 	}
 
 	public void seek(int percent) {
-		player.setMediaTime(new Time(getDurationAt(percent)));
+		if (player != null && player.getState() != Controller.Unrealized) {
+			player.setMediaTime(new Time(getDurationAt(percent)));
+		}
 	}
 
 	public double getDuration() {
@@ -188,6 +206,9 @@ class VVVCoreInteractionService implements CoreInteractionService {
 	}
 
 	public double getDurationAt(int percent) {
+		if (percent < 0 || percent > 100)
+			throw new IllegalArgumentException(
+					"Duration percentage out of range");
 
 		double factor = (double) percent / 100;
 		double seconds = (player.getDuration().getSeconds() * factor);
@@ -200,24 +221,29 @@ class VVVCoreInteractionService implements CoreInteractionService {
 	}
 
 	public int getPlayTime() {
-		double duration = getDuration();
-		double playTime = player.getMediaTime().getSeconds();
+		if (player == null) {
+			return 0;
+		} else {
+			double duration = getDuration();
+			double playTime = player.getMediaTime().getSeconds();
 
-		return (int) (playTime / duration);
+			return (int) (playTime / duration);
+		}
 	}
 
 	private class VVVControllerListener implements ControllerListener {
 
 		public void controllerUpdate(ControllerEvent evt) {
 			if (evt.getClass() == RealizeCompleteEvent.class) {
+				player.getGainControl().setLevel(volume);
+				player.getGainControl().setMute(isMute);
+
 				player.prefetch();
 			} else if (evt.getClass() == PrefetchCompleteEvent.class) {
-				player.start();
-
+				// player.start();
 			} else if (evt.getClass() == EndOfMediaEvent.class) {
-				player.removeControllerListener(this);
-				logger.debug("Player stopped at end of song");
-				player.stop();
+				// player.removeControllerListener(this);
+				// player.stop();
 				playNext();
 			}
 		}

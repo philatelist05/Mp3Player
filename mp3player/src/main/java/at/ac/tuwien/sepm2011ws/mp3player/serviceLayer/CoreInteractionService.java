@@ -10,24 +10,27 @@ import at.ac.tuwien.sepm2011ws.mp3player.domainObjects.Song;
  * 
  */
 public interface CoreInteractionService {
+	public final int MAX_VOLUME = 100;
 
 	/**
-	 * This method starts playing the current active song. If any other song is
-	 * already running, the previous started song will be stopped first.
-	 */
-	public void playPause();
-
-	/**
-	 * This method starts playing the provided song. If any other song is
-	 * already running, the previous started song will be stopped first.
+	 * Plays the song from the beginning of the song.
 	 * 
 	 * @param song
 	 *            The song containing the path to the file that should be played
 	 */
-	public void playPause(Song songToPlay);
+	public void playFromBeginning(Song song);
 
 	/**
-	 * Pauses the currently playing song (if any song is playing)
+	 * Plays the song or pauses the playing if the song is the current playing
+	 * song.
+	 * 
+	 * @param song
+	 *            The song containing the path to the file that should be played
+	 */
+	public void playPause(Song song);
+	
+	/**
+	 * Pauses the currently playing song
 	 */
 	public void pause();
 
@@ -114,8 +117,8 @@ public interface CoreInteractionService {
 	public double getDurationAt(int percent);
 
 	/**
-	 * Gets the percentage of the play time in relation to the duration of current
-	 * song. The value is between 0 (just started) and 100 (at the end).
+	 * Gets the percentage of the play time in relation to the duration of
+	 * current song. The value is between 0 (just started) and 100 (at the end).
 	 * 
 	 * @return the percentage of the current play time
 	 */

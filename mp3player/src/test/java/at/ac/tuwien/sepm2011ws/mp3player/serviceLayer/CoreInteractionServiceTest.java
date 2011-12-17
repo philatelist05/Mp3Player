@@ -3,12 +3,15 @@
  */
 package at.ac.tuwien.sepm2011ws.mp3player.serviceLayer;
 
+import static org.junit.Assert.assertTrue;
+
 import java.io.File;
 
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
+import at.ac.tuwien.sepm2011ws.mp3player.domainObjects.Playlist;
 import at.ac.tuwien.sepm2011ws.mp3player.domainObjects.Song;
 import at.ac.tuwien.sepm2011ws.mp3player.serviceLayer.vvv.ServiceFactory;
 
@@ -41,7 +44,7 @@ public class CoreInteractionServiceTest {
 		Song s = new Song("dummy", "dummy", 300, sPath.getAbsolutePath());
 		
 		cs.playPause(s);
-		Thread.sleep(2000);
+		Thread.sleep(1000);
 		cs.stop();
 	}
 	
@@ -51,10 +54,34 @@ public class CoreInteractionServiceTest {
 		Song s = new Song("dummy", "dummy", 300, sPath.getAbsolutePath());
 		
 		cs.playPause(s);
-		Thread.sleep(4000);
+		Thread.sleep(500);
+		cs.seek(20);
+		Thread.sleep(1000);
 		cs.seek(50);
-		Thread.sleep(4000);
+		Thread.sleep(1000);
 		cs.stop();
 	}
 
+	@Test
+	public void testEndOfMedia_ShouldPlayNext() throws InterruptedException {
+		ServiceFactory sf = ServiceFactory.getInstance();
+		PlaylistService ps = sf.getPlaylistService();
+		
+		Playlist temp = new Playlist("Temp");
+		
+		File sPath = new File("music/dummy-message.wav");
+		temp.addSong(new Song("dummy1", "dummy1", 300, sPath.getAbsolutePath()));
+		sPath = new File("music/The Other Thing.wav");
+		temp.addSong(new Song("dummy2", "dummy2", 300, sPath.getAbsolutePath()));
+
+		ps.setCurrentPlaylist(temp);
+		
+		cs.playPause(null);
+		Thread.sleep(500);
+		assertTrue(cs.getCurrentSong().equals(temp.getSongs().get(0)));
+		cs.seek(100);
+		Thread.sleep(3000);
+		assertTrue(cs.getCurrentSong().equals(temp.getSongs().get(1)));
+		cs.stop();
+	}
 }
