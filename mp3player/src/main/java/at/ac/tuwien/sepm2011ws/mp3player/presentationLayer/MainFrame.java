@@ -33,6 +33,7 @@ import javax.swing.JSlider;
 import javax.swing.JTable;
 import javax.swing.JTree;
 import javax.swing.ListSelectionModel;
+import javax.swing.ScrollPaneConstants;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import javax.swing.tree.DefaultMutableTreeNode;
@@ -70,24 +71,33 @@ public class MainFrame extends JFrame implements ActionListener {
 	private JCheckBox chckbxMute;
 	private JCheckBox chckbxRepeat;
 	private JCheckBox chckbxShuffle;
-	
-	private Icon l1 = new ImageIcon(getClass().getResource("img/left_blue.png"));
-	private Icon l2 = new ImageIcon(getClass().getResource("img/left_orange.png"));
-	private Icon l3 = new ImageIcon(getClass().getResource("img/left_orange_pressed.png"));
-	
-	private Icon m1 = new ImageIcon(getClass().getResource("img/play_blue.png"));
-	private Icon m2 = new ImageIcon(getClass().getResource("img/play_orange.png"));
-	private Icon m3 = new ImageIcon(getClass().getResource("img/play_orange_pressed.png"));
-	
-	private Icon r1 = new ImageIcon(getClass().getResource("img/right_blue.png"));
-	private Icon r2 = new ImageIcon(getClass().getResource("img/right_orange.png"));
-	private Icon r3 = new ImageIcon(getClass().getResource("img/right_orange_pressed.png"));
-	
-	private Icon mp1 = new ImageIcon(getClass().getResource("img/pause_blue.png"));
-	private Icon mp2 = new ImageIcon(getClass().getResource("img/pause_orange.png"));
-	private Icon mp3 = new ImageIcon(getClass().getResource("img/pause_orange_pressed.png"));
 
-	ServiceFactory sf = ServiceFactory.getInstance();
+	private Icon l1 = new ImageIcon(getClass().getResource("img/left_blue.png"));
+	private Icon l2 = new ImageIcon(getClass().getResource(
+			"img/left_orange.png"));
+	private Icon l3 = new ImageIcon(getClass().getResource(
+			"img/left_orange_pressed.png"));
+
+	private Icon m1 = new ImageIcon(getClass().getResource("img/play_blue.png"));
+	private Icon m2 = new ImageIcon(getClass().getResource(
+			"img/play_orange.png"));
+	private Icon m3 = new ImageIcon(getClass().getResource(
+			"img/play_orange_pressed.png"));
+
+	private Icon r1 = new ImageIcon(getClass()
+			.getResource("img/right_blue.png"));
+	private Icon r2 = new ImageIcon(getClass().getResource(
+			"img/right_orange.png"));
+	private Icon r3 = new ImageIcon(getClass().getResource(
+			"img/right_orange_pressed.png"));
+
+	private Icon mp1 = new ImageIcon(getClass().getResource(
+			"img/pause_blue.png"));
+	private Icon mp2 = new ImageIcon(getClass().getResource(
+			"img/pause_orange.png"));
+	private Icon mp3 = new ImageIcon(getClass().getResource(
+			"img/pause_orange_pressed.png"));
+
 	private PlaylistService ps;
 	private CoreInteractionService cis;
 
@@ -95,11 +105,12 @@ public class MainFrame extends JFrame implements ActionListener {
 	 * Gets all Songs from the Database
 	 */
 	private void getWholeLibrary() {
-		ps = sf.getPlaylistService();
 		Playlist library;
 
 		// Holen aller Songs der Library
 		library = ps.getLibrary();
+		// Curretn Playlist setzen
+		ps.setCurrentPlaylist(library);
 		// Einfügen der Daten in dlTable
 		fillSongTable(library);
 	}
@@ -117,7 +128,7 @@ public class MainFrame extends JFrame implements ActionListener {
 					x.getAlbum(), x.getYear(), x.getGenre(), x.getDuration(),
 					x.getRating(), x.getPlaycount() });
 	}
-	
+
 	/**
 	 * Switches the Button Icons to Pause
 	 */
@@ -126,7 +137,7 @@ public class MainFrame extends JFrame implements ActionListener {
 		btnPlayPause.settRolloverIcon(mp2);
 		btnPlayPause.settPressedIcon(mp3);
 	}
-	
+
 	/**
 	 * Switches the Button Icons to Play
 	 */
@@ -135,21 +146,19 @@ public class MainFrame extends JFrame implements ActionListener {
 		btnPlayPause.settRolloverIcon(m2);
 		btnPlayPause.settPressedIcon(m3);
 	}
-	
+
 	/**
 	 * Sends the "previous Song" Signal to the Service Layer
 	 */
 	private void previous() {
-		cis = sf.getCoreInteractionService();
-
 		// if (cis.hasPreviousSong()) {
-		Song temp = cis.getCurrentSong();
 
 		btnPlayPause.setActionCommand("play");
 		setPlayIcons();
 		lblCurrentStateSong.setText("");
 
 		cis.playPrevious();
+		Song temp = cis.getCurrentSong();
 
 		if (cis.isPlaying()) {
 			lblCurrentStateSong.setText("Currently playing: "
@@ -168,11 +177,12 @@ public class MainFrame extends JFrame implements ActionListener {
 	 *            The Song to play
 	 */
 	private void play(Song x) {
-		cis = sf.getCoreInteractionService();
+		setPlayIcons();
+		
+		cis.playFromBeginning(x);
+		
 		Song temp = cis.getCurrentSong();
-
-		cis.playPause(x);
-
+		
 		if (cis.isPlaying()) {
 			lblCurrentStateSong.setText("Currently playing: "
 					+ temp.getArtist() + " - " + temp.getTitle() + "");
@@ -185,10 +195,8 @@ public class MainFrame extends JFrame implements ActionListener {
 	 * Sends the play Song Signal to the ServiceLayer
 	 */
 	private void pauseplay() {
-		cis = sf.getCoreInteractionService();
-		Song temp = cis.getCurrentSong();
-
 		cis.playPause();
+		Song temp = cis.getCurrentSong();
 
 		if (cis.isPlaying()) {
 			lblCurrentStateSong.setText("Currently playing: "
@@ -202,12 +210,11 @@ public class MainFrame extends JFrame implements ActionListener {
 	 * Sends the pause Song action to the ServiceLayer
 	 */
 	private void pause() {
-		cis = sf.getCoreInteractionService();
-
 		cis.pause();
 
 		if (cis.isPaused()) {
-			lblCurrentStateSong.setText(lblCurrentStateSong.getText().concat("(Paused)"));
+			lblCurrentStateSong.setText(lblCurrentStateSong.getText().concat(
+					" (Paused)"));
 			btnPlayPause.setActionCommand("pauseplay");
 			setPlayIcons();
 		}
@@ -217,16 +224,13 @@ public class MainFrame extends JFrame implements ActionListener {
 	 * Sends the next Song action to the ServiceLayer
 	 */
 	private void next() {
-		cis = sf.getCoreInteractionService();
-
 		// if (cis.hasNextSong()) {
-		Song temp = cis.getCurrentSong();
-
 		btnPlayPause.setActionCommand("play");
 		setPlayIcons();
 		lblCurrentStateSong.setText("");
 
 		cis.playNext();
+		Song temp = cis.getCurrentSong();
 
 		if (cis.isPlaying()) {
 			lblCurrentStateSong.setText("Currently playing: "
@@ -246,7 +250,6 @@ public class MainFrame extends JFrame implements ActionListener {
 	 */
 	private void setVol(int x) {
 		if (!chckbxMute.isSelected()) {
-			cis = sf.getCoreInteractionService();
 			cis.setVolume(x);
 		}
 	}
@@ -258,9 +261,7 @@ public class MainFrame extends JFrame implements ActionListener {
 	 *            position from 0 - 100
 	 */
 	private void setMediaTime(int value) {
-		cis = sf.getCoreInteractionService();
 		cis.seek(value);
-
 	}
 
 	/**
@@ -269,24 +270,31 @@ public class MainFrame extends JFrame implements ActionListener {
 	 * @param mute
 	 *            true or false
 	 */
-	private void setMute (boolean mute) {
-		cis = sf.getCoreInteractionService();
-		if (mute)
-			cis.setVolume(0);
-		else
+	private void setMute(boolean mute) {
+		if (chckbxMute.isSelected()) {
+			cis.toggleMute();
+			if (cis.isMute())
+				chckbxMute.setSelected(true);
+			else
+				chckbxMute.setSelected(false);
+		} else {
 			cis.setVolume(volume.getValue());
+			chckbxMute.setSelected(false);
+		}
 	}
-	
+
 	/**
 	 * Sends the changePlayMode signal to the ServiceLayer
 	 */
-	private void setMode () {
-		ps = sf.getPlaylistService();
-		if ((chckbxRepeat.isSelected() == false) && (chckbxShuffle.isSelected() == false))
+	private void setMode() {
+		if ((chckbxRepeat.isSelected() == false)
+				&& (chckbxShuffle.isSelected() == false))
 			ps.setPlayMode(PlayMode.NORMAL);
-		else if(chckbxRepeat.isSelected() && (chckbxShuffle.isSelected() == false))
+		else if (chckbxRepeat.isSelected()
+				&& (chckbxShuffle.isSelected() == false))
 			ps.setPlayMode(PlayMode.REPEAT);
-		else if((chckbxRepeat.isSelected() == false) && chckbxShuffle.isSelected())
+		else if ((chckbxRepeat.isSelected() == false)
+				&& chckbxShuffle.isSelected())
 			ps.setPlayMode(PlayMode.SHUFFLE);
 	}
 
@@ -294,23 +302,23 @@ public class MainFrame extends JFrame implements ActionListener {
 	 * Starts the MainFrame
 	 */
 	public MainFrame() {
+		ServiceFactory sf = ServiceFactory.getInstance();
+		cis = sf.getCoreInteractionService();
+		ps = sf.getPlaylistService();
 
 		setBounds(100, 100, 1000, 600);
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-
-		cis = sf.getCoreInteractionService();
-		ps = sf.getPlaylistService();
+		setTitle("mp3@player");
 
 		initialize();
 
 		getWholeLibrary();
+
 		cis.setVolume(volume.getValue());
 		ps.setPlayMode(PlayMode.NORMAL);
 		setVisible(true);
 
 		logger.info("Components successfully initialized");
-
-		
 	}
 
 	/**
@@ -399,6 +407,10 @@ public class MainFrame extends JFrame implements ActionListener {
 		songTable = new JTable(songmodel);
 		songTable.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 		JScrollPane songTable_sp = new JScrollPane(songTable);
+		songTable_sp
+				.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_AS_NEEDED);
+		songTable_sp
+				.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED);
 		playerPanel.add(songTable_sp, "cell 1 1 2 1,grow");
 
 		songTable.addMouseListener(new MouseAdapter() {
@@ -419,17 +431,17 @@ public class MainFrame extends JFrame implements ActionListener {
 		 * JButtons
 		 */
 
-		// Previous		
+		// Previous
 		btnPrevious = new RectButton(l1, l2, l3);
 		playerPanel.add(btnPrevious, "cell 0 3,alignx center,aligny center");
 		btnPrevious.addActionListener(this);
 		btnPrevious.setActionCommand("previous");
 
-		// Play_Pause		
+		// Play_Pause
 		btnPlayPause = new RoundButton(m1, m2, m3);
 		playerPanel.add(btnPlayPause, "cell 0 3,alignx center,aligny center");
 		btnPlayPause.addActionListener(this);
-		btnPlayPause.setActionCommand("play");		
+		btnPlayPause.setActionCommand("play");
 
 		// Next
 		btnNext = new RectButton(r1, r2, r3);
@@ -464,7 +476,7 @@ public class MainFrame extends JFrame implements ActionListener {
 		playerPanel.add(lblVolume, "cell 2 3,alignx right,aligny center");
 
 		// Volume
-		volume = new JSlider(0, /* cis.getMaxVolume) */50, 25);
+		volume = new JSlider(0, cis.MAX_VOLUME, 50);
 		volume.setMajorTickSpacing(25);
 		volume.setMinorTickSpacing(5);
 		volume.setSnapToTicks(false);
@@ -474,7 +486,7 @@ public class MainFrame extends JFrame implements ActionListener {
 				setVol(volume.getValue());
 			}
 		});
-		volume.setPreferredSize(new Dimension(playerPanel.getWidth(), 25));
+		volume.setPreferredSize(new Dimension(100, 25));
 		playerPanel.add(volume, "cell 2 3,alignx right,aligny center");
 
 		/**
@@ -501,7 +513,7 @@ public class MainFrame extends JFrame implements ActionListener {
 		chckbxRepeat.setBorderPainted(false);
 		chckbxRepeat.setFocusPainted(false);
 		playerPanel.add(chckbxRepeat, "cell 2 3,alignx right,aligny center");
-		
+
 		chckbxRepeat.addItemListener(new ItemListener() {
 			public void itemStateChanged(ItemEvent e) {
 				if (chckbxShuffle.isSelected() && chckbxRepeat.isSelected())
@@ -517,7 +529,7 @@ public class MainFrame extends JFrame implements ActionListener {
 		chckbxShuffle.setBorderPainted(false);
 		chckbxShuffle.setFocusPainted(false);
 		playerPanel.add(chckbxShuffle, "cell 2 3,alignx right,aligny center");
-		
+
 		chckbxShuffle.addItemListener(new ItemListener() {
 			public void itemStateChanged(ItemEvent e) {
 				if (chckbxRepeat.isSelected() && chckbxShuffle.isSelected())
@@ -525,7 +537,6 @@ public class MainFrame extends JFrame implements ActionListener {
 				setMode();
 			}
 		});
-		
 
 		/**
 		 * The whole MenuBar
@@ -592,11 +603,11 @@ public class MainFrame extends JFrame implements ActionListener {
 		}
 
 		else if (e.getActionCommand().equals("pauseplay")) {
-			pauseplay();			
+			pauseplay();
 		}
 
 		else if (e.getActionCommand().equals("pause")) {
-			pause();			
+			pause();
 		}
 
 		else if (e.getActionCommand().equals("next")) {
