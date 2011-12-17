@@ -64,6 +64,12 @@ class VVVPlaylistService implements PlaylistService {
 	 *         playlist
 	 */
 	private int getCurrentSongIndex() {
+		if(this.currentPlaylist == null) {
+			return -1;
+		} else if(this.currentPlaylist.getSongs() == null) {
+			return -1;
+		}
+		
 		ServiceFactory sf = ServiceFactory.getInstance();
 		CoreInteractionService cs = sf.getCoreInteractionService();
 
@@ -75,6 +81,12 @@ class VVVPlaylistService implements PlaylistService {
 	}
 
 	public Song getNextSong() {
+		if(this.currentPlaylist == null) {
+			return null;
+		} else if(this.currentPlaylist.getSongs() == null) {
+			return null;
+		}
+		
 		List<Song> songs = this.currentPlaylist.getSongs();
 		int maxIndex = songs.size() - 1;
 		int index = 0;
@@ -112,6 +124,12 @@ class VVVPlaylistService implements PlaylistService {
 	}
 
 	public Song getPreviousSong() {
+		if(this.currentPlaylist == null) {
+			return null;
+		} else if(this.currentPlaylist.getSongs() == null) {
+			return null;
+		}
+		
 		List<Song> songs = this.currentPlaylist.getSongs();
 		int maxIndex = songs.size() - 1;
 		int index = 0;
