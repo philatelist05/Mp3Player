@@ -53,13 +53,14 @@ public class RoundButton extends JButton
         int iw = Math.max(standardIcon.getIconWidth(), standardIcon.getIconHeight());
         int sw = 1;
         // create a one pixel wide border around the button
-        setBorder(BorderFactory.createEmptyBorder(sw, sw, sw, sw));
+        //setBorder(BorderFactory.createEmptyBorder(sw, sw, sw, sw));
         // the dimension is the image size plus a one pixel border
-        Dimension dim = new Dimension(iw+sw*2, iw+sw*2);
+        //Dimension dim = new Dimension(iw+sw*2, iw+sw*2);
+        Dimension dim = new Dimension(iw, iw);
         setPreferredSize(dim);
         setMinimumSize(dim);
         setMaximumSize(dim);
-        setBackground(Color.BLACK);
+        //setBackground(Color.BLACK);
         setContentAreaFilled(false);
         setFocusPainted(false);
         setAlignmentY(Component.TOP_ALIGNMENT);
