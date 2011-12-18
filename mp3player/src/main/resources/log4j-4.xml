@@ -3,18 +3,30 @@
 
 <log4j:configuration xmlns:log4j="http://jakarta.apache.org/log4j/">
 
-  <appender name="MeinFileAppender" class="org.apache.log4j.DailyRollingFileAppender">
-    <param name="datePattern" value="'.'yyyy-MM-dd_HH-mm" />
-    <param name="file" value="logs/Logfile_mp3player.log" />
-    <param name="Append" value="true" />
-    <layout class="org.apache.log4j.PatternLayout">
-      <param name="ConversionPattern" value="%d{ISO8601} %-5p [%t] %c: %m%n" />
-    </layout>
-  </appender>
+	<appender name="FA" class="org.apache.log4j.DailyRollingFileAppender">
+		<param name="datePattern" value="'.'yyyy-MM-dd_HH-mm" />
+		<param name="file" value="logs/Logfile_mp3player.log" />
+		<param name="Append" value="true" />
+		<layout class="org.apache.log4j.PatternLayout">
+			<param name="ConversionPattern" value="%d{ISO8601} %-5p [%t] %c: %m%n" />
+		</layout>
+	</appender>
+	
+	<appender name="CA" class="org.apache.log4j.ConsoleAppender">
+		<param name="Threshold" value="INFO" />
+		<layout class="org.apache.log4j.PatternLayout">
+			<param name="ConversionPattern" value="%d{ISO8601} %-5p [%t] %c: %m%n" />
+		</layout>
+	</appender>
 
-  <root>
-    <priority value="TRACE"/>
-    <appender-ref ref="MeinFileAppender" />
-  </root>
+	<logger name="org.springframework">
+		<level value="WARN" />
+	</logger>
+
+	<root>
+		<priority value="DEBUG" />
+		<appender-ref ref="FA" />
+		<appender-ref ref="CA" />
+	</root>
 
 </log4j:configuration>

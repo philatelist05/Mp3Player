@@ -164,6 +164,7 @@ class VVVCoreInteractionService implements CoreInteractionService {
 
 	public void toggleMute() {
 		isMute = !isMute;
+		logger.info("Mute toggled to " + (isMute ? "ON" : "OFF"));
 
 		if (player != null) {
 			player.getGainControl().setMute(isMute);
@@ -176,7 +177,7 @@ class VVVCoreInteractionService implements CoreInteractionService {
 			throw new IllegalArgumentException("Volume level out of range");
 
 		this.volume = (float) level / 100f;
-		logger.debug("Volume set to " + this.volume);
+		logger.info("Volume set to " + this.volume);
 
 		if (player != null) {
 			player.getGainControl().setLevel(this.volume);
