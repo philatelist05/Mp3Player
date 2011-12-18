@@ -103,7 +103,11 @@ public interface CoreInteractionService {
 	 * @param percent
 	 */
 	public void seek(int percent);
-
+	
+	
+	public void seekToSecond(int seconds);
+	
+	
 	/**
 	 * Gets the duration of the current song.
 	 * 
