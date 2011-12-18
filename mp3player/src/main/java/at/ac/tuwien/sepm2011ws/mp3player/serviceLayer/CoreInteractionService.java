@@ -128,6 +128,15 @@ public interface CoreInteractionService {
 	 * 
 	 * @return the percentage of the current play time
 	 */
+	
+	/**
+	 * Gets the play time in seconds of the actual played song
+	 * The value is between 0 (when started) and the duration of the current song
+	 * @return the current play time in seconds
+	 */
+	public double getDurationInSeconds();
+	
+	
 	public int getPlayTime();
 
 	/**

@@ -195,7 +195,7 @@ public class MainFrame extends JFrame implements ActionListener, Runnable {
 		Song temp = cis.getCurrentSong();
 
 		progress.setEnabled(true);
-		lblDurationAt.setText(getMediaTimeAt(progress.getValue()));
+		lblDurationAt.setText(getMediaTimeAtInSeconds());
 		//lblCurrentStateSong.setVisible(true);
 		//lblDurationAt.setVisible(true);
 		//lblDuration.setVisible(true);
@@ -311,6 +311,17 @@ public class MainFrame extends JFrame implements ActionListener, Runnable {
 		return timeStringAt;
 
 	}
+	
+	public String getMediaTimeAtInSeconds() {
+		// cis = sf.getCoreInteractionService();
+		// cis.
+		double timeAt = cis.getDurationInSeconds();
+		String timeStringAt = String.format("%02.0f:%02.0f:%02.0f",
+				Math.floor(timeAt / 3600), Math.floor((timeAt % 3600) / 60),
+				Math.floor(timeAt % 60));
+		return timeStringAt;
+
+	}
 
 	public String getMediaTime() {
 		// cis = sf.getCoreInteractionService();
@@ -360,8 +371,10 @@ public class MainFrame extends JFrame implements ActionListener, Runnable {
 		while (!fred.isInterrupted()) {
 
 			progress.setValue(cis.getPlayTime());
-			lblDurationAt.setText(getMediaTimeAt(progress.getValue()));
+			lblDurationAt.setText(getMediaTimeAtInSeconds());
+			//lblDuration.setText(getMediaTimeAtInSeconds());
 			lblDuration.setText(getMediaTimeAt(100));
+			// lblDuration.setText(getMediaTimeAt(100));  // in percent
 			Song temp = cis.getCurrentSong();
 			if (cis.isPlaying()) {
 				lblCurrentStateSong.setText("Currently playing: "
