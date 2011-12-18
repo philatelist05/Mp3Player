@@ -228,11 +228,11 @@ class VVVCoreInteractionService implements CoreInteractionService {
 		return seconds;
 	}
 	
-	public double getDurationInSeconds() {
+	public double getDurationAtInSeconds() {
 		
 		double seconds = 0;
 		
-		if(player!=null)
+		if(player!=null && player.getState() != Controller.Unrealized)
 		{	
 			//seconds = player.getDuration().getSeconds();
 			seconds = player.getMediaTime().getSeconds();
@@ -243,6 +243,23 @@ class VVVCoreInteractionService implements CoreInteractionService {
 			return seconds;
 		}
 	}
+	
+	/*public double getDurationInSeconds() {
+		
+		double seconds = 0;
+		
+		if(player!=null)
+		{	
+			seconds = player.getDuration().getSeconds();
+			System.out.println(seconds);
+			return seconds;
+		}
+		else 
+		{
+			return seconds;
+		}
+	}*/
+	
 	
 
 	public Song getCurrentSong() {

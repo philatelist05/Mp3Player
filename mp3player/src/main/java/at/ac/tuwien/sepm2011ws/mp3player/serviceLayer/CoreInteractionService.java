@@ -138,8 +138,9 @@ public interface CoreInteractionService {
 	 * The value is between 0 (when started) and the duration of the current song
 	 * @return the current play time in seconds
 	 */
-	public double getDurationInSeconds();
+//	public double getDurationInSeconds();
 	
+	public double getDurationAtInSeconds();
 	
 	public int getPlayTime();
 

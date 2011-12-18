@@ -199,7 +199,8 @@ public class MainFrame extends JFrame implements ActionListener, Runnable {
 		// lblDurationAt.setVisible(true);
 		// lblDuration.setVisible(true);
 		// lblDurationAt.setText(getMediaTimeAt(progress.getValue()));
-		progress.setMaximum(temp.getDuration());
+		if(getMediaTimeInSecondsInt() < 1000)  // bug in API
+			progress.setMaximum(getMediaTimeInSecondsInt());
 		progress.setVisible(true);
 
 		lblCurrentStateSong.setVisible(true);
@@ -298,12 +299,11 @@ public class MainFrame extends JFrame implements ActionListener, Runnable {
 
 		if (cis.isPlaying() || cis.isPaused() == true)
 			cis.seekToSecond(value);
-		// cis.seek(value);
+		    // cis.seek(value);   // seek in percent
 	}
 
 	public String getMediaTimeAt(int percent) {
-		// cis = sf.getCoreInteractionService();
-		// cis.
+
 		double timeAt = cis.getDurationAt(percent);
 		String timeStringAt = String.format("%02.0f:%02.0f:%02.0f",
 				Math.floor(timeAt / 3600), Math.floor((timeAt % 3600) / 60),
@@ -313,9 +313,8 @@ public class MainFrame extends JFrame implements ActionListener, Runnable {
 	}
 
 	public String getMediaTimeAtInSeconds() {
-		// cis = sf.getCoreInteractionService();
-		// cis.
-		double timeAt = cis.getDurationInSeconds();
+		
+		double timeAt = cis.getDurationAtInSeconds();
 		String timeStringAt = String.format("%02.0f:%02.0f:%02.0f",
 				Math.floor(timeAt / 3600), Math.floor((timeAt % 3600) / 60),
 				Math.floor(timeAt % 60));
@@ -324,7 +323,11 @@ public class MainFrame extends JFrame implements ActionListener, Runnable {
 	}
 
 	public int getMediaTimeAtInSecondsInt() {
-		return (int) cis.getDurationInSeconds();
+		return (int) cis.getDurationAtInSeconds();
+	}
+	
+	public int getMediaTimeInSecondsInt(){
+		return (int) cis.getDuration();
 	}
 
 	public String getMediaTime() {
@@ -374,7 +377,9 @@ public class MainFrame extends JFrame implements ActionListener, Runnable {
 			Song temp = cis.getCurrentSong();
 			progress.setValue(getMediaTimeAtInSecondsInt());
 			// progress.setValue(cis.getPlayTime()); //for percent
-			progress.setMaximum(temp.getDuration());
+			if ( getMediaTimeInSecondsInt() < 1000 )	// bug API
+				progress.setMaximum(getMediaTimeInSecondsInt());
+			//System.out.println(getMediaTimeInSecondsInt());
 			lblDurationAt.setText(getMediaTimeAtInSeconds());
 			// lblDuration.setText(getMediaTimeAtInSeconds()); //for percent
 			lblDuration.setText(getMediaTimeAt(100));
