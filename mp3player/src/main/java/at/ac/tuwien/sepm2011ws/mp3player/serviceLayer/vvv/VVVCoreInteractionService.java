@@ -231,7 +231,7 @@ class VVVCoreInteractionService implements CoreInteractionService {
 			double duration = getDuration();
 			double playTime = player.getMediaTime().getSeconds();
 
-			return (int) (playTime / duration);
+			return (int) (playTime * 100 / duration);
 		}
 	}
 

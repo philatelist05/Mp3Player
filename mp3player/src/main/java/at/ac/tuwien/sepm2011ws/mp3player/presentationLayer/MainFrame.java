@@ -50,7 +50,7 @@ import at.ac.tuwien.sepm2011ws.mp3player.serviceLayer.PlayMode;
 import at.ac.tuwien.sepm2011ws.mp3player.serviceLayer.PlaylistService;
 import at.ac.tuwien.sepm2011ws.mp3player.serviceLayer.vvv.ServiceFactory;
 
-public class MainFrame extends JFrame implements ActionListener {
+public class MainFrame extends JFrame implements ActionListener, Runnable {
 	/**
 	 * 
 	 */
@@ -64,7 +64,11 @@ public class MainFrame extends JFrame implements ActionListener {
 	private RoundButton btnPlayPause;
 	private RectButton btnNext;
 	private JSlider volume;
+	
 	private JSlider progress;
+	private JLabel lblDurationAt;
+	private JLabel lblDuration;
+	
 	private JLabel lblHeader;
 	private JLabel lblCurrentStateSong;
 	private JLabel lblVolume;
@@ -183,6 +187,10 @@ public class MainFrame extends JFrame implements ActionListener {
 		
 		Song temp = cis.getCurrentSong();
 		
+		lblDurationAt.setText(getMediaTimeAt(progress.getValue()));
+	//	lblDuration.setText(getMediaTime());
+		createThread();
+		
 		if (cis.isPlaying()) {
 			lblCurrentStateSong.setText("Currently playing: "
 					+ temp.getArtist() + " - " + temp.getTitle() + "");
@@ -261,8 +269,61 @@ public class MainFrame extends JFrame implements ActionListener {
 	 *            position from 0 - 100
 	 */
 	private void setMediaTime(int value) {
-		cis.seek(value);
+		
+		if(cis.isPlaying() || cis.isPaused() == true)
+			cis.seek(value);
+		//cis.seek(value);
 	}
+	
+	
+	private String getMediaTimeAt(int percent){
+	//	cis = sf.getCoreInteractionService();
+		//cis.
+		double timeAt = cis.getDurationAt(percent);
+		String timeStringAt = String.format("%02.0f:%02.0f:%02.0f", Math.floor(timeAt / 3600), Math.floor((timeAt % 3600) / 60),
+				Math.floor(timeAt% 60));
+		return timeStringAt;
+		
+	}
+	
+	private String getMediaTime(){
+		// cis = sf.getCoreInteractionService();
+		double timeAt = cis.getDuration();
+		String timeStringAt = String.format("%02.0f:%02.0f:%02.0f", Math.floor(timeAt / 3600), Math.floor((timeAt % 3600) / 60),
+				Math.floor(timeAt% 60));
+		return timeStringAt;
+		
+	}
+	
+	private Thread fred;  // ;-)
+	
+	private void createThread()
+	{
+		fred = new Thread(this);
+		fred.start();
+	}
+	
+	public void run() {
+		// TODO Auto-generated method stub
+		
+		
+		while (!fred.isInterrupted())
+		{
+			
+		
+				progress.setValue(cis.getPlayTime());
+				lblDurationAt.setText(getMediaTimeAt(progress.getValue()));
+
+				try
+				{
+					Thread.sleep(500);
+				} catch (InterruptedException ex)
+				{
+					fred.interrupt();
+				}
+		}
+	}
+	
 
 	/**
 	 * Sends the Mute Signal to the Service Layer
@@ -462,13 +523,36 @@ public class MainFrame extends JFrame implements ActionListener {
 		progress.putClientProperty("JSlider.isFilled", Boolean.TRUE);
 		playerPanel.add(progress,
 				"flowx,cell 0 2 3 1,alignx center,aligny center");
+		
+		// lblDurationAt = new JLabel(getMediaTimeAt(progress.getValue()));
+		
+		lblDurationAt = new JLabel("");
+		playerPanel.add(lblDurationAt, "flowx,cell 0 2 3 1,alignx center, aligny center");
+		
+		// lblDuration = new JLabel(getMediaTime());
+		
+		lblDuration = new JLabel("");
+		playerPanel.add(lblDuration, "flowx,cell 0 2 3 1,alignx center, aligny center");
+	
+		progress.addMouseListener(new MouseAdapter()
+		{
+			public void mouseReleased(MouseEvent evt)
+			{
+				setMediaTime(progress.getValue());
+			}
 
-		progress.addChangeListener(new ChangeListener() {
+			public void mouseClicked(MouseEvent evt)
+			{
+
+			}
+		});
+		
+	/*	progress.addChangeListener(new ChangeListener() {
 			public void stateChanged(ChangeEvent e) {
 				setMediaTime(progress.getValue());
 			}
-		});
-
+		});*/
+		
 		progress.setPreferredSize(new Dimension(getWidth(), 25));
 
 		// lblVolume
