@@ -68,6 +68,9 @@ public class MainFrame extends JFrame implements ActionListener, Runnable {
 	private JLabel lblDurationAt;
 	private JLabel lblDuration;
 
+	private String DurationAtdefault = "00:00:00";
+	private String Durationdefault = "00:00:00";
+
 	private JLabel lblHeader;
 	private JLabel lblCurrentStateSong;
 	private JLabel lblVolume;
@@ -170,6 +173,8 @@ public class MainFrame extends JFrame implements ActionListener, Runnable {
 			btnPlayPause.setActionCommand("pause");
 			setPauseIcons();
 		}
+		else
+			setProgressBartoDefault();
 		// }
 	}
 
@@ -186,8 +191,15 @@ public class MainFrame extends JFrame implements ActionListener, Runnable {
 
 		Song temp = cis.getCurrentSong();
 
+		progress.setVisible(true);
+		lblDurationAt.setText(getMediaTimeAt(progress.getValue()));
+		lblDurationAt.setVisible(true);
+		lblDuration.setVisible(true);
+
+
 		lblDurationAt.setText(getMediaTimeAt(progress.getValue()));
 		// lblDuration.setText(getMediaTime());
+
 		createThread();
 
 		if (cis.isPlaying()) {
@@ -196,6 +208,9 @@ public class MainFrame extends JFrame implements ActionListener, Runnable {
 			btnPlayPause.setActionCommand("pause");
 			setPauseIcons();
 		}
+
+		// lblDuration.setText(getMediaTimeAt(100));
+		// lblDuration.validate();
 	}
 
 	/**
@@ -204,7 +219,7 @@ public class MainFrame extends JFrame implements ActionListener, Runnable {
 	private void pauseplay() {
 		cis.playPause();
 		Song temp = cis.getCurrentSong();
-
+		progress.setVisible(true);
 		if (cis.isPlaying()) {
 			lblCurrentStateSong.setText("Currently playing: "
 					+ temp.getArtist() + " - " + temp.getTitle() + "");
@@ -218,7 +233,7 @@ public class MainFrame extends JFrame implements ActionListener, Runnable {
 	 */
 	private void pause() {
 		cis.pause();
-
+		progress.setVisible(true);
 		if (cis.isPaused()) {
 			lblCurrentStateSong.setText(lblCurrentStateSong.getText().concat(
 					" (Paused)"));
@@ -246,6 +261,8 @@ public class MainFrame extends JFrame implements ActionListener, Runnable {
 			btnPlayPause.setActionCommand("pause");
 			setPauseIcons();
 		}
+		else
+			setProgressBartoDefault();
 		// }
 	}
 
@@ -271,7 +288,8 @@ public class MainFrame extends JFrame implements ActionListener, Runnable {
 
 		if (cis.isPlaying() || cis.isPaused() == true)
 			cis.seek(value);
-		// cis.seek(value);
+
+
 	}
 
 	private String getMediaTimeAt(int percent) {
@@ -295,6 +313,30 @@ public class MainFrame extends JFrame implements ActionListener, Runnable {
 
 	}
 
+	
+	private void setProgressBartoDefault()
+	{
+		progress.setValue(0);
+		lblDurationAt.setText(DurationAtdefault);
+		lblDuration.setText(Durationdefault);
+		lblDuration.setVisible(false);
+		lblDurationAt.setVisible(false);
+	
+		progress.setVisible(false);
+	}
+
+	/*
+	 * private String getMediaTime() {
+	 * 
+	 * double timeAt = cis.getDuration(); String timeStringAt =
+	 * String.format("%02.0f:%02.0f:%02.0f", Math.floor(timeAt / 3600),
+	 * Math.floor((timeAt % 3600) / 60), Math.floor(timeAt % 60)); return
+	 * timeStringAt;
+	 * 
+	 * }
+	 */
+
+
 	private Thread fred; // ;-)
 
 	private void createThread() {
@@ -303,9 +345,15 @@ public class MainFrame extends JFrame implements ActionListener, Runnable {
 	}
 
 	public void run() {
+
+		// TODO Auto-generated method stub
+
 		while (!fred.isInterrupted()) {
+
 			progress.setValue(cis.getPlayTime());
 			lblDurationAt.setText(getMediaTimeAt(progress.getValue()));
+			lblDuration.setText(getMediaTimeAt(100));
+
 			try {
 				Thread.sleep(500);
 			} catch (InterruptedException ex) {
@@ -506,6 +554,8 @@ public class MainFrame extends JFrame implements ActionListener, Runnable {
 
 		// lblDurationAt = new JLabel(getMediaTimeAt(progress.getValue()));
 
+		progress.setVisible(false);
+
 		lblDurationAt = new JLabel("");
 		playerPanel.add(lblDurationAt,
 				"flowx,cell 0 2 3 1,alignx center, aligny center");
@@ -515,6 +565,9 @@ public class MainFrame extends JFrame implements ActionListener, Runnable {
 		lblDuration = new JLabel("");
 		playerPanel.add(lblDuration,
 				"flowx,cell 0 2 3 1,alignx center, aligny center");
+
+		lblDurationAt.setVisible(false);
+		lblDuration.setVisible(false);
 
 		progress.addMouseListener(new MouseAdapter() {
 			public void mouseReleased(MouseEvent evt) {
