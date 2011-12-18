@@ -136,7 +136,7 @@ class VVVCoreInteractionService implements CoreInteractionService {
 		Song nextSong = ps.getNextSong();
 
 		if (nextSong != null)
-			playPause(nextSong);
+			playFromBeginning(nextSong);
 	}
 
 	public void playPrevious() {
@@ -145,7 +145,7 @@ class VVVCoreInteractionService implements CoreInteractionService {
 		Song previousSong = ps.getPreviousSong();
 
 		if (previousSong != null)
-			playPause(previousSong);
+			playFromBeginning(previousSong);
 	}
 
 	public void stop() {
