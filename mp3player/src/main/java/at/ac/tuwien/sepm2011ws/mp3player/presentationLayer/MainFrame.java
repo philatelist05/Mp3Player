@@ -730,12 +730,18 @@ public class MainFrame extends JFrame implements ActionListener, Runnable {
 		JMenu mnPlaylist = new JMenu("Playlist");
 		mnFile.add(mnPlaylist);
 
+		JMenuItem mntmNew = new JMenuItem("New...");
+		mnPlaylist.add(mntmNew);
+		
+		JSeparator separator_2 = new JSeparator();
+		mnPlaylist.add(separator_2);
+		
 		JMenuItem mntmImport = new JMenuItem("Import...");
 		mnPlaylist.add(mntmImport);
 
 		JMenuItem mntmExport = new JMenuItem("Export...");
 		mnPlaylist.add(mntmExport);
-
+		
 		JMenuItem mntmSettings = new JMenuItem("Settings");
 		mnFile.add(mntmSettings);
 
