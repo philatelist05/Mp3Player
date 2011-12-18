@@ -380,14 +380,11 @@ public class MainFrame extends JFrame implements ActionListener, Runnable {
 	 * Sends the changePlayMode signal to the ServiceLayer
 	 */
 	private void setMode() {
-		if ((chckbxRepeat.isSelected() == false)
-				&& (chckbxShuffle.isSelected() == false))
+		if (!chckbxRepeat.isSelected() && !chckbxShuffle.isSelected())
 			ps.setPlayMode(PlayMode.NORMAL);
-		else if (chckbxRepeat.isSelected()
-				&& (chckbxShuffle.isSelected() == false))
+		else if (chckbxRepeat.isSelected() && !chckbxShuffle.isSelected())
 			ps.setPlayMode(PlayMode.REPEAT);
-		else if ((chckbxRepeat.isSelected() == false)
-				&& chckbxShuffle.isSelected())
+		else if (!chckbxRepeat.isSelected() && chckbxShuffle.isSelected())
 			ps.setPlayMode(PlayMode.SHUFFLE);
 	}
 

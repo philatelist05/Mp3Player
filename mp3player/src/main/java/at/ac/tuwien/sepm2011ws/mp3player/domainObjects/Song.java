@@ -249,50 +249,22 @@ public class Song {
 
 	@Override
 	public boolean equals(Object obj) {
-		Song other;
 		if (obj != null && this.getClass() == obj.getClass()) {
-			other = (Song) obj;
-			if (this.getId() != other.getId())
-				return false;
-			if (!this.getTitle().equals(other.getTitle()))
-				return false;
-			if (this.getDuration() != other.getDuration())
-				return false;
-			if (this.getPlaycount() != other.getPlaycount())
-				return false;
-			if (this.getRating() != other.getRating())
-				return false;
-			if (!this.getPath().equals(other.getPath()))
-				return false;
-			if (this.getYear() != other.getYear())
-				return false;
-			if (!this.getArtist().equals(other.getArtist()))
-				return false;
-
-			// If not both are null or if they are unequal (to not get a NullPointerException)
-			if (this.getGenre() != null && other.getGenre() != null) {
-				if (!this.getGenre().equals(other.getGenre()))
-					return false;
-			} else if (!(this.getGenre() == null && other.getGenre() == null))
-				return false;
-
-			if (this.getAlbum() != null && other.getAlbum() != null) {
-				if (!this.getAlbum().equals(other.getAlbum()))
-					return false;
-			} else if (!(this.getAlbum() == null && other.getAlbum() == null))
-				return false;
-
-			if (this.getLyric() != null && other.getLyric() != null) {
-				if (!this.getLyric().equals(other.getLyric()))
-					return false;
-			} else if (!(this.getLyric() == null && other.getLyric() == null))
-				return false;
-
-		} else {
-			return false;
+			Song other = (Song) obj;
+			
+			return this.id == other.id &&
+				this.title.equals(other.title) &&
+				this.duration == other.duration &&
+				this.playcount == other.playcount &&
+				this.rating == other.rating &&
+				this.path.equals(other.path) &&
+				this.year == other.year &&
+				this.artist.equals(other.artist) &&
+				((this.genre == null && other.genre == null) || this.genre.equals(other.genre)) &&
+				((this.album == null && other.album == null) || this.genre.equals(other.album)) &&
+				((this.artist == null && other.artist == null) || this.genre.equals(other.artist));
 		}
-
-		return true;
+		return false;
 	}
 	
 	/* (non-Javadoc)
