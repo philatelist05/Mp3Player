@@ -43,11 +43,11 @@ class DBSongDao implements SongDao {
 			readStmt = con.prepareStatement("SELECT "
 					+ "title, artist, path, year, "
 					+ "duration, playcount, rating, genre, "
-					+ "album FROM song join is_on on id = song WHERE id=?;");
+					+ "album FROM song left join is_on on id = song WHERE id=?;");
 			readAllStmt = con.prepareStatement("SELECT id, "
 					+ "title, artist, path, year, "
 					+ "duration, playcount, rating, genre, "
-					+ "album FROM song join is_on on id = song;");
+					+ "album FROM song left join is_on on id = song;");
 			updateStmt = con.prepareStatement("UPDATE song SET "
 					+ "title=?, artist=?, path=?, year=?, duration=?, "
 					+ "playcount=?, rating=?, genre=? " + "WHERE id = ?;");
