@@ -118,9 +118,8 @@ class VVVPlaylistService implements PlaylistService {
 
 		if (index >= 0 && index <= maxIndex) {
 			return songs.get(index);
-		} else {
-			return null;
 		}
+		return null;
 	}
 
 	public Song getPreviousSong() {
@@ -165,9 +164,8 @@ class VVVPlaylistService implements PlaylistService {
 
 		if (index >= 0 && index <= maxIndex) {
 			return songs.get(index);
-		} else {
-			return null;
 		}
+		return null;
 	}
 
 }
