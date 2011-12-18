@@ -22,5 +22,4 @@ public class DaoFactory {
 	public SongDao getSongDao() {
 		return (SongDao) context.getBean("SongDao");
 	}
-
 }

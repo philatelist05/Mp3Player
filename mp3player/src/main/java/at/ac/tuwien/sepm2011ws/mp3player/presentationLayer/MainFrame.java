@@ -111,7 +111,7 @@ public class MainFrame extends JFrame implements ActionListener, Runnable {
 	/**
 	 * Gets all Songs from the Database
 	 */
-	private void getWholeLibrary() {
+	public void getWholeLibrary() {
 		Playlist library;
 
 		// Holen aller Songs der Library
@@ -128,7 +128,7 @@ public class MainFrame extends JFrame implements ActionListener, Runnable {
 	 * @param List
 	 *            containing song items
 	 */
-	private void fillSongTable(Playlist list) {
+	public void fillSongTable(Playlist list) {
 		songmodel.setRowCount(0);
 		for (Song x : list.getSongs())
 			songmodel.addRow(new Object[] { x, x.getTitle(), x.getArtist(),
@@ -139,7 +139,7 @@ public class MainFrame extends JFrame implements ActionListener, Runnable {
 	/**
 	 * Switches the Button Icons to Pause
 	 */
-	private void setPauseIcons() {
+	public void setPauseIcons() {
 		btnPlayPause.setStandardIcon(mp1);
 		btnPlayPause.settRolloverIcon(mp2);
 		btnPlayPause.settPressedIcon(mp3);
@@ -148,7 +148,7 @@ public class MainFrame extends JFrame implements ActionListener, Runnable {
 	/**
 	 * Switches the Button Icons to Play
 	 */
-	private void setPlayIcons() {
+	public void setPlayIcons() {
 		btnPlayPause.setStandardIcon(m1);
 		btnPlayPause.settRolloverIcon(m2);
 		btnPlayPause.settPressedIcon(m3);
@@ -157,7 +157,7 @@ public class MainFrame extends JFrame implements ActionListener, Runnable {
 	/**
 	 * Sends the "previous Song" Signal to the Service Layer
 	 */
-	private void previous() {
+	public void previous() {
 		// if (cis.hasPreviousSong()) {
 
 		btnPlayPause.setActionCommand("play");
@@ -185,7 +185,7 @@ public class MainFrame extends JFrame implements ActionListener, Runnable {
 	 * @param x
 	 *            The Song to play
 	 */
-	private void play(Song x) {
+	public void play(Song x) {
 		setPlayIcons();
 
 		cis.playFromBeginning(x);
@@ -222,7 +222,7 @@ public class MainFrame extends JFrame implements ActionListener, Runnable {
 	/**
 	 * Sends the play Song Signal to the ServiceLayer
 	 */
-	private void pauseplay() {
+	public void pauseplay() {
 		cis.playPause();
 		Song temp = cis.getCurrentSong();
 		progress.setVisible(true);
@@ -237,7 +237,7 @@ public class MainFrame extends JFrame implements ActionListener, Runnable {
 	/**
 	 * Sends the pause Song action to the ServiceLayer
 	 */
-	private void pause() {
+	public void pause() {
 		cis.pause();
 		progress.setVisible(true);
 		if (cis.isPaused()) {
@@ -251,7 +251,7 @@ public class MainFrame extends JFrame implements ActionListener, Runnable {
 	/**
 	 * Sends the next Song action to the ServiceLayer
 	 */
-	private void next() {
+	public void next() {
 		// if (cis.hasNextSong()) {
 		btnPlayPause.setActionCommand("play");
 		setPlayIcons();
@@ -278,7 +278,7 @@ public class MainFrame extends JFrame implements ActionListener, Runnable {
 	 * @param x
 	 *            the volume from 0 - 50
 	 */
-	private void setVol(int x) {
+	public void setVol(int x) {
 		if (!chckbxMute.isSelected()) {
 			cis.setVolume(x);
 		}
@@ -290,15 +290,13 @@ public class MainFrame extends JFrame implements ActionListener, Runnable {
 	 * @param time
 	 *            position from 0 - 100
 	 */
-	private void setMediaTime(int value) {
+	public void setMediaTime(int value) {
 
 		if (cis.isPlaying() || cis.isPaused() == true)
 			cis.seek(value);
-
-
 	}
 
-	private String getMediaTimeAt(int percent) {
+	public String getMediaTimeAt(int percent) {
 		// cis = sf.getCoreInteractionService();
 		// cis.
 		double timeAt = cis.getDurationAt(percent);
@@ -309,7 +307,7 @@ public class MainFrame extends JFrame implements ActionListener, Runnable {
 
 	}
 
-	private String getMediaTime() {
+	public String getMediaTime() {
 		// cis = sf.getCoreInteractionService();
 		double timeAt = cis.getDuration();
 		String timeStringAt = String.format("%02.0f:%02.0f:%02.0f",
@@ -320,7 +318,7 @@ public class MainFrame extends JFrame implements ActionListener, Runnable {
 	}
 
 	
-	private void setProgressBartoDefault()
+	public void setProgressBartoDefault()
 	{
 		progress.setValue(0);
 		progress.setEnabled(false);
