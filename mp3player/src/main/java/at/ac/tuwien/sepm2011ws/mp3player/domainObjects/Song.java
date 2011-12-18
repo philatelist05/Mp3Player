@@ -260,9 +260,9 @@ public class Song {
 				this.path.equals(other.path) &&
 				this.year == other.year &&
 				this.artist.equals(other.artist) &&
-				((this.genre == null && other.genre == null) || this.genre.equals(other.genre)) &&
-				((this.album == null && other.album == null) || this.genre.equals(other.album)) &&
-				((this.artist == null && other.artist == null) || this.genre.equals(other.artist));
+				((this.genre == null && other.genre == null) || (this.genre != null && this.genre.equals(other.genre))) &&
+				((this.album == null && other.album == null) || (this.album != null && this.album.equals(other.album))) &&
+				((this.artist == null && other.artist == null) || (this.artist != null && this.artist.equals(other.artist)));
 		}
 		return false;
 	}
