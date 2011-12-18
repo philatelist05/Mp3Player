@@ -362,7 +362,13 @@ public class MainFrame extends JFrame implements ActionListener, Runnable {
 			progress.setValue(cis.getPlayTime());
 			lblDurationAt.setText(getMediaTimeAt(progress.getValue()));
 			lblDuration.setText(getMediaTimeAt(100));
-
+			Song temp = cis.getCurrentSong();
+			if (cis.isPlaying()) {
+				lblCurrentStateSong.setText("Currently playing: "
+						+ temp.getArtist() + " - " + temp.getTitle() + "");
+				btnPlayPause.setActionCommand("pause");
+				setPauseIcons();
+			}
 			try {
 				Thread.sleep(500);
 			} catch (InterruptedException ex) {
