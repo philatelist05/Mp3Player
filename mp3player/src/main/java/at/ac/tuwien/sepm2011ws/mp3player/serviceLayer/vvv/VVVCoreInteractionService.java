@@ -205,6 +205,13 @@ class VVVCoreInteractionService implements CoreInteractionService {
 			player.setMediaTime(new Time(getDurationAt(percent)));
 		}
 	}
+	
+	public void seekToSecond(int seconds)
+	{
+		if (player != null && player.getState() != Controller.Unrealized) {
+			player.setMediaTime(new Time((double)seconds));
+		}
+	}
 
 	public double getDuration() {
 		return getDurationAt(100);
