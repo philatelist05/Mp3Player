@@ -341,7 +341,7 @@ public class MainFrame extends JFrame implements ActionListener, Runnable {
 	 */
 
 
-	private Thread fred; // ;-)
+	private Thread fred; // ;-) @Johannes: XD
 
 	private void createThread() {
 		fred = new Thread(this);
@@ -395,18 +395,22 @@ public class MainFrame extends JFrame implements ActionListener, Runnable {
 		ServiceFactory sf = ServiceFactory.getInstance();
 		cis = sf.getCoreInteractionService();
 		ps = sf.getPlaylistService();
-
+		
 		setBounds(100, 100, 1000, 600);
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setTitle("mp3@player");
-
+		
 		initialize();
 
 		getWholeLibrary();
 
 		cis.setVolume(volume.getValue());
 		ps.setPlayMode(PlayMode.NORMAL);
+		
+		//setExtendedState(JFrame.MAXIMIZED_BOTH);
+		
 		setVisible(true);
+		//setResizable(false);
 
 		logger.info("Components successfully initialized");
 	}
@@ -419,16 +423,33 @@ public class MainFrame extends JFrame implements ActionListener, Runnable {
 		/**
 		 * MainFrame
 		 */
+		
+		// Resizing MainFrame
 		addComponentListener(new ComponentAdapter() {
 			@Override
 			public void componentResized(ComponentEvent e) {
+				/*System.out.println("----------Start----------");
+				Thread progressThread = new Thread() {
+					public void run() {
+						System.out.println("Thread: "+getWidth()+"");
+						progress.setPreferredSize(new Dimension(getWidth(), 25));
+						System.out.println("Thread progress: "+progress.getPreferredSize()+"");
+						System.out.println("-----------End-----------");
+				    }
+				};
+				progressThread.start();
+				System.out.println("Main: "+getWidth()+"");*/
 				progress.setPreferredSize(new Dimension(getWidth(), 25));
+				//System.out.println("Main progress: "+progress.getPreferredSize()+"");
+				//setResizable(false);
 			}
 		});
 
+		// MainFrame state changing
 		addWindowStateListener(new WindowStateListener() {
 			public void windowStateChanged(WindowEvent arg0) {
 				progress.setPreferredSize(new Dimension(getWidth(), 25));
+				//setResizable(false);
 			}
 		});
 
@@ -441,7 +462,7 @@ public class MainFrame extends JFrame implements ActionListener, Runnable {
 			image = ImageIO.read(getClass().getResource("img/background.png"));
 		} catch (IOException e1) {
 		}
-		JPanel playerPanel = new ImagePanel(new MigLayout("", "[210!][grow][]",
+		JPanel playerPanel = new ImagePanel(new MigLayout("", "[210!][grow][200!][]",
 				"[][grow][center][][]"), image);
 		getContentPane().add(playerPanel);
 
@@ -501,7 +522,7 @@ public class MainFrame extends JFrame implements ActionListener, Runnable {
 				.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_AS_NEEDED);
 		songTable_sp
 				.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED);
-		playerPanel.add(songTable_sp, "cell 1 1 2 1,grow");
+		playerPanel.add(songTable_sp, "cell 1 1 3 1,grow");
 
 		songTable.addMouseListener(new MouseAdapter() {
 			public void mouseClicked(MouseEvent e) {
@@ -568,7 +589,7 @@ public class MainFrame extends JFrame implements ActionListener, Runnable {
 
 		progress.setPreferredSize(new Dimension(getWidth(), 25));
 		playerPanel.add(progress,
-				"flowx,cell 0 2 3 1,alignx center,aligny center");
+				"flowx,cell 0 2 4 1,alignx left,aligny center");
 		progress.setEnabled(false);
 		
 		// lblDurationAt
@@ -608,6 +629,7 @@ public class MainFrame extends JFrame implements ActionListener, Runnable {
 		});
 		volume.setPreferredSize(new Dimension(100, 25));
 		playerPanel.add(volume, "cell 2 3 1 2,alignx right,aligny center");
+		System.out.println(volume.getSize());
 
 		/**
 		 * JCheckboxes
@@ -618,7 +640,7 @@ public class MainFrame extends JFrame implements ActionListener, Runnable {
 		chckbxMute.setContentAreaFilled(false);
 		chckbxMute.setBorderPainted(false);
 		chckbxMute.setFocusPainted(false);
-		playerPanel.add(chckbxMute, "cell 2 3 1 2,alignx right,aligny center");
+		playerPanel.add(chckbxMute, "cell 3 3 1 2,alignx right,aligny center");
 
 		chckbxMute.addItemListener(new ItemListener() {
 			public void itemStateChanged(ItemEvent e) {
@@ -632,7 +654,7 @@ public class MainFrame extends JFrame implements ActionListener, Runnable {
 		chckbxRepeat.setContentAreaFilled(false);
 		chckbxRepeat.setBorderPainted(false);
 		chckbxRepeat.setFocusPainted(false);
-		playerPanel.add(chckbxRepeat, "cell 2 3 1 2,alignx right,aligny center");
+		playerPanel.add(chckbxRepeat, "cell 3 3 1 2,alignx right,aligny center");
 
 		chckbxRepeat.addItemListener(new ItemListener() {
 			public void itemStateChanged(ItemEvent e) {
@@ -648,7 +670,7 @@ public class MainFrame extends JFrame implements ActionListener, Runnable {
 		chckbxShuffle.setContentAreaFilled(false);
 		chckbxShuffle.setBorderPainted(false);
 		chckbxShuffle.setFocusPainted(false);
-		playerPanel.add(chckbxShuffle, "cell 2 3 1 2,alignx right,aligny center");
+		playerPanel.add(chckbxShuffle, "cell 3 3 1 2,alignx right,aligny center");
 
 		chckbxShuffle.addItemListener(new ItemListener() {
 			public void itemStateChanged(ItemEvent e) {
