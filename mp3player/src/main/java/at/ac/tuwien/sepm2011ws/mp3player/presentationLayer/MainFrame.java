@@ -166,6 +166,8 @@ public class MainFrame extends JFrame implements ActionListener, Runnable {
 
 		cis.playPrevious();
 		Song temp = cis.getCurrentSong();
+		
+		//progress.setEnabled(true);
 
 		if (cis.isPlaying()) {
 			lblCurrentStateSong.setText("Currently playing: "
@@ -213,6 +215,8 @@ public class MainFrame extends JFrame implements ActionListener, Runnable {
 					+ temp.getArtist() + " - " + temp.getTitle() + "");
 			btnPlayPause.setActionCommand("pause");
 			setPauseIcons();
+			btnNext.setActionCommand("next");
+			btnPrevious.setActionCommand("previous");
 		}
 
 		// lblDuration.setText(getMediaTimeAt(100));
@@ -259,6 +263,7 @@ public class MainFrame extends JFrame implements ActionListener, Runnable {
 
 		cis.playNext();
 		Song temp = cis.getCurrentSong();
+		//progress.setEnabled(true);
 
 		if (cis.isPlaying()) {
 			lblCurrentStateSong.setText("Currently playing: "
@@ -546,7 +551,7 @@ public class MainFrame extends JFrame implements ActionListener, Runnable {
 		btnPrevious = new RectButton(l1, l2, l3);
 		playerPanel.add(btnPrevious, "cell 0 3 1 2,alignx center,aligny center");
 		btnPrevious.addActionListener(this);
-		btnPrevious.setActionCommand("previous");
+		//btnPrevious.setActionCommand("previous");
 
 		// Play_Pause
 		btnPlayPause = new RoundButton(m1, m2, m3);
@@ -558,7 +563,7 @@ public class MainFrame extends JFrame implements ActionListener, Runnable {
 		btnNext = new RectButton(r1, r2, r3);
 		playerPanel.add(btnNext, "cell 0 3 1 2,alignx center,aligny center");
 		btnNext.addActionListener(this);
-		btnNext.setActionCommand("next");
+		//btnNext.setActionCommand("next");
 
 		/**
 		 * JSliders
@@ -629,7 +634,6 @@ public class MainFrame extends JFrame implements ActionListener, Runnable {
 		});
 		volume.setPreferredSize(new Dimension(100, 25));
 		playerPanel.add(volume, "cell 2 3 1 2,alignx right,aligny center");
-		System.out.println(volume.getSize());
 
 		/**
 		 * JCheckboxes
