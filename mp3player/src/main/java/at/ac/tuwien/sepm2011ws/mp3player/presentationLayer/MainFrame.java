@@ -314,7 +314,7 @@ public class MainFrame extends JFrame implements ActionListener, Runnable {
 
 	public String getMediaTimeAtInSeconds() {
 		
-		double timeAt = cis.getDurationAtInSeconds();
+		double timeAt = cis.getPlayTimeInSeconds();
 		String timeStringAt = String.format("%02.0f:%02.0f:%02.0f",
 				Math.floor(timeAt / 3600), Math.floor((timeAt % 3600) / 60),
 				Math.floor(timeAt % 60));
@@ -323,7 +323,7 @@ public class MainFrame extends JFrame implements ActionListener, Runnable {
 	}
 
 	public int getMediaTimeAtInSecondsInt() {
-		return (int) cis.getDurationAtInSeconds();
+		return (int) cis.getPlayTimeInSeconds();
 	}
 	
 	public int getMediaTimeInSecondsInt(){

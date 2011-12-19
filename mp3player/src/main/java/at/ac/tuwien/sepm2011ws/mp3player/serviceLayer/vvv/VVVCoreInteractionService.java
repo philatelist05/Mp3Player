@@ -228,39 +228,9 @@ class VVVCoreInteractionService implements CoreInteractionService {
 		return seconds;
 	}
 	
-	public double getDurationAtInSeconds() {
-		
-		double seconds = 0;
-		
-		if(player!=null && player.getState() != Controller.Unrealized)
-		{	
-			//seconds = player.getDuration().getSeconds();
-			seconds = player.getMediaTime().getSeconds();
-			return seconds;
-		}
-		else 
-		{
-			return seconds;
-		}
+	public double getPlayTimeInSeconds() {
+		return getDurationAt(getPlayTime());
 	}
-	
-	/*public double getDurationInSeconds() {
-		
-		double seconds = 0;
-		
-		if(player!=null)
-		{	
-			seconds = player.getDuration().getSeconds();
-			System.out.println(seconds);
-			return seconds;
-		}
-		else 
-		{
-			return seconds;
-		}
-	}*/
-	
-	
 
 	public Song getCurrentSong() {
 		return this.currentSong;

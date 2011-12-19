@@ -103,11 +103,9 @@ public interface CoreInteractionService {
 	 * @param percent
 	 */
 	public void seek(int percent);
-	
-	
+
 	public void seekToSecond(int seconds);
-	
-	
+
 	/**
 	 * Gets the duration of the current song.
 	 * 
@@ -132,17 +130,15 @@ public interface CoreInteractionService {
 	 * 
 	 * @return the percentage of the current play time
 	 */
-	
-	/**
-	 * Gets the play time in seconds of the actual played song
-	 * The value is between 0 (when started) and the duration of the current song
-	 * @return the current play time in seconds
-	 */
-//	public double getDurationInSeconds();
-	
-	public double getDurationAtInSeconds();
-	
+
 	public int getPlayTime();
+
+	/**
+	 * Gets the play time of the current song.
+	 * 
+	 * @return the current play time <b>in seconds</b>
+	 */
+	public double getPlayTimeInSeconds();
 
 	/**
 	 * Returns the current active song.
