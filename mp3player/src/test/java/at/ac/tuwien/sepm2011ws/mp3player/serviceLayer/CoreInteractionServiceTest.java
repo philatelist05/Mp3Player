@@ -17,10 +17,11 @@ import at.ac.tuwien.sepm2011ws.mp3player.serviceLayer.jmf.ServiceFactory;
 
 /**
  * @author klaus
- *
+ * 
  */
 public class CoreInteractionServiceTest {
 	private CoreInteractionService cs;
+	private PlaylistService ps;
 
 	/**
 	 * @throws java.lang.Exception
@@ -29,6 +30,7 @@ public class CoreInteractionServiceTest {
 	public void setUp() throws Exception {
 		ServiceFactory sf = ServiceFactory.getInstance();
 		cs = sf.getCoreInteractionService();
+		ps = sf.getPlaylistService();
 	}
 
 	/**
@@ -36,23 +38,25 @@ public class CoreInteractionServiceTest {
 	 */
 	@After
 	public void tearDown() throws Exception {
+		ps.setCurrentPlaylist(null);
+		ps.setPlayMode(PlayMode.NORMAL);
 	}
 
 	@Test
 	public void testPlayPause_ShouldPlay() throws InterruptedException {
 		File sPath = new File("music/dummy-message.wav");
 		Song s = new Song("dummy", "dummy", 300, sPath.getAbsolutePath());
-		
+
 		cs.playPause(s);
 		Thread.sleep(1000);
 		cs.stop();
 	}
-	
+
 	@Test
 	public void testSeek_ShouldSeek() throws InterruptedException {
 		File sPath = new File("music/The Other Thing.wav");
 		Song s = new Song("dummy", "dummy", 300, sPath.getAbsolutePath());
-		
+
 		cs.playPause(s);
 		Thread.sleep(500);
 		cs.seek(20);
@@ -64,38 +68,47 @@ public class CoreInteractionServiceTest {
 
 	@Test
 	public void testEndOfMedia_ShouldPlayNext() throws InterruptedException {
-		ServiceFactory sf = ServiceFactory.getInstance();
-		PlaylistService ps = sf.getPlaylistService();
-		
 		Playlist temp = new Playlist("Temp");
-		
+
 		File sPath = new File("music/dummy-message.wav");
 		temp.addSong(new Song("dummy1", "dummy1", 300, sPath.getAbsolutePath()));
 		sPath = new File("music/The Other Thing.wav");
 		temp.addSong(new Song("dummy2", "dummy2", 300, sPath.getAbsolutePath()));
 
 		ps.setCurrentPlaylist(temp);
-		
+		cs.setPlayerListener(new PlayerListener() {
+
+			public void endOfMediaEvent(Song song) {
+				assertTrue(song.equals(ps.getCurrentPlaylist().getSongs()
+						.get(1)));
+			}
+		});
+
 		cs.playPause(null);
 		Thread.sleep(500);
 		assertTrue(cs.getCurrentSong().equals(temp.getSongs().get(0)));
 		cs.seek(100);
-		Thread.sleep(3000);
-		assertTrue(cs.getCurrentSong().equals(temp.getSongs().get(1)));
+		// Here the endOfMediaEvent should be fired
 		cs.stop();
 	}
-	
+
 	@Test
-	public void testPlayPause_ShouldPauseAndContinue() throws InterruptedException {
+	public void testPlayPause_ShouldPauseAndContinue()
+			throws InterruptedException {
 		File sPath = new File("music/dummy-message.wav");
 		Song s = new Song("dummy", "dummy", 300, sPath.getAbsolutePath());
-		
+
+		// play
 		cs.playPause(s);
-		Thread.sleep(1000);
+		Thread.sleep(500);
+		// pause
 		cs.playPause(s);
-		Thread.sleep(1000);
+		double then = cs.getPlayTime();
+		// play again
 		cs.playPause(s);
-		Thread.sleep(1000);
+		Thread.sleep(500);
+		// Now has to be greater than then
+		assertTrue(cs.getPlayTime() > then);
 		cs.stop();
 	}
 }

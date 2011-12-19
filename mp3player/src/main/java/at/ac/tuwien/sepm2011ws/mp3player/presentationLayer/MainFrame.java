@@ -370,8 +370,6 @@ public class MainFrame extends JFrame implements ActionListener, Runnable {
 
 	public void run() {
 
-		// TODO Auto-generated method stub
-
 		while (!fred.isInterrupted()) {
 
 			Song temp = cis.getCurrentSong();
@@ -653,7 +651,7 @@ public class MainFrame extends JFrame implements ActionListener, Runnable {
 		playerPanel.add(lblVolume, "cell 2 3 1 2,alignx right,aligny center");
 
 		// Volume
-		volume = new JSlider(0, cis.MAX_VOLUME, 50);
+		volume = new JSlider(0, CoreInteractionService.MAX_VOLUME, 50);
 		volume.setMajorTickSpacing(25);
 		volume.setMinorTickSpacing(5);
 		volume.setSnapToTicks(false);

@@ -41,7 +41,7 @@ class JMFPlaylistService implements PlaylistService {
 	}
 
 	public void setPlayMode(PlayMode playMode) {
-		logger.debug("Current PlayMode set to: " + playMode);
+		logger.info("Current PlayMode set to: " + playMode);
 		this.playMode = playMode;
 	}
 

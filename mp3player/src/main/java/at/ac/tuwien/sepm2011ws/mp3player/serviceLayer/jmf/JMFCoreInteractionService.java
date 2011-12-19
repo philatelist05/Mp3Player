@@ -18,6 +18,7 @@ import org.apache.log4j.Logger;
 
 import at.ac.tuwien.sepm2011ws.mp3player.domainObjects.Song;
 import at.ac.tuwien.sepm2011ws.mp3player.serviceLayer.CoreInteractionService;
+import at.ac.tuwien.sepm2011ws.mp3player.serviceLayer.PlayerListener;
 import at.ac.tuwien.sepm2011ws.mp3player.serviceLayer.PlaylistService;
 
 class JMFCoreInteractionService implements CoreInteractionService {
@@ -29,6 +30,7 @@ class JMFCoreInteractionService implements CoreInteractionService {
 	private boolean isStopped;
 	private float volume;
 	private Song currentSong;
+	private PlayerListener pl;
 
 	// TODO Method (maybe event?) for syncing UI and ServiceLayer (e.g. if end
 	// of song, play next song --> send acknowledge to UI... (in that manner).
@@ -200,7 +202,7 @@ class JMFCoreInteractionService implements CoreInteractionService {
 		return isStopped;
 	}
 
-	public void seek(int percent) {
+	public void seek(double percent) {
 		if (player != null && player.getState() != Controller.Unrealized) {
 			player.setMediaTime(new Time(getDurationAt(percent)));
 		}
@@ -208,6 +210,9 @@ class JMFCoreInteractionService implements CoreInteractionService {
 	
 	public void seekToSecond(int seconds)
 	{
+		if(seconds < 0 || seconds > getDuration())
+			throw new IllegalArgumentException("Amount of seconds out of song duration");
+		
 		if (player != null && player.getState() != Controller.Unrealized) {
 			player.setMediaTime(new Time((double)seconds));
 		}
@@ -217,15 +222,12 @@ class JMFCoreInteractionService implements CoreInteractionService {
 		return getDurationAt(100);
 	}
 
-	public double getDurationAt(int percent) {
+	public double getDurationAt(double percent) {
 		if (percent < 0 || percent > 100)
 			throw new IllegalArgumentException(
 					"Duration percentage out of range");
 
-		double factor = (double) percent / 100;
-		double seconds = (player.getDuration().getSeconds() * factor);
-
-		return seconds;
+		return player.getDuration().getSeconds() * (percent / 100);
 	}
 	
 	public double getPlayTimeInSeconds() {
@@ -236,14 +238,14 @@ class JMFCoreInteractionService implements CoreInteractionService {
 		return this.currentSong;
 	}
 
-	public int getPlayTime() {
+	public double getPlayTime() {
 		if (player == null) {
 			return 0;
 		} else {
 			double duration = getDuration();
 			double playTime = player.getMediaTime().getSeconds();
 
-			return (int) (playTime * 100 / duration);
+			return playTime * 100 / duration;
 		}
 	}
 
@@ -261,9 +263,23 @@ class JMFCoreInteractionService implements CoreInteractionService {
 				// player.removeControllerListener(this);
 				// player.stop();
 				playNext();
+				
+				if(pl != null)
+					pl.endOfMediaEvent(currentSong);
 			}
 		}
 
+	}
+
+	public void setPlayerListener(PlayerListener pl) {
+		if(pl == null)
+			throw new IllegalArgumentException("Setting a non-existing PlayerListener makes no sense");
+		
+		this.pl = pl;
+	}
+
+	public void removePlayerListener() {
+		this.pl = null;
 	}
 
 }

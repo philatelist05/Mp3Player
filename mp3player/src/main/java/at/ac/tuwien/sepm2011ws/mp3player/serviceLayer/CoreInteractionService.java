@@ -102,8 +102,14 @@ public interface CoreInteractionService {
 	 * 
 	 * @param percent
 	 */
-	public void seek(int percent);
+	public void seek(double percent);
 
+	/**
+	 * Seeks the song to the given second.
+	 * 
+	 * @param seconds
+	 *            The second to where the player should seek
+	 */
 	public void seekToSecond(int seconds);
 
 	/**
@@ -122,7 +128,7 @@ public interface CoreInteractionService {
 	 * @return the percentage of the duration of the current song <b>in
 	 *         seconds</b>
 	 */
-	public double getDurationAt(int percent);
+	public double getDurationAt(double percent);
 
 	/**
 	 * Gets the percentage of the play time in relation to the duration of
@@ -131,7 +137,7 @@ public interface CoreInteractionService {
 	 * @return the percentage of the current play time
 	 */
 
-	public int getPlayTime();
+	public double getPlayTime();
 
 	/**
 	 * Gets the play time of the current song.
@@ -146,5 +152,18 @@ public interface CoreInteractionService {
 	 * @return the current active song
 	 */
 	public Song getCurrentSong();
+
+	/**
+	 * Adds a listener to this service to be informed about player events.
+	 * 
+	 * @param pl
+	 *            The PlayerListener which's methods will be called
+	 */
+	public void setPlayerListener(PlayerListener pl);
+
+	/**
+	 * Removes any player listener set to the service before.
+	 */
+	public void removePlayerListener();
 
 }
