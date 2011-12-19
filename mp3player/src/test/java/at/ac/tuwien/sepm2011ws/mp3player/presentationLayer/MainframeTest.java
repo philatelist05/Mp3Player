@@ -9,7 +9,7 @@ import org.junit.Before;
 import org.junit.Test;
 
 import at.ac.tuwien.sepm2011ws.mp3player.presentationLayer.MainFrame;
-import at.ac.tuwien.sepm2011ws.mp3player.serviceLayer.vvv.ServiceFactory;
+import at.ac.tuwien.sepm2011ws.mp3player.serviceLayer.jmf.ServiceFactory;
 
 
 public class MainframeTest {

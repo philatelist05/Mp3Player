@@ -1,4 +1,4 @@
-package at.ac.tuwien.sepm2011ws.mp3player.serviceLayer.vvv;
+package at.ac.tuwien.sepm2011ws.mp3player.serviceLayer.jmf;
 
 import java.io.IOException;
 import java.net.URL;
@@ -20,9 +20,9 @@ import at.ac.tuwien.sepm2011ws.mp3player.domainObjects.Song;
 import at.ac.tuwien.sepm2011ws.mp3player.serviceLayer.CoreInteractionService;
 import at.ac.tuwien.sepm2011ws.mp3player.serviceLayer.PlaylistService;
 
-class VVVCoreInteractionService implements CoreInteractionService {
+class JMFCoreInteractionService implements CoreInteractionService {
 	private static final Logger logger = Logger
-			.getLogger(VVVCoreInteractionService.class);
+			.getLogger(JMFCoreInteractionService.class);
 	private Player player;
 	private boolean isMute;
 	private boolean isPaused;
@@ -38,7 +38,7 @@ class VVVCoreInteractionService implements CoreInteractionService {
 	/**
 	 * 
 	 */
-	public VVVCoreInteractionService() {
+	public JMFCoreInteractionService() {
 		// Register the mp3 plugin
 		// Format input1 = new AudioFormat(AudioFormat.MPEGLAYER3);
 		// Format input2 = new AudioFormat(AudioFormat.MPEG);

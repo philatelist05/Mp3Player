@@ -1,7 +1,7 @@
 /**
  * Veni Vidi Vici PlaylistService
  */
-package at.ac.tuwien.sepm2011ws.mp3player.serviceLayer.vvv;
+package at.ac.tuwien.sepm2011ws.mp3player.serviceLayer.jmf;
 
 import java.util.List;
 
@@ -19,13 +19,13 @@ import at.ac.tuwien.sepm2011ws.mp3player.serviceLayer.PlaylistService;
  * @author klaus
  * 
  */
-class VVVPlaylistService implements PlaylistService {
+class JMFPlaylistService implements PlaylistService {
 	private static final Logger logger = Logger
-			.getLogger(VVVPlaylistService.class);
+			.getLogger(JMFPlaylistService.class);
 	private Playlist currentPlaylist;
 	private PlayMode playMode;
 
-	public VVVPlaylistService() {
+	public JMFPlaylistService() {
 		this.playMode = PlayMode.NORMAL;
 	}
 

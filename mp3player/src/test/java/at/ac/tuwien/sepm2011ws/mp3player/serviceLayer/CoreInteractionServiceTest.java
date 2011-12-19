@@ -13,7 +13,7 @@ import org.junit.Test;
 
 import at.ac.tuwien.sepm2011ws.mp3player.domainObjects.Playlist;
 import at.ac.tuwien.sepm2011ws.mp3player.domainObjects.Song;
-import at.ac.tuwien.sepm2011ws.mp3player.serviceLayer.vvv.ServiceFactory;
+import at.ac.tuwien.sepm2011ws.mp3player.serviceLayer.jmf.ServiceFactory;
 
 /**
  * @author klaus
