@@ -76,19 +76,15 @@ public class CoreInteractionServiceTest {
 		temp.addSong(new Song("dummy2", "dummy2", 300, sPath.getAbsolutePath()));
 
 		ps.setCurrentPlaylist(temp);
-		cs.setPlayerListener(new PlayerListener() {
-
-			public void endOfMediaEvent(Song song) {
-				assertTrue(song.equals(ps.getCurrentPlaylist().getSongs()
-						.get(1)));
-			}
-		});
 
 		cs.playPause(null);
 		Thread.sleep(500);
 		assertTrue(cs.getCurrentSong().equals(temp.getSongs().get(0)));
 		cs.seek(100);
 		// Here the endOfMediaEvent should be fired
+		Thread.sleep(3000); // The player needs a bit time to realize that the
+							// song is at the end... -,-
+		assertTrue(cs.getCurrentSong().equals(temp.getSongs().get(1)));
 		cs.stop();
 	}
 
