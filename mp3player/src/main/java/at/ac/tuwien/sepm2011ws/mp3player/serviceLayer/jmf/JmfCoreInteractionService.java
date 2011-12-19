@@ -21,9 +21,9 @@ import at.ac.tuwien.sepm2011ws.mp3player.serviceLayer.CoreInteractionService;
 import at.ac.tuwien.sepm2011ws.mp3player.serviceLayer.PlayerListener;
 import at.ac.tuwien.sepm2011ws.mp3player.serviceLayer.PlaylistService;
 
-class JMFCoreInteractionService implements CoreInteractionService {
+class JmfCoreInteractionService implements CoreInteractionService {
 	private static final Logger logger = Logger
-			.getLogger(JMFCoreInteractionService.class);
+			.getLogger(JmfCoreInteractionService.class);
 	private Player player;
 	private boolean isMute;
 	private boolean isPaused;
@@ -40,7 +40,7 @@ class JMFCoreInteractionService implements CoreInteractionService {
 	/**
 	 * 
 	 */
-	public JMFCoreInteractionService() {
+	public JmfCoreInteractionService() {
 		// Register the mp3 plugin
 		// Format input1 = new AudioFormat(AudioFormat.MPEGLAYER3);
 		// Format input2 = new AudioFormat(AudioFormat.MPEG);

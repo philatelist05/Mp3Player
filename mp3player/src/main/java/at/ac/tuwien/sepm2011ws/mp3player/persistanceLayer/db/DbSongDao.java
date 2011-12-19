@@ -18,7 +18,7 @@ import at.ac.tuwien.sepm2011ws.mp3player.persistanceLayer.SongDao;
  * 
  */
 
-class DBSongDao implements SongDao {
+class DbSongDao implements SongDao {
 	private Connection con;
 
 	private PreparedStatement createStmt;
@@ -28,7 +28,7 @@ class DBSongDao implements SongDao {
 	private PreparedStatement updateStmt;
 	private PreparedStatement deleteStmt;
 
-	DBSongDao(DataSource source) {
+	DbSongDao(DataSource source) {
 
 		try {
 

@@ -19,13 +19,13 @@ import at.ac.tuwien.sepm2011ws.mp3player.serviceLayer.PlaylistService;
  * @author klaus
  * 
  */
-class JMFPlaylistService implements PlaylistService {
+class JmfPlaylistService implements PlaylistService {
 	private static final Logger logger = Logger
-			.getLogger(JMFPlaylistService.class);
+			.getLogger(JmfPlaylistService.class);
 	private Playlist currentPlaylist;
 	private PlayMode playMode;
 
-	public JMFPlaylistService() {
+	public JmfPlaylistService() {
 		this.playMode = PlayMode.NORMAL;
 	}
 
