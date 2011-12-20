@@ -4,39 +4,57 @@ import java.io.File;
 
 import uk.co.caprica.vlcj.player.MediaPlayer;
 import uk.co.caprica.vlcj.player.MediaPlayerFactory;
+import uk.co.caprica.vlcj.runtime.RuntimeUtil;
 import at.ac.tuwien.sepm2011ws.mp3player.domainObjects.Song;
 import at.ac.tuwien.sepm2011ws.mp3player.serviceLayer.CoreInteractionService;
 import at.ac.tuwien.sepm2011ws.mp3player.serviceLayer.PlayerListener;
 import at.ac.tuwien.sepm2011ws.mp3player.serviceLayer.PlaylistService;
 import at.ac.tuwien.sepm2011ws.mp3player.serviceLayer.jmf.ServiceFactory;
 
-public class VlcjCoreInteractionService implements CoreInteractionService{
+public class VlcjCoreInteractionService implements CoreInteractionService {
     private final MediaPlayer mediaPlayer;
     private Song currentSong;
     private boolean isPaused;
     private PlayerListener playerListener;
 
-    public VlcjCoreInteractionService(String libPath, String pluginPath) {
-	
-//	libPath = new File("lib/vlc/osx/lib").getAbsolutePath();
-//	pluginPath = new File("lib/vlc/osx/plugin").getAbsolutePath();
-	
+    public VlcjCoreInteractionService() {
+
+	String libPath = getLibPath();
+	String pluginPath = getPluginPath();
+
 	System.setProperty("jna.library.path", libPath);
 	this.isPaused = false;
-	
+
 	MediaPlayerFactory factory = new MediaPlayerFactory(
 		new String[] { pluginPath });
 	this.mediaPlayer = factory.newMediaPlayer();
 
-//	mediaPlayer.addMediaPlayerEventListener(new MediaPlayerEventAdapter() {
-//	    public void finished(MediaPlayer mediaPlayer) {
-//		System.exit(0);
-//	    }
-//
-//	    public void error(MediaPlayer mediaPlayer) {
-//		System.exit(1);
-//	    }
-//	});
+	// mediaPlayer.addMediaPlayerEventListener(new MediaPlayerEventAdapter()
+	// {
+	// public void finished(MediaPlayer mediaPlayer) {
+	// System.exit(0);
+	// }
+	//
+	// public void error(MediaPlayer mediaPlayer) {
+	// System.exit(1);
+	// }
+	// });
+    }
+
+    private String getLibPath() {
+	if (RuntimeUtil.isMac())
+	    return new File("lib/vlc/osx/lib").getAbsolutePath();
+	else if (RuntimeUtil.isWindows())
+	    return new File("lib/vlc/windows/lib").getAbsolutePath();
+	return new File("lib/vlc/linux/lib").getAbsolutePath();
+    }
+
+    private String getPluginPath() {
+	if (RuntimeUtil.isMac())
+	    return new File("lib/vlc/osx/plugin").getAbsolutePath();
+	else if (RuntimeUtil.isWindows())
+	    return new File("lib/vlc/windows/plugin").getAbsolutePath();
+	return new File("lib/vlc/linux/plugin").getAbsolutePath();
     }
 
     public void playFromBeginning(Song song) {
@@ -56,11 +74,11 @@ public class VlcjCoreInteractionService implements CoreInteractionService{
 
     public void playPause(Song song) {
 	if (song != null && song.equals(this.currentSong)) {
-		// If song is the current song, toggle pause
+	    // If song is the current song, toggle pause
 	    pause();
 	} else {
-		// Play the song from the beginning
-		playFromBeginning(song);
+	    // Play the song from the beginning
+	    playFromBeginning(song);
 	}
     }
 
@@ -68,7 +86,6 @@ public class VlcjCoreInteractionService implements CoreInteractionService{
 	mediaPlayer.pause();
 	this.isPaused = this.isPaused ? false : true;
     }
-    
 
     public void playNext() {
 	ServiceFactory sf = ServiceFactory.getInstance();
@@ -76,7 +93,7 @@ public class VlcjCoreInteractionService implements CoreInteractionService{
 	Song nextSong = ps.getNextSong();
 
 	if (nextSong != null)
-		playFromBeginning(nextSong);
+	    playFromBeginning(nextSong);
     }
 
     public void playPrevious() {
@@ -85,7 +102,7 @@ public class VlcjCoreInteractionService implements CoreInteractionService{
 	Song previousSong = ps.getPreviousSong();
 
 	if (previousSong != null)
-		playFromBeginning(previousSong);
+	    playFromBeginning(previousSong);
     }
 
     public void stop() {
@@ -119,13 +136,14 @@ public class VlcjCoreInteractionService implements CoreInteractionService{
     public void seek(double percent) {
 	if (this.mediaPlayer.isSeekable())
 	    this.mediaPlayer.setTime((long) getDurationAt(percent));
-	
+
     }
 
     public void seekToSecond(int seconds) {
-	if(seconds < 0 || seconds > getDuration())
-		throw new IllegalArgumentException("Amount of seconds out of song duration");
-	
+	if (seconds < 0 || seconds > getDuration())
+	    throw new IllegalArgumentException(
+		    "Amount of seconds out of song duration");
+
 	if (this.mediaPlayer.isSeekable()) {
 	    this.mediaPlayer.setTime(seconds);
 	}
@@ -137,8 +155,8 @@ public class VlcjCoreInteractionService implements CoreInteractionService{
 
     public double getDurationAt(double percent) {
 	if (percent < 0 || percent > 100)
-		throw new IllegalArgumentException(
-				"Duration percentage out of range");
+	    throw new IllegalArgumentException(
+		    "Duration percentage out of range");
 
 	return this.mediaPlayer.getLength() * (percent / 100);
     }
@@ -159,9 +177,10 @@ public class VlcjCoreInteractionService implements CoreInteractionService{
     }
 
     public void setPlayerListener(PlayerListener playerListener) {
-	if(playerListener == null)
-		throw new IllegalArgumentException("Setting a non-existing PlayerListener makes no sense");
-	
+	if (playerListener == null)
+	    throw new IllegalArgumentException(
+		    "Setting a non-existing PlayerListener makes no sense");
+
 	this.playerListener = playerListener;
     }
 
