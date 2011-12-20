@@ -9,5 +9,9 @@ http://www.springframework.org/schema/beans/spring-beans-3.0.xsd">
 
 <bean id="CoreInteractionService" class="at.ac.tuwien.sepm2011ws.mp3player.serviceLayer.jmf.JmfCoreInteractionService">
 </bean>
+<bean id="CoreInteractionServiceBeta" class="at.ac.tuwien.sepm2011ws.mp3player.serviceLayer.vlcj.VlcjCoreInteractionService">
+	<constructor-arg value="lib/vlc/osx/lib"/>
+	<constructor-arg value="lib/vlc/osx/plugin"/>
+</bean>
 
 </beans>

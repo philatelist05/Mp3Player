@@ -239,14 +239,13 @@ class JmfCoreInteractionService implements CoreInteractionService {
 	}
 
 	public double getPlayTime() {
-		if (player == null) {
+		if (player == null) 
 			return 0;
-		} else {
-			double duration = getDuration();
-			double playTime = player.getMediaTime().getSeconds();
+		
+		double duration = getDuration();
+		double playTime = player.getMediaTime().getSeconds();
 
-			return playTime * 100 / duration;
-		}
+		return playTime * 100 / duration;
 	}
 
 	private class VVVControllerListener implements ControllerListener {

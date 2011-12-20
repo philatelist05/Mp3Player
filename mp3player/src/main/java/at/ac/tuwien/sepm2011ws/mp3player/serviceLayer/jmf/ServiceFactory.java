@@ -25,7 +25,7 @@ public class ServiceFactory {
 	}
 	
 	public CoreInteractionService getCoreInteractionService() {
-		return (CoreInteractionService) context.getBean("CoreInteractionService");
+		return (CoreInteractionService) context.getBean("CoreInteractionServiceBeta");
 	}
 
 }
