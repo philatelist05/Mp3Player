@@ -11,7 +11,6 @@ import org.junit.Before;
 import org.junit.Test;
 
 import at.ac.tuwien.sepm2011ws.mp3player.domainObjects.Playlist;
-import at.ac.tuwien.sepm2011ws.mp3player.serviceLayer.jmf.ServiceFactory;
 
 /**
  * @author klaus

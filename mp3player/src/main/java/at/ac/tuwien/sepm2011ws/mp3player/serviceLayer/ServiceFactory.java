@@ -1,10 +1,8 @@
-package at.ac.tuwien.sepm2011ws.mp3player.serviceLayer.jmf;
+package at.ac.tuwien.sepm2011ws.mp3player.serviceLayer;
 
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
-import at.ac.tuwien.sepm2011ws.mp3player.serviceLayer.CoreInteractionService;
-import at.ac.tuwien.sepm2011ws.mp3player.serviceLayer.PlaylistService;
 
 public class ServiceFactory {
 	private static ServiceFactory instance;

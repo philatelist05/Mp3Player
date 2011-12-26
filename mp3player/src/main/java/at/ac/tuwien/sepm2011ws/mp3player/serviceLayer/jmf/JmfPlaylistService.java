@@ -14,6 +14,7 @@ import at.ac.tuwien.sepm2011ws.mp3player.persistanceLayer.db.DaoFactory;
 import at.ac.tuwien.sepm2011ws.mp3player.serviceLayer.CoreInteractionService;
 import at.ac.tuwien.sepm2011ws.mp3player.serviceLayer.PlayMode;
 import at.ac.tuwien.sepm2011ws.mp3player.serviceLayer.PlaylistService;
+import at.ac.tuwien.sepm2011ws.mp3player.serviceLayer.ServiceFactory;
 
 /**
  * @author klaus

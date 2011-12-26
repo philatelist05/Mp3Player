@@ -47,7 +47,7 @@ import at.ac.tuwien.sepm2011ws.mp3player.domainObjects.Song;
 import at.ac.tuwien.sepm2011ws.mp3player.serviceLayer.CoreInteractionService;
 import at.ac.tuwien.sepm2011ws.mp3player.serviceLayer.PlayMode;
 import at.ac.tuwien.sepm2011ws.mp3player.serviceLayer.PlaylistService;
-import at.ac.tuwien.sepm2011ws.mp3player.serviceLayer.jmf.ServiceFactory;
+import at.ac.tuwien.sepm2011ws.mp3player.serviceLayer.ServiceFactory;
 
 public class MainFrame extends JFrame implements ActionListener, Runnable {
 	/**
