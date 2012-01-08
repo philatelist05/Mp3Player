@@ -11,6 +11,8 @@ import at.ac.tuwien.sepm2011ws.mp3player.serviceLayer.PlayerListener;
 import at.ac.tuwien.sepm2011ws.mp3player.serviceLayer.PlaylistService;
 import at.ac.tuwien.sepm2011ws.mp3player.serviceLayer.ServiceFactory;
 
+import com.sun.jna.NativeLibrary;
+
 public class VlcjCoreInteractionService implements CoreInteractionService {
 	private final MediaPlayer mediaPlayer;
 	private Song currentSong;
@@ -23,10 +25,11 @@ public class VlcjCoreInteractionService implements CoreInteractionService {
 		String pluginPath = getPluginPath();
 
 		System.setProperty("jna.library.path", libPath);
+
 		this.isPaused = false;
 
 		MediaPlayerFactory factory = new MediaPlayerFactory(
-				new String[] { pluginPath });
+				new String[] { "--plugin-path=" + pluginPath });
 		this.mediaPlayer = factory.newMediaPlayer();
 
 		// mediaPlayer.addMediaPlayerEventListener(new MediaPlayerEventAdapter()
@@ -84,7 +87,7 @@ public class VlcjCoreInteractionService implements CoreInteractionService {
 
 	public void pause() {
 		mediaPlayer.pause();
-		this.isPaused = this.isPaused ? false : true;
+		this.isPaused = !this.isPaused;
 	}
 
 	public void playNext() {
