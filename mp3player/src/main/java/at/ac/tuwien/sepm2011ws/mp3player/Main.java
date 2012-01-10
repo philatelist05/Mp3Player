@@ -17,6 +17,8 @@ public class Main {
 	private static Logger logger = Logger.getLogger(Main.class);
 
 	public static void main(String[] args) {
+		System.setProperty("jna.nosys", "true");
+		
 		DOMConfigurator.configureAndWatch("src/main/resources/log4j-4.xml", 60 * 1000);
 		startMainFrame();
 	}
