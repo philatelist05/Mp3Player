@@ -65,7 +65,7 @@ public class MainFrame extends JFrame implements ActionListener, Runnable {
 	private JSlider volume;
 
 	private JSlider progress;
-	private JLabel lblDurationAt;
+	private JLabel lblPlayedTime;
 	private JLabel lblDuration;
 	private JLabel lblDurationSeperator;
 
@@ -194,20 +194,13 @@ public class MainFrame extends JFrame implements ActionListener, Runnable {
 		Song temp = cis.getCurrentSong();
 
 		progress.setEnabled(true);
-		lblDurationAt.setText(getMediaTimeAtInSeconds());
-		// lblCurrentStateSong.setVisible(true);
-		// lblDurationAt.setVisible(true);
-		// lblDuration.setVisible(true);
-		// lblDurationAt.setText(getMediaTimeAt(progress.getValue()));
-		if(getMediaTimeInSecondsInt() < 1000)  // bug in API
-			progress.setMaximum(getMediaTimeInSecondsInt());
+		lblPlayedTime.setText(getPlayedTimeInSeconds());
 		progress.setVisible(true);
 
 		lblCurrentStateSong.setVisible(true);
-		lblDurationAt.setVisible(true);
+		lblPlayedTime.setVisible(true);
 		lblDurationSeperator.setVisible(true);
 		lblDuration.setVisible(true);
-		// lblDuration.setText(getMediaTime());
 
 		createThread();
 
@@ -298,11 +291,11 @@ public class MainFrame extends JFrame implements ActionListener, Runnable {
 	public void setMediaTime(int value) {
 
 		if (cis.isPlaying() || cis.isPaused() == true)
-			cis.seekToSecond(value);
-		    // cis.seek(value);   // seek in percent
+			//cis.seekToSecond(value);
+		    cis.seek(value);   // seek in percent
 	}
 
-	public String getMediaTimeAt(int percent) {
+	public String getMediaTimeAt(double percent) {
 
 		double timeAt = cis.getDurationAt(percent);
 		String timeStringAt = String.format("%02.0f:%02.0f:%02.0f",
@@ -312,7 +305,7 @@ public class MainFrame extends JFrame implements ActionListener, Runnable {
 
 	}
 
-	public String getMediaTimeAtInSeconds() {
+	public String getPlayedTimeInSeconds() {
 		
 		double timeAt = cis.getPlayTimeInSeconds();
 		String timeStringAt = String.format("%02.0f:%02.0f:%02.0f",
@@ -322,16 +315,8 @@ public class MainFrame extends JFrame implements ActionListener, Runnable {
 
 	}
 
-	public int getMediaTimeAtInSecondsInt() {
-		return (int) cis.getPlayTimeInSeconds();
-	}
-	
-	public int getMediaTimeInSecondsInt(){
-		return (int) cis.getDuration();
-	}
-
 	public String getMediaTime() {
-		// cis = sf.getCoreInteractionService();
+
 		double timeAt = cis.getDuration();
 		String timeStringAt = String.format("%02.0f:%02.0f:%02.0f",
 				Math.floor(timeAt / 3600), Math.floor((timeAt % 3600) / 60),
@@ -343,11 +328,11 @@ public class MainFrame extends JFrame implements ActionListener, Runnable {
 	public void setProgressBartoDefault() {
 		progress.setValue(0);
 		progress.setEnabled(false);
-		lblDurationAt.setText(durationAtdefault);
+		lblPlayedTime.setText(durationAtdefault);
 		lblDuration.setText(durationdefault);
 		lblDuration.setVisible(false);
 		lblDurationSeperator.setVisible(false);
-		lblDurationAt.setVisible(false);
+		lblPlayedTime.setVisible(false);
 	}
 
 	/*
@@ -373,15 +358,9 @@ public class MainFrame extends JFrame implements ActionListener, Runnable {
 		while (!fred.isInterrupted()) {
 
 			Song temp = cis.getCurrentSong();
-			progress.setValue(getMediaTimeAtInSecondsInt());
-			// progress.setValue(cis.getPlayTime()); //for percent
-			if ( getMediaTimeInSecondsInt() < 1000 )	// bug API
-				progress.setMaximum(getMediaTimeInSecondsInt());
-			//System.out.println(getMediaTimeInSecondsInt());
-			lblDurationAt.setText(getMediaTimeAtInSeconds());
-			// lblDuration.setText(getMediaTimeAtInSeconds()); //for percent
-			lblDuration.setText(getMediaTimeAt(100));
-			// lblDuration.setText(getMediaTimeAt(100)); // in percent
+			progress.setValue((int)cis.getPlayTime());
+			lblPlayedTime.setText(getPlayedTimeInSeconds());
+			lblDuration.setText(getMediaTimeAt(100)); // in percent
 
 			if (cis.isPlaying()) {
 				lblCurrentStateSong.setText("Currently playing: "
@@ -610,7 +589,7 @@ public class MainFrame extends JFrame implements ActionListener, Runnable {
 			}
 
 			public void mouseClicked(MouseEvent evt) {
-				//setMediaTime(progress.getValue());
+				setMediaTime(progress.getValue());
 			}
 			public void mouseDragged(MouseEvent evt) {
 				setMediaTime(progress.getValue());
@@ -628,11 +607,10 @@ public class MainFrame extends JFrame implements ActionListener, Runnable {
 				"flowx,cell 0 2 4 1,alignx left,aligny center");
 		progress.setEnabled(false);
 
-		// lblDurationAt = new JLabel(getMediaTimeAt(progress.getValue()));
 		
-		lblDurationAt = new JLabel("");
-		playerPanel.add(lblDurationAt, "cell 1 4,alignx left, aligny center");
-		lblDurationAt.setVisible(false);
+		lblPlayedTime = new JLabel("");
+		playerPanel.add(lblPlayedTime, "cell 1 4,alignx left, aligny center");
+		lblPlayedTime.setVisible(false);
 
 		// lblDurationSeperator
 		lblDurationSeperator = new JLabel("/");

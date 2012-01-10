@@ -138,7 +138,7 @@ public class VlcjCoreInteractionService implements CoreInteractionService {
 
 	public void seek(double percent) {
 		if (this.mediaPlayer.isSeekable())
-			this.mediaPlayer.setTime((long) getDurationAt(percent));
+			this.mediaPlayer.setTime((long) getDurationAt(percent)*1000);
 
 	}
 
@@ -148,7 +148,7 @@ public class VlcjCoreInteractionService implements CoreInteractionService {
 					"Amount of seconds out of song duration");
 
 		if (this.mediaPlayer.isSeekable()) {
-			this.mediaPlayer.setTime(seconds);
+			this.mediaPlayer.setTime(seconds*1000);
 		}
 	}
 
@@ -161,18 +161,18 @@ public class VlcjCoreInteractionService implements CoreInteractionService {
 			throw new IllegalArgumentException(
 					"Duration percentage out of range");
 
-		return this.mediaPlayer.getLength() * (percent / 100);
+		return (this.mediaPlayer.getLength()/1000) *  (percent/100);
 	}
 
 	public double getPlayTime() {
 		double duration = getDuration();
-		double playTime = this.mediaPlayer.getLength();
-
+		double playTime = this.mediaPlayer.getTime()/1000;
 		return playTime * 100 / duration;
 	}
 
 	public double getPlayTimeInSeconds() {
-		return getDurationAt(getPlayTime());
+		return this.mediaPlayer.getTime()/1000;
+		//return getDurationAt(getPlayTime());
 	}
 
 	public Song getCurrentSong() {
