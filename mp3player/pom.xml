@@ -61,6 +61,13 @@
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 	</properties>
 
+	<repositories>
+		<repository>
+			<id>lib</id>
+			<url>file://${project.basedir}/lib</url>
+		</repository>
+	</repositories>
+
 	<dependencies>
 		<dependency>
 			<groupId>junit</groupId>
@@ -101,6 +108,21 @@
 			<groupId>net.java.dev.jna</groupId>
 			<artifactId>jna</artifactId>
 			<version>3.4.0</version>
+		</dependency>
+		<dependency>
+			<groupId>com.vlcj</groupId>
+			<artifactId>vlcj</artifactId>
+			<version>1.1.5.1</version>
+		</dependency>
+		<dependency>
+			<groupId>net.sourceforge.abbot</groupId>
+			<artifactId>abbot</artifactId>
+			<version>1.2.0</version>
+		</dependency>
+		<dependency>
+			<groupId>last.fm</groupId>
+			<artifactId>bindings</artifactId>
+			<version>0.1.0</version>
 		</dependency>
 	</dependencies>
 	<build>
