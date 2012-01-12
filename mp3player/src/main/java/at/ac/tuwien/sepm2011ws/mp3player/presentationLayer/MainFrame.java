@@ -11,6 +11,7 @@ import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.awt.event.MouseMotionListener;
 
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowStateListener;
@@ -202,8 +203,10 @@ public class MainFrame extends JFrame implements ActionListener, Runnable {
 		lblPlayedTime.setVisible(true);
 		lblDurationSeperator.setVisible(true);
 		lblDuration.setVisible(true);
+		if (fred == null || fred.isAlive() == false) {
+			createThread();
 
-		createThread();
+		}
 
 		if (cis.isPlaying()) {
 			lblCurrentStateSong.setText("Currently playing: "
@@ -221,8 +224,12 @@ public class MainFrame extends JFrame implements ActionListener, Runnable {
 	/**
 	 * Sends the play Song Signal to the ServiceLayer
 	 */
+
 	public void pauseplay() {
 		cis.playPause();
+		if (fred == null || fred.isAlive() == false)
+			createThread();
+
 		Song temp = cis.getCurrentSong();
 		progress.setVisible(true);
 		if (cis.isPlaying()) {
@@ -235,9 +242,15 @@ public class MainFrame extends JFrame implements ActionListener, Runnable {
 
 	/**
 	 * Sends the pause Song action to the ServiceLayer
+	 * 
+	 * @throws InterruptedException
 	 */
-	public void pause() {
+	public void pause() throws InterruptedException {
 		cis.pause();
+		if (fred != null) {
+			fred.interrupt();
+		}
+
 		progress.setVisible(true);
 		if (cis.isPaused()) {
 			lblCurrentStateSong.setText(lblCurrentStateSong.getText().concat(
@@ -292,8 +305,8 @@ public class MainFrame extends JFrame implements ActionListener, Runnable {
 	public void setMediaTime(int value) {
 
 		if (cis.isPlaying() || cis.isPaused() == true)
-			//cis.seekToSecond(value);
-		    cis.seek(value);   // seek in percent
+			// cis.seekToSecond(value);
+			cis.seek(value); // seek in percent
 	}
 
 	public String getMediaTimeAt(double percent) {
@@ -307,7 +320,7 @@ public class MainFrame extends JFrame implements ActionListener, Runnable {
 	}
 
 	public String getPlayedTimeInSeconds() {
-		
+
 		double timeAt = cis.getPlayTimeInSeconds();
 		String timeStringAt = String.format("%02.0f:%02.0f:%02.0f",
 				Math.floor(timeAt / 3600), Math.floor((timeAt % 3600) / 60),
@@ -347,7 +360,7 @@ public class MainFrame extends JFrame implements ActionListener, Runnable {
 	 * }
 	 */
 
-	private Thread fred; // ;-) @Johannes: XD
+	private Thread fred;
 
 	private void createThread() {
 		fred = new Thread(this);
@@ -359,7 +372,7 @@ public class MainFrame extends JFrame implements ActionListener, Runnable {
 		while (!fred.isInterrupted()) {
 
 			Song temp = cis.getCurrentSong();
-			progress.setValue((int)cis.getPlayTime());
+			progress.setValue((int) cis.getPlayTime());
 			lblPlayedTime.setText(getPlayedTimeInSeconds());
 			lblDuration.setText(getMediaTimeAt(100)); // in percent
 
@@ -592,8 +605,21 @@ public class MainFrame extends JFrame implements ActionListener, Runnable {
 			public void mouseClicked(MouseEvent evt) {
 				setMediaTime(progress.getValue());
 			}
+
 			public void mouseDragged(MouseEvent evt) {
 				setMediaTime(progress.getValue());
+			}
+		});
+
+		progress.addMouseMotionListener(new MouseMotionListener() {
+
+			public void mouseMoved(MouseEvent e) {
+
+			}
+
+			public void mouseDragged(MouseEvent e) {
+				setMediaTime(progress.getValue());
+				// System.out.println(progress.getValue());
 			}
 		});
 
@@ -608,7 +634,6 @@ public class MainFrame extends JFrame implements ActionListener, Runnable {
 				"flowx,cell 0 2 4 1,alignx left,aligny center");
 		progress.setEnabled(false);
 
-		
 		lblPlayedTime = new JLabel("");
 		playerPanel.add(lblPlayedTime, "cell 1 4,alignx left, aligny center");
 		lblPlayedTime.setVisible(false);
@@ -727,10 +752,10 @@ public class MainFrame extends JFrame implements ActionListener, Runnable {
 
 		JMenuItem mntmNew = new JMenuItem("New...");
 		mnPlaylist.add(mntmNew);
-		
+
 		JSeparator separator_2 = new JSeparator();
 		mnPlaylist.add(separator_2);
-		
+
 		JMenuItem mntmImport = new JMenuItem("Import...");
 		mnPlaylist.add(mntmImport);
 		mntmImport.addActionListener(this);
@@ -777,7 +802,12 @@ public class MainFrame extends JFrame implements ActionListener, Runnable {
 		}
 
 		else if (e.getActionCommand().equals("pause")) {
-			pause();
+			try {
+				pause();
+			} catch (InterruptedException e1) {
+				// TODO Auto-generated catch block
+				logger.error(e1);
+			}
 		}
 
 		else if (e.getActionCommand().equals("next")) {
