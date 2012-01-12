@@ -55,6 +55,7 @@ public class MainFrame extends JFrame implements ActionListener, Runnable {
 	 */
 	private static final long serialVersionUID = -959319978002415594L;
 	private static Logger logger = Logger.getLogger(MainFrame.class);
+	private Dialog dialog;
 	private JTable songTable;
 	private SongTableModel songmodel = new SongTableModel(new String[] {
 			"Track Nr.", "Title", "Artist", "Album", "Year", "Genre",
@@ -705,11 +706,15 @@ public class MainFrame extends JFrame implements ActionListener, Runnable {
 		JMenu mnLibrary = new JMenu("Library");
 		mnFile.add(mnLibrary);
 
-		JMenuItem mntmAddFiles = new JMenuItem("Add Files...");
+		JMenuItem mntmAddFiles = new JMenuItem("Add File...");
+		mntmAddFiles.addActionListener(this);
+		mntmAddFiles.setActionCommand("addfile");
 		mnLibrary.add(mntmAddFiles);
 
-		JMenuItem mntmAddFolders = new JMenuItem("Add Folders...");
+		JMenuItem mntmAddFolders = new JMenuItem("Add Folder...");
 		mnLibrary.add(mntmAddFolders);
+		mntmAddFolders.addActionListener(this);
+		mntmAddFolders.setActionCommand("addfolder");
 
 		JSeparator separator_1 = new JSeparator();
 		mnLibrary.add(separator_1);
@@ -728,9 +733,13 @@ public class MainFrame extends JFrame implements ActionListener, Runnable {
 		
 		JMenuItem mntmImport = new JMenuItem("Import...");
 		mnPlaylist.add(mntmImport);
+		mntmImport.addActionListener(this);
+		mntmImport.setActionCommand("importplaylist");
 
 		JMenuItem mntmExport = new JMenuItem("Export...");
 		mnPlaylist.add(mntmExport);
+		mntmExport.addActionListener(this);
+		mntmExport.setActionCommand("exportplaylist");
 		
 		JMenuItem mntmSettings = new JMenuItem("Settings");
 		mnFile.add(mntmSettings);
@@ -773,6 +782,26 @@ public class MainFrame extends JFrame implements ActionListener, Runnable {
 
 		else if (e.getActionCommand().equals("next")) {
 			next();
+		}
+		
+		else if (e.getActionCommand().equals("addfile")) {
+			dialog = new Dialog ();
+			dialog.addFile();
+		}
+		
+		else if (e.getActionCommand().equals("addfolder")) {
+			dialog = new Dialog ();
+			dialog.addFolder();
+		}
+		
+		else if (e.getActionCommand().equals("importplaylist")) {
+			dialog = new Dialog ();
+			dialog.importPlaylist();
+		}
+		
+		else if (e.getActionCommand().equals("exportplaylist")) {
+			dialog = new Dialog ();
+			dialog.exportPlaylist();
 		}
 	}
 }
