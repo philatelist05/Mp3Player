@@ -12,6 +12,7 @@ import at.ac.tuwien.sepm2011ws.mp3player.serviceLayer.PlaylistService;
 import at.ac.tuwien.sepm2011ws.mp3player.serviceLayer.ServiceFactory;
 
 import com.sun.jna.NativeLibrary;
+import com.sun.jna.Platform;
 
 public class VlcjCoreInteractionService implements CoreInteractionService {
 	private final MediaPlayer mediaPlayer;
@@ -47,16 +48,24 @@ public class VlcjCoreInteractionService implements CoreInteractionService {
 	private String getLibPath() {
 		if (RuntimeUtil.isMac())
 			return new File("lib/vlc/osx/lib").getAbsolutePath();
-		else if (RuntimeUtil.isWindows())
-			return new File("lib/vlc/windows/lib").getAbsolutePath();
+		else if (RuntimeUtil.isWindows()) {
+		    if (Platform.is64Bit())
+			return new File("lib/vlc/windows/64Bit/lib").getAbsolutePath();
+		    
+		    return new File("lib/vlc/windows/32Bit/lib").getAbsolutePath();
+		}
 		return new File("lib/vlc/linux/lib").getAbsolutePath();
 	}
 
 	private String getPluginPath() {
 		if (RuntimeUtil.isMac())
 			return new File("lib/vlc/osx/plugins").getAbsolutePath();
-		else if (RuntimeUtil.isWindows())
-			return new File("lib/vlc/windows/plugins").getAbsolutePath();
+		else if (RuntimeUtil.isWindows()) {
+		    if (Platform.is64Bit())
+			return new File("lib/vlc/windows/64Bit/plugins").getAbsolutePath();
+		    
+		    return new File("lib/vlc/windows/32Bit/plugins").getAbsolutePath();
+		}
 		return new File("lib/vlc/linux/plugins").getAbsolutePath();
 	}
 
