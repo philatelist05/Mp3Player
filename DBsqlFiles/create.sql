@@ -4,13 +4,14 @@ CREATE SEQUENCE song_sequence
 CREATE TABLE Song (
   ID		INTEGER		PRIMARY KEY DEFAULT nextval('song_sequence'),
   title		VARCHAR(255)	NOT NULL,
-  duration      INTEGER	NOT NULL,
+  duration	INTEGER		NOT NULL,
   rating 	NUMERIC(2)	NOT NULL,
   playcount	INTEGER		NOT NULL,
   year		INTEGER		NOT NULL,
   path  	VARCHAR(512)	NOT NULL,
   artist  	VARCHAR(255)	NOT NULL,
   genre		VARCHAR(255),
+  lyric		TEXT,
   CHECK (rating BETWEEN -1 AND 10)
 );
 ALTER SEQUENCE song_sequence OWNED BY Song.ID;
@@ -43,6 +44,28 @@ CREATE TABLE is_on (
 
 -- contains (playlist:Playlist.ID, song:Song.ID)
 CREATE TABLE contains (
+  position	INTEGER CHECK (position >= 0),
   playlist	INTEGER	REFERENCES Playlist(ID) ON DELETE CASCADE,
-  song		INTEGER	REFERENCES Song(ID) ON DELETE CASCADE
+  song		INTEGER	REFERENCES Song(ID) ON DELETE CASCADE,
+  PRIMARY KEY (position, playlist, song)
 );
+
+
+-- Trigger
+
+CREATE LANGUAGE plpgsql;
+
+CREATE OR REPLACE FUNCTION songExistingCheck () RETURNS TRIGGER AS $$
+BEGIN
+	-- If the path of the new line is a new song file, add it, otherwise omit it.
+	IF NEW.path NOT IN (SELECT path from song)
+	THEN
+		RETURN NEW;
+	ELSE
+		RETURN NULL;
+	END IF;
+END;
+$$ LANGUAGE plpgsql;
+
+CREATE TRIGGER songExistingCheck BEFORE INSERT ON song
+  FOR EACH ROW EXECUTE PROCEDURE songExistingCheck();
