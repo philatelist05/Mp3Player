@@ -7,6 +7,7 @@ import java.util.List;
 
 import at.ac.tuwien.sepm2011ws.mp3player.domainObjects.Playlist;
 import at.ac.tuwien.sepm2011ws.mp3player.domainObjects.Song;
+import at.ac.tuwien.sepm2011ws.mp3player.persistanceLayer.DataAccessException;
 
 /**
  * @author klaus
@@ -146,7 +147,8 @@ public interface PlaylistService {
 	 * Get the Library playlist
 	 * 
 	 * @return a playlist with all songs of the library
+	 * @throws DataAccessException 
 	 */
-	public Playlist getLibrary();
+	public Playlist getLibrary() throws DataAccessException;
 
 }

@@ -11,6 +11,7 @@ import java.util.List;
 import javax.sql.DataSource;
 
 import at.ac.tuwien.sepm2011ws.mp3player.domainObjects.Song;
+import at.ac.tuwien.sepm2011ws.mp3player.persistanceLayer.DataAccessException;
 import at.ac.tuwien.sepm2011ws.mp3player.persistanceLayer.SongDao;
 
 /**
@@ -28,7 +29,7 @@ class DbSongDao implements SongDao {
 	private PreparedStatement updateStmt;
 	private PreparedStatement deleteStmt;
 
-	DbSongDao(DataSource source) {
+	DbSongDao(DataSource source) throws DataAccessException {
 
 		try {
 
@@ -57,12 +58,11 @@ class DbSongDao implements SongDao {
 					+ "WHERE id = ?;");
 
 		} catch (SQLException e) {
-			// TODO Exception throwing instead of outputting
-			e.printStackTrace();
+			throw new DataAccessException(e.getMessage());
 		}
 	}
 
-	public int create(Song s) {
+	public int create(Song s) throws DataAccessException {
 		ResultSet result = null;
 		int id = -1;
 
@@ -97,8 +97,7 @@ class DbSongDao implements SongDao {
 			}
 
 		} catch (SQLException e) {
-			// TODO Exception throwing instead of outputting
-			e.printStackTrace();
+			throw new DataAccessException(e.getMessage());
 		} finally {
 			try {
 				if (result != null)
@@ -110,7 +109,7 @@ class DbSongDao implements SongDao {
 		return id;
 	}
 
-	public void update(Song s) {
+	public void update(Song s) throws DataAccessException {
 
 		if (s == null) {
 			throw new IllegalArgumentException("Song must not be null");
@@ -131,12 +130,12 @@ class DbSongDao implements SongDao {
 			updateStmt.executeUpdate();
 
 		} catch (SQLException e) {
-			e.printStackTrace();
+			throw new DataAccessException(e.getMessage());
 		}
 
 	}
 
-	public void delete(int id) {
+	public void delete(int id) throws DataAccessException {
 
 		if (id < 0) {
 			throw new IllegalArgumentException("ID must be greater or equal 0");
@@ -147,13 +146,12 @@ class DbSongDao implements SongDao {
 			deleteStmt.setInt(1, id);
 			deleteStmt.executeUpdate();
 		} catch (SQLException e) {
-			// TODO Exception throwing instead of outputting
-			e.printStackTrace();
+			throw new DataAccessException(e.getMessage());
 		}
 
 	}
 
-	public Song read(int id) {
+	public Song read(int id) throws DataAccessException {
 		ResultSet result = null;
 
 		if (id < 0) {
@@ -185,9 +183,7 @@ class DbSongDao implements SongDao {
 			result.close();
 
 		} catch (SQLException e) {
-			// TODO Exception throwing instead of outputting
-			e.printStackTrace();
-			return null;
+			throw new DataAccessException(e.getMessage());
 		} finally {
 			try {
 				if (result != null)
@@ -199,7 +195,7 @@ class DbSongDao implements SongDao {
 		return s;
 	}
 
-	public List<Song> readAll() {
+	public List<Song> readAll() throws DataAccessException {
 		ResultSet result = null;
 		ArrayList<Song> sList = new ArrayList<Song>();
 		Song s;
@@ -226,9 +222,7 @@ class DbSongDao implements SongDao {
 			}
 			result.close();
 		} catch (SQLException e) {
-			// TODO Exception throwing instead of outputting
-			e.printStackTrace();
-			return null;
+			throw new DataAccessException(e.getMessage());
 		} finally {
 			try {
 				if (result != null)

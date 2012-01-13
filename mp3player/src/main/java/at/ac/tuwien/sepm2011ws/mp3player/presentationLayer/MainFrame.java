@@ -45,6 +45,7 @@ import org.apache.log4j.Logger;
 
 import at.ac.tuwien.sepm2011ws.mp3player.domainObjects.Playlist;
 import at.ac.tuwien.sepm2011ws.mp3player.domainObjects.Song;
+import at.ac.tuwien.sepm2011ws.mp3player.persistanceLayer.DataAccessException;
 import at.ac.tuwien.sepm2011ws.mp3player.serviceLayer.CoreInteractionService;
 import at.ac.tuwien.sepm2011ws.mp3player.serviceLayer.PlayMode;
 import at.ac.tuwien.sepm2011ws.mp3player.serviceLayer.PlaylistService;
@@ -116,12 +117,16 @@ public class MainFrame extends JFrame implements ActionListener, Runnable {
 	public void getWholeLibrary() {
 		Playlist library;
 
-		// Holen aller Songs der Library
-		library = ps.getLibrary();
-		// Curretn Playlist setzen
-		cis.setCurrentPlaylist(library);
-		// Einfügen der Daten in dlTable
-		fillSongTable(library);
+		try {
+			// Holen aller Songs der Library
+			library = ps.getLibrary();
+			// Curretn Playlist setzen
+			cis.setCurrentPlaylist(library);
+			// Einfügen der Daten in dlTable
+			fillSongTable(library);
+		} catch (DataAccessException e) {
+			// TODO Display the error and handle the exception
+		}
 	}
 
 	/**
@@ -765,7 +770,7 @@ public class MainFrame extends JFrame implements ActionListener, Runnable {
 		mnPlaylist.add(mntmExport);
 		mntmExport.addActionListener(this);
 		mntmExport.setActionCommand("exportplaylist");
-		
+
 		JMenuItem mntmSettings = new JMenuItem("Settings");
 		mnFile.add(mntmSettings);
 
@@ -805,7 +810,6 @@ public class MainFrame extends JFrame implements ActionListener, Runnable {
 			try {
 				pause();
 			} catch (InterruptedException e1) {
-				// TODO Auto-generated catch block
 				logger.error(e1);
 			}
 		}
@@ -813,24 +817,24 @@ public class MainFrame extends JFrame implements ActionListener, Runnable {
 		else if (e.getActionCommand().equals("next")) {
 			next();
 		}
-		
+
 		else if (e.getActionCommand().equals("addfile")) {
-			dialog = new Dialog ();
+			dialog = new Dialog();
 			dialog.addFile();
 		}
-		
+
 		else if (e.getActionCommand().equals("addfolder")) {
-			dialog = new Dialog ();
+			dialog = new Dialog();
 			dialog.addFolder();
 		}
-		
+
 		else if (e.getActionCommand().equals("importplaylist")) {
-			dialog = new Dialog ();
+			dialog = new Dialog();
 			dialog.importPlaylist();
 		}
-		
+
 		else if (e.getActionCommand().equals("exportplaylist")) {
-			dialog = new Dialog ();
+			dialog = new Dialog();
 			dialog.exportPlaylist();
 		}
 	}

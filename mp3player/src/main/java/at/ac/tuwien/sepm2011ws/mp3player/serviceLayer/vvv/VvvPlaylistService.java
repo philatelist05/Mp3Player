@@ -9,6 +9,7 @@ import org.apache.log4j.Logger;
 
 import at.ac.tuwien.sepm2011ws.mp3player.domainObjects.Playlist;
 import at.ac.tuwien.sepm2011ws.mp3player.domainObjects.Song;
+import at.ac.tuwien.sepm2011ws.mp3player.persistanceLayer.DataAccessException;
 import at.ac.tuwien.sepm2011ws.mp3player.persistanceLayer.SongDao;
 import at.ac.tuwien.sepm2011ws.mp3player.persistanceLayer.db.DaoFactory;
 import at.ac.tuwien.sepm2011ws.mp3player.serviceLayer.PlaylistService;
@@ -24,7 +25,7 @@ class VvvPlaylistService implements PlaylistService {
 	public VvvPlaylistService() {
 	}
 
-	public Playlist getLibrary() {
+	public Playlist getLibrary() throws DataAccessException {
 		Playlist lib = new Playlist("Library");
 		lib.setReadonly(true);
 
