@@ -119,7 +119,7 @@ public class MainFrame extends JFrame implements ActionListener, Runnable {
 		// Holen aller Songs der Library
 		library = ps.getLibrary();
 		// Curretn Playlist setzen
-		ps.setCurrentPlaylist(library);
+		cis.setCurrentPlaylist(library);
 		// Einfügen der Daten in dlTable
 		fillSongTable(library);
 	}
@@ -405,11 +405,11 @@ public class MainFrame extends JFrame implements ActionListener, Runnable {
 	 */
 	private void setMode() {
 		if (!chckbxRepeat.isSelected() && !chckbxShuffle.isSelected())
-			ps.setPlayMode(PlayMode.NORMAL);
+			cis.setPlayMode(PlayMode.NORMAL);
 		else if (chckbxRepeat.isSelected() && !chckbxShuffle.isSelected())
-			ps.setPlayMode(PlayMode.REPEAT);
+			cis.setPlayMode(PlayMode.REPEAT);
 		else if (!chckbxRepeat.isSelected() && chckbxShuffle.isSelected())
-			ps.setPlayMode(PlayMode.SHUFFLE);
+			cis.setPlayMode(PlayMode.SHUFFLE);
 	}
 
 	/**
@@ -429,7 +429,7 @@ public class MainFrame extends JFrame implements ActionListener, Runnable {
 		getWholeLibrary();
 
 		cis.setVolume(volume.getValue());
-		ps.setPlayMode(PlayMode.NORMAL);
+		cis.setPlayMode(PlayMode.NORMAL);
 
 		// setExtendedState(JFrame.MAXIMIZED_BOTH);
 

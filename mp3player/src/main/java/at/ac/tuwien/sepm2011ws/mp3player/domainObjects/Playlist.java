@@ -67,7 +67,8 @@ public class Playlist {
 	}
 
 	/**
-	 * @param id the id to set
+	 * @param id
+	 *            the id to set
 	 */
 	public void setId(int id) {
 		if (id < 0)
@@ -115,10 +116,34 @@ public class Playlist {
 	}
 
 	/**
-	 * @param readonly the readonly to set
+	 * @param readonly
+	 *            the readonly to set
 	 */
 	public void setReadonly(boolean isReadonly) {
 		this.readonly = isReadonly;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (obj != null && this.getClass() == obj.getClass()) {
+			Playlist other = (Playlist) obj;
+
+			if (!(this.readonly == other.readonly && this.id == other.id && this.title == other.title))
+				return false;
+
+			for (int i = 0; i < this.songs.size(); i++) {
+				if (i >= other.songs.size() || !this.songs.get(i).equals(other.songs.get(i)))
+					return false;
+			}
+			
+			return true;
+		}
+		return false;
+	}
+
+	@Override
+	public String toString() {
+		return this.title;
 	}
 
 }

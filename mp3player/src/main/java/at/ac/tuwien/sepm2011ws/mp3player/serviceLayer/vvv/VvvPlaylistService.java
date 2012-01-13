@@ -11,10 +11,7 @@ import at.ac.tuwien.sepm2011ws.mp3player.domainObjects.Playlist;
 import at.ac.tuwien.sepm2011ws.mp3player.domainObjects.Song;
 import at.ac.tuwien.sepm2011ws.mp3player.persistanceLayer.SongDao;
 import at.ac.tuwien.sepm2011ws.mp3player.persistanceLayer.db.DaoFactory;
-import at.ac.tuwien.sepm2011ws.mp3player.serviceLayer.CoreInteractionService;
-import at.ac.tuwien.sepm2011ws.mp3player.serviceLayer.PlayMode;
 import at.ac.tuwien.sepm2011ws.mp3player.serviceLayer.PlaylistService;
-import at.ac.tuwien.sepm2011ws.mp3player.serviceLayer.ServiceFactory;
 
 /**
  * @author klaus
@@ -23,11 +20,8 @@ import at.ac.tuwien.sepm2011ws.mp3player.serviceLayer.ServiceFactory;
 class VvvPlaylistService implements PlaylistService {
 	private static final Logger logger = Logger
 			.getLogger(VvvPlaylistService.class);
-	private Playlist currentPlaylist;
-	private PlayMode playMode;
 
 	public VvvPlaylistService() {
-		this.playMode = PlayMode.NORMAL;
 	}
 
 	public Playlist getLibrary() {
@@ -41,132 +35,74 @@ class VvvPlaylistService implements PlaylistService {
 		return lib;
 	}
 
-	public void setPlayMode(PlayMode playMode) {
-		logger.info("Current PlayMode set to: " + playMode);
-		this.playMode = playMode;
-	}
-
-	public Playlist getCurrentPlaylist() {
-		return this.currentPlaylist;
-	}
-
-	public void setCurrentPlaylist(Playlist playlist) {
-		this.currentPlaylist = playlist;
-	}
-
-	public PlayMode getPlayMode() {
-		return this.playMode;
-	}
-
-	/**
-	 * Gets the current song index
-	 * 
-	 * @return the index of the current song or -1 if it is not in the current
-	 *         playlist
-	 */
-	private int getCurrentSongIndex() {
-		if(this.currentPlaylist == null) {
-			return -1;
-		} else if(this.currentPlaylist.getSongs() == null) {
-			return -1;
-		}
-		
-		ServiceFactory sf = ServiceFactory.getInstance();
-		CoreInteractionService cs = sf.getCoreInteractionService();
-
-		Song current = cs.getCurrentSong();
-
-		List<Song> songs = this.currentPlaylist.getSongs();
-
-		return songs.indexOf(current);
-	}
-
-	public Song getNextSong() {
-		if(this.currentPlaylist == null) {
-			return null;
-		} else if(this.currentPlaylist.getSongs() == null) {
-			return null;
-		}
-		
-		List<Song> songs = this.currentPlaylist.getSongs();
-		int maxIndex = songs.size() - 1;
-		int index = 0;
-
-		switch (this.playMode) {
-		case NORMAL:
-			index = getCurrentSongIndex() + 1;
-			if (index > maxIndex) {
-				// If the last song was the last of the playlist, stay at this
-				// song
-				index = maxIndex;
-			}
-			break;
-		case REPEAT:
-			index = getCurrentSongIndex() + 1;
-			if (index > maxIndex) {
-				// If the last song was the last of the playlist, the next song
-				// is the first of the playlist
-				index = 0;
-			}
-			break;
-		case SHUFFLE:
-			index = (int) Math.floor(Math.random() * maxIndex);
-			break;
-		default:
-			index = 0;
-			break;
-		}
-
-		if (index >= 0 && index <= maxIndex) {
-			return songs.get(index);
-		}
+	public Playlist importPlaylist(String path) {
+		// TODO Auto-generated method stub
 		return null;
 	}
 
-	public Song getPreviousSong() {
-		if(this.currentPlaylist == null) {
-			return null;
-		} else if(this.currentPlaylist.getSongs() == null) {
-			return null;
-		}
+	public void exportPlaylist(String path, Playlist playlist) {
+		// TODO Auto-generated method stub
 		
-		List<Song> songs = this.currentPlaylist.getSongs();
-		int maxIndex = songs.size() - 1;
-		int index = 0;
+	}
 
-		switch (this.playMode) {
-		case NORMAL:
-			index = getCurrentSongIndex() - 1;
-			if (index < 0) {
-				// If the last song was not in the playlist or it was the first
-				// of the playlist, the next song is the first
-				index = 0;
-			}
-			break;
-		case REPEAT:
-			index = getCurrentSongIndex() - 1;
-			if (index == -1) {
-				// If the last song was the first of the playlist, repeat
-				// backwards. The previous song is the last song of the playlist
-				index = maxIndex;
-			} else if (index < -1) {
-				// If the last song was not in the playlist, the previous song
-				// is the first of the playlist
-				index = 0;
-			}
-			break;
-		case SHUFFLE:
-			index = (int) Math.floor(Math.random() * maxIndex);
-			break;
-		default:
-			index = 0;
-			break;
-		}
-
-		if (index >= 0 && index <= maxIndex) {
-			return songs.get(index);
-		}
+	public List<Playlist> getAllPlaylists() {
+		// TODO Auto-generated method stub
 		return null;
+	}
+
+	public void addFolder(String folder, Playlist playlist) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	public void addSongs(String[] paths, Playlist playlist) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	public void deleteSong(Song song, Playlist playlist) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	public Playlist createPlaylist(String name) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	public void deletePlaylist(Playlist playlist) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	public void updatePlaylist(Playlist playlist) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	public void renamePlaylist(Playlist playlist, String name) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	public Playlist getTopRated() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	public Playlist getTopPlayed() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	public Playlist globalSearch(String pattern) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	public void checkSongPaths() {
+		// TODO Auto-generated method stub
+		
 	}
 
 }
