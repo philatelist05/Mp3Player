@@ -21,7 +21,7 @@ public interface SongDao {
 	 * @return The generated id of the song.
 	 * @throws IllegalArgumentException
 	 */
-	public int create(Song s) throws IllegalArgumentException;
+	public int create(Song s);
 	
 	/**
 	 * Updates a song.
@@ -31,7 +31,7 @@ public interface SongDao {
 	 *            song.
 	 * @throws IllegalArgumentException
 	 */
-	public void update(Song s) throws IllegalArgumentException;
+	public void update(Song s);
 
 	/**
 	 * Deletes a song.
@@ -40,7 +40,7 @@ public interface SongDao {
 	 *            The id of the song which should be deleted.
 	 * @throws IllegalArgumentException
 	 */
-	public void delete(int id) throws IllegalArgumentException;
+	public void delete(int id);
 	
 
 	/**
@@ -51,7 +51,7 @@ public interface SongDao {
 	 * @return The song from the DB.
 	 * @throws IllegalArgumentException
 	 */
-	public Song read(int id) throws IllegalArgumentException;
+	public Song read(int id);
 
 	/**
 	 * Reads all songs from the DB.

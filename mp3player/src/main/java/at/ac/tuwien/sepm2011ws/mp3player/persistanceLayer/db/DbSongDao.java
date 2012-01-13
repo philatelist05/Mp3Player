@@ -35,22 +35,24 @@ class DbSongDao implements SongDao {
 			con = source.getConnection();
 			createStmt = con.prepareStatement("INSERT INTO song ( "
 					+ "title, artist, path, year, duration, "
-					+ "playcount, rating, genre) "
-					+ "VALUES (?, ?, ?, ?, ?, ?, ?, ?);",
+					+ "playcount, rating, genre, pathOk) "
+					+ "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?);",
 					Statement.RETURN_GENERATED_KEYS);
 			createIsOnStmt = con.prepareStatement("INSERT INTO is_on ( "
 					+ "song, album) " + "VALUES (?, ?);");
-			readStmt = con.prepareStatement("SELECT "
-					+ "title, artist, path, year, "
-					+ "duration, playcount, rating, genre, "
-					+ "album FROM song left join is_on on id = song WHERE id=?;");
+			readStmt = con
+					.prepareStatement("SELECT "
+							+ "title, artist, path, year, "
+							+ "duration, playcount, rating, genre, pathOk, "
+							+ "album FROM song left join is_on on id = song WHERE id=?;");
 			readAllStmt = con.prepareStatement("SELECT id, "
 					+ "title, artist, path, year, "
-					+ "duration, playcount, rating, genre, "
+					+ "duration, playcount, rating, genre, pathOk, "
 					+ "album FROM song left join is_on on id = song;");
 			updateStmt = con.prepareStatement("UPDATE song SET "
 					+ "title=?, artist=?, path=?, year=?, duration=?, "
-					+ "playcount=?, rating=?, genre=? " + "WHERE id = ?;");
+					+ "playcount=?, rating=?, genre=?, pathOk=? "
+					+ "WHERE id = ?;");
 			deleteStmt = con.prepareStatement("DELETE FROM song "
 					+ "WHERE id = ?;");
 
@@ -60,7 +62,7 @@ class DbSongDao implements SongDao {
 		}
 	}
 
-	public int create(Song s) throws IllegalArgumentException {
+	public int create(Song s) {
 		ResultSet result = null;
 		int id = -1;
 
@@ -76,6 +78,7 @@ class DbSongDao implements SongDao {
 			createStmt.setInt(6, s.getPlaycount());
 			createStmt.setInt(7, s.getRating());
 			createStmt.setString(8, s.getGenre());
+			createStmt.setBoolean(9, s.isPathOk());
 
 			createStmt.executeUpdate();
 
@@ -107,12 +110,12 @@ class DbSongDao implements SongDao {
 		return id;
 	}
 
-	public void update(Song s) throws IllegalArgumentException {
-		
-		if(s == null) {
+	public void update(Song s) {
+
+		if (s == null) {
 			throw new IllegalArgumentException("Song must not be null");
 		}
-		
+
 		try {
 			updateStmt.setString(1, s.getTitle());
 			updateStmt.setString(2, s.getArtist());
@@ -122,17 +125,18 @@ class DbSongDao implements SongDao {
 			updateStmt.setInt(6, s.getPlaycount());
 			updateStmt.setInt(7, s.getRating());
 			updateStmt.setString(8, s.getGenre());
-			updateStmt.setInt(9, s.getId());
+			updateStmt.setBoolean(9, s.isPathOk());
+			updateStmt.setInt(10, s.getId());
 
 			updateStmt.executeUpdate();
-			
+
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
 
 	}
 
-	public void delete(int id) throws IllegalArgumentException {
+	public void delete(int id) {
 
 		if (id < 0) {
 			throw new IllegalArgumentException("ID must be greater or equal 0");
@@ -149,7 +153,7 @@ class DbSongDao implements SongDao {
 
 	}
 
-	public Song read(int id) throws IllegalArgumentException {
+	public Song read(int id) {
 		ResultSet result = null;
 
 		if (id < 0) {
@@ -172,6 +176,7 @@ class DbSongDao implements SongDao {
 			s.setPlaycount(result.getInt("playcount"));
 			s.setRating(result.getInt("rating"));
 			s.setGenre(result.getString("genre"));
+			s.setPathOk(result.getBoolean("pathOk"));
 			// TODO Add album of song as soon as AlbumDao is implemented
 			// DaoFactory df = DaoFactory.getInstance();
 			// AlbumDao ad = df.getAlbumDao();
@@ -211,6 +216,7 @@ class DbSongDao implements SongDao {
 				s.setPlaycount(result.getInt("playcount"));
 				s.setRating(result.getInt("rating"));
 				s.setGenre(result.getString("genre"));
+				s.setPathOk(result.getBoolean("pathOk"));
 				// TODO Add album of song as soon as AlbumDao is implemented
 				// DaoFactory df = DaoFactory.getInstance();
 				// AlbumDao ad = df.getAlbumDao();
