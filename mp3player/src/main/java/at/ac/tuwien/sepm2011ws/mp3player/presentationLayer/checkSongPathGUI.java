@@ -12,6 +12,9 @@ import net.miginfocom.swing.MigLayout;
 
 import org.apache.log4j.Logger;
 
+import at.ac.tuwien.sepm2011ws.mp3player.serviceLayer.PlaylistService;
+import at.ac.tuwien.sepm2011ws.mp3player.serviceLayer.ServiceFactory;
+
 public class checkSongPathGUI extends JDialog implements ActionListener {
 
 	/**
@@ -22,6 +25,7 @@ public class checkSongPathGUI extends JDialog implements ActionListener {
 	private JPanel checkPanel;
 	private JLabel checklabel;
 	private JButton btnCancel;
+	private PlaylistService ps;
 	
 	public checkSongPathGUI() {
 		logger.info("checkSongPathGUI(): Started constructor checkSongPathGUI()");
@@ -32,6 +36,10 @@ public class checkSongPathGUI extends JDialog implements ActionListener {
 		setModal(true);
 		setVisible(true);
 		
+		ServiceFactory sf = ServiceFactory.getInstance();
+		ps = sf.getPlaylistService();
+		
+		ps.checkSongPaths();		
 		//TODO: start checkSongPath()
 		//TODO: start reloadTable(currentPlaylist)
 	}
