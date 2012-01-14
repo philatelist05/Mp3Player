@@ -9,39 +9,36 @@ import at.ac.tuwien.sepm2011ws.mp3player.domainObjects.Album;
 
 /**
  * @author klaus K
- *
+ * 
  */
 
-interface AlbumDao {
+public interface AlbumDao {
 	/**
 	 * Creates a album.
 	 * 
 	 * @param a
 	 *            The album which will be created.
-	 * @return The generated id of the album.
-	 * @throws IllegalArgumentException
+	 * @throws DataAccessException
 	 */
-	public int create(Album a);
-	
+	public void create(Album a) throws DataAccessException;
+
 	/**
 	 * Updates a album.
 	 * 
 	 * @param a
-	 *            The album with the new values and the id of the old
-	 *            album.
-	 * @throws IllegalArgumentException
+	 *            The album with the new values and the id of the old album.
+	 * @throws DataAccessException
 	 */
-	public void update(Album a);
+	public void update(Album a) throws DataAccessException;
 
 	/**
 	 * Deletes a album.
 	 * 
 	 * @param id
 	 *            The id of the album which should be deleted.
-	 * @throws IllegalArgumentException
+	 * @throws DataAccessException
 	 */
-	public void delete(int id);
-	
+	public void delete(int id) throws DataAccessException;
 
 	/**
 	 * Reads a album with the given id.
@@ -49,12 +46,12 @@ interface AlbumDao {
 	 * @param id
 	 *            Id of the album which should be read.
 	 * @return The album from the DB.
-	 * @throws IllegalArgumentException
+	 * @throws DataAccessException
 	 */
-	public Album read(int id);
-	
+	public Album read(int id) throws DataAccessException;
+
 	/**
-	 * @return the connection used by this dao
+	 * @return the connection used by this DAO
 	 */
-	Connection getConnection();
+	public Connection getConnection();
 }
