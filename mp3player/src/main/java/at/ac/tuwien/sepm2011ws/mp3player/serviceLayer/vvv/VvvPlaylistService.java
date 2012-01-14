@@ -42,12 +42,11 @@ class VvvPlaylistService implements PlaylistService {
 	    for (File file : files) {
 		playlist.addSong(new Song(1,"Title",0,0,0,file.getAbsolutePath(),0000,"Unknown Artist","Unknown Genre", true, null, null));
 	    }
-	    return null;
+	    return playlist;
 	}
 
 	public void exportPlaylist(File file, Playlist playlist) {
-		// TODO Auto-generated method stub
-		
+	    
 	}
 
 	public List<Playlist> getAllPlaylists() {

@@ -129,11 +129,6 @@
 			<artifactId>commons-configuration</artifactId>
 			<version>1.7</version>
 		</dependency>
-		<dependency>
-			<groupId>org.aspectj</groupId>
-			<artifactId>aspectjrt</artifactId>
-			<version>1.6.12</version>
-		</dependency>
 	</dependencies>
 	<build>
 		<plugins>
@@ -183,18 +178,6 @@
 					<source>1.6</source>
 					<target>1.6</target>
 				</configuration>
-			</plugin>
-			<plugin>
-				<groupId>org.codehaus.mojo</groupId>
-				<artifactId>aspectj-maven-plugin</artifactId>
-				<version>1.4</version>
-				<executions>
-					<execution>
-						<goals>
-							<goal>compile</goal>
-						</goals>
-					</execution>
-				</executions>
 			</plugin>
 		</plugins>
 	</build>
