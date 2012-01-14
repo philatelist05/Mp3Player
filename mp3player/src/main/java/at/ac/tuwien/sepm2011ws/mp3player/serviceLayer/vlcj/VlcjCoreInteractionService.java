@@ -17,8 +17,7 @@ import at.ac.tuwien.sepm2011ws.mp3player.serviceLayer.PlayerListener;
 import com.sun.jna.Platform;
 
 public class VlcjCoreInteractionService implements CoreInteractionService {
-	private static final Logger logger = Logger
-			.getLogger(VlcjCoreInteractionService.class);
+	
 	private final MediaPlayer mediaPlayer;
 	private PlayMode playMode;
 	private Playlist currentPlaylist;
@@ -192,7 +191,6 @@ public class VlcjCoreInteractionService implements CoreInteractionService {
 	}
 
 	public void setPlayMode(PlayMode playMode) {
-		logger.info("Current PlayMode set to: " + playMode);
 		this.playMode = playMode;
 	}
 

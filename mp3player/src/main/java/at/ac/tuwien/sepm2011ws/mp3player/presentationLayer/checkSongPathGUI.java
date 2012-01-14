@@ -48,7 +48,6 @@ public class checkSongPathGUI extends JDialog implements ActionListener {
 		checkPanel.add(btnCancel, "cell 0 1,alignx right");
 	}
 
-	@Override
 	public void actionPerformed(ActionEvent e) {
 		if (e.getActionCommand().equals("cancel")) {
 			dispose();
