@@ -1,20 +1,27 @@
 package at.ac.tuwien.sepm2011ws.mp3player.serviceLayer.vlcj;
 
 import java.io.File;
+import java.util.List;
+
+import org.apache.log4j.Logger;
 
 import uk.co.caprica.vlcj.player.MediaPlayer;
 import uk.co.caprica.vlcj.player.MediaPlayerFactory;
 import uk.co.caprica.vlcj.runtime.RuntimeUtil;
+import at.ac.tuwien.sepm2011ws.mp3player.domainObjects.Playlist;
 import at.ac.tuwien.sepm2011ws.mp3player.domainObjects.Song;
 import at.ac.tuwien.sepm2011ws.mp3player.serviceLayer.CoreInteractionService;
+import at.ac.tuwien.sepm2011ws.mp3player.serviceLayer.PlayMode;
 import at.ac.tuwien.sepm2011ws.mp3player.serviceLayer.PlayerListener;
-import at.ac.tuwien.sepm2011ws.mp3player.serviceLayer.PlaylistService;
-import at.ac.tuwien.sepm2011ws.mp3player.serviceLayer.ServiceFactory;
 
-import com.sun.jna.NativeLibrary;
+import com.sun.jna.Platform;
 
 public class VlcjCoreInteractionService implements CoreInteractionService {
+	private static final Logger logger = Logger
+			.getLogger(VlcjCoreInteractionService.class);
 	private final MediaPlayer mediaPlayer;
+	private PlayMode playMode;
+	private Playlist currentPlaylist;
 	private Song currentSong;
 	private boolean isPaused;
 	private PlayerListener playerListener;
@@ -27,6 +34,7 @@ public class VlcjCoreInteractionService implements CoreInteractionService {
 		System.setProperty("jna.library.path", libPath);
 
 		this.isPaused = false;
+		this.playMode = PlayMode.NORMAL;
 
 		MediaPlayerFactory factory = new MediaPlayerFactory(
 				new String[] { "--plugin-path=" + pluginPath });
@@ -47,16 +55,24 @@ public class VlcjCoreInteractionService implements CoreInteractionService {
 	private String getLibPath() {
 		if (RuntimeUtil.isMac())
 			return new File("lib/vlc/osx/lib").getAbsolutePath();
-		else if (RuntimeUtil.isWindows())
-			return new File("lib/vlc/windows/lib").getAbsolutePath();
+		else if (RuntimeUtil.isWindows()) {
+		    if (Platform.is64Bit())
+			return new File("lib/vlc/windows/64Bit/lib").getAbsolutePath();
+		    
+		    return new File("lib/vlc/windows/32Bit/lib").getAbsolutePath();
+		}
 		return new File("lib/vlc/linux/lib").getAbsolutePath();
 	}
 
 	private String getPluginPath() {
 		if (RuntimeUtil.isMac())
 			return new File("lib/vlc/osx/plugins").getAbsolutePath();
-		else if (RuntimeUtil.isWindows())
-			return new File("lib/vlc/windows/plugins").getAbsolutePath();
+		else if (RuntimeUtil.isWindows()) {
+		    if (Platform.is64Bit())
+			return new File("lib/vlc/windows/64Bit/plugins").getAbsolutePath();
+		    
+		    return new File("lib/vlc/windows/32Bit/plugins").getAbsolutePath();
+		}
 		return new File("lib/vlc/linux/plugins").getAbsolutePath();
 	}
 
@@ -91,18 +107,14 @@ public class VlcjCoreInteractionService implements CoreInteractionService {
 	}
 
 	public void playNext() {
-		ServiceFactory sf = ServiceFactory.getInstance();
-		PlaylistService ps = sf.getPlaylistService();
-		Song nextSong = ps.getNextSong();
+		Song nextSong = getNextSong();
 
 		if (nextSong != null)
 			playFromBeginning(nextSong);
 	}
 
 	public void playPrevious() {
-		ServiceFactory sf = ServiceFactory.getInstance();
-		PlaylistService ps = sf.getPlaylistService();
-		Song previousSong = ps.getPreviousSong();
+		Song previousSong = getPreviousSong();
 
 		if (previousSong != null)
 			playFromBeginning(previousSong);
@@ -177,6 +189,130 @@ public class VlcjCoreInteractionService implements CoreInteractionService {
 
 	public Song getCurrentSong() {
 		return this.currentSong;
+	}
+
+	public void setPlayMode(PlayMode playMode) {
+		logger.info("Current PlayMode set to: " + playMode);
+		this.playMode = playMode;
+	}
+
+	public Playlist getCurrentPlaylist() {
+		return this.currentPlaylist;
+	}
+
+	public void setCurrentPlaylist(Playlist playlist) {
+		this.currentPlaylist = playlist;
+	}
+
+	public PlayMode getPlayMode() {
+		return this.playMode;
+	}
+
+	/**
+	 * Gets the current song index
+	 * 
+	 * @return the index of the current song or -1 if it is not in the current
+	 *         playlist
+	 */
+	private int getCurrentSongIndex() {
+		if(this.currentPlaylist == null) {
+			return -1;
+		} else if(this.currentPlaylist.getSongs() == null) {
+			return -1;
+		}
+		Song current = getCurrentSong();
+
+		List<Song> songs = this.currentPlaylist.getSongs();
+
+		return songs.indexOf(current);
+	}
+
+	public Song getNextSong() {
+		if(this.currentPlaylist == null) {
+			return null;
+		} else if(this.currentPlaylist.getSongs() == null) {
+			return null;
+		}
+		
+		List<Song> songs = this.currentPlaylist.getSongs();
+		int maxIndex = songs.size() - 1;
+		int index = 0;
+
+		switch (this.playMode) {
+		case NORMAL:
+			index = getCurrentSongIndex() + 1;
+			if (index > maxIndex) {
+				// If the last song was the last of the playlist, stay at this
+				// song
+				index = maxIndex;
+			}
+			break;
+		case REPEAT:
+			index = getCurrentSongIndex() + 1;
+			if (index > maxIndex) {
+				// If the last song was the last of the playlist, the next song
+				// is the first of the playlist
+				index = 0;
+			}
+			break;
+		case SHUFFLE:
+			index = (int) Math.floor(Math.random() * maxIndex);
+			break;
+		default:
+			index = 0;
+			break;
+		}
+
+		if (index >= 0 && index <= maxIndex) {
+			return songs.get(index);
+		}
+		return null;
+	}
+
+	public Song getPreviousSong() {
+		if(this.currentPlaylist == null) {
+			return null;
+		} else if(this.currentPlaylist.getSongs() == null) {
+			return null;
+		}
+		
+		List<Song> songs = this.currentPlaylist.getSongs();
+		int maxIndex = songs.size() - 1;
+		int index = 0;
+
+		switch (this.playMode) {
+		case NORMAL:
+			index = getCurrentSongIndex() - 1;
+			if (index < 0) {
+				// If the last song was not in the playlist or it was the first
+				// of the playlist, the next song is the first
+				index = 0;
+			}
+			break;
+		case REPEAT:
+			index = getCurrentSongIndex() - 1;
+			if (index == -1) {
+				// If the last song was the first of the playlist, repeat
+				// backwards. The previous song is the last song of the playlist
+				index = maxIndex;
+			} else if (index < -1) {
+				// If the last song was not in the playlist, the previous song
+				// is the first of the playlist
+				index = 0;
+			}
+			break;
+		case SHUFFLE:
+			index = (int) Math.floor(Math.random() * maxIndex);
+			break;
+		default:
+			index = 0;
+			break;
+		}
+
+		if (index >= 0 && index <= maxIndex) {
+			return songs.get(index);
+		}
+		return null;
 	}
 
 	public void setPlayerListener(PlayerListener playerListener) {

@@ -17,6 +17,7 @@ public class Song {
 	private int year;
 	private String artist;
 	private String genre;
+	private boolean pathOk;
 	private Album album;
 	private Lyric lyric;
 
@@ -32,6 +33,7 @@ public class Song {
 		this.setDuration(duration);
 		this.setPath(path);
 		this.setRating(-1);
+		this.setPathOk(true);
 	}
 
 	/**
@@ -44,12 +46,13 @@ public class Song {
 	 * @param year
 	 * @param artist
 	 * @param genre
+	 * @param pathOK
 	 * @param album
 	 * @param lyric
 	 */
 	public Song(int id, String title, int duration, int playcount, int rating,
-			String path, int year, String artist, String genre, Album album,
-			Lyric lyric) throws IllegalArgumentException {
+			String path, int year, String artist, String genre, boolean pathOK,
+			Album album, Lyric lyric) throws IllegalArgumentException {
 		this.setId(id);
 		this.setTitle(title);
 		this.setDuration(duration);
@@ -59,6 +62,7 @@ public class Song {
 		this.setYear(year);
 		this.setArtist(artist);
 		this.setGenre(genre);
+		this.setPathOk(pathOK);
 		this.setAlbum(album);
 		this.setLyric(lyric);
 	}
@@ -247,31 +251,53 @@ public class Song {
 		this.lyric = lyric;
 	}
 
+	/**
+	 * @return the pathOk
+	 */
+	public boolean isPathOk() {
+		return this.pathOk;
+	}
+
+	/**
+	 * @param pathOk
+	 *            the pathOk to set
+	 */
+	public void setPathOk(boolean pathOk) {
+		this.pathOk = pathOk;
+	}
+
 	@Override
 	public boolean equals(Object obj) {
 		if (obj != null && this.getClass() == obj.getClass()) {
 			Song other = (Song) obj;
-			
-			return this.id == other.id &&
-				this.title.equals(other.title) &&
-				this.duration == other.duration &&
-				this.playcount == other.playcount &&
-				this.rating == other.rating &&
-				this.path.equals(other.path) &&
-				this.year == other.year &&
-				this.artist.equals(other.artist) &&
-				((this.genre == null && other.genre == null) || (this.genre != null && this.genre.equals(other.genre))) &&
-				((this.album == null && other.album == null) || (this.album != null && this.album.equals(other.album))) &&
-				((this.artist == null && other.artist == null) || (this.artist != null && this.artist.equals(other.artist)));
+
+			return this.id == other.id
+					&& this.title.equals(other.title)
+					&& this.duration == other.duration
+					&& this.playcount == other.playcount
+					&& this.rating == other.rating
+					&& this.path.equals(other.path)
+					&& this.year == other.year
+					&& this.artist.equals(other.artist)
+					&& ((this.genre == null && other.genre == null) || (this.genre != null && this.genre
+							.equals(other.genre)))
+					&&
+					// this.pathOk == other.pathOk &&
+					((this.album == null && other.album == null) || (this.album != null && this.album
+							.equals(other.album)))
+					&& ((this.artist == null && other.artist == null) || (this.artist != null && this.artist
+							.equals(other.artist)));
 		}
 		return false;
 	}
-	
-	/* (non-Javadoc)
-	  * @see java.lang.Object#toString()
-	  */
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see java.lang.Object#toString()
+	 */
 	@Override
-	 public String toString() {
-	  return String.valueOf(id);
+	public String toString() {
+		return String.valueOf(id);
 	}
 }

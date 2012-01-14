@@ -49,6 +49,7 @@ import org.apache.log4j.Logger;
 
 import at.ac.tuwien.sepm2011ws.mp3player.domainObjects.Playlist;
 import at.ac.tuwien.sepm2011ws.mp3player.domainObjects.Song;
+import at.ac.tuwien.sepm2011ws.mp3player.persistanceLayer.DataAccessException;
 import at.ac.tuwien.sepm2011ws.mp3player.serviceLayer.CoreInteractionService;
 import at.ac.tuwien.sepm2011ws.mp3player.serviceLayer.PlayMode;
 import at.ac.tuwien.sepm2011ws.mp3player.serviceLayer.PlaylistService;
@@ -121,12 +122,16 @@ public class MainFrame extends JFrame implements ActionListener, Runnable, KeyLi
 	public void getWholeLibrary() {
 		Playlist library;
 
-		// Holen aller Songs der Library
-		library = ps.getLibrary();
-		// Curretn Playlist setzen
-		ps.setCurrentPlaylist(library);
-		// Einfügen der Daten in dlTable
-		fillSongTable(library);
+		try {
+			// Holen aller Songs der Library
+			library = ps.getLibrary();
+			// Curretn Playlist setzen
+			cis.setCurrentPlaylist(library);
+			// Einfügen der Daten in dlTable
+			fillSongTable(library);
+		} catch (DataAccessException e) {
+			// TODO Display the error and handle the exception
+		}
 	}
 
 	/**
@@ -410,11 +415,11 @@ public class MainFrame extends JFrame implements ActionListener, Runnable, KeyLi
 	 */
 	private void setMode() {
 		if (!chckbxRepeat.isSelected() && !chckbxShuffle.isSelected())
-			ps.setPlayMode(PlayMode.NORMAL);
+			cis.setPlayMode(PlayMode.NORMAL);
 		else if (chckbxRepeat.isSelected() && !chckbxShuffle.isSelected())
-			ps.setPlayMode(PlayMode.REPEAT);
+			cis.setPlayMode(PlayMode.REPEAT);
 		else if (!chckbxRepeat.isSelected() && chckbxShuffle.isSelected())
-			ps.setPlayMode(PlayMode.SHUFFLE);
+			cis.setPlayMode(PlayMode.SHUFFLE);
 	}
 
 	/**
@@ -434,7 +439,7 @@ public class MainFrame extends JFrame implements ActionListener, Runnable, KeyLi
 		getWholeLibrary();
 
 		cis.setVolume(volume.getValue());
-		ps.setPlayMode(PlayMode.NORMAL);
+		cis.setPlayMode(PlayMode.NORMAL);
 
 		// setExtendedState(JFrame.MAXIMIZED_BOTH);
 
@@ -788,7 +793,7 @@ public class MainFrame extends JFrame implements ActionListener, Runnable, KeyLi
 		mnPlaylist.add(mntmExport);
 		mntmExport.addActionListener(this);
 		mntmExport.setActionCommand("exportplaylist");
-		
+
 		JMenuItem mntmSettings = new JMenuItem("Settings");
 		mnFile.add(mntmSettings);
 
@@ -835,22 +840,22 @@ public class MainFrame extends JFrame implements ActionListener, Runnable, KeyLi
 		else if (e.getActionCommand().equals("next")) {
 			next();
 		}
-		
+
 		else if (e.getActionCommand().equals("addfile")) {
 			librarygui = new LibraryGUI();
 			librarygui.addFile();
 		}
-		
+
 		else if (e.getActionCommand().equals("addfolder")) {
 			librarygui = new LibraryGUI();
 			librarygui.addFolder();
 		}
-		
+
 		else if (e.getActionCommand().equals("importplaylist")) {
 			playlistgui = new PlaylistGUI();
 			playlistgui.importPlaylist();
 		}
-		
+
 		else if (e.getActionCommand().equals("exportplaylist")) {
 			playlistgui = new PlaylistGUI();
 			playlistgui.exportPlaylist(null /*TODO: getCurrentPlaylistGUI*/);

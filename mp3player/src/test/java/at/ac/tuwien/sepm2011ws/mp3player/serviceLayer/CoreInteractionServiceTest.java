@@ -20,7 +20,6 @@ import at.ac.tuwien.sepm2011ws.mp3player.domainObjects.Song;
  */
 public class CoreInteractionServiceTest {
 	private CoreInteractionService cs;
-	private PlaylistService ps;
 
 	/**
 	 * @throws java.lang.Exception
@@ -29,7 +28,6 @@ public class CoreInteractionServiceTest {
 	public void setUp() throws Exception {
 		ServiceFactory sf = ServiceFactory.getInstance();
 		cs = sf.getCoreInteractionService();
-		ps = sf.getPlaylistService();
 	}
 
 	/**
@@ -37,8 +35,8 @@ public class CoreInteractionServiceTest {
 	 */
 	@After
 	public void tearDown() throws Exception {
-		ps.setCurrentPlaylist(null);
-		ps.setPlayMode(PlayMode.NORMAL);
+		cs.setCurrentPlaylist(null);
+		cs.setPlayMode(PlayMode.NORMAL);
 	}
 
 	@Test
@@ -74,7 +72,7 @@ public class CoreInteractionServiceTest {
 		sPath = new File("music/The Other Thing.wav");
 		temp.addSong(new Song("dummy2", "dummy2", 300, sPath.getAbsolutePath()));
 
-		ps.setCurrentPlaylist(temp);
+		cs.setCurrentPlaylist(temp);
 
 		cs.playPause(null);
 		Thread.sleep(500);
