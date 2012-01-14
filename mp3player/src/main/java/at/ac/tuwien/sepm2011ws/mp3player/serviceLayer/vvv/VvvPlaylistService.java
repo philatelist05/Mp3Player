@@ -3,6 +3,7 @@
  */
 package at.ac.tuwien.sepm2011ws.mp3player.serviceLayer.vvv;
 
+import java.io.File;
 import java.util.List;
 
 import org.apache.log4j.Logger;
@@ -36,12 +37,12 @@ class VvvPlaylistService implements PlaylistService {
 		return lib;
 	}
 
-	public Playlist importPlaylist(String path) {
+	public Playlist importPlaylist(File[] files) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
-	public void exportPlaylist(String path, Playlist playlist) {
+	public void exportPlaylist(File file, Playlist playlist) {
 		// TODO Auto-generated method stub
 		
 	}
@@ -51,12 +52,12 @@ class VvvPlaylistService implements PlaylistService {
 		return null;
 	}
 
-	public void addFolder(String folder, Playlist playlist) {
+	public void addFolder(File folder, Playlist playlist) {
 		// TODO Auto-generated method stub
 		
 	}
 
-	public void addSongs(String[] paths, Playlist playlist) {
+	public void addSongs(File[] files, Playlist playlist) {
 		// TODO Auto-generated method stub
 		
 	}

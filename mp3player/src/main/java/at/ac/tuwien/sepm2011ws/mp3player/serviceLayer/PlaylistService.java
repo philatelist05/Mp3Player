@@ -3,6 +3,7 @@
  */
 package at.ac.tuwien.sepm2011ws.mp3player.serviceLayer;
 
+import java.io.File;
 import java.util.List;
 
 import at.ac.tuwien.sepm2011ws.mp3player.domainObjects.Playlist;
@@ -15,26 +16,26 @@ import at.ac.tuwien.sepm2011ws.mp3player.persistanceLayer.DataAccessException;
  */
 public interface PlaylistService {
 
-	public final String[] PlaylistFileTypes = new String[] { "m3u" };
+	public static final String[] PlaylistFileTypes = new String[] { "m3u" };
 
 	/**
 	 * Imports a playlist from a playlist file to the library.
 	 * 
-	 * @param path
-	 *            The path to the file
+	 * @param files
+	 *            The playlist file
 	 * @return a playlist object corresponding to the parsed file
 	 */
-	public Playlist importPlaylist(String path);
+	public Playlist importPlaylist(File[] files);
 
 	/**
 	 * Exports a playlist to a playlist file.
 	 * 
-	 * @param path
-	 *            The path where to export it
+	 * @param file
+	 *            The file where to export it
 	 * @param playlist
 	 *            The playlist to export
 	 */
-	public void exportPlaylist(String path, Playlist playlist);
+	public void exportPlaylist(File file, Playlist playlist);
 
 	/**
 	 * Gets all saved playlists from the library
@@ -48,22 +49,22 @@ public interface PlaylistService {
 	 * accepted file type (specified in the program properties) to the playlist.
 	 * 
 	 * @param folder
-	 *            The path to the folder which will be added
+	 *            The folder which will be added
 	 * @param playlist
 	 *            The playlist to which the files will be added
 	 */
-	public void addFolder(String folder, Playlist playlist);
+	public void addFolder(File folder, Playlist playlist);
 
 	/**
 	 * Adds all files given in the path array with accepted file types
 	 * (specified in the program properties) to the playlist.
 	 * 
-	 * @param paths
-	 *            The paths to the files which will be added
+	 * @param files
+	 *            The files which will be added
 	 * @param playlist
 	 *            The playlist to which the files will be added
 	 */
-	public void addSongs(String[] paths, Playlist playlist);
+	public void addSongs(File[] files, Playlist playlist);
 
 	/**
 	 * Deletes the given Song from the playlist.
@@ -147,7 +148,7 @@ public interface PlaylistService {
 	 * Get the Library playlist
 	 * 
 	 * @return a playlist with all songs of the library
-	 * @throws DataAccessException 
+	 * @throws DataAccessException
 	 */
 	public Playlist getLibrary() throws DataAccessException;
 
