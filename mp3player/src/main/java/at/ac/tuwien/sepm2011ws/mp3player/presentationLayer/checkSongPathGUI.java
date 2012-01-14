@@ -25,23 +25,21 @@ public class checkSongPathGUI extends JDialog implements ActionListener {
 	private JPanel checkPanel;
 	private JLabel checklabel;
 	private JButton btnCancel;
+	private JButton btnStart;
 	private PlaylistService ps;
 	
 	public checkSongPathGUI() {
 		logger.info("checkSongPathGUI(): Started constructor checkSongPathGUI()");
 		initialize();
 		logger.info("checkSongPathGUI(): Components successfully initialized");
-		setTitle("Checking songpaths...");
-		setBounds(100, 100, 450, 150);
-		setModal(true);
-		setVisible(true);
 		
 		ServiceFactory sf = ServiceFactory.getInstance();
 		ps = sf.getPlaylistService();
 		
-		ps.checkSongPaths();		
-		//TODO: start checkSongPath()
-		//TODO: start reloadTable(currentPlaylist)
+		setTitle("Checking songpaths...");
+		setBounds(100, 100, 450, 150);
+		setModal(true);
+		setVisible(true);
 	}
 	
 	private void initialize() {
@@ -50,14 +48,27 @@ public class checkSongPathGUI extends JDialog implements ActionListener {
 		btnCancel = new JButton("Cancel");
 		btnCancel.addActionListener(this);
 		btnCancel.setActionCommand("cancel");
+		btnStart = new JButton("Start");
+		btnStart.addActionListener(this);
+		btnStart.setActionCommand("start");
 		
 		getContentPane().add(checkPanel);
 		checkPanel.add(checklabel, "cell 0 0");
 		checkPanel.add(btnCancel, "cell 0 1,alignx right");
+		checkPanel.add(btnStart, "cell 0 1,alignx right");
 	}
 
 	public void actionPerformed(ActionEvent e) {
 		if (e.getActionCommand().equals("cancel")) {
+			logger.info("checkSongPathGUI(): Cancelled");
+			dispose();
+		}
+		
+		else if (e.getActionCommand().equals("start")) {
+			ps.checkSongPaths();
+			logger.info("checkSongPathGUI(): Songpaths successfully checked");
+			new MainFrame("reloadsongTable");
+			logger.info("checkSongPathGUI(): Back from Mainframe");
 			dispose();
 		}
 	}

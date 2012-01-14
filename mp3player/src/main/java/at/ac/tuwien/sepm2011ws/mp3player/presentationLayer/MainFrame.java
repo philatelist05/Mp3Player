@@ -473,6 +473,11 @@ public class MainFrame extends JFrame implements ActionListener, Runnable,
 	public MainFrame(Playlist list) {
 		currentPlaylistGUI = list;
 	}
+	
+	public MainFrame(String command) {
+		if (command == "reloadsongTable")
+			fillSongTable(currentPlaylistGUI);
+	}
 
 	/**
 	 * Initializes the contents of the frame
