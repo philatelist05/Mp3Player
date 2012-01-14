@@ -11,6 +11,9 @@ import javax.swing.BorderFactory;
 import javax.swing.Icon;
 import javax.swing.JButton;
 
+/**
+ * Creates a Round Button.
+ */
 @SuppressWarnings("serial")
 public class RoundButton extends JButton
 {
