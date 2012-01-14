@@ -41,7 +41,6 @@ public class LibraryGUI {
 		chooser = new JFileChooser();
 		//chooser.setAcceptAllFileFilterUsed(false);
 		//chooser.addChoosableFileFilter(new CustomFileFilter(".wav"));
-		chooser.setMultiSelectionEnabled(true);
 		chooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
 		
 		int rVal = chooser.showOpenDialog(null);

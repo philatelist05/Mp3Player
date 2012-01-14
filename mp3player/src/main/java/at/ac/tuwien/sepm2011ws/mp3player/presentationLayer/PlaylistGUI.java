@@ -44,6 +44,7 @@ public class PlaylistGUI extends JDialog implements ActionListener {
 		File[] files;
 		chooser = new JFileChooser();
 		chooser.setAcceptAllFileFilterUsed(false);
+		chooser.setMultiSelectionEnabled(true);
 		chooser.addChoosableFileFilter(new CustomFileFilter(".m3u"));
 
 		int rVal = chooser.showOpenDialog(null);
