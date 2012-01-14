@@ -281,21 +281,15 @@ public class Song {
 					&& this.artist.equals(other.artist)
 					&& ((this.genre == null && other.genre == null) || (this.genre != null && this.genre
 							.equals(other.genre)))
-					&&
-					// this.pathOk == other.pathOk &&
-					((this.album == null && other.album == null) || (this.album != null && this.album
+					&& this.pathOk == other.pathOk
+					&& ((this.album == null && other.album == null) || (this.album != null && this.album
 							.equals(other.album)))
-					&& ((this.artist == null && other.artist == null) || (this.artist != null && this.artist
-							.equals(other.artist)));
+					&& ((this.lyric == null && other.lyric == null) || (this.lyric != null && this.lyric
+							.equals(other.lyric)));
 		}
 		return false;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see java.lang.Object#toString()
-	 */
 	@Override
 	public String toString() {
 		return String.valueOf(id);
