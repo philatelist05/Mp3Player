@@ -4,6 +4,9 @@ import java.awt.Dimension;
 import javax.swing.Icon;
 import javax.swing.JButton;
 
+/**
+ * Creates a Rectangular Button.
+ */
 @SuppressWarnings("serial")
 public class RectButton extends JButton
 {	

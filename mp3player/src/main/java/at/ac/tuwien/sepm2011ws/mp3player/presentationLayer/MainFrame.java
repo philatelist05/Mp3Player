@@ -37,6 +37,7 @@ import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeModel;
+import javax.swing.tree.TreePath;
 
 import net.miginfocom.swing.MigLayout;
 
@@ -55,6 +56,7 @@ public class MainFrame extends JFrame implements ActionListener, Runnable {
 	 */
 	private static final long serialVersionUID = -959319978002415594L;
 	private static Logger logger = Logger.getLogger(MainFrame.class);
+	private JTree pl_tree;
 	private JTable songTable;
 	private SongTableModel songmodel = new SongTableModel(new String[] {
 			"Track Nr.", "Title", "Artist", "Album", "Year", "Genre",
@@ -397,7 +399,24 @@ public class MainFrame extends JFrame implements ActionListener, Runnable {
 		else if (!chckbxRepeat.isSelected() && chckbxShuffle.isSelected())
 			ps.setPlayMode(PlayMode.SHUFFLE);
 	}
-
+	
+	/**
+	 * Shows the clicked Playlist from the Tree.
+	 * @param MouseEvent
+	 */
+	private void doPlaylistClicked(MouseEvent me) {
+		TreePath tp = pl_tree.getPathForLocation(me.getX(), me.getY());
+		PlaylistTreeNode clicked = (PlaylistTreeNode) pl_tree.getLastSelectedPathComponent();
+		if (tp != null && clicked != null) {
+			if(clicked.hasNodePlaylist()) {
+				//TODO
+				System.out.print(clicked.getNodePlaylist());
+			} else {
+				System.out.print("noway");
+			}
+		}
+	}
+	
 	/**
 	 * Starts the MainFrame
 	 */
@@ -492,8 +511,8 @@ public class MainFrame extends JFrame implements ActionListener, Runnable {
 		 * JTrees
 		 */
 		// pl_tree
-		JTree pl_tree = new JTree();
-		pl_tree.setModel(new DefaultTreeModel(new DefaultMutableTreeNode(
+		pl_tree = new JTree();
+		pl_tree.setModel(new DefaultTreeModel(new PlaylistTreeNode(
 				"mp3@player") {
 			/**
 				 * 
@@ -501,24 +520,31 @@ public class MainFrame extends JFrame implements ActionListener, Runnable {
 			private static final long serialVersionUID = -7228695694680777407L;
 
 			{
-				DefaultMutableTreeNode node_1;
-				add(new DefaultMutableTreeNode("Library"));
-				add(new DefaultMutableTreeNode("Queue"));
-				node_1 = new DefaultMutableTreeNode("Playlists");
-				node_1.add(new DefaultMutableTreeNode("Metal"));
-				node_1.add(new DefaultMutableTreeNode("80s"));
-				node_1.add(new DefaultMutableTreeNode("Funk"));
-				node_1.add(new DefaultMutableTreeNode("Pop"));
+				PlaylistTreeNode node_1;
+				add(new PlaylistTreeNode("Library"));
+				add(new PlaylistTreeNode("Queue"));
+				node_1 = new PlaylistTreeNode("Playlists");
+				node_1.add(new PlaylistTreeNode("Metal"));
+				node_1.add(new PlaylistTreeNode("80s"));
+				node_1.add(new PlaylistTreeNode("Funk"));
+				node_1.add(new PlaylistTreeNode("Pop"));
 				add(node_1);
-				node_1 = new DefaultMutableTreeNode("Intelligent Playlists");
-				node_1.add(new DefaultMutableTreeNode("Top40 rated"));
-				node_1.add(new DefaultMutableTreeNode("Top40 played"));
+				node_1 = new PlaylistTreeNode("Intelligent Playlists");
+				node_1.add(new PlaylistTreeNode("Top40 rated"));
+				node_1.add(new PlaylistTreeNode("Top40 played"));
 				add(node_1);
 			}
 		}));
 		pl_tree.setEditable(true);
 		pl_tree.setVisibleRowCount(5);
 		JScrollPane pl_tree_sp = new JScrollPane(pl_tree);
+		
+		pl_tree.addMouseListener(new MouseAdapter() {
+			public void mouseClicked(MouseEvent me) {
+				doPlaylistClicked(me);
+			}
+		});
+		
 		playerPanel.add(pl_tree_sp, "cell 0 1,grow");
 
 		/**
