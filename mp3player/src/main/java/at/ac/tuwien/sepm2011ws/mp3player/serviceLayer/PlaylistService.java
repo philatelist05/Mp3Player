@@ -46,14 +46,21 @@ public interface PlaylistService {
 
 	/**
 	 * Recursively adds all files in the specified folder and subfolders with
-	 * accepted file type (specified in the program properties) to the playlist.
+	 * accepted file type (specified in the program properties) to the library.
 	 * 
 	 * @param folder
 	 *            The folder which will be added
-	 * @param playlist
-	 *            The playlist to which the files will be added
 	 */
-	public void addFolder(File folder, Playlist playlist);
+	public void addFolder(File folder);
+
+	/**
+	 * Adds all files given in the path array with accepted file types
+	 * (specified in the program properties) to the library.
+	 * 
+	 * @param files
+	 *            The files which will be added
+	 */
+	public void addSongs(File[] files);
 
 	/**
 	 * Adds all files given in the path array with accepted file types
@@ -64,7 +71,7 @@ public interface PlaylistService {
 	 * @param playlist
 	 *            The playlist to which the files will be added
 	 */
-	public void addSongs(File[] files, Playlist playlist);
+	public void addSongsToPlaylist(File[] files, Playlist playlist);
 
 	/**
 	 * Deletes the given Song from the playlist.
