@@ -12,6 +12,10 @@ import net.miginfocom.swing.MigLayout;
 
 public class GlobalSearch extends JDialog {
 	
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 2115447615731002587L;
 	private static Logger logger = Logger.getLogger(GlobalSearch.class);
 	private JPanel globalSearchPanel;
 	private JTextField playlistName;
@@ -20,7 +24,7 @@ public class GlobalSearch extends JDialog {
 		logger.info("GlobalSearch(): Started constructor GlobalSearch()");
 		initialize();
 		logger.info("GlobalSearch(): Components successfully initialized");
-		setTitle("Create new playlist...");
+		setTitle("Search globally...");
 		setBounds(100, 100, 450, 100);
 		setModal(true);
 		setVisible(true);
@@ -39,6 +43,7 @@ public class GlobalSearch extends JDialog {
 		        	if (playlistName.getText().trim().length() > 0) {
 		        		//TODO: start globalSearch()
 		        		logger.info("GlobalSearch(): loaded search results into songTable");
+		        		dispose();
 		        	}
 		        	else {
 		        		logger.info("GlobalSearch(): Search criterion too short or blank");

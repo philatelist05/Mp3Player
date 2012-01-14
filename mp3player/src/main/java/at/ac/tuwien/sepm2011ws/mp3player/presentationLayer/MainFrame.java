@@ -1,22 +1,18 @@
 package at.ac.tuwien.sepm2011ws.mp3player.presentationLayer;
 
-import java.awt.Image;
-import java.awt.KeyboardFocusManager;
-
 import java.awt.Dimension;
+import java.awt.Image;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
-import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseMotionListener;
-
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowStateListener;
 import java.io.IOException;
@@ -770,8 +766,10 @@ public class MainFrame extends JFrame implements ActionListener, Runnable, KeyLi
 		JSeparator separator_1 = new JSeparator();
 		mnLibrary.add(separator_1);
 
-		JMenuItem mntmReallocateSongs_1 = new JMenuItem("Reallocate Songs...");
-		mnLibrary.add(mntmReallocateSongs_1);
+		JMenuItem mntmCheckSongpaths = new JMenuItem("Check songpaths...");
+		mnLibrary.add(mntmCheckSongpaths);
+		mntmCheckSongpaths.addActionListener(this);
+		mntmCheckSongpaths.setActionCommand("checksongpaths");
 
 		JMenu mnPlaylist = new JMenu("Playlist");
 		mnFile.add(mnPlaylist);
@@ -793,6 +791,11 @@ public class MainFrame extends JFrame implements ActionListener, Runnable, KeyLi
 		mnPlaylist.add(mntmExport);
 		mntmExport.addActionListener(this);
 		mntmExport.setActionCommand("exportplaylist");
+		
+		JMenuItem mntmSearch = new JMenuItem("Search...");
+		mnFile.add(mntmSearch);
+		mntmSearch.addActionListener(this);
+		mntmSearch.setActionCommand("mntmsearch");
 
 		JMenuItem mntmSettings = new JMenuItem("Settings");
 		mnFile.add(mntmSettings);
@@ -864,6 +867,14 @@ public class MainFrame extends JFrame implements ActionListener, Runnable, KeyLi
 		else if (e.getActionCommand().equals("newplaylist")) {
 			playlistgui = new PlaylistGUI();
 			playlistgui.newPlaylist();
+		}
+		
+		else if (e.getActionCommand().equals("mntmsearch")) {
+			new GlobalSearch();
+		}
+		
+		else if (e.getActionCommand().equals("checksongpaths")) {
+			new checkSongPathGUI();
 		}
 	}
 
