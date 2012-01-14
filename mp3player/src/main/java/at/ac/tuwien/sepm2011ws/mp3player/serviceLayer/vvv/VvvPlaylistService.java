@@ -52,12 +52,17 @@ class VvvPlaylistService implements PlaylistService {
 		return null;
 	}
 
-	public void addFolder(File folder, Playlist playlist) {
+	public void addFolder(File folder) {
 		// TODO Auto-generated method stub
 		
 	}
 
-	public void addSongs(File[] files, Playlist playlist) {
+	public void addSongs(File[] files) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	public void addSongsToPlaylist(File[] files, Playlist playlist) {
 		// TODO Auto-generated method stub
 		
 	}
