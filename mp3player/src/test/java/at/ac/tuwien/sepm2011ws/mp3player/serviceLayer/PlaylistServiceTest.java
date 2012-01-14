@@ -11,10 +11,11 @@ import org.junit.Before;
 import org.junit.Test;
 
 import at.ac.tuwien.sepm2011ws.mp3player.domainObjects.Playlist;
+import at.ac.tuwien.sepm2011ws.mp3player.persistanceLayer.DataAccessException;
 
 /**
  * @author klaus
- *
+ * 
  */
 public class PlaylistServiceTest {
 	private PlaylistService ps;
@@ -37,8 +38,13 @@ public class PlaylistServiceTest {
 
 	@Test
 	public void testGetLibrary_AtLeastOneSong() {
-		Playlist lib = ps.getLibrary();
-		
+		Playlist lib = null;
+
+		try {
+			lib = ps.getLibrary();
+		} catch (DataAccessException e) {
+		}
+
 		assertNotNull(lib.getSongs());
 		assertTrue(lib.getSongs().size() > 0);
 	}

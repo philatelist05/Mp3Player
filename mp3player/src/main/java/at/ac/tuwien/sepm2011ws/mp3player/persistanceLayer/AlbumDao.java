@@ -12,7 +12,7 @@ import at.ac.tuwien.sepm2011ws.mp3player.domainObjects.Album;
  *
  */
 
-public interface AlbumDao {
+interface AlbumDao {
 	/**
 	 * Creates a album.
 	 * 
@@ -21,7 +21,7 @@ public interface AlbumDao {
 	 * @return The generated id of the album.
 	 * @throws IllegalArgumentException
 	 */
-	public int create(Album a) throws IllegalArgumentException;
+	public int create(Album a);
 	
 	/**
 	 * Updates a album.
@@ -31,7 +31,7 @@ public interface AlbumDao {
 	 *            album.
 	 * @throws IllegalArgumentException
 	 */
-	public void update(Album a) throws IllegalArgumentException;
+	public void update(Album a);
 
 	/**
 	 * Deletes a album.
@@ -40,7 +40,7 @@ public interface AlbumDao {
 	 *            The id of the album which should be deleted.
 	 * @throws IllegalArgumentException
 	 */
-	public void delete(int id) throws IllegalArgumentException;
+	public void delete(int id);
 	
 
 	/**
@@ -51,7 +51,7 @@ public interface AlbumDao {
 	 * @return The album from the DB.
 	 * @throws IllegalArgumentException
 	 */
-	public Album read(int id) throws IllegalArgumentException;
+	public Album read(int id);
 	
 	/**
 	 * @return the connection used by this dao

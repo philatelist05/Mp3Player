@@ -60,7 +60,7 @@ public class SongDaoTest {
 	}
 
 	@Test
-	public void testReadAll_AtLeastOne() {
+	public void testReadAll_AtLeastOne() throws DataAccessException {
 		List<Song> dList = sd.readAll();
 
 		assertFalse(dList == null);
@@ -68,7 +68,7 @@ public class SongDaoTest {
 	}
 
 	@Test
-	public void testRead_ReadsExistingSong() {
+	public void testRead_ReadsExistingSong() throws DataAccessException {
 		List<Song> sList = sd.readAll();
 
 		Song s = sd.read(sList.get(0).getId());
@@ -77,14 +77,14 @@ public class SongDaoTest {
 	}
 
 	@Test
-	public void testRead_ReadsUnexistingSong() {
+	public void testRead_ReadsUnexistingSong() throws DataAccessException {
 		Song s = sd.read(Integer.MAX_VALUE);
 
 		assertTrue(s == null);
 	}
 
 	@Test
-	public void testCreate_CreateValidSong() {
+	public void testCreate_CreateValidSong() throws DataAccessException {
 		Song s = new Song("Machine Head", "Halo", 300, "C:\\music\\halo");
 
 		int id = sd.create(s);
@@ -93,14 +93,14 @@ public class SongDaoTest {
 	}
 
 	@Test(expected = IllegalArgumentException.class)
-	public void testCreate_CreateSongWithInvalidArtist() {
+	public void testCreate_CreateSongWithInvalidArtist() throws DataAccessException {
 		Song s = new Song(null, "Halo", 300, "C:\\music\\halo");
 
 		sd.create(s);
 	}
 
 	@Test
-	public void testUpdate_TestsValidUpdate() {
+	public void testUpdate_TestsValidUpdate() throws DataAccessException {
 		Song oldS = new Song("Machine Head", "Halo", 300, "C:\\music\\halo");
 
 		oldS.setId(sd.create(oldS));
@@ -115,12 +115,12 @@ public class SongDaoTest {
 	}
 	
 	@Test(expected=IllegalArgumentException.class)
-	public void testUpdate_TestsInvalidSong() {
+	public void testUpdate_TestsInvalidSong() throws DataAccessException {
 		sd.update(null);
 	}
 	
 	@Test
-	public void testDelete_TestsValidDelete() {
+	public void testDelete_TestsValidDelete() throws DataAccessException {
 		Song s = new Song("Machine Head", "Halo", 300, "C:\\music\\halo");
 		
 		s.setId(sd.create(s));
@@ -129,7 +129,7 @@ public class SongDaoTest {
 	}
 	
 	@Test(expected=IllegalArgumentException.class)
-	public void testDelete_TestsInvalidId() {
+	public void testDelete_TestsInvalidId() throws DataAccessException {
 		sd.delete(-1);
 	}
 

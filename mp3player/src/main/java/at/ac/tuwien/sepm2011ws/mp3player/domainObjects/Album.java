@@ -124,4 +124,18 @@ public class Album {
 		this.albumartPath = albumartPath;
 	}
 
+	@Override
+	public boolean equals(Object obj) {
+		if (obj != null && this.getClass() == obj.getClass()) {
+			Album other = (Album) obj;
+
+			return this.id == other.id
+					&& this.title.equals(other.title)
+					&& this.year == other.year
+					&& ((this.albumartPath == null && other.albumartPath == null) || (this.albumartPath != null && this.albumartPath
+							.equals(other.albumartPath)));
+		}
+		return false;
+	}
+
 }
