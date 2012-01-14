@@ -1,6 +1,7 @@
 package at.ac.tuwien.sepm2011ws.mp3player.presentationLayer;
 
 import java.awt.Image;
+import java.awt.KeyboardFocusManager;
 
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;
@@ -9,6 +10,9 @@ import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseMotionListener;
@@ -50,13 +54,14 @@ import at.ac.tuwien.sepm2011ws.mp3player.serviceLayer.PlayMode;
 import at.ac.tuwien.sepm2011ws.mp3player.serviceLayer.PlaylistService;
 import at.ac.tuwien.sepm2011ws.mp3player.serviceLayer.ServiceFactory;
 
-public class MainFrame extends JFrame implements ActionListener, Runnable {
+public class MainFrame extends JFrame implements ActionListener, Runnable, KeyListener {
 	/**
 	 * 
 	 */
 	private static final long serialVersionUID = -959319978002415594L;
 	private static Logger logger = Logger.getLogger(MainFrame.class);
-	private Dialog dialog;
+	private PlaylistGUI playlistgui;
+	private LibraryGUI librarygui;
 	private JTable songTable;
 	private SongTableModel songmodel = new SongTableModel(new String[] {
 			"Track Nr.", "Title", "Artist", "Album", "Year", "Genre",
@@ -476,6 +481,22 @@ public class MainFrame extends JFrame implements ActionListener, Runnable {
 				// setResizable(false);
 			}
 		});
+		
+		// add Hotkey Strg+F for GlobalSearch
+		//KeyboardFocusManager kbfm = KeyboardFocusManager.getCurrentKeyboardFocusManager();
+		//kbfm.addKeyEventDispatcher(new KeyboardManager());
+		
+		addKeyListener(this);
+		
+		/*addKeyListener(new KeyAdapter() {
+			@Override
+			public void keyPressed(KeyEvent e) {
+				int key = e.getKeyCode();
+		        if (key == KeyEvent.VK_ENTER) {
+		        	logger.info("MainFrame(): Pressed Enter");
+		        }
+			}
+		});*/
 
 		/**
 		 * JPanels
@@ -752,6 +773,8 @@ public class MainFrame extends JFrame implements ActionListener, Runnable {
 
 		JMenuItem mntmNew = new JMenuItem("New...");
 		mnPlaylist.add(mntmNew);
+		mntmNew.addActionListener(this);
+		mntmNew.setActionCommand("newplaylist");
 
 		JSeparator separator_2 = new JSeparator();
 		mnPlaylist.add(separator_2);
@@ -805,7 +828,6 @@ public class MainFrame extends JFrame implements ActionListener, Runnable {
 			try {
 				pause();
 			} catch (InterruptedException e1) {
-				// TODO Auto-generated catch block
 				logger.error(e1);
 			}
 		}
@@ -815,23 +837,44 @@ public class MainFrame extends JFrame implements ActionListener, Runnable {
 		}
 		
 		else if (e.getActionCommand().equals("addfile")) {
-			dialog = new Dialog ();
-			dialog.addFile();
+			librarygui = new LibraryGUI();
+			librarygui.addFile();
 		}
 		
 		else if (e.getActionCommand().equals("addfolder")) {
-			dialog = new Dialog ();
-			dialog.addFolder();
+			librarygui = new LibraryGUI();
+			librarygui.addFolder();
 		}
 		
 		else if (e.getActionCommand().equals("importplaylist")) {
-			dialog = new Dialog ();
-			dialog.importPlaylist();
+			playlistgui = new PlaylistGUI();
+			playlistgui.importPlaylist();
 		}
 		
 		else if (e.getActionCommand().equals("exportplaylist")) {
-			dialog = new Dialog ();
-			dialog.exportPlaylist();
+			playlistgui = new PlaylistGUI();
+			playlistgui.exportPlaylist(null /*TODO: getCurrentPlaylistGUI*/);
 		}
+		
+		else if (e.getActionCommand().equals("newplaylist")) {
+			playlistgui = new PlaylistGUI();
+			playlistgui.newPlaylist();
+		}
+	}
+
+	public void keyPressed(KeyEvent e) {
+		if(e.getKeyCode() == KeyEvent.VK_ENTER)
+			logger.info("MainFrame(): Pressed Enter");
+		
+	}
+
+	public void keyReleased(KeyEvent e) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	public void keyTyped(KeyEvent e) {
+		// TODO Auto-generated method stub
+		
 	}
 }

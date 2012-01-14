@@ -25,6 +25,10 @@ public class DynamicDialog extends JDialog implements ActionListener{
 		this.setTitle(title);
 		msg.setText(message);
 		initialize();
+		setDefaultCloseOperation(DISPOSE_ON_CLOSE);
+		setBounds(100, 100, 400, 100);
+		setModal(true);
+		setVisible(true);
 	}
 
 	private void initialize() {
@@ -40,11 +44,7 @@ public class DynamicDialog extends JDialog implements ActionListener{
 		btnOK.setHorizontalAlignment(SwingConstants.RIGHT);
 		btnOK.addActionListener(this);
 		btnOK.setActionCommand("OK");
-		ok.add(this.btnOK, "cell 0 1,alignx right");
-
-		setDefaultCloseOperation(DISPOSE_ON_CLOSE);
-		setBounds(100, 100, 400, 100);
-		setModal(true);
+		ok.add(this.btnOK, "cell 0 1,alignx center");
 	}
 
 	public void actionPerformed(ActionEvent e) {
@@ -52,5 +52,4 @@ public class DynamicDialog extends JDialog implements ActionListener{
 			this.dispose();
 		}		
 	}
-
 }
