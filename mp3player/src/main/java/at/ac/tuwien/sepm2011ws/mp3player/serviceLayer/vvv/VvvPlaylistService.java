@@ -117,7 +117,7 @@ class VvvPlaylistService implements PlaylistService {
     }
 
     public List<Playlist> getAllPlaylists() throws DataAccessException {
-	return this.playlistDao.readAll();
+		return this.playlistDao.readAll();
     }
     
     private void readSongsRecursive(File folder, List<Song> list) {
