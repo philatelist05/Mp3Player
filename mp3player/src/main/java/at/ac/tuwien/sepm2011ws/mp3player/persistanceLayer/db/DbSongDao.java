@@ -38,14 +38,14 @@ class DbSongDao implements SongDao {
 	private PreparedStatement readPlayedStmt;
 
 	DbSongDao(DataSource source, AlbumDao ad) throws DataAccessException {
-	    this.ad = ad;
+		this.ad = ad;
 		try {
 
 			con = source.getConnection();
 			createStmt = con.prepareStatement("INSERT INTO song ( "
 					+ "title, artist, path, year, duration, "
 					+ "playcount, rating, genre, pathOk, lyric) "
-					+ "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?);",
+					+ "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?);",
 					Statement.RETURN_GENERATED_KEYS);
 			createIsOnStmt = con.prepareStatement("INSERT INTO is_on ( "
 					+ "song, album) " + "VALUES (?, ?);");
@@ -58,7 +58,7 @@ class DbSongDao implements SongDao {
 			readAllStmt = con.prepareStatement("SELECT id, "
 					+ "title, artist, path, year, "
 					+ "duration, playcount, rating, genre, pathOk, lyric, "
-					+ "album FROM song left join is_on on id = song;");
+					+ "album FROM song LEFT JOIN is_on ON id = song ORDER BY id;");
 			updateStmt = con.prepareStatement("UPDATE song SET "
 					+ "title=?, artist=?, path=?, year=?, duration=?, "
 					+ "playcount=?, rating=?, genre=?, pathOk=?, lyric=? "
@@ -66,14 +66,13 @@ class DbSongDao implements SongDao {
 			deleteStmt = con.prepareStatement("DELETE FROM song "
 					+ "WHERE id = ?;");
 			readRatedStmt = con.prepareStatement("SELECT id, "
-				+ "title, artist, path, year, "
-				+ "duration, playcount, rating, genre, pathOk, lyric, "
-				+ "album FROM song ORDER BY rating DESC LIMIT ?;");
+					+ "title, artist, path, year, "
+					+ "duration, playcount, rating, genre, pathOk, lyric, "
+					+ "album FROM song ORDER BY rating DESC LIMIT ?;");
 			readPlayedStmt = con.prepareStatement("SELECT id, "
-				+ "title, artist, path, year, "
-				+ "duration, playcount, rating, genre, pathOk, lyric, "
-				+ "album FROM song ORDER BY playcount DESC LIMIT ?;");
-			
+					+ "title, artist, path, year, "
+					+ "duration, playcount, rating, genre, pathOk, lyric, "
+					+ "album FROM song ORDER BY playcount DESC LIMIT ?;");
 
 		} catch (SQLException e) {
 			throw new DataAccessException(
@@ -97,7 +96,12 @@ class DbSongDao implements SongDao {
 			createStmt.setInt(7, s.getRating());
 			createStmt.setString(8, s.getGenre());
 			createStmt.setBoolean(9, s.isPathOk());
-			createStmt.setString(10, s.getLyric().getText());
+			
+			if(s.getLyric() != null) {
+				createStmt.setString(10, s.getLyric().getText());
+			} else {
+				createStmt.setString(10, null);
+			}
 
 			createStmt.executeUpdate();
 
@@ -144,10 +148,16 @@ class DbSongDao implements SongDao {
 			updateStmt.setInt(7, s.getRating());
 			updateStmt.setString(8, s.getGenre());
 			updateStmt.setBoolean(9, s.isPathOk());
-			updateStmt.setString(10, s.getLyric().getText());
+			if(s.getLyric() != null) {
+				updateStmt.setString(10, s.getLyric().getText());
+			} else {
+				updateStmt.setString(10, null);
+			}
 			updateStmt.setInt(11, s.getId());
 
-			// TODO: Update album too
+			if (s.getAlbum() != null) {
+				ad.update(s.getAlbum());
+			}
 
 			updateStmt.executeUpdate();
 
@@ -168,7 +178,7 @@ class DbSongDao implements SongDao {
 			deleteStmt.setInt(1, id);
 			deleteStmt.executeUpdate();
 
-			// TODO: Delete album too if there are no more songs of it; 
+			// TODO: Delete album too if there are no more songs of it;
 			// I guess this should actually do ON DELETE CASCASE ?????
 		} catch (SQLException e) {
 			throw new DataAccessException("Error deleting song in database");
@@ -230,9 +240,10 @@ class DbSongDao implements SongDao {
 	public List<Song> readAll() throws DataAccessException {
 		return executeSelect(readAllStmt);
 	}
-	
-	private List<Song> executeSelect(PreparedStatement statement) throws DataAccessException{
-	    ResultSet result = null;
+
+	private List<Song> executeSelect(PreparedStatement statement)
+			throws DataAccessException {
+		ResultSet result = null;
 		ResultSet result2 = null;
 		ArrayList<Song> sList = new ArrayList<Song>();
 		Song s;
@@ -287,30 +298,30 @@ class DbSongDao implements SongDao {
 
 	@Override
 	public List<Song> getTopRatedSongs() throws DataAccessException {
-	    ServiceFactory serviceFactory = ServiceFactory.getInstance();
-	    SettingsService settingsService = serviceFactory.getSettingsService();
-	    
-	    try {
-		int anzahl = settingsService.getTopXXRatedCount();
-		readRatedStmt.setInt(1, anzahl);
-		return executeSelect(readRatedStmt);
-	    } catch(SQLException e) {
-		throw new DataAccessException("Error reading song from database");
-	    }
+		ServiceFactory serviceFactory = ServiceFactory.getInstance();
+		SettingsService settingsService = serviceFactory.getSettingsService();
+
+		try {
+			int anzahl = settingsService.getTopXXRatedCount();
+			readRatedStmt.setInt(1, anzahl);
+			return executeSelect(readRatedStmt);
+		} catch (SQLException e) {
+			throw new DataAccessException("Error reading song from database");
+		}
 	}
 
 	@Override
 	public List<Song> getTopPlayedSongs() throws DataAccessException {
-	    ServiceFactory serviceFactory = ServiceFactory.getInstance();
-	    SettingsService settingsService = serviceFactory.getSettingsService();
-	    
-	    try {
-		int anzahl = settingsService.getTopXXPlayedCount();
-		readPlayedStmt.setInt(1, anzahl);
-		return executeSelect(readPlayedStmt);
-	    } catch(SQLException e) {
-		throw new DataAccessException("Error reading song from database");
-	    }
+		ServiceFactory serviceFactory = ServiceFactory.getInstance();
+		SettingsService settingsService = serviceFactory.getSettingsService();
+
+		try {
+			int anzahl = settingsService.getTopXXPlayedCount();
+			readPlayedStmt.setInt(1, anzahl);
+			return executeSelect(readPlayedStmt);
+		} catch (SQLException e) {
+			throw new DataAccessException("Error reading song from database");
+		}
 	}
-	
+
 }
