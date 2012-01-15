@@ -33,7 +33,8 @@ public class VVVServiceSettings implements ServiceSettings {
     }
 
     @Override
-    public void getTopXXRatedCount() {
+    public int getTopXXRatedCount() {
+		return 0;
     }
 
     @Override
@@ -41,7 +42,8 @@ public class VVVServiceSettings implements ServiceSettings {
     }
 
     @Override
-    public void getTopXXPlayedCount() {
+    public int getTopXXPlayedCount() {
+		return 0;
     }
 
     @Override
