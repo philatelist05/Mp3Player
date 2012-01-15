@@ -33,6 +33,16 @@ public class JTreeSongTransferHandler extends SongTransferHandler {
 		TreePath path = dl.getPath();
 		PlaylistTreeNode clicked = (PlaylistTreeNode) path
 				.getLastPathComponent();
+		
+		/*
+		namesPath = tree.getPathForRow(3);
+        TreePath namesPath2=new TreePath(new String[] {"things", "sports"});
+        if(namesPath.toString().equals(namesPath2.toString())) {
+        	System.out.println("kASKmskMSKMs");
+        }
+        */
+        
+        
 
 		if (treeModel.isLeaf(clicked)) {
 			System.out.println(clicked);
@@ -59,4 +69,27 @@ public class JTreeSongTransferHandler extends SongTransferHandler {
 	 * 
 	 * }
 	 */
+	public boolean canImport(JComponent c, DataFlavor[] flavors) {
+		JTree target = (JTree) c;
+		DefaultTreeModel treeModel = (DefaultTreeModel) target.getModel();
+		JTree.DropLocation dl = (JTree.DropLocation) target.getDropLocation();
+		TreePath path = dl.getPath();
+		PlaylistTreeNode clicked = (PlaylistTreeNode) path
+				.getLastPathComponent();
+		
+		/*
+		namesPath = tree.getPathForRow(3);
+        TreePath namesPath2=new TreePath(new String[] {"things", "sports"});
+        if(namesPath.toString().equals(namesPath2.toString())) {
+        	System.out.println("kASKmskMSKMs");
+        }
+        */
+		
+		for (int i = 0; i < flavors.length; i++) {
+			if (songFlavor.equals(flavors[i])) {
+				return true;
+			}
+		}
+		return false;
+	}
 }

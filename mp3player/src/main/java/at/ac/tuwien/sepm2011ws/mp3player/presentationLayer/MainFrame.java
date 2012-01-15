@@ -576,7 +576,10 @@ public class MainFrame extends JFrame implements ActionListener, Runnable,
 		 * JTrees
 		 */
 		// pl_tree
-		playlists = ps.getAllPlaylists();
+		try {
+			playlists = ps.getAllPlaylists();
+		} catch (DataAccessException e1) {
+		}
 		pl_tree = new JTree();
 		pl_tree.setModel(new DefaultTreeModel(new PlaylistTreeNode(
 				"mp3@player") {
@@ -587,12 +590,13 @@ public class MainFrame extends JFrame implements ActionListener, Runnable,
 
 			{
 				PlaylistTreeNode node_1;
+				
 				add(new PlaylistTreeNode("Library"));
 				add(new PlaylistTreeNode("Queue"));
-				node_1 = new PlaylistTreeNode("Playlists");
+				try {
+				node_1 = new PlaylistTreeNode(ps.getLibrary().toString(), false, ps.getLibrary());
 				
 				Playlist current = null;
-				if(playlists==null){ System.out.println("ajsnajsjasjn"); }
 				ListIterator<Playlist> iter = playlists.listIterator();
 				while(iter.hasNext()) {
 					current = iter.next();
@@ -607,6 +611,8 @@ public class MainFrame extends JFrame implements ActionListener, Runnable,
 				node_1.add(new PlaylistTreeNode("Top40 rated"));
 				node_1.add(new PlaylistTreeNode("Top40 played"));
 				add(node_1);
+				} catch (DataAccessException e1) {
+				}
 			}
 		}));
 		pl_tree.setEditable(true);
