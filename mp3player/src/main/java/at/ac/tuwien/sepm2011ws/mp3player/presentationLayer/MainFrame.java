@@ -960,11 +960,13 @@ public class MainFrame extends JFrame implements ActionListener, Runnable,
 		else if (e.getActionCommand().equals("addfile")) {
 			librarygui = new LibraryGUI();
 			librarygui.addFile();
+			fillSongTable(currentPlaylistGUI);
 		}
 
 		else if (e.getActionCommand().equals("addfolder")) {
 			librarygui = new LibraryGUI();
 			librarygui.addFolder();
+			fillSongTable(currentPlaylistGUI);
 		}
 
 		else if (e.getActionCommand().equals("importplaylist")) {

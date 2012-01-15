@@ -1,16 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <configuration>
 <FileTypes>wav</FileTypes>
-<FileTypes>mp3</FileTypes>
-<Columns>Track Nr.</Columns>
-<Columns>Title</Columns>
-<Columns>Artist</Columns>
-<Columns>Album</Columns>
-<Columns>Year</Columns>
-<Columns>Genre</Columns>
-<Columns>Duration</Columns>
-<Columns>Rating</Columns>
-<Columns>Playcount</Columns>
-<TopXXPlayed>40</TopXXPlayed>
+<Columns>playcount</Columns>
+<TopXXPlayed>10</TopXXPlayed>
 <TopXXRated>40</TopXXRated>
 </configuration>
