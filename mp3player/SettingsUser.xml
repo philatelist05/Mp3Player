@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<configuration>
+<FileTypes>mp3</FileTypes>
+<Columns>Playcount</Columns>
+<TopXXPlayed>40</TopXXPlayed>
+<TopXXRated>40</TopXXRated>
+</configuration>
