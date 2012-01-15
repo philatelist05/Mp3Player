@@ -22,10 +22,11 @@ public interface PlaylistService {
 	 * Imports a playlist from a playlist file to the library.
 	 * 
 	 * @param files
-	 *            The playlist file
+	 *            Array of Playlist files(m3u files)
 	 * @return a playlist object corresponding to the parsed file
+	 * @throws DataAccessException 
 	 */
-	public Playlist importPlaylist(File[] files);
+	public void importPlaylist(File[] files) throws DataAccessException;
 
 	/**
 	 * Exports a playlist to a playlist file.
