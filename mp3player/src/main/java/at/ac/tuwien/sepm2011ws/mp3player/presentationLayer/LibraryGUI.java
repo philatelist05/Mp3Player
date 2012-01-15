@@ -62,7 +62,7 @@ public class LibraryGUI {
 		
 		int rVal = chooser.showOpenDialog(null);
 		if (rVal == JFileChooser.APPROVE_OPTION) {
-			folder = chooser.getCurrentDirectory();
+			folder = chooser.getSelectedFile();
 			try {
 				ps.addFolder(folder);
 			} catch (DataAccessException e) {
