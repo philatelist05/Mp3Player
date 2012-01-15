@@ -6,7 +6,7 @@ import at.ac.tuwien.sepm2011ws.mp3player.domainObjects.Playlist;
 
 /**
  * Special TreeNode class, extends DefaultMutableTreeNode. Offers the option to 
- * save Variable of the type Playlist.
+ * save a Variable of the type Playlist.
  * @see DefaultMutableTreeNode
  */
 public class PlaylistTreeNode extends DefaultMutableTreeNode {
