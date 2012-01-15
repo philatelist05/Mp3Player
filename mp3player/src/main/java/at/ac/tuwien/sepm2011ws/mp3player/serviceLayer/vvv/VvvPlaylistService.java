@@ -32,191 +32,194 @@ import at.ac.tuwien.sepm2011ws.mp3player.serviceLayer.SettingsService;
  * 
  */
 class VvvPlaylistService implements PlaylistService {
-    
-    private static final Logger logger = Logger.getLogger(VvvPlaylistService.class);
-    private final PlaylistDao playlistDao;
-    private final SongDao songDao;
 
-    public VvvPlaylistService() {
-	DaoFactory factory = DaoFactory.getInstance();
-	this.playlistDao = factory.getPlaylistDao();
-	this.songDao = factory.getSongDao();
-    }
+	private static final Logger logger = Logger
+			.getLogger(VvvPlaylistService.class);
+	private final PlaylistDao playlistDao;
+	private final SongDao songDao;
 
-    public Playlist getLibrary() throws DataAccessException {
-	Playlist lib = new Playlist("Library");
-	lib.setReadonly(true);
-
-	lib.setSongs(this.songDao.readAll());
-
-	return lib;
-    }
-
-    public void importPlaylist(File[] files) throws DataAccessException {
-	for (File file : files) {
-	    Playlist playlist = readPlaylist(file);
-	    playlistDao.create(playlist);
+	public VvvPlaylistService() {
+		DaoFactory factory = DaoFactory.getInstance();
+		this.playlistDao = factory.getPlaylistDao();
+		this.songDao = factory.getSongDao();
 	}
-    }
-    
-    private Playlist readPlaylist(File file) throws DataAccessException {
-	FileReader reader = null;
-	BufferedReader breader = null;
-	try {
-	    reader = new FileReader(file);
-	    breader = new BufferedReader(reader);
-	    String line;
-	    Playlist playlist = new Playlist("Dummy Title");
-	    while ((line = breader.readLine()) != "") {
-		playlist.addSong(new Song(1, "Dummy Title", 0, 0, 0, line,
-			0000, "Dummy Artist", "Dummy Genre", true, null, null));
-	    }
-	    return playlist;
-	} catch (IOException e) {
-	    throw new DataAccessException("Could't read Playlist from path" + file.getAbsolutePath());
-	} finally {
-	    try {
-		if (reader != null)
-		    reader.close();
-		if (breader != null)
-		    breader.close();
-	    } catch (IOException e) {
 
-	    }
+	public Playlist getLibrary() throws DataAccessException {
+		Playlist lib = new Playlist("Library");
+		lib.setReadonly(true);
+
+		lib.setSongs(this.songDao.readAll());
+
+		return lib;
 	}
-    }
-    
-    private Song readSong(File file) {	
-	return new Song(1, file.getName(), 0, 0, 0, file.getAbsolutePath(),
-		0000, "Dummy Artist", "Dummy Genre", true, null, null);
-    }
-    
-    public void exportPlaylist(File file, Playlist playlist) {
-	FileWriter writer = null;
-	BufferedWriter bwriter = null;
-	try {
-	    writer = new FileWriter(file.getAbsolutePath() + ".m3u");
-	    bwriter = new BufferedWriter(writer);
-	    for (Song song : playlist.getSongs()) {
-		bwriter.write(song.getPath());
-		bwriter.newLine();
-	    }
-	} catch (IOException e) {
-	} finally {
-	    try {
-		if (bwriter != null) {
-		    bwriter.flush();
-		    bwriter.close();
+
+	public void importPlaylist(File[] files) throws DataAccessException {
+		for (File file : files) {
+			Playlist playlist = readPlaylist(file);
+			playlistDao.create(playlist);
 		}
-		if (writer != null)
-		    writer.close();
-	    } catch (IOException e) {
-
-	    }
 	}
-    }
 
-    public List<Playlist> getAllPlaylists() throws DataAccessException {
+	private Playlist readPlaylist(File file) throws DataAccessException {
+		FileReader reader = null;
+		BufferedReader breader = null;
+		try {
+			reader = new FileReader(file);
+			breader = new BufferedReader(reader);
+			String line;
+			Playlist playlist = new Playlist("Dummy Title");
+			while ((line = breader.readLine()) != "") {
+				playlist.addSong(new Song(1, "Dummy Title", 0, 0, 0, line,
+						0000, "Dummy Artist", "Dummy Genre", true, null, null));
+			}
+			return playlist;
+		} catch (IOException e) {
+			throw new DataAccessException("Could't read Playlist from path"
+					+ file.getAbsolutePath());
+		} finally {
+			try {
+				if (reader != null)
+					reader.close();
+				if (breader != null)
+					breader.close();
+			} catch (IOException e) {
+
+			}
+		}
+	}
+
+	private Song readSong(File file) {
+		return new Song(1, file.getName(), 0, 0, 0, file.getAbsolutePath(),
+				0000, "Dummy Artist", "Dummy Genre", true, null, null);
+	}
+
+	public void exportPlaylist(File file, Playlist playlist) {
+		FileWriter writer = null;
+		BufferedWriter bwriter = null;
+		try {
+			writer = new FileWriter(file.getAbsolutePath() + ".m3u");
+			bwriter = new BufferedWriter(writer);
+			for (Song song : playlist.getSongs()) {
+				bwriter.write(song.getPath());
+				bwriter.newLine();
+			}
+		} catch (IOException e) {
+		} finally {
+			try {
+				if (bwriter != null) {
+					bwriter.flush();
+					bwriter.close();
+				}
+				if (writer != null)
+					writer.close();
+			} catch (IOException e) {
+
+			}
+		}
+	}
+
+	public List<Playlist> getAllPlaylists() throws DataAccessException {
 		return this.playlistDao.readAll();
-    }
-    
-    private void readSongsRecursive(File folder, List<Song> list) {
-	if (!folder.isDirectory() && folder.getName().endsWith( ".m3u" )) {
-	    list.add(readSong(folder));
 	}
-	
-	FilenameFilter filter =  new FilenameFilter() {
-	    public boolean accept(File f, String s) {
-		return s.toLowerCase().endsWith( ".m3u" );
-	    }
-	};
-	for (File file : folder.listFiles(filter)) {
-	    readSongsRecursive(file, list);
+
+	private void readSongsRecursive(File folder, List<Song> list) {
+		if (!folder.isDirectory() && folder.getName().endsWith(".m3u")) {
+			list.add(readSong(folder));
+		}
+
+		FilenameFilter filter = new FilenameFilter() {
+			public boolean accept(File f, String s) {
+				return s.toLowerCase().endsWith(".m3u");
+			}
+		};
+		for (File file : folder.listFiles(filter)) {
+			readSongsRecursive(file, list);
+		}
 	}
-    }
 
-    public void addFolder(File folder) throws DataAccessException {
-	List<Song> list = new ArrayList<Song>();
-	readSongsRecursive(folder, list);
-	for (Song song : list) {
-	    this.songDao.create(song);
+	public void addFolder(File folder) throws DataAccessException {
+		List<Song> list = new ArrayList<Song>();
+		readSongsRecursive(folder, list);
+		for (Song song : list) {
+			this.songDao.create(song);
+		}
 	}
-    }
 
-    public void addSongs(File[] files) throws DataAccessException {
-	for (File file : files) {
-	    addFolder(file);
+	public void addSongs(File[] files) throws DataAccessException {
+		for (File file : files) {
+			addFolder(file);
+		}
 	}
-    }
 
-    public void addSongsToPlaylist(File[] files, Playlist playlist) {
-	List<Song> list = new ArrayList<Song>();
-	for (File file : files) {
-	    readSongsRecursive(file, list);
+	public void addSongsToPlaylist(File[] files, Playlist playlist) {
+		List<Song> list = new ArrayList<Song>();
+		for (File file : files) {
+			readSongsRecursive(file, list);
+		}
+		for (Song song : list) {
+			playlist.addSong(song);
+		}
 	}
-	for (Song song : list) {
-	    playlist.addSong(song);
+
+	public void deleteSong(Song song, Playlist playlist) {
+		List<Song> songsInPlaylist = playlist.getSongs();
+		for (Song song2 : songsInPlaylist) {
+			if (song.equals(song2))
+				songsInPlaylist.remove(song2);
+		}
 	}
-    }
 
-    public void deleteSong(Song song, Playlist playlist) {
-	List<Song> songsInPlaylist = playlist.getSongs();
-	for (Song song2 : songsInPlaylist) {
-	    if (song.equals(song2))
-		songsInPlaylist.remove(song2);
+	public Playlist createPlaylist(String name) throws DataAccessException {
+		Playlist playlist = new Playlist(name);
+		this.playlistDao.create(playlist);
+		return playlist;
 	}
-    }
 
-    public Playlist createPlaylist(String name) throws DataAccessException {
-	Playlist playlist = new Playlist(name);
-	this.playlistDao.create(playlist);
-	return playlist;
-    }
-
-    public void deletePlaylist(Playlist playlist) throws DataAccessException {
-	this.playlistDao.delete(playlist.getId());
-    }
-
-    public void updatePlaylist(Playlist playlist) throws DataAccessException {
-	this.playlistDao.update(playlist);
-    }
-
-    public void renamePlaylist(Playlist playlist, String name) throws DataAccessException {
-	playlist.setTitle(name);
-	updatePlaylist(playlist);
-    }
-
-    public Playlist getTopRated() throws DataAccessException {
-	List<Song> list = this.songDao.getTopRatedSongs();
-	
-	Playlist playlist = new Playlist("TopRated");
-	playlist.setReadonly(true);
-	for (Song song : list) {
-	    playlist.addSong(song);
+	public void deletePlaylist(Playlist playlist) throws DataAccessException {
+		this.playlistDao.delete(playlist.getId());
 	}
-	return playlist;
-    }
 
-    public Playlist getTopPlayed() throws DataAccessException {
-	List<Song> list = this.songDao.getTopRatedSongs();
-	
-	Playlist playlist = new Playlist("TopPlayed");
-	playlist.setReadonly(true);
-	for (Song song : list) {
-	    playlist.addSong(song);
+	public void updatePlaylist(Playlist playlist) throws DataAccessException {
+		this.playlistDao.update(playlist);
 	}
-	return playlist;
-    }
 
-    public Playlist globalSearch(String pattern) {
-	//TODO globalsearch
-	return null;
-    }
-
-    public void checkSongPaths() throws DataAccessException {
-	List<Song> songs = this.songDao.readAll();
-	for (Song song : songs) {
-	    song.setPathOk(new File(song.getPath()).isFile());
+	public void renamePlaylist(Playlist playlist, String name)
+			throws DataAccessException {
+		playlist.setTitle(name);
+		updatePlaylist(playlist);
 	}
-    }
+
+	public Playlist getTopRated() throws DataAccessException {
+		List<Song> list = this.songDao.getTopRatedSongs();
+
+		Playlist playlist = new Playlist("TopRated");
+		playlist.setReadonly(true);
+		for (Song song : list) {
+			playlist.addSong(song);
+		}
+		return playlist;
+	}
+
+	public Playlist getTopPlayed() throws DataAccessException {
+		List<Song> list = this.songDao.getTopRatedSongs();
+
+		Playlist playlist = new Playlist("TopPlayed");
+		playlist.setReadonly(true);
+		for (Song song : list) {
+			playlist.addSong(song);
+		}
+		return playlist;
+	}
+
+	public Playlist globalSearch(String pattern) {
+		// TODO globalsearch
+		return null;
+	}
+
+	public void checkSongPaths() throws DataAccessException {
+		List<Song> songs = this.songDao.readAll();
+		for (Song song : songs) {
+			song.setPathOk(new File(song.getPath()).isFile());
+		}
+	}
 }

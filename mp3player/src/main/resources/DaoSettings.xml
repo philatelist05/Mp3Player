@@ -17,7 +17,7 @@ http://www.springframework.org/schema/beans/spring-beans-3.0.xsd">
 	
 	<bean id="SongDao"
 		class="at.ac.tuwien.sepm2011ws.mp3player.persistanceLayer.db.DbSongDao"
-		depends-on="AlbumDao">
+		depends-on="DataSource,AlbumDao">
 		
 		<constructor-arg ref="DataSource" />
 		<constructor-arg ref="AlbumDao" />
@@ -25,9 +25,10 @@ http://www.springframework.org/schema/beans/spring-beans-3.0.xsd">
 
 	<bean id="PlaylistDao"
 		class="at.ac.tuwien.sepm2011ws.mp3player.persistanceLayer.db.DbPlaylistDao"
-		depends-on="DataSource">
+		depends-on="DataSource,SongDao">
 		
 		<constructor-arg ref="DataSource" />
+		<constructor-arg ref="SongDao" />
 	</bean>
 
 </beans>
