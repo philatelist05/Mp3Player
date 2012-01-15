@@ -26,7 +26,7 @@ public interface PlaylistService {
 	 * @return a playlist object corresponding to the parsed file
 	 * @throws DataAccessException 
 	 */
-	public void importPlaylist(File[] files) throws DataAccessException;
+	public void importPlaylist(File[] files);
 
 	/**
 	 * Exports a playlist to a playlist file.

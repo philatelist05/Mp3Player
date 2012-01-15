@@ -3,7 +3,12 @@
  */
 package at.ac.tuwien.sepm2011ws.mp3player.serviceLayer.vvv;
 
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileReader;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.util.List;
 
@@ -40,11 +45,38 @@ class VvvPlaylistService implements PlaylistService {
 	return lib;
     }
 
-    public void importPlaylist(File[] files) throws DataAccessException {
-	
+    public void importPlaylist(File[] files) {
+	for (File file : files) {
+	    Playlist playlist = read(file);
+	}
     }
     
+    private Playlist read(File file) {
+	FileReader reader = null;
+	BufferedReader breader = null;
+	try {
+	    reader = new FileReader(file);
+	    breader = new BufferedReader(reader);
+	    String line;
+	    Playlist playlist = new Playlist("Dummy Title");
+	    while ((line = breader.readLine()) != "") {
+		playlist.addSong(new Song(1, "Dummy Title", 0, 0, 0, line,
+			0000, "Dummy Artist", "Dummy Genre", true, null, null));
+	    }
+	    return playlist;
+	} catch (IOException e) {
+	    return null;
+	} finally {
+	    try {
+		if (reader != null)
+		    reader.close();
+		if (breader != null)
+		    breader.close();
+	    } catch (IOException e) {
 
+	    }
+	}
+    }
 
     private void writePlaylistM3U(File file) throws DataAccessException {
 	try {
@@ -60,10 +92,29 @@ class VvvPlaylistService implements PlaylistService {
 	    throw new DataAccessException("Couldn't read Playlist " + file.getName());
 	}
     }
-
+    
     public void exportPlaylist(File file, Playlist playlist) {
-	for (Song song : playlist.getSongs()) {
-	    
+	FileWriter writer = null;
+	BufferedWriter bwriter = null;
+	try {
+	    writer = new FileWriter(file);
+	    bwriter = new BufferedWriter(writer);
+	    for (Song song : playlist.getSongs()) {
+		bwriter.write(song.getPath());
+		bwriter.newLine();
+	    }
+	} catch (IOException e) {
+	} finally {
+	    try {
+		if (bwriter != null) {
+		    bwriter.flush();
+		    bwriter.close();
+		}
+		if (writer != null)
+		    writer.close();
+	    } catch (IOException e) {
+
+	    }
 	}
     }
 
