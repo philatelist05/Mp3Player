@@ -14,9 +14,9 @@ public class VvvSettingsService implements SettingsService {
     private static final Logger logger = Logger
 	    .getLogger(VvvSettingsService.class);
 
-    public VvvSettingsService(String fileName) {
+    public VvvSettingsService() {
 	try {
-	    this.userConfig = new XMLConfiguration(new File(fileName));
+	    this.userConfig = new XMLConfiguration(new File("SettingsUser.xml"));
 	} catch (ConfigurationException e) {
 	    logger.error(e.getMessage());
 	    this.userConfig = new XMLConfiguration();
