@@ -90,21 +90,31 @@ public class MainFrame extends JFrame implements ActionListener, Runnable,
 	private JCheckBox chckbxRepeat;
 	private JCheckBox chckbxShuffle;
 
-	private Icon l1 = new ImageIcon("img/left_blue.png");
-	private Icon l2 = new ImageIcon("img/left_orange.png");
-	private Icon l3 = new ImageIcon("img/left_orange_pressed.png");
+	private Icon l1 = new ImageIcon(getClass().getResource("img/left_blue.png"));
+	private Icon l2 = new ImageIcon(getClass().getResource(
+			"img/left_orange.png"));
+	private Icon l3 = new ImageIcon(getClass().getResource(
+			"img/left_orange_pressed.png"));
 
-	private Icon m1 = new ImageIcon("img/play_blue.png");
-	private Icon m2 = new ImageIcon("img/play_orange.png");
-	private Icon m3 = new ImageIcon("img/play_orange_pressed.png");
+	private Icon m1 = new ImageIcon(getClass().getResource("img/play_blue.png"));
+	private Icon m2 = new ImageIcon(getClass().getResource(
+			"img/play_orange.png"));
+	private Icon m3 = new ImageIcon(getClass().getResource(
+			"img/play_orange_pressed.png"));
 
-	private Icon r1 = new ImageIcon("img/right_blue.png");
-	private Icon r2 = new ImageIcon("img/right_orange.png");
-	private Icon r3 = new ImageIcon("img/right_orange_pressed.png");
+	private Icon r1 = new ImageIcon(getClass()
+			.getResource("img/right_blue.png"));
+	private Icon r2 = new ImageIcon(getClass().getResource(
+			"img/right_orange.png"));
+	private Icon r3 = new ImageIcon(getClass().getResource(
+			"img/right_orange_pressed.png"));
 
-	private Icon mp1 = new ImageIcon("img/pause_blue.png");
-	private Icon mp2 = new ImageIcon("img/pause_orange.png");
-	private Icon mp3 = new ImageIcon("img/pause_orange_pressed.png");
+	private Icon mp1 = new ImageIcon(getClass().getResource(
+			"img/pause_blue.png"));
+	private Icon mp2 = new ImageIcon(getClass().getResource(
+			"img/pause_orange.png"));
+	private Icon mp3 = new ImageIcon(getClass().getResource(
+			"img/pause_orange_pressed.png"));
 
 	private PlaylistService ps;
 	private CoreInteractionService cis;
