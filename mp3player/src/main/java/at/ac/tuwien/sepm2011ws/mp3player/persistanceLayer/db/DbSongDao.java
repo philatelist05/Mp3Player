@@ -23,7 +23,7 @@ import at.ac.tuwien.sepm2011ws.mp3player.persistanceLayer.SongDao;
 
 class DbSongDao implements SongDao {
 	private Connection con;
-	private AlbumDao ad;
+//	private AlbumDao ad;
 
 	private PreparedStatement createStmt;
 	private PreparedStatement createIsOnStmt;
@@ -96,7 +96,9 @@ class DbSongDao implements SongDao {
 
 				if (s.getAlbum() != null) {
 					// Create album if it doesn't exist
-					ad.create(s.getAlbum());
+				    
+//					ad.create(s.getAlbum());
+				    	
 
 					// Create album song association
 					createIsOnStmt.setInt(1, s.getId());
@@ -199,7 +201,8 @@ class DbSongDao implements SongDao {
 				s.setAlbum(null);
 			} else {
 				int albumId = result.getInt("album");
-				s.setAlbum(ad.read(albumId));
+//				s.setAlbum(ad.read(albumId));
+				s.setAlbum(null);
 			}
 
 		} catch (SQLException e) {
@@ -244,7 +247,8 @@ class DbSongDao implements SongDao {
 					s.setAlbum(null);
 				} else {
 					int albumId = result2.getInt("album");
-					s.setAlbum(ad.read(albumId));
+//					s.setAlbum(ad.read(albumId));
+					s.setAlbum(null);
 				}
 
 				sList.add(s);
