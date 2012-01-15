@@ -10,7 +10,9 @@ import java.util.List;
 
 import javax.sql.DataSource;
 
+import at.ac.tuwien.sepm2011ws.mp3player.domainObjects.Lyric;
 import at.ac.tuwien.sepm2011ws.mp3player.domainObjects.Song;
+import at.ac.tuwien.sepm2011ws.mp3player.persistanceLayer.AlbumDao;
 import at.ac.tuwien.sepm2011ws.mp3player.persistanceLayer.DataAccessException;
 import at.ac.tuwien.sepm2011ws.mp3player.persistanceLayer.SongDao;
 
@@ -21,50 +23,57 @@ import at.ac.tuwien.sepm2011ws.mp3player.persistanceLayer.SongDao;
 
 class DbSongDao implements SongDao {
 	private Connection con;
+	private AlbumDao ad;
 
 	private PreparedStatement createStmt;
 	private PreparedStatement createIsOnStmt;
 	private PreparedStatement readStmt;
+	private PreparedStatement readIsOnStmt;
 	private PreparedStatement readAllStmt;
 	private PreparedStatement updateStmt;
 	private PreparedStatement deleteStmt;
 
-	DbSongDao(DataSource source) throws DataAccessException {
+	DbSongDao(DataSource source, AlbumDao ad) throws DataAccessException {
+//	    DaoFactory df = DaoFactory.getInstance();
+//	    ad = df.getAlbumDao();
+	    
+	    this.ad = ad;
 
 		try {
 
 			con = source.getConnection();
 			createStmt = con.prepareStatement("INSERT INTO song ( "
 					+ "title, artist, path, year, duration, "
-					+ "playcount, rating, genre, pathOk) "
+					+ "playcount, rating, genre, pathOk, lyric) "
 					+ "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?);",
 					Statement.RETURN_GENERATED_KEYS);
 			createIsOnStmt = con.prepareStatement("INSERT INTO is_on ( "
 					+ "song, album) " + "VALUES (?, ?);");
-			readStmt = con
-					.prepareStatement("SELECT "
-							+ "title, artist, path, year, "
-							+ "duration, playcount, rating, genre, pathOk, "
-							+ "album FROM song left join is_on on id = song WHERE id=?;");
+			readStmt = con.prepareStatement("SELECT "
+					+ "title, artist, path, year, "
+					+ "duration, playcount, rating, genre, pathOk, lyric, "
+					+ "album FROM song LEFT JOIN is_on ON id=song WHERE id=?;");
+			readIsOnStmt = con
+					.prepareStatement("SELECT album FROM is_on WHERE song=?;");
 			readAllStmt = con.prepareStatement("SELECT id, "
 					+ "title, artist, path, year, "
-					+ "duration, playcount, rating, genre, pathOk, "
+					+ "duration, playcount, rating, genre, pathOk, lyric, "
 					+ "album FROM song left join is_on on id = song;");
 			updateStmt = con.prepareStatement("UPDATE song SET "
 					+ "title=?, artist=?, path=?, year=?, duration=?, "
-					+ "playcount=?, rating=?, genre=?, pathOk=? "
+					+ "playcount=?, rating=?, genre=?, pathOk=?, lyric=? "
 					+ "WHERE id = ?;");
 			deleteStmt = con.prepareStatement("DELETE FROM song "
 					+ "WHERE id = ?;");
 
 		} catch (SQLException e) {
-			throw new DataAccessException(e.getMessage());
+			throw new DataAccessException(
+					"Error initializing database commands");
 		}
 	}
 
-	public int create(Song s) throws DataAccessException {
+	public void create(Song s) throws DataAccessException {
 		ResultSet result = null;
-		int id = -1;
 
 		if (s == null)
 			throw new IllegalArgumentException("Song must not be null");
@@ -79,25 +88,28 @@ class DbSongDao implements SongDao {
 			createStmt.setInt(7, s.getRating());
 			createStmt.setString(8, s.getGenre());
 			createStmt.setBoolean(9, s.isPathOk());
+			createStmt.setString(10, s.getLyric().getText());
 
 			createStmt.executeUpdate();
 
 			result = createStmt.getGeneratedKeys();
-			if (!result.next()) {
-				return -1;
+			if (result.next()) {
+				s.setId(result.getInt(1));
+
+				if (s.getAlbum() != null) {
+					// Create album if it doesn't exist
+					ad.create(s.getAlbum());
+
+					// Create album song association
+					createIsOnStmt.setInt(1, s.getId());
+					createIsOnStmt.setInt(2, s.getAlbum().getId());
+
+					createIsOnStmt.executeUpdate();
+				}
+
 			}
-			id = result.getInt(1);
-
-			if (s.getAlbum() != null) {
-				// TODO What should we do if album doesn't already exist?
-				createIsOnStmt.setInt(1, id);
-				createIsOnStmt.setInt(2, s.getAlbum().getId());
-
-				createIsOnStmt.executeUpdate();
-			}
-
 		} catch (SQLException e) {
-			throw new DataAccessException(e.getMessage());
+			throw new DataAccessException("Error creating song in database");
 		} finally {
 			try {
 				if (result != null)
@@ -105,8 +117,6 @@ class DbSongDao implements SongDao {
 			} catch (SQLException e) {
 			}
 		}
-
-		return id;
 	}
 
 	public void update(Song s) throws DataAccessException {
@@ -125,12 +135,15 @@ class DbSongDao implements SongDao {
 			updateStmt.setInt(7, s.getRating());
 			updateStmt.setString(8, s.getGenre());
 			updateStmt.setBoolean(9, s.isPathOk());
-			updateStmt.setInt(10, s.getId());
+			updateStmt.setString(10, s.getLyric().getText());
+			updateStmt.setInt(11, s.getId());
+
+			// TODO: Update album too
 
 			updateStmt.executeUpdate();
 
 		} catch (SQLException e) {
-			throw new DataAccessException(e.getMessage());
+			throw new DataAccessException("Error updating song in database");
 		}
 
 	}
@@ -145,8 +158,11 @@ class DbSongDao implements SongDao {
 
 			deleteStmt.setInt(1, id);
 			deleteStmt.executeUpdate();
+
+			// TODO: Delete album too if there are no more songs of it; 
+			// I guess this should actually do ON DELETE CASCASE ?????
 		} catch (SQLException e) {
-			throw new DataAccessException(e.getMessage());
+			throw new DataAccessException("Error deleting song in database");
 		}
 
 	}
@@ -164,6 +180,7 @@ class DbSongDao implements SongDao {
 			readStmt.setInt(1, id);
 			result = readStmt.executeQuery();
 			if (!result.next()) {
+				result.close();
 				return null;
 			}
 
@@ -175,15 +192,21 @@ class DbSongDao implements SongDao {
 			s.setRating(result.getInt("rating"));
 			s.setGenre(result.getString("genre"));
 			s.setPathOk(result.getBoolean("pathOk"));
-			// TODO Add album of song as soon as AlbumDao is implemented
-			// DaoFactory df = DaoFactory.getInstance();
-			// AlbumDao ad = df.getAlbumDao();
-			// s.setAlbum(ad.read(<with readIsOnStmt>));
+			s.setLyric(new Lyric(result.getString("lyric")));
 
-			result.close();
+			// Reading album
+			readIsOnStmt.setInt(1, id);
+			result = readIsOnStmt.executeQuery();
+
+			if (!result.next()) {
+				s.setAlbum(null);
+			} else {
+				int albumId = result.getInt("album");
+				s.setAlbum(ad.read(albumId));
+			}
 
 		} catch (SQLException e) {
-			throw new DataAccessException(e.getMessage());
+			throw new DataAccessException("Error reading song from database");
 		} finally {
 			try {
 				if (result != null)
@@ -197,6 +220,7 @@ class DbSongDao implements SongDao {
 
 	public List<Song> readAll() throws DataAccessException {
 		ResultSet result = null;
+		ResultSet result2 = null;
 		ArrayList<Song> sList = new ArrayList<Song>();
 		Song s;
 		try {
@@ -213,20 +237,31 @@ class DbSongDao implements SongDao {
 				s.setRating(result.getInt("rating"));
 				s.setGenre(result.getString("genre"));
 				s.setPathOk(result.getBoolean("pathOk"));
-				// TODO Add album of song as soon as AlbumDao is implemented
-				// DaoFactory df = DaoFactory.getInstance();
-				// AlbumDao ad = df.getAlbumDao();
-				// s.setAlbum(ad.read(<with readIsOnStmt>));
+				s.setLyric(new Lyric(result.getString("lyric")));
+
+				// Reading album
+				readIsOnStmt.setInt(1, s.getId());
+				result2 = readIsOnStmt.executeQuery();
+
+				if (!result2.next()) {
+					s.setAlbum(null);
+				} else {
+					int albumId = result2.getInt("album");
+					s.setAlbum(ad.read(albumId));
+				}
 
 				sList.add(s);
 			}
-			result.close();
+
 		} catch (SQLException e) {
-			throw new DataAccessException(e.getMessage());
+			throw new DataAccessException(
+					"Error reading all songs from database");
 		} finally {
 			try {
 				if (result != null)
 					result.close();
+				if (result2 != null)
+					result2.close();
 			} catch (SQLException e) {
 			}
 		}

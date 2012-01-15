@@ -87,9 +87,9 @@ public class SongDaoTest {
 	public void testCreate_CreateValidSong() throws DataAccessException {
 		Song s = new Song("Machine Head", "Halo", 300, "C:\\music\\halo");
 
-		int id = sd.create(s);
+		sd.create(s);
 
-		assertTrue(id > 0);
+		assertTrue(s.getId() > 0);
 	}
 
 	@Test(expected = IllegalArgumentException.class)
@@ -103,7 +103,7 @@ public class SongDaoTest {
 	public void testUpdate_TestsValidUpdate() throws DataAccessException {
 		Song oldS = new Song("Machine Head", "Halo", 300, "C:\\music\\halo");
 
-		oldS.setId(sd.create(oldS));
+		sd.create(oldS);
 
 		oldS.setGenre("Thrash Metal");
 
@@ -123,7 +123,7 @@ public class SongDaoTest {
 	public void testDelete_TestsValidDelete() throws DataAccessException {
 		Song s = new Song("Machine Head", "Halo", 300, "C:\\music\\halo");
 		
-		s.setId(sd.create(s));
+		sd.create(s);
 		
 		sd.delete(s.getId());
 	}

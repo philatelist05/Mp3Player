@@ -38,7 +38,6 @@ import javax.swing.ListSelectionModel;
 import javax.swing.ScrollPaneConstants;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
-import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeModel;
 import javax.swing.tree.TreePath;
 
@@ -54,14 +53,17 @@ import at.ac.tuwien.sepm2011ws.mp3player.serviceLayer.PlayMode;
 import at.ac.tuwien.sepm2011ws.mp3player.serviceLayer.PlaylistService;
 import at.ac.tuwien.sepm2011ws.mp3player.serviceLayer.ServiceFactory;
 
-public class MainFrame extends JFrame implements ActionListener, Runnable, KeyListener {
+public class MainFrame extends JFrame implements ActionListener, Runnable,
+		KeyListener {
 	/**
 	 * 
 	 */
 	private static final long serialVersionUID = -959319978002415594L;
 	private static Logger logger = Logger.getLogger(MainFrame.class);
+	private static Playlist currentPlaylistGUI;
 
 	private JTree pl_tree;
+
 	private PlaylistGUI playlistgui;
 	private LibraryGUI librarygui;
 	private JTable songTable;
@@ -126,8 +128,9 @@ public class MainFrame extends JFrame implements ActionListener, Runnable, KeyLi
 		try {
 			// Holen aller Songs der Library
 			library = ps.getLibrary();
-			// Curretn Playlist setzen
+			// Current Playlist setzen (Servicelayer and GUI)
 			cis.setCurrentPlaylist(library);
+			currentPlaylistGUI = library;
 			// Einfügen der Daten in dlTable
 			fillSongTable(library);
 		} catch (DataAccessException e) {
@@ -141,12 +144,18 @@ public class MainFrame extends JFrame implements ActionListener, Runnable, KeyLi
 	 * @param List
 	 *            containing song items
 	 */
-	public void fillSongTable(Playlist list) {
+	protected void fillSongTable(Playlist list) {
+		String album=null;
 		songmodel.setRowCount(0);
-		for (Song x : list.getSongs())
+		for (Song x : list.getSongs()) {
+			if (x.getAlbum() != null)
+				album = x.getAlbum().getTitle();
+			else
+				album = "";
 			songmodel.addRow(new Object[] { x, x.getTitle(), x.getArtist(),
-					x.getAlbum(), x.getYear(), x.getGenre(), x.getDuration(),
+					album, x.getYear(), x.getGenre(), x.getDuration(),
 					x.getRating(), x.getPlaycount() });
+		}
 	}
 
 	/**
@@ -171,26 +180,26 @@ public class MainFrame extends JFrame implements ActionListener, Runnable, KeyLi
 	 * Sends the "previous Song" Signal to the Service Layer
 	 */
 	public void previous() {
-		// if (cis.hasPreviousSong()) {
-
-		btnPlayPause.setActionCommand("play");
-		setPlayIcons();
-		lblCurrentStateSong.setText("");
-
-		cis.playPrevious();
-		Song temp = cis.getCurrentSong();
-
-		// progress.setEnabled(true);
-
 		if (cis.isPlaying()) {
-			lblCurrentStateSong.setText("Currently playing: "
-					+ temp.getArtist() + " - " + temp.getTitle() + "");
 
-			btnPlayPause.setActionCommand("pause");
-			setPauseIcons();
-		} else
-			setProgressBartoDefault();
-		// }
+			btnPlayPause.setActionCommand("play");
+			setPlayIcons();
+			lblCurrentStateSong.setText("");
+
+			cis.playPrevious();
+			Song temp = cis.getCurrentSong();
+
+			// progress.setEnabled(true);
+
+			if (cis.isPlaying()) {
+				lblCurrentStateSong.setText("Currently playing: "
+						+ temp.getArtist() + " - " + temp.getTitle() + "");
+
+				btnPlayPause.setActionCommand("pause");
+				setPauseIcons();
+			} else
+				setProgressBartoDefault();
+		}
 	}
 
 	/**
@@ -226,6 +235,8 @@ public class MainFrame extends JFrame implements ActionListener, Runnable, KeyLi
 			setPauseIcons();
 			btnNext.setActionCommand("next");
 			btnPrevious.setActionCommand("previous");
+			System.out.println(btnNext.getActionCommand());
+			System.out.println(btnPrevious.getActionCommand());
 		}
 
 		// lblDuration.setText(getMediaTimeAt(100));
@@ -275,24 +286,24 @@ public class MainFrame extends JFrame implements ActionListener, Runnable, KeyLi
 	 * Sends the next Song action to the ServiceLayer
 	 */
 	public void next() {
-		// if (cis.hasNextSong()) {
-		btnPlayPause.setActionCommand("play");
-		setPlayIcons();
-		lblCurrentStateSong.setText("");
-
-		cis.playNext();
-		Song temp = cis.getCurrentSong();
-		// progress.setEnabled(true);
-
 		if (cis.isPlaying()) {
-			lblCurrentStateSong.setText("Currently playing: "
-					+ temp.getArtist() + " - " + temp.getTitle() + "");
+			btnPlayPause.setActionCommand("play");
+			setPlayIcons();
+			lblCurrentStateSong.setText("");
 
-			btnPlayPause.setActionCommand("pause");
-			setPauseIcons();
-		} else
-			setProgressBartoDefault();
-		// }
+			cis.playNext();
+			Song temp = cis.getCurrentSong();
+			// progress.setEnabled(true);
+
+			if (cis.isPlaying()) {
+				lblCurrentStateSong.setText("Currently playing: "
+						+ temp.getArtist() + " - " + temp.getTitle() + "");
+
+				btnPlayPause.setActionCommand("pause");
+				setPauseIcons();
+			} else
+				setProgressBartoDefault();
+		}
 	}
 
 	/**
@@ -469,6 +480,15 @@ public class MainFrame extends JFrame implements ActionListener, Runnable, KeyLi
 		logger.info("Components successfully initialized");
 	}
 
+	public MainFrame(Playlist list) {
+		currentPlaylistGUI = list;
+	}
+	
+	public MainFrame(String command) {
+		if (command == "reloadsongTable")
+			fillSongTable(currentPlaylistGUI);
+	}
+
 	/**
 	 * Initializes the contents of the frame
 	 */
@@ -505,22 +525,21 @@ public class MainFrame extends JFrame implements ActionListener, Runnable, KeyLi
 				// setResizable(false);
 			}
 		});
-		
+
 		// add Hotkey Strg+F for GlobalSearch
-		//KeyboardFocusManager kbfm = KeyboardFocusManager.getCurrentKeyboardFocusManager();
-		//kbfm.addKeyEventDispatcher(new KeyboardManager());
-		
+		// KeyboardFocusManager kbfm =
+		// KeyboardFocusManager.getCurrentKeyboardFocusManager();
+		// kbfm.addKeyEventDispatcher(new KeyboardManager());
+
 		addKeyListener(this);
-		
-		/*addKeyListener(new KeyAdapter() {
-			@Override
-			public void keyPressed(KeyEvent e) {
-				int key = e.getKeyCode();
-		        if (key == KeyEvent.VK_ENTER) {
-		        	logger.info("MainFrame(): Pressed Enter");
-		        }
-			}
-		});*/
+
+		/*
+		 * addKeyListener(new KeyAdapter() {
+		 * 
+		 * @Override public void keyPressed(KeyEvent e) { int key =
+		 * e.getKeyCode(); if (key == KeyEvent.VK_ENTER) {
+		 * logger.info("MainFrame(): Pressed Enter"); } } });
+		 */
 
 		/**
 		 * JPanels
@@ -629,7 +648,7 @@ public class MainFrame extends JFrame implements ActionListener, Runnable, KeyLi
 		playerPanel
 				.add(btnPrevious, "cell 0 3 1 2,alignx center,aligny center");
 		btnPrevious.addActionListener(this);
-		// btnPrevious.setActionCommand("previous");
+		btnPrevious.setActionCommand("previous");
 
 		// Play_Pause
 		btnPlayPause = new RoundButton(m1, m2, m3);
@@ -642,7 +661,7 @@ public class MainFrame extends JFrame implements ActionListener, Runnable, KeyLi
 		btnNext = new RectButton(r1, r2, r3);
 		playerPanel.add(btnNext, "cell 0 3 1 2,alignx center,aligny center");
 		btnNext.addActionListener(this);
-		// btnNext.setActionCommand("next");
+		btnNext.setActionCommand("next");
 
 		/**
 		 * JSliders
@@ -827,7 +846,7 @@ public class MainFrame extends JFrame implements ActionListener, Runnable, KeyLi
 		mnPlaylist.add(mntmExport);
 		mntmExport.addActionListener(this);
 		mntmExport.setActionCommand("exportplaylist");
-		
+
 		JMenuItem mntmSearch = new JMenuItem("Search...");
 		mnFile.add(mntmSearch);
 		mntmSearch.addActionListener(this);
@@ -835,12 +854,16 @@ public class MainFrame extends JFrame implements ActionListener, Runnable, KeyLi
 
 		JMenuItem mntmSettings = new JMenuItem("Settings");
 		mnFile.add(mntmSettings);
+		mntmSettings.addActionListener(this);
+		mntmSettings.setActionCommand("settings");
 
 		JSeparator separator = new JSeparator();
 		mnFile.add(separator);
 
 		JMenuItem mntmExit = new JMenuItem("Exit");
 		mnFile.add(mntmExit);
+		mntmExit.addActionListener(this);
+		mntmExit.setActionCommand("exit");
 
 		JMenu mnHelp = new JMenu("Help");
 		menuBar.add(mnHelp);
@@ -892,41 +915,60 @@ public class MainFrame extends JFrame implements ActionListener, Runnable, KeyLi
 
 		else if (e.getActionCommand().equals("importplaylist")) {
 			playlistgui = new PlaylistGUI();
-			playlistgui.importPlaylist();
+
+			try {
+				playlistgui.importPlaylist();
+			} catch (DataAccessException e1) {
+				// TODO Auto-generated catch block
+				e1.printStackTrace();
+			}
 		}
 
 		else if (e.getActionCommand().equals("exportplaylist")) {
 			playlistgui = new PlaylistGUI();
-			playlistgui.exportPlaylist(null /*TODO: getCurrentPlaylistGUI*/);
+			playlistgui.exportPlaylist(currentPlaylistGUI);
 		}
-		
+
 		else if (e.getActionCommand().equals("newplaylist")) {
 			playlistgui = new PlaylistGUI();
 			playlistgui.newPlaylist();
 		}
-		
+
 		else if (e.getActionCommand().equals("mntmsearch")) {
 			new GlobalSearch();
+			fillSongTable(currentPlaylistGUI);
 		}
-		
+
 		else if (e.getActionCommand().equals("checksongpaths")) {
 			new checkSongPathGUI();
+			fillSongTable(currentPlaylistGUI);
+		}
+		
+		else if (e.getActionCommand().equals("settings")) {
+			new Settings();
+			//TODO: Add dynamically changing for songTable
+			//TODO: Add reloading for "TopXX played" and "TopXX rated", if selected
+		}
+		
+		else if (e.getActionCommand().equals("exit")) {
+			logger.info("Application is going terminate... Have a nice day :)");
+			System.exit(0);
 		}
 	}
 
 	public void keyPressed(KeyEvent e) {
-		if(e.getKeyCode() == KeyEvent.VK_ENTER)
+		if (e.getKeyCode() == KeyEvent.VK_ENTER)
 			logger.info("MainFrame(): Pressed Enter");
-		
+
 	}
 
 	public void keyReleased(KeyEvent e) {
-		// TODO Auto-generated method stub
 		
+
 	}
 
 	public void keyTyped(KeyEvent e) {
-		// TODO Auto-generated method stub
 		
+
 	}
 }

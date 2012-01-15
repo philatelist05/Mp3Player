@@ -8,6 +8,10 @@ import javax.swing.JTextField;
 
 import org.apache.log4j.Logger;
 
+import at.ac.tuwien.sepm2011ws.mp3player.domainObjects.Playlist;
+import at.ac.tuwien.sepm2011ws.mp3player.serviceLayer.PlaylistService;
+import at.ac.tuwien.sepm2011ws.mp3player.serviceLayer.ServiceFactory;
+
 import net.miginfocom.swing.MigLayout;
 
 public class GlobalSearch extends JDialog {
@@ -19,11 +23,16 @@ public class GlobalSearch extends JDialog {
 	private static Logger logger = Logger.getLogger(GlobalSearch.class);
 	private JPanel globalSearchPanel;
 	private JTextField playlistName;
+	private PlaylistService ps;
+	private Playlist result;
 	
 	public GlobalSearch() {
+		ServiceFactory sf = ServiceFactory.getInstance();
+		ps = sf.getPlaylistService();
 		logger.info("GlobalSearch(): Started constructor GlobalSearch()");
 		initialize();
 		logger.info("GlobalSearch(): Components successfully initialized");
+		
 		setTitle("Search globally...");
 		setBounds(100, 100, 450, 100);
 		setModal(true);
@@ -31,8 +40,10 @@ public class GlobalSearch extends JDialog {
 	}
 	
 	private void initialize() {
+		
 		globalSearchPanel = new JPanel(new MigLayout("", "[grow]", "[]"));
 		playlistName = new JTextField("");
+		
 		playlistName.addKeyListener(new KeyAdapter() {
 			@Override
 			public void keyPressed(KeyEvent e) {
@@ -42,7 +53,8 @@ public class GlobalSearch extends JDialog {
 		        	logger.info("GlobalSearch(): Pressed Enter Key while focussed on playlistName");
 		        	if (playlistName.getText().trim().length() > 0) {
 		        		//TODO: start globalSearch()
-		        		logger.info("GlobalSearch(): loaded search results into songTable");
+		        		result = ps.globalSearch(playlistName.getText());
+		        		new MainFrame(result);
 		        		dispose();
 		        	}
 		        	else {
