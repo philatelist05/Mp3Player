@@ -1,5 +1,7 @@
 package at.ac.tuwien.sepm2011ws.mp3player.presentationLayer;
 
+
+
 import java.awt.Dimension;
 import java.awt.Image;
 import java.awt.event.ActionEvent;
@@ -427,13 +429,15 @@ public class MainFrame extends JFrame implements ActionListener, Runnable, KeyLi
 	 */
 	private void doPlaylistClicked(MouseEvent me) {
 		TreePath tp = pl_tree.getPathForLocation(me.getX(), me.getY());
+		//PlaylistTreeNode clicked = (PlaylistTreeNode) tp.getLastPathComponent();
 		PlaylistTreeNode clicked = (PlaylistTreeNode) pl_tree.getLastSelectedPathComponent();
 		if (tp != null && clicked != null) {
 			if(clicked.hasNodePlaylist()) {
 				//TODO
-				System.out.print(clicked.getNodePlaylist());
+				System.out.println(clicked.getNodePlaylist());
 			} else {
-				System.out.print("noway");
+				
+				System.out.println("noway");
 			}
 		}
 	}
@@ -473,7 +477,6 @@ public class MainFrame extends JFrame implements ActionListener, Runnable, KeyLi
 		/**
 		 * MainFrame
 		 */
-
 		// Resizing MainFrame
 		addComponentListener(new ComponentAdapter() {
 			@Override
@@ -575,6 +578,8 @@ public class MainFrame extends JFrame implements ActionListener, Runnable, KeyLi
 		pl_tree.setEditable(true);
 		pl_tree.setVisibleRowCount(5);
 		JScrollPane pl_tree_sp = new JScrollPane(pl_tree);
+		pl_tree.setDragEnabled(false);
+		pl_tree.setTransferHandler(new JTreeSongTransferHandler());
 		
 		pl_tree.addMouseListener(new MouseAdapter() {
 			public void mouseClicked(MouseEvent me) {
@@ -595,6 +600,10 @@ public class MainFrame extends JFrame implements ActionListener, Runnable, KeyLi
 				.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_AS_NEEDED);
 		songTable_sp
 				.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED);
+		songTable.getTableHeader().setReorderingAllowed(false);
+		songTable.setSelectionMode(ListSelectionModel.SINGLE_INTERVAL_SELECTION);
+		songTable.setDragEnabled(true);
+		songTable.setTransferHandler(new JTableSongTransferHandler());
 		playerPanel.add(songTable_sp, "cell 1 1 3 1,grow");
 
 		songTable.addMouseListener(new MouseAdapter() {
