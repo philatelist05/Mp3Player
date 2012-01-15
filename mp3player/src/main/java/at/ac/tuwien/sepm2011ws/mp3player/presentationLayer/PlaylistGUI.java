@@ -20,6 +20,7 @@ import at.ac.tuwien.sepm2011ws.mp3player.domainObjects.Playlist;
 import at.ac.tuwien.sepm2011ws.mp3player.persistanceLayer.DataAccessException;
 import at.ac.tuwien.sepm2011ws.mp3player.serviceLayer.PlaylistService;
 import at.ac.tuwien.sepm2011ws.mp3player.serviceLayer.ServiceFactory;
+import java.lang.String;
 
 public class PlaylistGUI extends JDialog implements ActionListener {
 
@@ -49,7 +50,7 @@ public class PlaylistGUI extends JDialog implements ActionListener {
 	 * matches the specified filetypes)
 	 * @throws DataAccessException 
 	 */
-	public void importPlaylist() throws DataAccessException {
+	public void importPlaylist() {
 		File[] playlists;
 		chooser = new JFileChooser();
 		chooser.setAcceptAllFileFilterUsed(false);
@@ -95,6 +96,12 @@ public class PlaylistGUI extends JDialog implements ActionListener {
 				} else
 					logger.info("exportPlaylist(): didn't overwrite "
 							+ export.getAbsolutePath());
+			}
+			
+			else {
+				ps.exportPlaylist(export, list);
+				logger.info("exportPlaylist(): " + export.getAbsolutePath()
+						+ " exported");
 			}
 		}
 		if (rVal == JFileChooser.CANCEL_OPTION) {

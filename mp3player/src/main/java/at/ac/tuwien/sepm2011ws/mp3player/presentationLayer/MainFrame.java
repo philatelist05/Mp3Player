@@ -915,6 +915,7 @@ public class MainFrame extends JFrame implements ActionListener, Runnable,
 
 		else if (e.getActionCommand().equals("importplaylist")) {
 			playlistgui = new PlaylistGUI();
+<<<<<<< HEAD
 
 			try {
 				playlistgui.importPlaylist();
@@ -922,6 +923,9 @@ public class MainFrame extends JFrame implements ActionListener, Runnable,
 				// TODO Auto-generated catch block
 				e1.printStackTrace();
 			}
+=======
+			playlistgui.importPlaylist();
+>>>>>>> HEAD@{1}
 		}
 
 		else if (e.getActionCommand().equals("exportplaylist")) {
