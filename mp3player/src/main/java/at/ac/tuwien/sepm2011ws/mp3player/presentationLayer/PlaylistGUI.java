@@ -17,6 +17,7 @@ import net.miginfocom.swing.MigLayout;
 import org.apache.log4j.Logger;
 
 import at.ac.tuwien.sepm2011ws.mp3player.domainObjects.Playlist;
+import at.ac.tuwien.sepm2011ws.mp3player.persistanceLayer.DataAccessException;
 import at.ac.tuwien.sepm2011ws.mp3player.serviceLayer.PlaylistService;
 import at.ac.tuwien.sepm2011ws.mp3player.serviceLayer.ServiceFactory;
 
@@ -46,8 +47,9 @@ public class PlaylistGUI extends JDialog implements ActionListener {
 	 * Opens a "openFile" Dialog, prompting the user to choose a file from the
 	 * filesystem which should be added to the library (only, if the file
 	 * matches the specified filetypes)
+	 * @throws DataAccessException 
 	 */
-	public void importPlaylist() {
+	public void importPlaylist() throws DataAccessException {
 		File[] playlists;
 		chooser = new JFileChooser();
 		chooser.setAcceptAllFileFilterUsed(false);
