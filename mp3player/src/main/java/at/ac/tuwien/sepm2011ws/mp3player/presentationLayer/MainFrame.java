@@ -18,6 +18,9 @@ import java.awt.event.MouseMotionListener;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowStateListener;
 import java.io.IOException;
+import java.util.Iterator;
+import java.util.List;
+import java.util.ListIterator;
 
 import javax.imageio.ImageIO;
 import javax.swing.Icon;
@@ -115,6 +118,8 @@ public class MainFrame extends JFrame implements ActionListener, Runnable,
 			"img/pause_orange.png"));
 	private Icon mp3 = new ImageIcon(getClass().getResource(
 			"img/pause_orange_pressed.png"));
+	
+	private List<Playlist> playlists= null;
 
 	private PlaylistService ps;
 	private CoreInteractionService cis;
@@ -570,6 +575,7 @@ public class MainFrame extends JFrame implements ActionListener, Runnable,
 		 * JTrees
 		 */
 		// pl_tree
+		playlists = ps.getAllPlaylists();
 		pl_tree = new JTree();
 		pl_tree.setModel(new DefaultTreeModel(new PlaylistTreeNode(
 				"mp3@player") {
@@ -583,6 +589,14 @@ public class MainFrame extends JFrame implements ActionListener, Runnable,
 				add(new PlaylistTreeNode("Library"));
 				add(new PlaylistTreeNode("Queue"));
 				node_1 = new PlaylistTreeNode("Playlists");
+				
+				Playlist current = null;
+				if(playlists==null){ System.out.println("ajsnajsjasjn"); }
+				ListIterator<Playlist> iter = playlists.listIterator();
+				while(iter.hasNext()) {
+					current = iter.next();
+					node_1.add(new PlaylistTreeNode(current.getTitle(), false, current));
+				}
 				node_1.add(new PlaylistTreeNode("Metal"));
 				node_1.add(new PlaylistTreeNode("80s"));
 				node_1.add(new PlaylistTreeNode("Funk"));

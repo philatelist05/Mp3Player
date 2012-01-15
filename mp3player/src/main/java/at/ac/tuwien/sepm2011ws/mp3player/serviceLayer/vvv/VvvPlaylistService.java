@@ -10,6 +10,7 @@ import java.io.FileInputStream;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.log4j.Logger;
@@ -17,6 +18,7 @@ import org.apache.log4j.Logger;
 import at.ac.tuwien.sepm2011ws.mp3player.domainObjects.Playlist;
 import at.ac.tuwien.sepm2011ws.mp3player.domainObjects.Song;
 import at.ac.tuwien.sepm2011ws.mp3player.persistanceLayer.DataAccessException;
+import at.ac.tuwien.sepm2011ws.mp3player.persistanceLayer.PlaylistDao;
 import at.ac.tuwien.sepm2011ws.mp3player.persistanceLayer.SongDao;
 import at.ac.tuwien.sepm2011ws.mp3player.persistanceLayer.db.DaoFactory;
 import at.ac.tuwien.sepm2011ws.mp3player.serviceLayer.PlaylistService;
@@ -119,8 +121,14 @@ class VvvPlaylistService implements PlaylistService {
     }
 
     public List<Playlist> getAllPlaylists() {
-	// TODO Auto-generated method stub
-	return null;
+    	//ArrayList<Playlist> playlists=new ArrayList<Playlist>();
+    	DaoFactory df = DaoFactory.getInstance();
+    	PlaylistDao pd = df.getPlaylistDao();
+    	try {
+			return pd.readAll();
+		} catch (DataAccessException e) {
+			return null;
+		}
     }
 
     public void addFolder(File folder) {
