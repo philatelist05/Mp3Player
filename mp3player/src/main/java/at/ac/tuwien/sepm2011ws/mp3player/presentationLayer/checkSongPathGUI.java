@@ -12,6 +12,7 @@ import net.miginfocom.swing.MigLayout;
 
 import org.apache.log4j.Logger;
 
+import at.ac.tuwien.sepm2011ws.mp3player.persistanceLayer.DataAccessException;
 import at.ac.tuwien.sepm2011ws.mp3player.serviceLayer.PlaylistService;
 import at.ac.tuwien.sepm2011ws.mp3player.serviceLayer.ServiceFactory;
 
@@ -65,7 +66,12 @@ public class checkSongPathGUI extends JDialog implements ActionListener {
 		}
 		
 		else if (e.getActionCommand().equals("start")) {
-			ps.checkSongPaths();
+			try {
+				ps.checkSongPaths();
+			} catch (DataAccessException e1) {
+				// TODO Auto-generated catch block
+				e1.printStackTrace();
+			}
 			logger.info("checkSongPathGUI(): Songpaths successfully checked");
 			new MainFrame("reloadsongTable");
 			logger.info("checkSongPathGUI(): Back from Mainframe");

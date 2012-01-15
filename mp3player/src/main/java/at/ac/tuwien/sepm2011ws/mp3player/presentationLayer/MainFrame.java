@@ -1,7 +1,5 @@
 package at.ac.tuwien.sepm2011ws.mp3player.presentationLayer;
 
-
-
 import java.awt.Dimension;
 import java.awt.Image;
 import java.awt.event.ActionEvent;
@@ -20,15 +18,18 @@ import java.awt.event.WindowStateListener;
 import java.io.IOException;
 
 import javax.imageio.ImageIO;
+import javax.swing.Action;
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
 import javax.swing.JCheckBox;
+import javax.swing.JCheckBoxMenuItem;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 import javax.swing.JPanel;
+import javax.swing.JPopupMenu;
 import javax.swing.JScrollPane;
 import javax.swing.JSeparator;
 import javax.swing.JSlider;
@@ -67,6 +68,7 @@ public class MainFrame extends JFrame implements ActionListener, Runnable,
 	private PlaylistGUI playlistgui;
 	private LibraryGUI librarygui;
 	private JTable songTable;
+	private HidableTableColumnModel cTableModel;
 	private SongTableModel songmodel = new SongTableModel(new String[] {
 			"Track Nr.", "Title", "Artist", "Album", "Year", "Genre",
 			"Duration", "Rating", "Playcount" }, 0);
@@ -145,7 +147,7 @@ public class MainFrame extends JFrame implements ActionListener, Runnable,
 	 *            containing song items
 	 */
 	protected void fillSongTable(Playlist list) {
-		String album=null;
+		String album = null;
 		songmodel.setRowCount(0);
 		for (Song x : list.getSongs()) {
 			if (x.getAlbum() != null)
@@ -433,26 +435,29 @@ public class MainFrame extends JFrame implements ActionListener, Runnable,
 		else if (!chckbxRepeat.isSelected() && chckbxShuffle.isSelected())
 			cis.setPlayMode(PlayMode.SHUFFLE);
 	}
-	
+
 	/**
 	 * Shows the clicked Playlist from the Tree.
+	 * 
 	 * @param MouseEvent
 	 */
 	private void doPlaylistClicked(MouseEvent me) {
 		TreePath tp = pl_tree.getPathForLocation(me.getX(), me.getY());
-		//PlaylistTreeNode clicked = (PlaylistTreeNode) tp.getLastPathComponent();
-		PlaylistTreeNode clicked = (PlaylistTreeNode) pl_tree.getLastSelectedPathComponent();
+		// PlaylistTreeNode clicked = (PlaylistTreeNode)
+		// tp.getLastPathComponent();
+		PlaylistTreeNode clicked = (PlaylistTreeNode) pl_tree
+				.getLastSelectedPathComponent();
 		if (tp != null && clicked != null) {
-			if(clicked.hasNodePlaylist()) {
-				//TODO
+			if (clicked.hasNodePlaylist()) {
+				// TODO
 				System.out.println(clicked.getNodePlaylist());
 			} else {
-				
+
 				System.out.println("noway");
 			}
 		}
 	}
-	
+
 	/**
 	 * Starts the MainFrame
 	 */
@@ -483,7 +488,7 @@ public class MainFrame extends JFrame implements ActionListener, Runnable,
 	public MainFrame(Playlist list) {
 		currentPlaylistGUI = list;
 	}
-	
+
 	public MainFrame(String command) {
 		if (command == "reloadsongTable")
 			fillSongTable(currentPlaylistGUI);
@@ -571,47 +576,48 @@ public class MainFrame extends JFrame implements ActionListener, Runnable,
 		 */
 		// pl_tree
 		pl_tree = new JTree();
-		pl_tree.setModel(new DefaultTreeModel(new PlaylistTreeNode(
-				"mp3@player") {
-			/**
+		pl_tree.setModel(new DefaultTreeModel(
+				new PlaylistTreeNode("mp3@player") {
+					/**
 				 * 
 				 */
-			private static final long serialVersionUID = -7228695694680777407L;
+					private static final long serialVersionUID = -7228695694680777407L;
 
-			{
-				PlaylistTreeNode node_1;
-				add(new PlaylistTreeNode("Library"));
-				add(new PlaylistTreeNode("Queue"));
-				node_1 = new PlaylistTreeNode("Playlists");
-				node_1.add(new PlaylistTreeNode("Metal"));
-				node_1.add(new PlaylistTreeNode("80s"));
-				node_1.add(new PlaylistTreeNode("Funk"));
-				node_1.add(new PlaylistTreeNode("Pop"));
-				add(node_1);
-				node_1 = new PlaylistTreeNode("Intelligent Playlists");
-				node_1.add(new PlaylistTreeNode("Top40 rated"));
-				node_1.add(new PlaylistTreeNode("Top40 played"));
-				add(node_1);
-			}
-		}));
+					{
+						PlaylistTreeNode node_1;
+						add(new PlaylistTreeNode("Library"));
+						add(new PlaylistTreeNode("Queue"));
+						node_1 = new PlaylistTreeNode("Playlists");
+						node_1.add(new PlaylistTreeNode("Metal"));
+						node_1.add(new PlaylistTreeNode("80s"));
+						node_1.add(new PlaylistTreeNode("Funk"));
+						node_1.add(new PlaylistTreeNode("Pop"));
+						add(node_1);
+						node_1 = new PlaylistTreeNode("Intelligent Playlists");
+						node_1.add(new PlaylistTreeNode("Top40 rated"));
+						node_1.add(new PlaylistTreeNode("Top40 played"));
+						add(node_1);
+					}
+				}));
 		pl_tree.setEditable(true);
 		pl_tree.setVisibleRowCount(5);
 		JScrollPane pl_tree_sp = new JScrollPane(pl_tree);
 		pl_tree.setDragEnabled(false);
 		pl_tree.setTransferHandler(new JTreeSongTransferHandler());
-		
+
 		pl_tree.addMouseListener(new MouseAdapter() {
 			public void mouseClicked(MouseEvent me) {
 				doPlaylistClicked(me);
 			}
 		});
-		
+
 		playerPanel.add(pl_tree_sp, "cell 0 1,grow");
 
 		/**
 		 * JTables
 		 */
 		// songTable
+
 		songTable = new JTable(songmodel);
 		songTable.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 		JScrollPane songTable_sp = new JScrollPane(songTable);
@@ -620,10 +626,19 @@ public class MainFrame extends JFrame implements ActionListener, Runnable,
 		songTable_sp
 				.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED);
 		songTable.getTableHeader().setReorderingAllowed(false);
-		songTable.setSelectionMode(ListSelectionModel.SINGLE_INTERVAL_SELECTION);
+		songTable
+				.setSelectionMode(ListSelectionModel.SINGLE_INTERVAL_SELECTION);
 		songTable.setDragEnabled(true);
 		songTable.setTransferHandler(new JTableSongTransferHandler());
 		playerPanel.add(songTable_sp, "cell 1 1 3 1,grow");
+		cTableModel = new HidableTableColumnModel(songTable.getColumnModel());
+		// htcm.setColumnVisible(0, false);
+		JPopupMenu popup = new JPopupMenu("Hide Menu");
+		Action[] actions = cTableModel.createColumnActions();
+		for (Action act : actions) {
+			popup.add(new JCheckBoxMenuItem(act));
+		}
+		songTable.setComponentPopupMenu(popup);
 
 		songTable.addMouseListener(new MouseAdapter() {
 			public void mouseClicked(MouseEvent e) {
@@ -914,14 +929,10 @@ public class MainFrame extends JFrame implements ActionListener, Runnable,
 		}
 
 		else if (e.getActionCommand().equals("importplaylist")) {
+
 			playlistgui = new PlaylistGUI();
 
-			try {
-				playlistgui.importPlaylist();
-			} catch (DataAccessException e1) {
-				// TODO Auto-generated catch block
-				e1.printStackTrace();
-			}
+			playlistgui.importPlaylist();
 		}
 
 		else if (e.getActionCommand().equals("exportplaylist")) {
@@ -943,13 +954,14 @@ public class MainFrame extends JFrame implements ActionListener, Runnable,
 			new checkSongPathGUI();
 			fillSongTable(currentPlaylistGUI);
 		}
-		
+
 		else if (e.getActionCommand().equals("settings")) {
 			new Settings();
-			//TODO: Add dynamically changing for songTable
-			//TODO: Add reloading for "TopXX played" and "TopXX rated", if selected
+			// TODO: Add dynamically changing for songTable
+			// TODO: Add reloading for "TopXX played" and "TopXX rated", if
+			// selected
 		}
-		
+
 		else if (e.getActionCommand().equals("exit")) {
 			logger.info("Application is going terminate... Have a nice day :)");
 			System.exit(0);
@@ -963,12 +975,10 @@ public class MainFrame extends JFrame implements ActionListener, Runnable,
 	}
 
 	public void keyReleased(KeyEvent e) {
-		
 
 	}
 
 	public void keyTyped(KeyEvent e) {
-		
 
 	}
 }

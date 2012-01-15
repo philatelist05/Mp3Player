@@ -27,6 +27,6 @@ public class ServiceFactory {
 	}
 
 	public SettingsService getSettingsService() {
-		return (SettingsService) context.getBean("ServiceSettings");
+	    return (SettingsService) context.getBean("SettingsService");
 	}
 }
