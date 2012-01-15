@@ -450,11 +450,8 @@ public class MainFrame extends JFrame implements ActionListener, Runnable,
 		PlaylistTreeNode clicked = (PlaylistTreeNode) pl_tree.getLastSelectedPathComponent();
 		if (tp != null && clicked != null) {
 			if(clicked.hasNodePlaylist()) {
-				//TODO
-				System.out.println(clicked.getNodePlaylist());
+				fillSongTable(clicked.getNodePlaylist());
 			} else {
-				
-				System.out.println("noway");
 			}
 		}
 	}
@@ -582,16 +579,18 @@ public class MainFrame extends JFrame implements ActionListener, Runnable,
 		}
 		pl_tree = new JTree();
 		pl_tree.setModel(new DefaultTreeModel(new PlaylistTreeNode(
-				"mp3@player") {
+				"") {
 			/**
-				 * 
+				 * mp3@player
 				 */
 			private static final long serialVersionUID = -7228695694680777407L;
 
 			{
 				PlaylistTreeNode node_1;
-				
-				//add(new PlaylistTreeNode(ps.getLibrary().toString(), false, ps.getLibrary()));
+				try{
+					add(new PlaylistTreeNode(ps.getLibrary().toString(), false, ps.getLibrary()));
+				} catch(DataAccessException a) {					
+				}
 				add(new PlaylistTreeNode("Queue"));
 				
 				//node_1 = new PlaylistTreeNode(ps.getLibrary().toString(), false, ps.getLibrary());
@@ -604,16 +603,16 @@ public class MainFrame extends JFrame implements ActionListener, Runnable,
 					current = iter.next();
 					node_1.add(new PlaylistTreeNode(current.getTitle(), false, current));
 				}
-				
-				node_1.add(new PlaylistTreeNode("Metal"));
-				node_1.add(new PlaylistTreeNode("80s"));
-				node_1.add(new PlaylistTreeNode("Funk"));
-				node_1.add(new PlaylistTreeNode("Pop"));
 				add(node_1);
 				
 				node_1 = new PlaylistTreeNode("Intelligent Playlists");
+				try {
+				node_1.add(new PlaylistTreeNode(ps.getTopRated().getTitle(), false, ps.getTopRated()));
+				node_1.add(new PlaylistTreeNode(ps.getTopPlayed().getTitle(), false, ps.getTopPlayed()));
+				} catch(NullPointerException n) {
 				node_1.add(new PlaylistTreeNode("Top40 rated"));
 				node_1.add(new PlaylistTreeNode("Top40 played"));
+				}
 				add(node_1);
 			}
 		}));
