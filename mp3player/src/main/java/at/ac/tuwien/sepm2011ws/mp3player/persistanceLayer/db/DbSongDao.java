@@ -159,7 +159,8 @@ class DbSongDao implements SongDao {
 			deleteStmt.setInt(1, id);
 			deleteStmt.executeUpdate();
 
-			// TODO: Delete album too if there are no more songs of it
+			// TODO: Delete album too if there are no more songs of it; 
+			// I guess this should actually do ON DELETE CASCASE ?????
 		} catch (SQLException e) {
 			throw new DataAccessException("Error deleting song in database");
 		}
