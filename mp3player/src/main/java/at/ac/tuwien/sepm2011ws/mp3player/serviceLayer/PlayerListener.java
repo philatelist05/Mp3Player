@@ -3,7 +3,6 @@
  */
 package at.ac.tuwien.sepm2011ws.mp3player.serviceLayer;
 
-import at.ac.tuwien.sepm2011ws.mp3player.domainObjects.Song;
 
 /**
  * @author klaus
@@ -12,11 +11,13 @@ import at.ac.tuwien.sepm2011ws.mp3player.domainObjects.Song;
 public interface PlayerListener {
 
 	/**
-	 * Fires if the player is at the end of a song.
-	 * 
-	 * @param song
-	 *            The next song the player will play.
+	 * Fires when the player begins to play a song.
 	 */
-	public void endOfMediaEvent(Song song);
+	public void songBeginnEvent();
 	
+	/**
+	 * Fires when the player is at the end of a song.
+	 */
+	public void songEndEvent();
+
 }

@@ -6,10 +6,15 @@ import java.util.List;
 import org.apache.log4j.Logger;
 
 import uk.co.caprica.vlcj.player.MediaPlayer;
+import uk.co.caprica.vlcj.player.MediaPlayerEventListener;
 import uk.co.caprica.vlcj.player.MediaPlayerFactory;
+import uk.co.caprica.vlcj.player.VideoMetaData;
 import uk.co.caprica.vlcj.runtime.RuntimeUtil;
 import at.ac.tuwien.sepm2011ws.mp3player.domainObjects.Playlist;
 import at.ac.tuwien.sepm2011ws.mp3player.domainObjects.Song;
+import at.ac.tuwien.sepm2011ws.mp3player.persistanceLayer.DataAccessException;
+import at.ac.tuwien.sepm2011ws.mp3player.persistanceLayer.SongDao;
+import at.ac.tuwien.sepm2011ws.mp3player.persistanceLayer.db.DaoFactory;
 import at.ac.tuwien.sepm2011ws.mp3player.serviceLayer.CoreInteractionService;
 import at.ac.tuwien.sepm2011ws.mp3player.serviceLayer.PlayMode;
 import at.ac.tuwien.sepm2011ws.mp3player.serviceLayer.PlayerListener;
@@ -18,6 +23,7 @@ import com.sun.jna.Platform;
 
 public class VlcjCoreInteractionService implements CoreInteractionService {
 	
+	private static final Logger logger = Logger.getLogger(VlcjCoreInteractionService.class);
 	private final MediaPlayer mediaPlayer;
 	private PlayMode playMode;
 	private Playlist currentPlaylist;
@@ -39,26 +45,18 @@ public class VlcjCoreInteractionService implements CoreInteractionService {
 				new String[] { "--plugin-path=" + pluginPath });
 		this.mediaPlayer = factory.newMediaPlayer();
 
-		// mediaPlayer.addMediaPlayerEventListener(new MediaPlayerEventAdapter()
-		// {
-		// public void finished(MediaPlayer mediaPlayer) {
-		// System.exit(0);
-		// }
-		//
-		// public void error(MediaPlayer mediaPlayer) {
-		// System.exit(1);
-		// }
-		// });
+		mediaPlayer
+				.addMediaPlayerEventListener(new VvvMediaPlayerEventListener());
 	}
 
 	private String getLibPath() {
 		if (RuntimeUtil.isMac())
 			return new File("lib/vlc/osx/lib").getAbsolutePath();
 		else if (RuntimeUtil.isWindows()) {
-		    if (Platform.is64Bit())
-			return new File("lib/vlc/windows/64Bit/lib").getAbsolutePath();
-		    
-		    return new File("lib/vlc/windows/32Bit/lib").getAbsolutePath();
+			if (Platform.is64Bit())
+				return new File("lib/vlc/windows/64Bit/lib").getAbsolutePath();
+
+			return new File("lib/vlc/windows/32Bit/lib").getAbsolutePath();
 		}
 		return new File("lib/vlc/linux/lib").getAbsolutePath();
 	}
@@ -67,10 +65,11 @@ public class VlcjCoreInteractionService implements CoreInteractionService {
 		if (RuntimeUtil.isMac())
 			return new File("lib/vlc/osx/plugins").getAbsolutePath();
 		else if (RuntimeUtil.isWindows()) {
-		    if (Platform.is64Bit())
-			return new File("lib/vlc/windows/64Bit/plugins").getAbsolutePath();
-		    
-		    return new File("lib/vlc/windows/32Bit/plugins").getAbsolutePath();
+			if (Platform.is64Bit())
+				return new File("lib/vlc/windows/64Bit/plugins")
+						.getAbsolutePath();
+
+			return new File("lib/vlc/windows/32Bit/plugins").getAbsolutePath();
 		}
 		return new File("lib/vlc/linux/plugins").getAbsolutePath();
 	}
@@ -81,8 +80,9 @@ public class VlcjCoreInteractionService implements CoreInteractionService {
 		} else {
 			isPaused = false;
 			this.currentSong = song;
-			File songPath = new File(song.getPath());
-			mediaPlayer.playMedia(songPath.getAbsolutePath());
+			File songFile = new File(song.getPath());
+
+			mediaPlayer.playMedia(songFile.getAbsolutePath());
 		}
 	}
 
@@ -149,7 +149,7 @@ public class VlcjCoreInteractionService implements CoreInteractionService {
 
 	public void seek(double percent) {
 		if (this.mediaPlayer.isSeekable())
-			this.mediaPlayer.setTime((long) getDurationAt(percent)*1000);
+			this.mediaPlayer.setTime((long) getDurationAt(percent) * 1000);
 
 	}
 
@@ -159,7 +159,7 @@ public class VlcjCoreInteractionService implements CoreInteractionService {
 					"Amount of seconds out of song duration");
 
 		if (this.mediaPlayer.isSeekable()) {
-			this.mediaPlayer.setTime(seconds*1000);
+			this.mediaPlayer.setTime(seconds * 1000);
 		}
 	}
 
@@ -172,18 +172,18 @@ public class VlcjCoreInteractionService implements CoreInteractionService {
 			throw new IllegalArgumentException(
 					"Duration percentage out of range");
 
-		return (this.mediaPlayer.getLength()/1000) *  (percent/100);
+		return (this.mediaPlayer.getLength() / 1000) * (percent / 100);
 	}
 
 	public double getPlayTime() {
 		double duration = getDuration();
-		double playTime = this.mediaPlayer.getTime()/1000;
+		double playTime = this.mediaPlayer.getTime() / 1000;
 		return playTime * 100 / duration;
 	}
 
 	public double getPlayTimeInSeconds() {
-		return this.mediaPlayer.getTime()/1000;
-		//return getDurationAt(getPlayTime());
+		return this.mediaPlayer.getTime() / 1000;
+		// return getDurationAt(getPlayTime());
 	}
 
 	public Song getCurrentSong() {
@@ -206,32 +206,22 @@ public class VlcjCoreInteractionService implements CoreInteractionService {
 		return this.playMode;
 	}
 
-	/**
-	 * Gets the current song index
-	 * 
-	 * @return the index of the current song or -1 if it is not in the current
-	 *         playlist
-	 */
-	private int getCurrentSongIndex() {
-		if(this.currentPlaylist == null) {
+	public int getCurrentSongIndex() {
+		if (this.currentPlaylist == null) {
 			return -1;
-		} else if(this.currentPlaylist.getSongs() == null) {
+		} else if (this.currentPlaylist.getSongs() == null) {
 			return -1;
 		}
-		Song current = getCurrentSong();
-
-		List<Song> songs = this.currentPlaylist.getSongs();
-
-		return songs.indexOf(current);
+		return this.currentPlaylist.getSongs().indexOf(currentSong);
 	}
 
 	public Song getNextSong() {
-		if(this.currentPlaylist == null) {
+		if (this.currentPlaylist == null) {
 			return null;
-		} else if(this.currentPlaylist.getSongs() == null) {
+		} else if (this.currentPlaylist.getSongs() == null) {
 			return null;
 		}
-		
+
 		List<Song> songs = this.currentPlaylist.getSongs();
 		int maxIndex = songs.size() - 1;
 		int index = 0;
@@ -268,12 +258,12 @@ public class VlcjCoreInteractionService implements CoreInteractionService {
 	}
 
 	public Song getPreviousSong() {
-		if(this.currentPlaylist == null) {
+		if (this.currentPlaylist == null) {
 			return null;
-		} else if(this.currentPlaylist.getSongs() == null) {
+		} else if (this.currentPlaylist.getSongs() == null) {
 			return null;
 		}
-		
+
 		List<Song> songs = this.currentPlaylist.getSongs();
 		int maxIndex = songs.size() - 1;
 		int index = 0;
@@ -323,6 +313,103 @@ public class VlcjCoreInteractionService implements CoreInteractionService {
 
 	public void removePlayerListener() {
 		this.playerListener = null;
+	}
+
+	private class VvvMediaPlayerEventListener implements
+			MediaPlayerEventListener {
+
+		@Override
+		public void backward(MediaPlayer arg0) {
+		}
+
+		@Override
+		public void buffering(MediaPlayer arg0) {
+		}
+
+		@Override
+		public void error(MediaPlayer arg0) {
+			currentSong.setPathOk(false);
+			DaoFactory df = DaoFactory.getInstance();
+			SongDao sd = df.getSongDao();
+			try {
+				sd.update(currentSong);
+			} catch (DataAccessException e) {
+				logger.error(e.getMessage());
+			}
+			playerListener.songBeginnEvent();
+			playerListener.songEndEvent();
+		}
+
+		@Override
+		public void finished(MediaPlayer arg0) {
+			playerListener.songEndEvent();
+		}
+
+		@Override
+		public void forward(MediaPlayer arg0) {
+		}
+
+		@Override
+		public void lengthChanged(MediaPlayer arg0, long arg1) {
+		}
+
+		@Override
+		public void mediaChanged(MediaPlayer arg0) {
+		}
+
+		@Override
+		public void metaDataAvailable(MediaPlayer arg0, VideoMetaData arg1) {
+		}
+
+		@Override
+		public void opening(MediaPlayer arg0) {
+		}
+
+		@Override
+		public void pausableChanged(MediaPlayer arg0, int arg1) {
+		}
+
+		@Override
+		public void paused(MediaPlayer arg0) {
+		}
+
+		@Override
+		public void playing(MediaPlayer arg0) {
+			currentSong.setPathOk(true);
+			DaoFactory df = DaoFactory.getInstance();
+			SongDao sd = df.getSongDao();
+			try {
+				sd.update(currentSong);
+			} catch (DataAccessException e) {
+				logger.error(e.getMessage());
+			}
+			playerListener.songBeginnEvent();
+		}
+
+		@Override
+		public void positionChanged(MediaPlayer arg0, float arg1) {
+		}
+
+		@Override
+		public void seekableChanged(MediaPlayer arg0, int arg1) {
+		}
+
+		@Override
+		public void snapshotTaken(MediaPlayer arg0, String arg1) {
+		}
+
+		@Override
+		public void stopped(MediaPlayer arg0) {
+		}
+
+		@Override
+		public void timeChanged(MediaPlayer arg0, long arg1) {
+		}
+
+		@Override
+		public void titleChanged(MediaPlayer arg0, int arg1) {
+		}
+
 	}
 
 }
