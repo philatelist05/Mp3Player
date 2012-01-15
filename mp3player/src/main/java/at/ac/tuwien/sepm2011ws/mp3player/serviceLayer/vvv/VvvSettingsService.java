@@ -33,14 +33,10 @@ public class VvvSettingsService implements SettingsService {
     }
 
     private void initConfig() throws ConfigurationException {
-
-	for (String type : SettingsService.SongFileTypesAll) {
-	    this.userConfig.setProperty("FileTypes", type);
-	}
-	for (String type : SettingsService.SongTableColumnsAll) {
-	    this.userConfig.setProperty("Columns", type);
-	}
-
+	this.userConfig.setProperty("FileTypes",
+		SettingsService.SongFileTypesAll);
+	this.userConfig.setProperty("Columns",
+		SettingsService.SongTableColumnsAll);
 	this.userConfig.setProperty("TopXXPlayed", new Integer(
 		SettingsService.XXXPlayedCountDefault));
 	this.userConfig.setProperty("TopXXRated", new Integer(
@@ -56,9 +52,7 @@ public class VvvSettingsService implements SettingsService {
     @Override
     public void setUserFileTypes(String[] types) {
 	try {
-	    for (String type : types) {
-		this.userConfig.setProperty("FileTypes", type);
-	    }
+	    this.userConfig.setProperty("FileTypes", types);
 	    this.userConfig.save();
 	} catch (ConfigurationException e) {
 	    logger.error(e);
@@ -73,9 +67,7 @@ public class VvvSettingsService implements SettingsService {
     @Override
     public void setUserColumns(String[] cols) {
 	try {
-	    for (String col : cols) {
-		this.userConfig.setProperty("Columns", col);
-	    }
+	    this.userConfig.setProperty("Columns", cols);
 	    this.userConfig.save();
 	} catch (ConfigurationException e) {
 	    logger.error(e);
