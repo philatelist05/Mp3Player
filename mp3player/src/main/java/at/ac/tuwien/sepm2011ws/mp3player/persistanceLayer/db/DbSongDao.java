@@ -15,6 +15,8 @@ import at.ac.tuwien.sepm2011ws.mp3player.domainObjects.Song;
 import at.ac.tuwien.sepm2011ws.mp3player.persistanceLayer.AlbumDao;
 import at.ac.tuwien.sepm2011ws.mp3player.persistanceLayer.DataAccessException;
 import at.ac.tuwien.sepm2011ws.mp3player.persistanceLayer.SongDao;
+import at.ac.tuwien.sepm2011ws.mp3player.serviceLayer.ServiceFactory;
+import at.ac.tuwien.sepm2011ws.mp3player.serviceLayer.SettingsService;
 
 /**
  * @author klaus
@@ -32,13 +34,11 @@ class DbSongDao implements SongDao {
 	private PreparedStatement readAllStmt;
 	private PreparedStatement updateStmt;
 	private PreparedStatement deleteStmt;
+	private PreparedStatement readRatedStmt;
+	private PreparedStatement readPlayedStmt;
 
 	DbSongDao(DataSource source, AlbumDao ad) throws DataAccessException {
-//	    DaoFactory df = DaoFactory.getInstance();
-//	    ad = df.getAlbumDao();
-	    
 	    this.ad = ad;
-
 		try {
 
 			con = source.getConnection();
@@ -65,6 +65,15 @@ class DbSongDao implements SongDao {
 					+ "WHERE id = ?;");
 			deleteStmt = con.prepareStatement("DELETE FROM song "
 					+ "WHERE id = ?;");
+			readRatedStmt = con.prepareStatement("SELECT id, "
+				+ "title, artist, path, year, "
+				+ "duration, playcount, rating, genre, pathOk, lyric, "
+				+ "album FROM song ORDER BY rating DESC LIMIT ?;");
+			readPlayedStmt = con.prepareStatement("SELECT id, "
+				+ "title, artist, path, year, "
+				+ "duration, playcount, rating, genre, pathOk, lyric, "
+				+ "album FROM song ORDER BY playcount DESC LIMIT ?;");
+			
 
 		} catch (SQLException e) {
 			throw new DataAccessException(
@@ -219,12 +228,16 @@ class DbSongDao implements SongDao {
 	}
 
 	public List<Song> readAll() throws DataAccessException {
-		ResultSet result = null;
+		return executeSelect(readAllStmt);
+	}
+	
+	private List<Song> executeSelect(PreparedStatement statement) throws DataAccessException{
+	    ResultSet result = null;
 		ResultSet result2 = null;
 		ArrayList<Song> sList = new ArrayList<Song>();
 		Song s;
 		try {
-			result = readAllStmt.executeQuery();
+			result = statement.executeQuery();
 
 			while (result.next()) {
 				s = new Song(result.getString("artist"),
@@ -268,10 +281,36 @@ class DbSongDao implements SongDao {
 		return sList;
 	}
 
-	/**
-	 * @return the connection
-	 */
 	public Connection getConnection() {
 		return this.con;
 	}
+
+	@Override
+	public List<Song> getTopRatedSongs() throws DataAccessException {
+	    ServiceFactory serviceFactory = ServiceFactory.getInstance();
+	    SettingsService settingsService = serviceFactory.getSettingsService();
+	    
+	    try {
+		int anzahl = settingsService.getTopXXRatedCount();
+		readRatedStmt.setInt(1, anzahl);
+		return executeSelect(readRatedStmt);
+	    } catch(SQLException e) {
+		throw new DataAccessException("Error reading song from database");
+	    }
+	}
+
+	@Override
+	public List<Song> getTopPlayedSongs() throws DataAccessException {
+	    ServiceFactory serviceFactory = ServiceFactory.getInstance();
+	    SettingsService settingsService = serviceFactory.getSettingsService();
+	    
+	    try {
+		int anzahl = settingsService.getTopXXPlayedCount();
+		readPlayedStmt.setInt(1, anzahl);
+		return executeSelect(readPlayedStmt);
+	    } catch(SQLException e) {
+		throw new DataAccessException("Error reading song from database");
+	    }
+	}
+	
 }

@@ -61,6 +61,22 @@ public interface SongDao {
 	public List<Song> readAll() throws DataAccessException;
 	
 	/**
+	 * Reads all top xx rated songs from the DB.
+	 * 
+	 * @return A list of all xx rated songs from the DB.
+	 * @throws DataAccessException 
+	 */
+	public List<Song> getTopRatedSongs() throws DataAccessException;
+	
+	/**
+	 * Reads all top xx played songs from the DB.
+	 * 
+	 * @return A list of all xx played songs from the DB.
+	 * @throws DataAccessException 
+	 */
+	public List<Song> getTopPlayedSongs() throws DataAccessException;
+	
+	/**
 	 * @return the connection used by this DAO
 	 */
 	public Connection getConnection();
