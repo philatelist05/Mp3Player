@@ -186,13 +186,13 @@ public class Settings extends JDialog implements ActionListener {
 		contentPane.add(btnOK, "cell 0 1,alignx right");
 	}
 
-	private boolean check() {
+	private boolean check(String[] filetypes, String[] columns) {
 		boolean check = true;
-		if (xxPlayed.getText().toString().trim().matches("^[1-9]+[0-9]*$")
-				&& xxRated.getText().toString().trim().matches("^[1-9]+[0-9]*$"))
+		if (xxPlayed.getText().trim().matches("^[1-9]+[0-9]*$") == false
+				|| xxRated.getText().trim().matches("^[1-9]+[0-9]*$") == false)
 			return false;
-		if (userFileTypesList.getSelectedValues().length > 0
-				&& userColumnsList.getSelectedValues().length > 0)
+		if (filetypes.length < 1
+				|| columns.length < 1)
 			return false;
 		return check;
 	}
@@ -203,18 +203,18 @@ public class Settings extends JDialog implements ActionListener {
 			logger.info("Settings(): start saving functionylity");
 			int ftUserSize = userFileTypesList.getModel().getSize();
 			int tmUserSize = userColumnsList.getModel().getSize();
-			Object[] ftUser = new Object[ftUserSize];
-			Object[] tmUser = new Object[tmUserSize];
+			String[] ftUser = new String[ftUserSize];
+			String[] tmUser = new String[tmUserSize];
 
-			if (check()) {
-				for (int i = 0; i < ftUserSize; i++) {
-					ftUser[i] = userFileTypesList.getModel().getElementAt(i);
-				}
+			for (int i = 0; i < ftUserSize; i++) {
+				ftUser[i] = (String) userFileTypesList.getModel().getElementAt(i);
+			}
 
-				for (int i = 0; i < tmUserSize; i++) {
-					tmUser[i] = userColumnsList.getModel().getElementAt(i);
-				}
-				
+			for (int i = 0; i < tmUserSize; i++) {
+				tmUser[i] = (String) userColumnsList.getModel().getElementAt(i);
+			}
+			
+			if (check(ftUser, tmUser)) {
 				ss.setUserFileTypes((String[])ftUser);
 				ss.setUserColumns((String[])tmUser);
 				ss.setTopXXPlayedCount(Integer.parseInt(xxPlayed.getText()));
