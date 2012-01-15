@@ -95,7 +95,7 @@ class VvvPlaylistService implements PlaylistService {
 	FileWriter writer = null;
 	BufferedWriter bwriter = null;
 	try {
-	    writer = new FileWriter(file);
+	    writer = new FileWriter(file.getAbsolutePath() + ".m3u");
 	    bwriter = new BufferedWriter(writer);
 	    for (Song song : playlist.getSongs()) {
 		bwriter.write(song.getPath());
@@ -216,7 +216,7 @@ class VvvPlaylistService implements PlaylistService {
     public void checkSongPaths() throws DataAccessException {
 	List<Song> songs = this.songDao.readAll();
 	for (Song song : songs) {
-	    song.setPathOk(new File(song.getPath()).isDirectory());
+	    song.setPathOk(new File(song.getPath()).isFile());
 	}
     }
 }

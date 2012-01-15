@@ -1,6 +1,7 @@
 package at.ac.tuwien.sepm2011ws.mp3player.serviceLayer.vvv;
 
 import java.io.File;
+import java.io.IOException;
 
 import org.apache.commons.configuration.ConfigurationException;
 import org.apache.commons.configuration.XMLConfiguration;
@@ -16,11 +17,35 @@ public class VvvSettingsService implements SettingsService {
 
     public VvvSettingsService() {
 	try {
-	    this.userConfig = new XMLConfiguration(new File("SettingsUser.xml"));
+	    File file = new File("SettingsUser.xml");
+	    this.userConfig = new XMLConfiguration(file);
+	    if (!file.isFile()) {
+		file.createNewFile();
+		initConfig();
+	    }
 	} catch (ConfigurationException e) {
 	    logger.error(e.getMessage());
 	    this.userConfig = new XMLConfiguration();
+	} catch (IOException e) {
+	    logger.error(e.getMessage());
+	    this.userConfig = new XMLConfiguration();
 	}
+    }
+
+    private void initConfig() throws ConfigurationException {
+
+	for (String type : SettingsService.SongFileTypesAll) {
+	    this.userConfig.setProperty("FileTypes", type);
+	}
+	for (String type : SettingsService.SongTableColumnsAll) {
+	    this.userConfig.setProperty("Columns", type);
+	}
+
+	this.userConfig.setProperty("TopXXPlayed", new Integer(
+		SettingsService.XXXPlayedCountDefault));
+	this.userConfig.setProperty("TopXXRated", new Integer(
+		SettingsService.XXXRatedCountDefault));
+	this.userConfig.save();
     }
 
     @Override
@@ -30,8 +55,13 @@ public class VvvSettingsService implements SettingsService {
 
     @Override
     public void setUserFileTypes(String[] types) {
-	for (String type : types) {
-	    this.userConfig.setProperty("FileTypes", type);
+	try {
+	    for (String type : types) {
+		this.userConfig.setProperty("FileTypes", type);
+	    }
+	    this.userConfig.save();
+	} catch (ConfigurationException e) {
+	    logger.error(e);
 	}
     }
 
@@ -42,8 +72,13 @@ public class VvvSettingsService implements SettingsService {
 
     @Override
     public void setUserColumns(String[] cols) {
-	for (String col : cols) {
-	    this.userConfig.setProperty("Columns", col);
+	try {
+	    for (String col : cols) {
+		this.userConfig.setProperty("Columns", col);
+	    }
+	    this.userConfig.save();
+	} catch (ConfigurationException e) {
+	    logger.error(e);
 	}
     }
 
@@ -54,7 +89,12 @@ public class VvvSettingsService implements SettingsService {
 
     @Override
     public void setTopXXRatedCount(int anzahl) {
-	this.userConfig.setProperty("TopXXRated", new Integer(anzahl));
+	try {
+	    this.userConfig.setProperty("TopXXRated", new Integer(anzahl));
+	    this.userConfig.save();
+	} catch (ConfigurationException e) {
+	    logger.error(e);
+	}
     }
 
     @Override
@@ -64,7 +104,12 @@ public class VvvSettingsService implements SettingsService {
 
     @Override
     public void setTopXXPlayedCount(int anzahl) {
-	this.userConfig.setProperty("TopXXPlayed", new Integer(anzahl));
+	try {
+	    this.userConfig.setProperty("TopXXPlayed", new Integer(anzahl));
+	    this.userConfig.save();
+	} catch (ConfigurationException e) {
+	    logger.error(e);
+	}
     }
 
 }
