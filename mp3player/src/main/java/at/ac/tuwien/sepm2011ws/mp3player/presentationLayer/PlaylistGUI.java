@@ -62,7 +62,12 @@ public class PlaylistGUI extends JDialog implements ActionListener {
 
 		if (rVal == JFileChooser.APPROVE_OPTION) {
 			playlists = chooser.getSelectedFiles();
-			ps.importPlaylist(playlists);
+			try {
+				ps.importPlaylist(playlists);
+			} catch (DataAccessException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 			logger.info("importPlaylist(): Array of playlists added");
 		}
 		if (rVal == JFileChooser.CANCEL_OPTION) {
@@ -179,7 +184,12 @@ public class PlaylistGUI extends JDialog implements ActionListener {
 			if (result.length() > 0) {
 				logger.info("newPlaylist(): start createPlaylist("
 						+ playlistName.getText() + ")");
-				ps.createPlaylist(result);
+				try {
+					ps.createPlaylist(result);
+				} catch (DataAccessException e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				}
 				dispose();
 			} else {
 				logger.info("newPlaylist(): Name of Playlist too short or blank");
@@ -193,7 +203,12 @@ public class PlaylistGUI extends JDialog implements ActionListener {
 			if (result.length() > 0 && tempPlaylist != null) {
 				logger.info("renamePlaylist(): start renamePlaylist(" + result
 						+ ")");
-				ps.renamePlaylist(tempPlaylist, result);
+				try {
+					ps.renamePlaylist(tempPlaylist, result);
+				} catch (DataAccessException e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				}
 				tempPlaylist = null;
 				dispose();
 			} else {

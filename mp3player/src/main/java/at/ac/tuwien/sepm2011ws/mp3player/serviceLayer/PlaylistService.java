@@ -26,7 +26,7 @@ public interface PlaylistService {
 	 * @return a playlist object corresponding to the parsed file
 	 * @throws DataAccessException 
 	 */
-	public void importPlaylist(File[] files);
+	public void importPlaylist(File[] files) throws DataAccessException;
 
 	/**
 	 * Exports a playlist to a playlist file.
@@ -42,8 +42,9 @@ public interface PlaylistService {
 	 * Gets all saved playlists from the library
 	 * 
 	 * @return all playlists currently available
+	 * @throws DataAccessException 
 	 */
-	public List<Playlist> getAllPlaylists();
+	public List<Playlist> getAllPlaylists() throws DataAccessException;
 
 	/**
 	 * Recursively adds all files in the specified folder and subfolders with
@@ -51,8 +52,9 @@ public interface PlaylistService {
 	 * 
 	 * @param folder
 	 *            The folder which will be added
+	 * @throws DataAccessException 
 	 */
-	public void addFolder(File folder);
+	public void addFolder(File folder) throws DataAccessException;
 
 	/**
 	 * Adds all files given in the path array with accepted file types
@@ -60,8 +62,9 @@ public interface PlaylistService {
 	 * 
 	 * @param files
 	 *            The files which will be added
+	 * @throws DataAccessException 
 	 */
-	public void addSongs(File[] files);
+	public void addSongs(File[] files) throws DataAccessException;
 
 	/**
 	 * Adds all files given in the path array with accepted file types
@@ -90,23 +93,26 @@ public interface PlaylistService {
 	 * @param name
 	 *            The name of the playlist
 	 * @return the created playlist
+	 * @throws DataAccessException 
 	 */
-	public Playlist createPlaylist(String name);
+	public Playlist createPlaylist(String name) throws DataAccessException;
 
 	/**
 	 * Deletes the specified playlist from the library.
 	 * 
 	 * @param playlist
 	 *            The playlist to delete
+	 * @throws DataAccessException 
 	 */
-	public void deletePlaylist(Playlist playlist);
+	public void deletePlaylist(Playlist playlist) throws DataAccessException;
 
 	/**
 	 * Updates the specified playlist in the library.
 	 * 
 	 * @param playlist
+	 * @throws DataAccessException 
 	 */
-	public void updatePlaylist(Playlist playlist);
+	public void updatePlaylist(Playlist playlist) throws DataAccessException;
 
 	/**
 	 * Renames the playlist in the library.
@@ -115,8 +121,9 @@ public interface PlaylistService {
 	 *            The playlist with the old name
 	 * @param name
 	 *            The new name of the playlist
+	 * @throws DataAccessException 
 	 */
-	public void renamePlaylist(Playlist playlist, String name);
+	public void renamePlaylist(Playlist playlist, String name) throws DataAccessException;
 
 	/**
 	 * Generates the magic TopXXRated playlist.
@@ -149,8 +156,9 @@ public interface PlaylistService {
 	/**
 	 * Checks the song paths of all songs of the library and sets their
 	 * <code>pathOk</code> field.
+	 * @throws DataAccessException 
 	 */
-	public void checkSongPaths();
+	public void checkSongPaths() throws DataAccessException;
 
 	/**
 	 * Get the Library playlist

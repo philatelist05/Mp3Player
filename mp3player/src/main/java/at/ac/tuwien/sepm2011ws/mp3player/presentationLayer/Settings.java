@@ -104,7 +104,8 @@ public class Settings extends JDialog implements ActionListener {
 		setTitle("Settings");
 		
 		ServiceFactory sf = ServiceFactory.getInstance();
-		ss = sf.getServiceSettings();
+		//TODO
+		//ss = sf.getServiceSettings();
 		
 		initialize();
 		
@@ -193,6 +194,10 @@ public class Settings extends JDialog implements ActionListener {
 	}
 
 	
+	
+	private int check() {
+		return 0;
+	}
 	
 	@Override
 	public void actionPerformed(ActionEvent e) {

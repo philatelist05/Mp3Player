@@ -6,16 +6,17 @@ import javax.swing.JFileChooser;
 
 import org.apache.log4j.Logger;
 
+import at.ac.tuwien.sepm2011ws.mp3player.persistanceLayer.DataAccessException;
 import at.ac.tuwien.sepm2011ws.mp3player.serviceLayer.PlaylistService;
 import at.ac.tuwien.sepm2011ws.mp3player.serviceLayer.ServiceFactory;
-import at.ac.tuwien.sepm2011ws.mp3player.serviceLayer.ServiceSettings;
+import at.ac.tuwien.sepm2011ws.mp3player.serviceLayer.SettingsService;
 
 public class LibraryGUI {
 	
 	private static Logger logger = Logger.getLogger(LibraryGUI.class);
 	private JFileChooser chooser;
 	private PlaylistService ps;
-	private ServiceSettings ss;
+	private SettingsService ss;
 	
 	public LibraryGUI() {
 		ServiceFactory sf = ServiceFactory.getInstance();
@@ -36,7 +37,12 @@ public class LibraryGUI {
 		int rVal = chooser.showOpenDialog(null);
 		if (rVal == JFileChooser.APPROVE_OPTION) {
 			songs = chooser.getSelectedFiles();
-			ps.addSongs(songs);
+			try {
+				ps.addSongs(songs);
+			} catch (DataAccessException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 			logger.info("addFile(): Array of Files added");
 		}
 		if (rVal == JFileChooser.CANCEL_OPTION) {
@@ -57,7 +63,12 @@ public class LibraryGUI {
 		int rVal = chooser.showOpenDialog(null);
 		if (rVal == JFileChooser.APPROVE_OPTION) {
 			folder = chooser.getCurrentDirectory();
-			ps.addFolder(folder);
+			try {
+				ps.addFolder(folder);
+			} catch (DataAccessException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 			logger.info("addFolder(): Folder "+folder.getAbsolutePath()+" added");
 		}
 		if (rVal == JFileChooser.CANCEL_OPTION) {
