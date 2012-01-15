@@ -929,6 +929,7 @@ public class MainFrame extends JFrame implements ActionListener, Runnable,
 		}
 
 		else if (e.getActionCommand().equals("importplaylist")) {
+
 			playlistgui = new PlaylistGUI();
 
 			try {
