@@ -35,13 +35,11 @@ public class PlaylistGUI extends JDialog implements ActionListener {
 	private static Logger logger = Logger.getLogger(PlaylistGUI.class);
 	private JFileChooser chooser;
 	private PlaylistService ps;
-	//private ServiceSettings ss;
 	private Playlist tempPlaylist = null;
 
 	public PlaylistGUI() {
 		ServiceFactory sf = ServiceFactory.getInstance();
 		ps = sf.getPlaylistService();
-		//ss = sf.getServiceSettings();
 	}
 
 	/**

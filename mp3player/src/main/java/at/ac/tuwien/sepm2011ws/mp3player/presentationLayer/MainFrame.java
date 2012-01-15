@@ -36,7 +36,6 @@ import javax.swing.ListSelectionModel;
 import javax.swing.ScrollPaneConstants;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
-import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeModel;
 import javax.swing.tree.TreePath;
 
@@ -143,11 +142,17 @@ public class MainFrame extends JFrame implements ActionListener, Runnable,
 	 *            containing song items
 	 */
 	protected void fillSongTable(Playlist list) {
+		String album=null;
 		songmodel.setRowCount(0);
-		for (Song x : list.getSongs())
+		for (Song x : list.getSongs()) {
+			if (x.getAlbum() != null)
+				album = x.getAlbum().getTitle();
+			else
+				album = "";
 			songmodel.addRow(new Object[] { x, x.getTitle(), x.getArtist(),
-					x.getAlbum(), x.getYear(), x.getGenre(), x.getDuration(),
+					album, x.getYear(), x.getGenre(), x.getDuration(),
 					x.getRating(), x.getPlaycount() });
+		}
 	}
 
 	/**
@@ -839,12 +844,16 @@ public class MainFrame extends JFrame implements ActionListener, Runnable,
 
 		JMenuItem mntmSettings = new JMenuItem("Settings");
 		mnFile.add(mntmSettings);
+		mntmSettings.addActionListener(this);
+		mntmSettings.setActionCommand("settings");
 
 		JSeparator separator = new JSeparator();
 		mnFile.add(separator);
 
 		JMenuItem mntmExit = new JMenuItem("Exit");
 		mnFile.add(mntmExit);
+		mntmExit.addActionListener(this);
+		mntmExit.setActionCommand("exit");
 
 		JMenu mnHelp = new JMenu("Help");
 		menuBar.add(mnHelp);
@@ -918,6 +927,17 @@ public class MainFrame extends JFrame implements ActionListener, Runnable,
 			new checkSongPathGUI();
 			fillSongTable(currentPlaylistGUI);
 		}
+		
+		else if (e.getActionCommand().equals("settings")) {
+			new Settings();
+			//TODO: Add dynamically changing for songTable
+			//TODO: Add reloading for "TopXX played" and "TopXX rated", if selected
+		}
+		
+		else if (e.getActionCommand().equals("exit")) {
+			logger.info("Application is going terminate... Have a nice day :)");
+			System.exit(0);
+		}
 	}
 
 	public void keyPressed(KeyEvent e) {
@@ -927,12 +947,12 @@ public class MainFrame extends JFrame implements ActionListener, Runnable,
 	}
 
 	public void keyReleased(KeyEvent e) {
-		// TODO Auto-generated method stub
+		
 
 	}
 
 	public void keyTyped(KeyEvent e) {
-		// TODO Auto-generated method stub
+		
 
 	}
 }
