@@ -21,7 +21,7 @@ public class LibraryGUI {
 	public LibraryGUI() {
 		ServiceFactory sf = ServiceFactory.getInstance();
 		ps = sf.getPlaylistService();
-		ss = sf.getServiceSettings();
+		ss = sf.getSettingsService();
 	}
 	
 	/**

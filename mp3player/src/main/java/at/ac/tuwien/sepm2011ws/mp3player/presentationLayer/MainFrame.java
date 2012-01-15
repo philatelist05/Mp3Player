@@ -28,6 +28,7 @@ import javax.swing.JLabel;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
 import javax.swing.JScrollPane;
@@ -136,7 +137,7 @@ public class MainFrame extends JFrame implements ActionListener, Runnable,
 			// Einfügen der Daten in dlTable
 			fillSongTable(library);
 		} catch (DataAccessException e) {
-			// TODO Display the error and handle the exception
+			JOptionPane.showMessageDialog(null, "Library konnte nicht geladen werden" + e);
 		}
 	}
 
@@ -191,7 +192,13 @@ public class MainFrame extends JFrame implements ActionListener, Runnable,
 			cis.playPrevious();
 			Song temp = cis.getCurrentSong();
 
-			// progress.setEnabled(true);
+			//progress.setEnabled(true);
+			if (fred == null || fred.isAlive() == false) {
+				createThread();
+
+			}
+			/*else
+				fred.start();
 
 			if (cis.isPlaying()) {
 				lblCurrentStateSong.setText("Currently playing: "
@@ -200,7 +207,7 @@ public class MainFrame extends JFrame implements ActionListener, Runnable,
 				btnPlayPause.setActionCommand("pause");
 				setPauseIcons();
 			} else
-				setProgressBartoDefault();
+				setProgressBartoDefault();*/
 		}
 	}
 
@@ -294,9 +301,16 @@ public class MainFrame extends JFrame implements ActionListener, Runnable,
 			lblCurrentStateSong.setText("");
 
 			cis.playNext();
-			Song temp = cis.getCurrentSong();
-			// progress.setEnabled(true);
+	//		Song temp = cis.getCurrentSong();
+	//		progress.setEnabled(true);
+			if (fred == null || fred.isAlive() == false) {
+				createThread();
 
+			}
+		/*	else
+			{	
+				fred.start();
+			}
 			if (cis.isPlaying()) {
 				lblCurrentStateSong.setText("Currently playing: "
 						+ temp.getArtist() + " - " + temp.getTitle() + "");
@@ -304,7 +318,7 @@ public class MainFrame extends JFrame implements ActionListener, Runnable,
 				btnPlayPause.setActionCommand("pause");
 				setPauseIcons();
 			} else
-				setProgressBartoDefault();
+				setProgressBartoDefault();*/
 		}
 	}
 
@@ -931,13 +945,8 @@ public class MainFrame extends JFrame implements ActionListener, Runnable,
 		else if (e.getActionCommand().equals("importplaylist")) {
 
 			playlistgui = new PlaylistGUI();
+			playlistgui.importPlaylist();
 
-			try {
-				playlistgui.importPlaylist();
-			} catch (DataAccessException e1) {
-				// TODO Auto-generated catch block
-				e1.printStackTrace();
-			}
 		}
 
 		else if (e.getActionCommand().equals("exportplaylist")) {
