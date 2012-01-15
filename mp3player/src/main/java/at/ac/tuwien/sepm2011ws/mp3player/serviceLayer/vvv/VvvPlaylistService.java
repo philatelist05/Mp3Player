@@ -24,6 +24,8 @@ import at.ac.tuwien.sepm2011ws.mp3player.persistanceLayer.PlaylistDao;
 import at.ac.tuwien.sepm2011ws.mp3player.persistanceLayer.SongDao;
 import at.ac.tuwien.sepm2011ws.mp3player.persistanceLayer.db.DaoFactory;
 import at.ac.tuwien.sepm2011ws.mp3player.serviceLayer.PlaylistService;
+import at.ac.tuwien.sepm2011ws.mp3player.serviceLayer.ServiceFactory;
+import at.ac.tuwien.sepm2011ws.mp3player.serviceLayer.SettingsService;
 
 /**
  * @author klaus
@@ -184,14 +186,26 @@ class VvvPlaylistService implements PlaylistService {
 	updatePlaylist(playlist);
     }
 
-    public Playlist getTopRated() {
-	//TODO toprated
-	return null;
+    public Playlist getTopRated() throws DataAccessException {
+	List<Song> list = this.songDao.getTopRatedSongs();
+	
+	Playlist playlist = new Playlist("TopRated");
+	playlist.setReadonly(true);
+	for (Song song : list) {
+	    playlist.addSong(song);
+	}
+	return playlist;
     }
 
-    public Playlist getTopPlayed() {
-	//TODO topPlayed
-	return null;
+    public Playlist getTopPlayed() throws DataAccessException {
+	List<Song> list = this.songDao.getTopRatedSongs();
+	
+	Playlist playlist = new Playlist("TopPlayed");
+	playlist.setReadonly(true);
+	for (Song song : list) {
+	    playlist.addSong(song);
+	}
+	return playlist;
     }
 
     public Playlist globalSearch(String pattern) {
@@ -202,23 +216,7 @@ class VvvPlaylistService implements PlaylistService {
     public void checkSongPaths() throws DataAccessException {
 	List<Song> songs = this.songDao.readAll();
 	for (Song song : songs) {
-	    song.setPathOk(isPathAccessible(song.getPath()));
-	}
-    }
-
-    private boolean isPathAccessible(String path) {
-	FileInputStream stream = null;
-	try {
-	    stream = new FileInputStream(new File(path));
-	    return true;
-	} catch (FileNotFoundException e) {
-	    return false;
-	} finally {
-	    try {
-		if (stream != null)
-		    stream.close();
-	    } catch (IOException e) {
-	    }
+	    song.setPathOk(new File(song.getPath()).isDirectory());
 	}
     }
 }

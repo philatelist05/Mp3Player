@@ -153,7 +153,7 @@ public interface CoreInteractionService {
 	 * @return the current active song
 	 */
 	public Song getCurrentSong();
-	
+
 	/**
 	 * Returns the current playlist
 	 * 
@@ -196,6 +196,15 @@ public interface CoreInteractionService {
 	 * @return the current play mode.
 	 */
 	public PlayMode getPlayMode();
+
+	/**
+	 * Gets the index of the current song in the current playlist.
+	 * 
+	 * @return the index of the current song or -1 if it is not in the current
+	 *         playlist, the playlist has no songs or there is no current
+	 *         playlist
+	 */
+	public int getCurrentSongIndex();
 
 	/**
 	 * Adds a listener to this service to be informed about player events.

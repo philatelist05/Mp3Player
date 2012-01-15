@@ -261,23 +261,13 @@ class JmfCoreInteractionService implements CoreInteractionService {
 		return this.playMode;
 	}
 
-	/**
-	 * Gets the current song index
-	 * 
-	 * @return the index of the current song or -1 if it is not in the current
-	 *         playlist
-	 */
-	private int getCurrentSongIndex() {
+	public int getCurrentSongIndex() {
 		if(this.currentPlaylist == null) {
 			return -1;
 		} else if(this.currentPlaylist.getSongs() == null) {
 			return -1;
 		}
-		Song current = getCurrentSong();
-
-		List<Song> songs = this.currentPlaylist.getSongs();
-
-		return songs.indexOf(current);
+		return this.currentPlaylist.getSongs().indexOf(currentSong);
 	}
 
 	public Song getNextSong() {
@@ -384,7 +374,7 @@ class JmfCoreInteractionService implements CoreInteractionService {
 				playNext();
 				
 				if(pl != null)
-					pl.endOfMediaEvent(currentSong);
+					pl.songEndEvent();
 			}
 		}
 
