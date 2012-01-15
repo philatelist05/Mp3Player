@@ -192,11 +192,20 @@ public class Settings extends JDialog implements ActionListener {
 		contentPane.add(btnOK, "cell 0 1,alignx right");
 	}
 
+	
+	
 	@Override
 	public void actionPerformed(ActionEvent e) {
 		if (e.getActionCommand().equals("ok")) {
 			logger.info("Settings(): start saving functionylity");
 			//TODO: Add save functionality
+			int ftUserSize = userFileTypesList.getModel().getSize();
+			int tmUserSize = userColumnsList.getModel().getSize();
+			Object[] ftUser = new Object[ftUserSize];
+			Object[] tmUser = new Object[tmUserSize];
+			
+			
+			
 			dispose();
 		}
 		
