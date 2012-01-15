@@ -121,6 +121,7 @@ public class MainFrame extends JFrame implements ActionListener, Runnable,
 	
 	private List<Playlist> playlists= null;
 
+
 	private PlaylistService ps;
 	private CoreInteractionService cis;
 
