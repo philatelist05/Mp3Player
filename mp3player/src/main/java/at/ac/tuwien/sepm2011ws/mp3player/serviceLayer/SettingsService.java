@@ -1,6 +1,6 @@
 package at.ac.tuwien.sepm2011ws.mp3player.serviceLayer;
 
-public interface ServiceSettings {
+public interface SettingsService {
     public static final String[] SongFileTypesAll = new String[] { "wav", "mp3" };
 
     public static final String[] SongTableColumnsAll = new String[] {
@@ -17,7 +17,7 @@ public interface ServiceSettings {
 
     public String[] getUserColumns();
 
-    public void setUserColumns();
+    public void setUserColumns(String[] cols);
 
     public int getTopXXRatedCount();
 
