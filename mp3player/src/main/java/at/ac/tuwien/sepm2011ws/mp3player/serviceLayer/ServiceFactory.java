@@ -26,7 +26,7 @@ public class ServiceFactory {
 		return (CoreInteractionService) context.getBean("CoreInteractionService");
 	}
 
-	public SettingsService getServiceSettings() {
-		return (SettingsService) context.getBean("ServiceSettings");
+	public SettingsService getSettingsService() {
+		return (SettingsService) context.getBean("SettingsService");
 	}
 }
