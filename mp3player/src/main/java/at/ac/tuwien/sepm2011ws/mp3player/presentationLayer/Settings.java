@@ -131,6 +131,7 @@ public class Settings extends JDialog implements ActionListener {
 		ft.add(lblSupportedFiletypes, "cell 0 0");
 		ft.add(lblAcceptedFiletypes, "cell 2 0");
 
+		allFileTypesList.setFixedCellWidth(100);
 		allFileTypesList.setModel(ftAllListModel);
 		spAllFiletypes = new JScrollPane(allFileTypesList);
 		ft.add(spAllFiletypes, "flowx,cell 0 1");
@@ -143,6 +144,7 @@ public class Settings extends JDialog implements ActionListener {
 		btnDeleteFT.setActionCommand("deleteft");
 		ft.add(btnDeleteFT, "cell 1 1");
 
+		userFileTypesList.setFixedCellWidth(100);
 		userFileTypesList.setModel(ftUserListModel);
 		spUserFiletypes = new JScrollPane(userFileTypesList);
 		ft.add(spUserFiletypes, "flowx,cell 2 1");
@@ -157,6 +159,7 @@ public class Settings extends JDialog implements ActionListener {
 		tm.add(lblSupportedColumns, "cell 0 0");
 		tm.add(lblAcceptedColumns, "cell 2 0");
 
+		allColumnsList.setFixedCellWidth(100);
 		allColumnsList.setModel(tmAllListModel);
 		spAllColumns = new JScrollPane(allColumnsList);
 		tm.add(spAllColumns, "flowx,cell 0 1");
@@ -169,6 +172,7 @@ public class Settings extends JDialog implements ActionListener {
 		btnDeleteTM.setActionCommand("deletetm");
 		tm.add(btnDeleteTM, "cell 1 1");
 
+		userColumnsList.setFixedCellWidth(100);
 		userColumnsList.setModel(tmUserListModel);
 		spUserColumns = new JScrollPane(userColumnsList);
 		tm.add(spUserColumns, "flowx,cell 2 1");
