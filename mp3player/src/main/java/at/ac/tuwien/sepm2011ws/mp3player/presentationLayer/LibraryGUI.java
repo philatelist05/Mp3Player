@@ -8,14 +8,14 @@ import org.apache.log4j.Logger;
 
 import at.ac.tuwien.sepm2011ws.mp3player.serviceLayer.PlaylistService;
 import at.ac.tuwien.sepm2011ws.mp3player.serviceLayer.ServiceFactory;
-import at.ac.tuwien.sepm2011ws.mp3player.serviceLayer.ServiceSettings;
+import at.ac.tuwien.sepm2011ws.mp3player.serviceLayer.SettingsService;
 
 public class LibraryGUI {
 	
 	private static Logger logger = Logger.getLogger(LibraryGUI.class);
 	private JFileChooser chooser;
 	private PlaylistService ps;
-	private ServiceSettings ss;
+	private SettingsService ss;
 	
 	public LibraryGUI() {
 		ServiceFactory sf = ServiceFactory.getInstance();

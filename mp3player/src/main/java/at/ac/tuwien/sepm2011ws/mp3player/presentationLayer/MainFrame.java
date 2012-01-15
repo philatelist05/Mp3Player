@@ -591,28 +591,30 @@ public class MainFrame extends JFrame implements ActionListener, Runnable,
 			{
 				PlaylistTreeNode node_1;
 				
-				add(new PlaylistTreeNode("Library"));
+				//add(new PlaylistTreeNode(ps.getLibrary().toString(), false, ps.getLibrary()));
 				add(new PlaylistTreeNode("Queue"));
-				try {
-				node_1 = new PlaylistTreeNode(ps.getLibrary().toString(), false, ps.getLibrary());
+				
+				//node_1 = new PlaylistTreeNode(ps.getLibrary().toString(), false, ps.getLibrary());
+				node_1 = new PlaylistTreeNode("Playlists");
 				
 				Playlist current = null;
 				ListIterator<Playlist> iter = playlists.listIterator();
+				
 				while(iter.hasNext()) {
 					current = iter.next();
 					node_1.add(new PlaylistTreeNode(current.getTitle(), false, current));
 				}
+				
 				node_1.add(new PlaylistTreeNode("Metal"));
 				node_1.add(new PlaylistTreeNode("80s"));
 				node_1.add(new PlaylistTreeNode("Funk"));
 				node_1.add(new PlaylistTreeNode("Pop"));
 				add(node_1);
+				
 				node_1 = new PlaylistTreeNode("Intelligent Playlists");
 				node_1.add(new PlaylistTreeNode("Top40 rated"));
 				node_1.add(new PlaylistTreeNode("Top40 played"));
 				add(node_1);
-				} catch (DataAccessException e1) {
-				}
 			}
 		}));
 		pl_tree.setEditable(true);
