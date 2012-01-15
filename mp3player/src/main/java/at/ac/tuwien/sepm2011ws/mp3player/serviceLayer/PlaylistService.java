@@ -129,15 +129,17 @@ public interface PlaylistService {
 	 * Generates the magic TopXXRated playlist.
 	 * 
 	 * @return the magic playlist
+	 * @throws DataAccessException 
 	 */
-	public Playlist getTopRated();
+	public Playlist getTopRated() throws DataAccessException;
 
 	/**
 	 * Generates the magic TopXXPlayed playlist.
 	 * 
 	 * @return the magic playlist
+	 * @throws DataAccessException 
 	 */
-	public Playlist getTopPlayed();
+	public Playlist getTopPlayed() throws DataAccessException;
 
 	/**
 	 * Searches the whole library for songs where any of the songs fields
