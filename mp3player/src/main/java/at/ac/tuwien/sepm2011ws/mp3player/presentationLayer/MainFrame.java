@@ -179,7 +179,7 @@ public class MainFrame extends JFrame implements ActionListener, Runnable,
 			fillSongTable(library);
 		} catch (DataAccessException e) {
 			JOptionPane.showMessageDialog(null,
-					"Library konnte nicht geladen werden" + e);
+					"Couldn't load library" + e);
 		}
 	}
 
@@ -197,9 +197,9 @@ public class MainFrame extends JFrame implements ActionListener, Runnable,
 				album = x.getAlbum().getTitle();
 			else
 				album = "";			
-				songmodel.addRow(new Object[] { x, x.getTitle(), x.getArtist(),
-					album, x.getYear(), x.getGenre(), x.getDuration(),
-					x.getRating(), x.getPlaycount() });
+			songmodel.addRow(new Object[] { x, x.getTitle(), x.getArtist(),
+				album, x.getYear(), x.getGenre(), x.getDuration(),
+				x.getRating(), x.getPlaycount() });
 		}
 	}
 
@@ -837,7 +837,7 @@ public class MainFrame extends JFrame implements ActionListener, Runnable,
 		songTable.setDragEnabled(true);
 		songTable.setTransferHandler(new JTableSongTransferHandler());
 		playerPanel.add(songTable_sp, "cell 1 1 3 1,grow");
-		songTable.setAutoCreateRowSorter(true);
+		//songTable.setAutoCreateRowSorter(true);
 		songTable.getModel().addTableModelListener(this);
 		cTableModel = new HidableTableColumnModel(songTable.getColumnModel());
 		// htcm.setColumnVisible(0, false);
@@ -1154,19 +1154,43 @@ public class MainFrame extends JFrame implements ActionListener, Runnable,
 		else if (e.getActionCommand().equals("addfile")) {
 			librarygui = new LibraryGUI();
 			librarygui.addFile();
-			fillSongTable(currentPlaylistGUI);
+			buildPlTree();
+			try {
+				Playlist list = ps.getLibrary();
+				fillSongTable(list);
+				currentPlaylistGUI = list;
+			} catch (DataAccessException e1) {
+				// TODO Auto-generated catch block
+				e1.printStackTrace();
+			}
 		}
 
 		else if (e.getActionCommand().equals("addfolder")) {
 			librarygui = new LibraryGUI();
 			librarygui.addFolder();
-			fillSongTable(currentPlaylistGUI);
+			buildPlTree();
+			try {
+				Playlist list = ps.getLibrary();
+				fillSongTable(list);
+				currentPlaylistGUI = list;
+			} catch (DataAccessException e1) {
+				// TODO Auto-generated catch block
+				e1.printStackTrace();
+			}
 		}
 
 		else if (e.getActionCommand().equals("importplaylist")) {
 			playlistgui = new PlaylistGUI();
 			playlistgui.importPlaylist();
 			buildPlTree();
+			try {
+				Playlist list = ps.getLibrary();
+				fillSongTable(list);
+				currentPlaylistGUI = list;
+			} catch (DataAccessException e1) {
+				// TODO Auto-generated catch block
+				e1.printStackTrace();
+			}
 
 		} 
 		
@@ -1188,7 +1212,15 @@ public class MainFrame extends JFrame implements ActionListener, Runnable,
 
 		else if (e.getActionCommand().equals("checksongpaths")) {
 			new checkSongPathGUI();
-			fillSongTable(currentPlaylistGUI);
+			buildPlTree();
+			try {
+				Playlist list = ps.getLibrary();
+				fillSongTable(list);
+				currentPlaylistGUI = list;
+			} catch (DataAccessException e1) {
+				// TODO Auto-generated catch block
+				e1.printStackTrace();
+			}
 		}
 
 		else if (e.getActionCommand().equals("settings")) {
