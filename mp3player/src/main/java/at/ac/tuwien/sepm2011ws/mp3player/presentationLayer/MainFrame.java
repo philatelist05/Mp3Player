@@ -1,6 +1,5 @@
 package at.ac.tuwien.sepm2011ws.mp3player.presentationLayer;
 
-
 import java.awt.Dimension;
 import java.awt.Image;
 import java.awt.event.ActionEvent;
@@ -15,6 +14,7 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
+import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowStateListener;
 import java.io.IOException;
@@ -501,7 +501,7 @@ public class MainFrame extends JFrame implements ActionListener, Runnable,
 					ps.updatePlaylist(currentPlaylistGUI);
 				} catch (DataAccessException e) {
 				}
-				currentPlaylistGUI=clicked.getNodePlaylist();
+				currentPlaylistGUI = clicked.getNodePlaylist();
 				fillSongTable(clicked.getNodePlaylist());
 			} else {
 			}
@@ -522,7 +522,15 @@ public class MainFrame extends JFrame implements ActionListener, Runnable,
 		setTitle("mp3@player");
 
 		initialize();
-
+		addWindowListener(new WindowAdapter() {
+			public void windowClosing(WindowEvent e) {
+				currentPlaylistGUI = parseSongTable(currentPlaylistGUI);
+				try {
+					ps.updatePlaylist(currentPlaylistGUI);
+				} catch (DataAccessException a) {
+				}
+			}
+		});
 		getWholeLibrary();
 
 		cis.setVolume(volume.getValue());
@@ -1044,8 +1052,6 @@ public class MainFrame extends JFrame implements ActionListener, Runnable,
 			fillSongTable(currentPlaylistGUI);
 		}
 
-		
-
 		else if (e.getActionCommand().equals("settings")) {
 			new Settings();
 
@@ -1133,16 +1139,15 @@ public class MainFrame extends JFrame implements ActionListener, Runnable,
 		public void actionPerformed(ActionEvent e) {
 			if (e.getActionCommand().equals("deleteSong")) {
 				int row = songTable.getSelectedRow();
-				Song x=null;
+				Song x = null;
 
 				if (row > -1) {
 					x = (Song) songTable.getValueAt(row, 0);
 				}
-				System.out.println(currentPlaylistGUI);
 				currentPlaylistGUI.removeSong(x);
 				fillSongTable(currentPlaylistGUI);
-				System.out.println(currentPlaylistGUI);
 			}
 		}
 	}
+
 }
