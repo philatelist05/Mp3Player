@@ -118,9 +118,6 @@ public class Album {
 	 * 
 	 */
 	public void setAlbumartPath(String albumartPath) {
-		if (albumartPath == null || albumartPath.isEmpty())
-			throw new IllegalArgumentException(
-					"Path of the albumart must not be empty");
 		this.albumartPath = albumartPath;
 	}
 
