@@ -9,6 +9,7 @@ import javax.swing.JTextField;
 import org.apache.log4j.Logger;
 
 import at.ac.tuwien.sepm2011ws.mp3player.domainObjects.Playlist;
+import at.ac.tuwien.sepm2011ws.mp3player.persistanceLayer.DataAccessException;
 import at.ac.tuwien.sepm2011ws.mp3player.serviceLayer.PlaylistService;
 import at.ac.tuwien.sepm2011ws.mp3player.serviceLayer.ServiceFactory;
 
@@ -53,7 +54,11 @@ public class GlobalSearch extends JDialog {
 		        	logger.info("GlobalSearch(): Pressed Enter Key while focussed on playlistName");
 		        	if (playlistName.getText().trim().length() > 0) {
 		        		//TODO: start globalSearch()
-		        		result = ps.globalSearch(playlistName.getText());
+		        		try {
+							result = ps.globalSearch(playlistName.getText());
+						} catch (DataAccessException e1) {
+							// TODO: Show error dialog
+						}
 		        		new MainFrame(result);
 		        		dispose();
 		        	}

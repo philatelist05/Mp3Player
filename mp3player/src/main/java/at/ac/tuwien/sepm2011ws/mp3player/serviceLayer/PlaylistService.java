@@ -154,8 +154,9 @@ public interface PlaylistService {
 	 *            The search pattern
 	 * @return a playlist named "Search Results" which contains the search
 	 *         results
+	 * @throws DataAccessException 
 	 */
-	public Playlist globalSearch(String pattern);
+	public Playlist globalSearch(String pattern) throws DataAccessException;
 
 	/**
 	 * Checks the song paths of all songs of the library and sets their

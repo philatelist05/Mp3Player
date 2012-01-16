@@ -26,8 +26,6 @@ import christophedelory.playlist.Media;
 import christophedelory.playlist.Sequence;
 import christophedelory.playlist.SpecificPlaylist;
 import christophedelory.playlist.SpecificPlaylistFactory;
-import christophedelory.playlist.m3u.M3U;
-import christophedelory.playlist.m3u.M3UProvider;
 
 /**
  * @author klaus
@@ -59,7 +57,7 @@ class VvvPlaylistService implements PlaylistService {
 	public void importPlaylist(File[] files) throws DataAccessException {
 		for (File file : files) {
 			if (checkFileExtensionAccepted(file.getName(), PlaylistFileTypes)) {
-				Playlist playlist = readPlaylist(file);
+				readPlaylist(file);
 			}
 		}
 	}
@@ -209,7 +207,7 @@ class VvvPlaylistService implements PlaylistService {
 			throws DataAccessException {
 		List<Song> songs = playlist.getSongs();
 
-		for (Iterator iterator = songs.iterator(); iterator.hasNext();) {
+		for (Iterator<Song> iterator = songs.iterator(); iterator.hasNext();) {
 			Song s = (Song) iterator.next();
 			if (song.equals(s))
 				iterator.remove();
@@ -256,9 +254,31 @@ class VvvPlaylistService implements PlaylistService {
 		return playlist;
 	}
 
-	public Playlist globalSearch(String pattern) {
-		// TODO globalsearch
-		return null;
+	public Playlist globalSearch(String pattern) throws DataAccessException {
+		List<Song> songs = getLibrary().getSongs();
+
+		for (Iterator<Song> iterator = songs.iterator(); iterator.hasNext();) {
+			Song s = (Song) iterator.next();
+			// If song doesn't match pattern, remove it from search results
+			if (!(s.getArtist().contains(pattern)
+					|| s.getTitle().contains(pattern)
+					|| (s.getGenre() != null && s.getGenre().contains(pattern))
+					|| (s.getLyric() != null && s.getLyric().getText() != null && s
+							.getLyric().getText().contains(pattern))
+					|| String.valueOf(s.getYear()).contains(pattern) || (s
+					.getAlbum() != null && s.getAlbum().getTitle() != null && s
+					.getAlbum().getTitle().contains(pattern))
+					|| s.getPath().contains(pattern))) {
+
+				iterator.remove();
+			}
+		}
+
+		Playlist pl = new Playlist("Search");
+		pl.setReadonly(true);
+		pl.setSongs(songs);
+
+		return pl;
 	}
 
 	public void checkSongPaths() throws DataAccessException {
