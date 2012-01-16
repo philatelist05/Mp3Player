@@ -89,9 +89,9 @@ public class HidableTableColumnModel implements TableColumnModel
     } 
     
     /**
-     * @brief shows all column
+     * @brief disable all column
      * 
-     * this method makes all columns visible
+     * this method makes all columns invisible
      */
     public void setAllColumnsInVisible() 
     {
@@ -102,6 +102,12 @@ public class HidableTableColumnModel implements TableColumnModel
         	m_delegateModel.removeColumn(m_delegateModel.getColumn(m_delegateModel.getColumnIndexAtX(idxColumn)));
         } 
     } 
+    
+    /**
+     * @brief shows all column
+     * 
+     * this method makes all columns visible
+     */
     
     public void setAllColumnsVisible() 
     {
