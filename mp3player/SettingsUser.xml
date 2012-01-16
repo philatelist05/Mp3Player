@@ -2,15 +2,11 @@
 <configuration>
 <FileTypes>wav</FileTypes>
 <FileTypes>mp3</FileTypes>
-<Columns>Track Nr.</Columns>
-<Columns>Title</Columns>
-<Columns>Artist</Columns>
-<Columns>Album</Columns>
-<Columns>Year</Columns>
-<Columns>Genre</Columns>
-<Columns>Duration</Columns>
-<Columns>Rating</Columns>
-<Columns>Playcount</Columns>
+<Columns>track nr.</Columns>
+<Columns>title</Columns>
+<Columns>album</Columns>
+<Columns>year</Columns>
+<Columns>genre</Columns>
 <TopXXPlayed>40</TopXXPlayed>
 <TopXXRated>40</TopXXRated>
 </configuration>
