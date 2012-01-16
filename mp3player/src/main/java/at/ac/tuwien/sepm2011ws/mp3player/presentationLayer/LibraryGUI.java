@@ -6,11 +6,11 @@ import javax.sql.rowset.JdbcRowSet;
 import javax.swing.JButton;
 import javax.swing.JDialog;
 import javax.swing.JFileChooser;
-import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 
 import net.miginfocom.swing.MigLayout;
+import javax.swing.JOptionPane;
 
 import org.apache.log4j.Logger;
 
@@ -21,6 +21,10 @@ import at.ac.tuwien.sepm2011ws.mp3player.serviceLayer.SettingsService;
 
 public class LibraryGUI extends JDialog implements Runnable {
 	
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -3957579889665439757L;
 	private static Logger logger = Logger.getLogger(LibraryGUI.class);
 	private JFileChooser chooser;
 	private PlaylistService ps;
@@ -62,8 +66,9 @@ public class LibraryGUI extends JDialog implements Runnable {
 				this.dispose();
 				fred.stop();
 			} catch (DataAccessException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+				JOptionPane.showMessageDialog(null,
+						"Folder: " + e);
+						e.printStackTrace();
 			}
 	}
 	
@@ -89,7 +94,8 @@ public class LibraryGUI extends JDialog implements Runnable {
 			try {
 				ps.addSongs(songs);
 			} catch (DataAccessException e) {
-				// TODO Auto-generated catch block
+				JOptionPane.showMessageDialog(null,
+						"File: " + e);
 				e.printStackTrace();
 			}
 			logger.info("addFile(): Array of Files added");
@@ -111,6 +117,7 @@ public class LibraryGUI extends JDialog implements Runnable {
 		int rVal = chooser.showOpenDialog(null);
 		if (rVal == JFileChooser.APPROVE_OPTION) {
 			folder = chooser.getSelectedFile();
+			
 			logger.info("addFolder(): Start thread...");
 			
 			initialize();
