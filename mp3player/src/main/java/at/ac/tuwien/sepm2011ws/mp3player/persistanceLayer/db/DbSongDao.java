@@ -122,6 +122,8 @@ class DbSongDao implements SongDao {
 					createIsOnStmt.executeUpdate();
 				}
 
+			} else {
+				throw new DataAccessException("Error creating song in database");
 			}
 		} catch (SQLException e) {
 			throw new DataAccessException("Error creating song in database");

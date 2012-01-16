@@ -67,6 +67,8 @@ class DbAlbumDao implements AlbumDao {
 			result = createStmt.getGeneratedKeys();
 			if (result.next()) {
 				a.setId(result.getInt(1));
+			} else {
+				throw new DataAccessException("Error creating album in database");
 			}
 
 		} catch (SQLException e) {

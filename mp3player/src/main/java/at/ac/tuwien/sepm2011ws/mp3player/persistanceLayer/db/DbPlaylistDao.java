@@ -88,6 +88,8 @@ class DbPlaylistDao implements PlaylistDao {
 					i++;
 				}
 
+			} else {
+				throw new DataAccessException("Error creating playlist in database");
 			}
 		} catch (SQLException e) {
 			throw new DataAccessException("Error creating playlist in database");

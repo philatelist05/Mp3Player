@@ -74,8 +74,9 @@ public interface PlaylistService {
 	 *            The files which will be added
 	 * @param playlist
 	 *            The playlist to which the files will be added
+	 * @throws DataAccessException 
 	 */
-	public void addSongsToPlaylist(File[] files, Playlist playlist);
+	public void addSongsToPlaylist(File[] files, Playlist playlist) throws DataAccessException;
 
 	/**
 	 * Deletes the given Song from the playlist.
@@ -84,8 +85,9 @@ public interface PlaylistService {
 	 *            The song to delete
 	 * @param playlist
 	 *            The playlist from which to delete
+	 * @throws DataAccessException 
 	 */
-	public void deleteSong(Song song, Playlist playlist);
+	public void deleteSong(Song song, Playlist playlist) throws DataAccessException;
 
 	/**
 	 * Creates an empty playlist with the specitied name.

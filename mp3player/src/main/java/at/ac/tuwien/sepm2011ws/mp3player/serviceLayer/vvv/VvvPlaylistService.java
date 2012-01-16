@@ -3,16 +3,13 @@
  */
 package at.ac.tuwien.sepm2011ws.mp3player.serviceLayer.vvv;
 
-import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.FileReader;
 import java.io.FileWriter;
-import java.io.FilenameFilter;
 import java.io.IOException;
+import java.net.URISyntaxException;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 import org.apache.log4j.Logger;
@@ -22,76 +19,101 @@ import at.ac.tuwien.sepm2011ws.mp3player.domainObjects.Song;
 import at.ac.tuwien.sepm2011ws.mp3player.persistanceLayer.DataAccessException;
 import at.ac.tuwien.sepm2011ws.mp3player.persistanceLayer.PlaylistDao;
 import at.ac.tuwien.sepm2011ws.mp3player.persistanceLayer.SongDao;
-import at.ac.tuwien.sepm2011ws.mp3player.persistanceLayer.db.DaoFactory;
 import at.ac.tuwien.sepm2011ws.mp3player.serviceLayer.PlaylistService;
-import at.ac.tuwien.sepm2011ws.mp3player.serviceLayer.ServiceFactory;
 import at.ac.tuwien.sepm2011ws.mp3player.serviceLayer.SettingsService;
+import christophedelory.playlist.AbstractPlaylistComponent;
+import christophedelory.playlist.Media;
+import christophedelory.playlist.Sequence;
+import christophedelory.playlist.SpecificPlaylist;
+import christophedelory.playlist.SpecificPlaylistFactory;
 
 /**
  * @author klaus
  * 
  */
 class VvvPlaylistService implements PlaylistService {
-    
+
 	private static final Logger logger = Logger
 			.getLogger(VvvPlaylistService.class);
-	private final PlaylistDao playlistDao;
-	private final SongDao songDao;
+	private final PlaylistDao pd;
+	private final SongDao sd;
+	private final SettingsService ss;
 
-	public VvvPlaylistService() {
-		DaoFactory factory = DaoFactory.getInstance();
-		this.playlistDao = factory.getPlaylistDao();
-		this.songDao = factory.getSongDao();
+	VvvPlaylistService(SongDao sd, PlaylistDao pd, SettingsService ss) {
+		this.pd = pd;
+		this.sd = sd;
+		this.ss = ss;
 	}
 
 	public Playlist getLibrary() throws DataAccessException {
 		Playlist lib = new Playlist("Library");
 		lib.setReadonly(true);
 
-		lib.setSongs(this.songDao.readAll());
+		lib.setSongs(this.sd.readAll());
 
 		return lib;
 	}
 
 	public void importPlaylist(File[] files) throws DataAccessException {
 		for (File file : files) {
-			Playlist playlist = readPlaylist(file);
-			playlistDao.create(playlist);
+			if (checkFileExtensionAccepted(file.getName(), PlaylistFileTypes)) {
+				Playlist playlist = readPlaylist(file);
+				pd.create(playlist);
+			}
 		}
+	}
+
+	private boolean checkFileExtensionAccepted(String fileName,
+			String[] acceptedExtensions) {
+		for (int i = 0; i < acceptedExtensions.length; i++) {
+			if (acceptedExtensions[i].toLowerCase().equals(
+					getExtension(fileName).toLowerCase())) {
+				return true;
+			}
+		}
+
+		return false;
+	}
+
+	private String getExtension(String fileName) {
+		int dotIndex = fileName.lastIndexOf(".");
+		return fileName.substring(dotIndex + 1, fileName.length());
+	}
+
+	private String getBasename(String fileName) {
+		int dotIndex = fileName.lastIndexOf(".");
+		return fileName.substring(0, dotIndex);
 	}
 
 	private Playlist readPlaylist(File file) throws DataAccessException {
-		FileReader reader = null;
-		BufferedReader breader = null;
+		Playlist playlist;
+
+		// Initialize playlist
+		playlist = createPlaylist(getBasename(file.getName()));
+
 		try {
-			reader = new FileReader(file);
-			breader = new BufferedReader(reader);
-			String line;
-			Playlist playlist = new Playlist("Dummy Title");
-			while ((line = breader.readLine()) != "") {
-				playlist.addSong(new Song(1, "Dummy Title", 0, 0, 0, line,
-						0000, "Dummy Artist", "Dummy Genre", true, null, null));
+			// Get song files from playlist file
+			SpecificPlaylistFactory spf = SpecificPlaylistFactory.getInstance();
+			SpecificPlaylist specificPlaylist = spf.readFrom(file);
+			Sequence plSeq = specificPlaylist.toPlaylist().getRootSequence();
+
+			Media m;
+			for (AbstractPlaylistComponent apc : plSeq.getComponents()) {
+				m = (Media) apc;
+				addSongsToPlaylist(
+						new File[] { new File(m.getSource().getURI()) },
+						playlist);
 			}
-			return playlist;
+
 		} catch (IOException e) {
-			throw new DataAccessException("Could't read Playlist from path"
-					+ file.getAbsolutePath());
-		} finally {
-			try {
-				if (reader != null)
-					reader.close();
-				if (breader != null)
-					breader.close();
-			} catch (IOException e) {
-
-			}
-
+			throw new DataAccessException("Error reading playlist "
+					+ file.getPath());
+		} catch (URISyntaxException e) {
+			throw new DataAccessException("Error reading playlist "
+					+ file.getPath());
 		}
-	}
 
-	private Song readSong(File file) {
-		return new Song(1, file.getName(), 0, 0, 0, file.getAbsolutePath(),
-				0000, "Dummy Artist", "Dummy Genre", true, null, null);
+		return playlist;
 	}
 
 	public void exportPlaylist(File file, Playlist playlist) {
@@ -120,95 +142,114 @@ class VvvPlaylistService implements PlaylistService {
 	}
 
 	public List<Playlist> getAllPlaylists() throws DataAccessException {
-		return this.playlistDao.readAll();
-	}
-
-	private void readSongsRecursive(File folder, List<Song> list) {
-		if (!folder.isDirectory() && folder.getName().endsWith(".m3u")) {
-			list.add(readSong(folder));
-		}
-
-		FilenameFilter filter = new FilenameFilter() {
-			public boolean accept(File f, String s) {
-				return s.toLowerCase().endsWith(".m3u");
-			}
-		};
-		for (File file : folder.listFiles(filter)) {
-			readSongsRecursive(file, list);
-		}
+		return this.pd.readAll();
 	}
 
 	public void addFolder(File folder) throws DataAccessException {
-		List<Song> list = new ArrayList<Song>();
-		readSongsRecursive(folder, list);
-		for (Song song : list) {
-			this.songDao.create(song);
+		addSongs(traverseFolderRecursively(folder).toArray(new File[] {}));
+	}
+
+	private List<File> traverseFolderRecursively(File folder) {
+		List<File> retFiles = new ArrayList<File>();
+
+		String[] all = folder.list();
+		File f;
+		for (String s : all) {
+			f = new File(s);
+			if (f.isDirectory()) {
+				// Recursive add all files from all folders in the current
+				// folder
+				retFiles.addAll(traverseFolderRecursively(f));
+			} else if (f.isFile()) {
+				// Add files of the current folder
+				retFiles.add(f);
+			}
 		}
+
+		return retFiles;
 	}
 
 	public void addSongs(File[] files) throws DataAccessException {
-		for (File file : files) {
-			addFolder(file);
-		}
+		createSongs(files);
 	}
 
-	public void addSongsToPlaylist(File[] files, Playlist playlist) {
-		List<Song> list = new ArrayList<Song>();
-		for (File file : files) {
-			readSongsRecursive(file, list);
+	public void addSongsToPlaylist(File[] files, Playlist playlist)
+			throws DataAccessException {
+		List<Song> list = createSongs(files);
+
+		for (Song s : list) {
+			playlist.addSong(s);
 		}
-		for (Song song : list) {
-			playlist.addSong(song);
-		}
+
+		updatePlaylist(playlist);
 	}
 
-	public void deleteSong(Song song, Playlist playlist) {
-		List<Song> songsInPlaylist = playlist.getSongs();
-		for (Song song2 : songsInPlaylist) {
-			if (song.equals(song2))
-				songsInPlaylist.remove(song2);
+	private List<Song> createSongs(File[] files) throws DataAccessException {
+		List<Song> songs = new ArrayList<Song>();
+		Song s;
+
+		String[] userFileTypes = ss.getUserFileTypes();
+
+		for (File file : files) {
+			if (checkFileExtensionAccepted(file.getName(), userFileTypes)) {
+				// TODO: Read metadata from song with SongInformationService
+				s = new Song("Dummy Artist", file.getName(), 0,
+						file.getAbsolutePath());
+
+				sd.create(s);
+				songs.add(s);
+			}
 		}
+
+		return songs;
+	}
+
+	public void deleteSong(Song song, Playlist playlist)
+			throws DataAccessException {
+		List<Song> songs = playlist.getSongs();
+
+		for (Iterator iterator = songs.iterator(); iterator.hasNext();) {
+			Song s = (Song) iterator.next();
+			if (song.equals(s))
+				iterator.remove();
+		}
+
+		if (!playlist.isReadonly())
+			updatePlaylist(playlist);
 	}
 
 	public Playlist createPlaylist(String name) throws DataAccessException {
 		Playlist playlist = new Playlist(name);
-		this.playlistDao.create(playlist);
+		this.pd.create(playlist);
 		return playlist;
 	}
 
 	public void deletePlaylist(Playlist playlist) throws DataAccessException {
-		this.playlistDao.delete(playlist.getId());
+		this.pd.delete(playlist.getId());
 	}
 
 	public void updatePlaylist(Playlist playlist) throws DataAccessException {
-		this.playlistDao.update(playlist);
+		this.pd.update(playlist);
 	}
 
 	public void renamePlaylist(Playlist playlist, String name)
 			throws DataAccessException {
-		playlist.setTitle(name);
-		updatePlaylist(playlist);
+		pd.rename(playlist, name);
 	}
 
 	public Playlist getTopRated() throws DataAccessException {
-		List<Song> list = this.songDao.getTopRatedSongs();
-
 		Playlist playlist = new Playlist("TopRated");
 		playlist.setReadonly(true);
-		for (Song song : list) {
-			playlist.addSong(song);
-		}
+		playlist.setSongs(sd.getTopRatedSongs(ss.getTopXXRatedCount()));
+
 		return playlist;
 	}
 
 	public Playlist getTopPlayed() throws DataAccessException {
-		List<Song> list = this.songDao.getTopRatedSongs();
-
 		Playlist playlist = new Playlist("TopPlayed");
 		playlist.setReadonly(true);
-		for (Song song : list) {
-			playlist.addSong(song);
-		}
+		playlist.setSongs(sd.getTopRatedSongs(ss.getTopXXPlayedCount()));
+
 		return playlist;
 	}
 
@@ -218,7 +259,7 @@ class VvvPlaylistService implements PlaylistService {
 	}
 
 	public void checkSongPaths() throws DataAccessException {
-		List<Song> songs = this.songDao.readAll();
+		List<Song> songs = this.sd.readAll();
 		for (Song song : songs) {
 			song.setPathOk(new File(song.getPath()).isFile());
 		}
