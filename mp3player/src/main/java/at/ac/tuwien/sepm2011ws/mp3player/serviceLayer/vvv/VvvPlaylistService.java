@@ -32,7 +32,7 @@ import at.ac.tuwien.sepm2011ws.mp3player.serviceLayer.SettingsService;
  * 
  */
 class VvvPlaylistService implements PlaylistService {
-
+    
 	private static final Logger logger = Logger
 			.getLogger(VvvPlaylistService.class);
 	private final PlaylistDao playlistDao;
@@ -85,6 +85,7 @@ class VvvPlaylistService implements PlaylistService {
 			} catch (IOException e) {
 
 			}
+
 		}
 	}
 

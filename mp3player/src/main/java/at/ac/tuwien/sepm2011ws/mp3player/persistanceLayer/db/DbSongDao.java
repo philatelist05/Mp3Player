@@ -97,11 +97,12 @@ class DbSongDao implements SongDao {
 			createStmt.setString(8, s.getGenre());
 			createStmt.setBoolean(9, s.isPathOk());
 			
-			if(s.getLyric() != null) {
+
+			if(s.getLyric() != null)
 				createStmt.setString(10, s.getLyric().getText());
-			} else {
+			else
 				createStmt.setString(10, null);
-			}
+
 
 			createStmt.executeUpdate();
 
@@ -148,11 +149,13 @@ class DbSongDao implements SongDao {
 			updateStmt.setInt(7, s.getRating());
 			updateStmt.setString(8, s.getGenre());
 			updateStmt.setBoolean(9, s.isPathOk());
-			if(s.getLyric() != null) {
+
+			if(s.getLyric() != null)
 				updateStmt.setString(10, s.getLyric().getText());
-			} else {
+			else
 				updateStmt.setString(10, null);
-			}
+			
+
 			updateStmt.setInt(11, s.getId());
 
 			if (s.getAlbum() != null) {

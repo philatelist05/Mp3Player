@@ -22,8 +22,9 @@ import at.ac.tuwien.sepm2011ws.mp3player.serviceLayer.PlayerListener;
 import com.sun.jna.Platform;
 
 public class VlcjCoreInteractionService implements CoreInteractionService {
-	
-	private static final Logger logger = Logger.getLogger(VlcjCoreInteractionService.class);
+
+	private static final Logger logger = Logger
+			.getLogger(VlcjCoreInteractionService.class);
 	private final MediaPlayer mediaPlayer;
 	private PlayMode playMode;
 	private Playlist currentPlaylist;
@@ -336,13 +337,17 @@ public class VlcjCoreInteractionService implements CoreInteractionService {
 			} catch (DataAccessException e) {
 				logger.error(e.getMessage());
 			}
-			playerListener.songBeginnEvent();
-			playerListener.songEndEvent();
+			if (playerListener != null) {
+				playerListener.songBeginnEvent();
+				playerListener.songEndEvent();
+			}
 		}
 
 		@Override
 		public void finished(MediaPlayer arg0) {
-			playerListener.songEndEvent();
+			if (playerListener != null)
+				playerListener.songEndEvent();
+			playNext();
 		}
 
 		@Override
@@ -383,7 +388,8 @@ public class VlcjCoreInteractionService implements CoreInteractionService {
 			} catch (DataAccessException e) {
 				logger.error(e.getMessage());
 			}
-			playerListener.songBeginnEvent();
+			if (playerListener != null)
+				playerListener.songBeginnEvent();
 		}
 
 		@Override

@@ -18,14 +18,12 @@ import java.awt.event.MouseMotionListener;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowStateListener;
 import java.io.IOException;
-
+import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.HashMap;
-
 import java.util.Iterator;
 import java.util.List;
 import java.util.ListIterator;
-
 import javax.imageio.ImageIO;
 import javax.swing.Action;
 import javax.swing.Icon;
@@ -137,6 +135,29 @@ public class MainFrame extends JFrame implements ActionListener, Runnable,
 	private PlaylistService ps;
 	private CoreInteractionService cis;
 	private SettingsService ss;
+
+	/**
+	 * Parses and replaces the songs of the songTable into the specified
+	 * playlist
+	 * 
+	 * @param list
+	 *            the specified playlist
+	 * @return the new parsed playlist
+	 */
+	public Playlist parseSongTable(Playlist list) {
+		ArrayList<Song> temp = new ArrayList<Song>();
+		Song song;
+		int row = songmodel.getRowCount();
+
+		for (int i = 0; i < row; i++) {
+			song = (Song) songTable.getValueAt(i, 0);
+			temp.add(song);
+		}
+
+		list.setSongs(temp);
+
+		return list;
+	}
 
 	/**
 	 * Gets all Songs from the Database
