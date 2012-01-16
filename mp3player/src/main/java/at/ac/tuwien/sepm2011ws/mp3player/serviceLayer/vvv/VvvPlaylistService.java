@@ -58,7 +58,6 @@ class VvvPlaylistService implements PlaylistService {
 		for (File file : files) {
 			if (checkFileExtensionAccepted(file.getName(), PlaylistFileTypes)) {
 				Playlist playlist = readPlaylist(file);
-				pd.create(playlist);
 			}
 		}
 	}
@@ -214,8 +213,7 @@ class VvvPlaylistService implements PlaylistService {
 				iterator.remove();
 		}
 
-		if (!playlist.isReadonly())
-			updatePlaylist(playlist);
+		updatePlaylist(playlist);
 	}
 
 	public Playlist createPlaylist(String name) throws DataAccessException {
@@ -225,16 +223,19 @@ class VvvPlaylistService implements PlaylistService {
 	}
 
 	public void deletePlaylist(Playlist playlist) throws DataAccessException {
-		this.pd.delete(playlist.getId());
+		if (!playlist.isReadonly())
+			this.pd.delete(playlist.getId());
 	}
 
 	public void updatePlaylist(Playlist playlist) throws DataAccessException {
-		this.pd.update(playlist);
+		if (!playlist.isReadonly())
+			this.pd.update(playlist);
 	}
 
 	public void renamePlaylist(Playlist playlist, String name)
 			throws DataAccessException {
-		pd.rename(playlist, name);
+		if (!playlist.isReadonly())
+			pd.rename(playlist, name);
 	}
 
 	public Playlist getTopRated() throws DataAccessException {
