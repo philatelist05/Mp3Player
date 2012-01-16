@@ -9,6 +9,7 @@ import javax.swing.JTree;
 import javax.swing.tree.DefaultTreeModel;
 import javax.swing.tree.TreePath;
 
+import at.ac.tuwien.sepm2011ws.mp3player.domainObjects.Playlist;
 import at.ac.tuwien.sepm2011ws.mp3player.domainObjects.Song;
 
 public class JTreeSongTransferHandler extends SongTransferHandler {
@@ -26,18 +27,21 @@ public class JTreeSongTransferHandler extends SongTransferHandler {
 	}
 
 	protected void importSong(JComponent c, Song[] songs) {
+
 		JTree target = (JTree) c;
 		DefaultTreeModel treeModel = (DefaultTreeModel) target.getModel();
-
 		JTree.DropLocation dl = (JTree.DropLocation) target.getDropLocation();
 		TreePath path = dl.getPath();
 		PlaylistTreeNode clicked = (PlaylistTreeNode) path
 				.getLastPathComponent();
-
 		if (treeModel.isLeaf(clicked)) {
-			System.out.println(clicked);
-			for (int i = 0; i < songs.length; i++) {
-				System.out.println(songs[i]);
+			TreePath check = new TreePath(new String[] { "", "Library" });
+			if (path.toString().equals(check.toString())) {
+			} else {
+				Playlist cp = clicked.getNodePlaylist();
+				for (int i = 0; i < songs.length; i++) {
+					cp.addSong(songs[i]);
+				}
 			}
 		}
 	}

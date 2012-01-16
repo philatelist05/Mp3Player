@@ -1,2 +1,8 @@
+# Log files
 logs/
+
+# Compile targets
 target/
+
+# Settings file
+SettingsUser.xml

@@ -34,8 +34,9 @@ class DbPlaylistDao implements PlaylistDao {
 	private PreparedStatement deleteContainsStmt;
 	private PreparedStatement deleteStmt;
 
-	DbPlaylistDao(DataSource source) throws DataAccessException {
+	DbPlaylistDao(DataSource source, SongDao sd) throws DataAccessException {
 		try {
+			this.sd = sd;
 
 			con = source.getConnection();
 			createStmt = con.prepareStatement("INSERT INTO playlist (name) "
