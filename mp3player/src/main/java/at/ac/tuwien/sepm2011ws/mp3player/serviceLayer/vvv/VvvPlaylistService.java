@@ -57,7 +57,7 @@ class VvvPlaylistService implements PlaylistService {
 	public void importPlaylist(File[] files) throws DataAccessException {
 		for (File file : files) {
 			if (checkFileExtensionAccepted(file.getName(), PlaylistFileTypes)) {
-				readPlaylist(file);
+				importPlaylist(file);
 			}
 		}
 	}
@@ -84,7 +84,7 @@ class VvvPlaylistService implements PlaylistService {
 		return fileName.substring(0, dotIndex);
 	}
 
-	private Playlist readPlaylist(File file) throws DataAccessException {
+	private Playlist importPlaylist(File file) throws DataAccessException {
 		Playlist playlist;
 
 		// Initialize playlist
@@ -265,10 +265,10 @@ class VvvPlaylistService implements PlaylistService {
 					|| (s.getGenre() != null && s.getGenre().contains(pattern))
 					|| (s.getLyric() != null && s.getLyric().getText() != null && s
 							.getLyric().getText().contains(pattern))
-					|| String.valueOf(s.getYear()).contains(pattern) || (s
-					.getAlbum() != null && s.getAlbum().getTitle() != null && s
-					.getAlbum().getTitle().contains(pattern))
-					|| s.getPath().contains(pattern))) {
+					|| String.valueOf(s.getYear()).contains(pattern)
+					|| (s.getAlbum() != null && s.getAlbum().getTitle() != null && s
+							.getAlbum().getTitle().contains(pattern)) || s
+					.getPath().contains(pattern))) {
 
 				iterator.remove();
 			}
@@ -286,5 +286,15 @@ class VvvPlaylistService implements PlaylistService {
 		for (Song song : songs) {
 			song.setPathOk(new File(song.getPath()).isFile());
 		}
+	}
+
+	@Override
+	public Playlist getPlaylist(String name) throws DataAccessException {
+		List<Playlist> playlists = getAllPlaylists();
+		for (Playlist pl : playlists) {
+			if (pl.getTitle().equals(name))
+				return pl;
+		}
+		return null;
 	}
 }

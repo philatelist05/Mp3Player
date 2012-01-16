@@ -45,6 +45,15 @@ public interface PlaylistService {
 	 * @throws DataAccessException 
 	 */
 	public List<Playlist> getAllPlaylists() throws DataAccessException;
+	
+	/**
+	 * Get a specific playlist by its name
+	 * 
+	 * @param name The name of the playlist
+	 * @return the first playlist with the specified name
+	 * @throws DataAccessException
+	 */
+	public Playlist getPlaylist(String name) throws DataAccessException;
 
 	/**
 	 * Recursively adds all files in the specified folder and subfolders with
