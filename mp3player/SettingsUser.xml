@@ -6,4 +6,11 @@
 <TopXXRated>40</TopXXRated>
 <Columns>year</Columns>
 <Columns>duration</Columns>
+<FileTypes>mp3</FileTypes>
+<Columns>title</Columns>
+<Columns>artist</Columns>
+<Columns>album</Columns>
+<Columns>genre</Columns>
+<Columns>rating</Columns>
+<Columns>playcount</Columns>
 </configuration>

@@ -952,6 +952,8 @@ public class MainFrame extends JFrame implements ActionListener, Runnable,
 
 		JMenuItem mntmAbout = new JMenuItem("About...");
 		mnHelp.add(mntmAbout);
+		mntmAbout.addActionListener(this);
+		mntmAbout.setActionCommand("about");
 	}
 
 	public void actionPerformed(ActionEvent e) {
@@ -1002,7 +1004,9 @@ public class MainFrame extends JFrame implements ActionListener, Runnable,
 			playlistgui = new PlaylistGUI();
 			playlistgui.importPlaylist();
 
-		} else if (e.getActionCommand().equals("exportplaylist")) {
+		} 
+		
+		else if (e.getActionCommand().equals("exportplaylist")) {
 			playlistgui = new PlaylistGUI();
 			playlistgui.exportPlaylist(currentPlaylistGUI);
 		}
@@ -1063,6 +1067,11 @@ public class MainFrame extends JFrame implements ActionListener, Runnable,
 
 			// TODO: Add reloading for "TopXX played" and "TopXX rated", if
 			// selected
+		}
+		
+		else if (e.getActionCommand().equals("about")) {
+			logger.info("About: Going to show About dialog");
+			new DynamicDialog("About mp3@Player...", "mp3@Player Beta Version by SEPM team VVV");
 		}
 
 		else if (e.getActionCommand().equals("exit")) {

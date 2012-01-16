@@ -12,11 +12,12 @@ import net.miginfocom.swing.MigLayout;
 
 import org.apache.log4j.Logger;
 
+import at.ac.tuwien.sepm2011ws.mp3player.domainObjects.Song;
 import at.ac.tuwien.sepm2011ws.mp3player.persistanceLayer.DataAccessException;
 import at.ac.tuwien.sepm2011ws.mp3player.serviceLayer.PlaylistService;
 import at.ac.tuwien.sepm2011ws.mp3player.serviceLayer.ServiceFactory;
 
-public class checkSongPathGUI extends JDialog implements ActionListener {
+public class checkSongPathGUI extends JDialog implements ActionListener, Runnable {
 
 	/**
 	 * 
@@ -28,6 +29,35 @@ public class checkSongPathGUI extends JDialog implements ActionListener {
 	private JButton btnCancel;
 	private JButton btnStart;
 	private PlaylistService ps;
+	private Thread fred;
+
+	private void createThread() {
+		fred = new Thread(this);
+		fred.start();
+	}
+
+	public void run() {
+			try {
+				btnCancel.setEnabled(false);
+				btnStart.setEnabled(false);
+				checklabel.setText(checklabel.getText().concat(" Working..."));
+				
+				ps.checkSongPaths();
+				
+				logger.info("checkSongPathGUI(): Songpaths successfully checked");
+				new MainFrame("reloadsongTable");
+				logger.info("checkSongPathGUI(): Back from Mainframe");
+				
+				checklabel.setText("Press start to check for missing songs: Finished!");
+				btnCancel.setEnabled(true);
+				btnStart.setEnabled(true);
+				
+				fred.stop();
+			} catch (DataAccessException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+	}
 	
 	public checkSongPathGUI() {
 		logger.info("checkSongPathGUI(): Started constructor checkSongPathGUI()");
@@ -39,13 +69,14 @@ public class checkSongPathGUI extends JDialog implements ActionListener {
 		
 		setTitle("Checking songpaths...");
 		setBounds(100, 100, 450, 150);
+		setDefaultCloseOperation(DO_NOTHING_ON_CLOSE);
 		setModal(true);
 		setVisible(true);
 	}
 	
 	private void initialize() {
 		checkPanel = new JPanel(new MigLayout("", "[grow]", "[][]"));
-		checklabel = new JLabel("Checking songpaths...");
+		checklabel = new JLabel("Press start to check for missing songs:");
 		btnCancel = new JButton("Cancel");
 		btnCancel.addActionListener(this);
 		btnCancel.setActionCommand("cancel");
@@ -66,16 +97,8 @@ public class checkSongPathGUI extends JDialog implements ActionListener {
 		}
 		
 		else if (e.getActionCommand().equals("start")) {
-			try {
-				ps.checkSongPaths();
-			} catch (DataAccessException e1) {
-				// TODO Auto-generated catch block
-				e1.printStackTrace();
-			}
-			logger.info("checkSongPathGUI(): Songpaths successfully checked");
-			new MainFrame("reloadsongTable");
-			logger.info("checkSongPathGUI(): Back from Mainframe");
-			dispose();
+			logger.info("checkSongPathGUI(): started Thread");
+			createThread();
 		}
 	}
 }
