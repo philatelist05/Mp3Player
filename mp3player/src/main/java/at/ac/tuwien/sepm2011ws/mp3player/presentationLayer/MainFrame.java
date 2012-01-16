@@ -593,18 +593,18 @@ public class MainFrame extends JFrame implements ActionListener, Runnable,
 		}
 		pl_tree = new JTree();
 		try {
-			pl_tree.setModel(new DefaultTreeModel(new PlaylistTreeNode("") {
+			pl_tree.setModel(new DefaultTreeModel(new PlaylistTreeNode("mp3player") {
 				/**
 				 * mp3@player
 				 */
 				private static final long serialVersionUID = -7228695694680777407L;
 
 				{
-					PlaylistTreeNode node_1; 
+					PlaylistTreeNode node_1;
 					add(new PlaylistTreeNode(ps.getLibrary().toString(), false,
 							ps.getLibrary()));
-					
-					add(new PlaylistTreeNode("Queue"));
+					Playlist qu = new Playlist("Queue");
+					add(new PlaylistTreeNode("Queue", false, qu));
 
 					// node_1 = new PlaylistTreeNode(ps.getLibrary().toString(),
 					// false, ps.getLibrary());
@@ -615,30 +615,26 @@ public class MainFrame extends JFrame implements ActionListener, Runnable,
 
 					while (iter.hasNext()) {
 						current = iter.next();
-						node_1.add(new PlaylistTreeNode(current.getTitle(), false,
-								current));
+						node_1.add(new PlaylistTreeNode(current.getTitle(),
+								false, current));
 					}
 					add(node_1);
 
 					node_1 = new PlaylistTreeNode("Intelligent Playlists");
-					//try {
-					/*
-						node_1.add(new PlaylistTreeNode(
-								ps.getTopRated().getTitle(), false, ps
-										.getTopRated()));
-						node_1.add(new PlaylistTreeNode(ps.getTopPlayed()
-								.getTitle(), false, ps.getTopPlayed()));
-					*/
-					//} catch (NullPointerException n) {
-					//	node_1.add(new PlaylistTreeNode("Top40 rated"));
-					//	node_1.add(new PlaylistTreeNode("Top40 played"));
-					//}
+/*
+					node_1.add(new PlaylistTreeNode(
+							ps.getTopRated().getTitle(), false, ps
+									.getTopRated()));
+					node_1.add(new PlaylistTreeNode(ps.getTopPlayed()
+							.getTitle(), false, ps.getTopPlayed()));
+*/
 					add(node_1);
+
 				}
 			}));
 		} catch (DataAccessException e1) {
 		}
-		pl_tree.setEditable(true);
+		pl_tree.setEditable(false);
 		pl_tree.setVisibleRowCount(5);
 		JScrollPane pl_tree_sp = new JScrollPane(pl_tree);
 		pl_tree.setDragEnabled(false);
@@ -974,8 +970,7 @@ public class MainFrame extends JFrame implements ActionListener, Runnable,
 			playlistgui = new PlaylistGUI();
 			playlistgui.importPlaylist();
 
-		}
-		else if (e.getActionCommand().equals("exportplaylist")) {
+		} else if (e.getActionCommand().equals("exportplaylist")) {
 			playlistgui = new PlaylistGUI();
 			playlistgui.exportPlaylist(currentPlaylistGUI);
 		}
