@@ -26,6 +26,8 @@ import christophedelory.playlist.Media;
 import christophedelory.playlist.Sequence;
 import christophedelory.playlist.SpecificPlaylist;
 import christophedelory.playlist.SpecificPlaylistFactory;
+import christophedelory.playlist.m3u.M3U;
+import christophedelory.playlist.m3u.M3UProvider;
 
 /**
  * @author klaus
@@ -154,7 +156,7 @@ class VvvPlaylistService implements PlaylistService {
 		String[] all = folder.list();
 		File f;
 		for (String s : all) {
-			f = new File(s);
+			f = new File(folder + File.separator + s);
 			if (f.isDirectory()) {
 				// Recursive add all files from all folders in the current
 				// folder
