@@ -48,17 +48,14 @@ public class CoreInteractionServiceTest {
 		
 		//now start playing
 		cs.playPause();
-		System.out.println(Thread.currentThread().toString());
 		Thread.sleep(500);
-		System.out.println(Thread.currentThread().toString());
 		assertEquals(cs.getCurrentSong(),temp.getSongs().get(0));
 		// Here the endOfMediaEvent should be fired
 		Thread.sleep(3500); // The player needs a bit time to realize that the
 							// song is at the end... -,-
 		Song actual = cs.getCurrentSong();
 		Song expected = temp.getSongs().get(1);
-		System.out.println(actual);
-		System.out.println(expected);
+		
 		assertEquals(actual,expected);
 	}
 

@@ -25,7 +25,7 @@ class DbAlbumDao implements AlbumDao {
 	private PreparedStatement updateStmt;
 	private PreparedStatement deleteStmt;
 
-	// private PreparedStatement existsStmt;
+	private PreparedStatement sameStmt;
 
 	DbAlbumDao(DataSource source) throws DataAccessException {
 
@@ -38,12 +38,11 @@ class DbAlbumDao implements AlbumDao {
 			readStmt = con.prepareStatement("SELECT "
 					+ "title, year, albumart_path FROM album WHERE id=?;");
 			updateStmt = con.prepareStatement("UPDATE album SET "
-					+ "title=?, year=?, albumart_path=?, " + "WHERE id = ?;");
+					+ "title=?, year=?, albumart_path=? WHERE id = ?;");
 			deleteStmt = con.prepareStatement("DELETE FROM album "
 					+ "WHERE id = ?;");
-			// existsStmt = con
-			// .prepareStatement("SELECT EXISTS(SELECT * FROM album WHERE "
-			// + "title=? AND year=? AND albumart_path=?);");
+			sameStmt = con.prepareStatement("SELECT id FROM album WHERE "
+					+ "title=? AND year=? AND albumart_path=?;");
 
 		} catch (SQLException e) {
 			throw new DataAccessException(
@@ -58,15 +57,33 @@ class DbAlbumDao implements AlbumDao {
 			throw new IllegalArgumentException("Album must not be null");
 
 		try {
-			createStmt.setString(1, a.getTitle());
-			createStmt.setInt(2, a.getYear());
-			createStmt.setString(3, a.getAlbumartPath());
+			sameStmt.setString(1, a.getTitle());
+			sameStmt.setInt(2, a.getYear());
+			sameStmt.setString(3, a.getAlbumartPath());
+			result = sameStmt.executeQuery();
 
-			createStmt.executeUpdate();
-
-			result = createStmt.getGeneratedKeys();
 			if (result.next()) {
-				a.setId(result.getInt(1));
+				// Album already exists in db, so read it
+				Album a2 = read(result.getInt("id"));
+				a.setId(a2.getId());
+				a.setTitle(a2.getTitle());
+				a.setYear(a2.getYear());
+				a.setAlbumartPath(a2.getAlbumartPath());
+			} else {
+				// Album doesn't exist in db, so create
+				createStmt.setString(1, a.getTitle());
+				createStmt.setInt(2, a.getYear());
+				createStmt.setString(3, a.getAlbumartPath());
+
+				createStmt.executeUpdate();
+
+				result = createStmt.getGeneratedKeys();
+				if (result.next()) {
+					a.setId(result.getInt(1));
+				} else {
+					throw new DataAccessException(
+							"Error creating album in database");
+				}
 			}
 
 		} catch (SQLException e) {
@@ -157,34 +174,4 @@ class DbAlbumDao implements AlbumDao {
 	public Connection getConnection() {
 		return this.con;
 	}
-
-	// public boolean exists(Album a) throws DataAccessException {
-	// ResultSet result = null;
-	// boolean ret;
-	//
-	// try {
-	// existsStmt.setString(1, a.getTitle());
-	// existsStmt.setInt(2, a.getYear());
-	// existsStmt.setString(3, a.getAlbumartPath());
-	// result = existsStmt.executeQuery();
-	// if (!result.next()) {
-	// result.close();
-	// return false;
-	// }
-	//
-	// ret = result.getBoolean(1);
-	//
-	// } catch (SQLException e) {
-	// throw new DataAccessException(
-	// "Error checking album existence in database");
-	// } finally {
-	// try {
-	// if (result != null)
-	// result.close();
-	// } catch (SQLException e) {
-	// }
-	// }
-	//
-	// return ret;
-	// }
 }

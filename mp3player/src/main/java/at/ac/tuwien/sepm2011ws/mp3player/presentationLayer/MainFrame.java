@@ -504,6 +504,7 @@ public class MainFrame extends JFrame implements ActionListener, Runnable,
 				try {
 					ps.updatePlaylist(currentPlaylistGUI);
 				} catch (DataAccessException e) {
+					// TODO: Show error dialog
 				}
 				currentPlaylistGUI = clicked.getNodePlaylist();
 				fillSongTable(clicked.getNodePlaylist());

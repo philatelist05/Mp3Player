@@ -36,6 +36,7 @@ class DbSongDao implements SongDao {
 	private PreparedStatement deleteStmt;
 	private PreparedStatement readRatedStmt;
 	private PreparedStatement readPlayedStmt;
+	private PreparedStatement sameStmt;
 
 	DbSongDao(DataSource source, AlbumDao ad) throws DataAccessException {
 		this.ad = ad;
@@ -76,6 +77,8 @@ class DbSongDao implements SongDao {
 							+ "title, artist, path, year, "
 							+ "duration, playcount, rating, genre, pathOk, lyric, "
 							+ "album FROM song LEFT JOIN is_on ON id = song ORDER BY playcount DESC LIMIT ?;");
+			sameStmt = con
+					.prepareStatement("SELECT id FROM song WHERE path=?;");
 
 		} catch (SQLException e) {
 			throw new DataAccessException(
@@ -90,38 +93,62 @@ class DbSongDao implements SongDao {
 			throw new IllegalArgumentException("Song must not be null");
 
 		try {
-			createStmt.setString(1, s.getTitle());
-			createStmt.setString(2, s.getArtist());
-			createStmt.setString(3, s.getPath());
-			createStmt.setInt(4, s.getYear());
-			createStmt.setInt(5, s.getDuration());
-			createStmt.setInt(6, s.getPlaycount());
-			createStmt.setInt(7, s.getRating());
-			createStmt.setString(8, s.getGenre());
-			createStmt.setBoolean(9, s.isPathOk());
+			sameStmt.setString(1, s.getPath());
+			result = sameStmt.executeQuery();
 
-			if (s.getLyric() != null)
-				createStmt.setString(10, s.getLyric().getText());
-			else
-				createStmt.setString(10, null);
-
-			createStmt.executeUpdate();
-
-			result = createStmt.getGeneratedKeys();
 			if (result.next()) {
-				s.setId(result.getInt(1));
+				// Song already exists in db, so read it
+				Song s2 = read(result.getInt("id"));
+				s.setId(s2.getId());
+				s.setTitle(s2.getTitle());
+				s.setArtist(s2.getArtist());
+				s.setPath(s2.getPath());
+				s.setYear(s2.getYear());
+				s.setDuration(s2.getDuration());
+				s.setPlaycount(s2.getPlaycount());
+				s.setRating(s2.getRating());
+				s.setGenre(s2.getGenre());
+				s.setPathOk(s2.isPathOk());
+				s.setLyric(s2.getLyric());
+				s.setAlbum(s2.getAlbum());
+			} else {
+				// Song doesn't exist in db, so create
+				createStmt.setString(1, s.getTitle());
+				createStmt.setString(2, s.getArtist());
+				createStmt.setString(3, s.getPath());
+				createStmt.setInt(4, s.getYear());
+				createStmt.setInt(5, s.getDuration());
+				createStmt.setInt(6, s.getPlaycount());
+				createStmt.setInt(7, s.getRating());
+				createStmt.setString(8, s.getGenre());
+				createStmt.setBoolean(9, s.isPathOk());
 
-				if (s.getAlbum() != null) {
-					// Create album if it doesn't exist
-					ad.create(s.getAlbum());
+				if (s.getLyric() != null)
+					createStmt.setString(10, s.getLyric().getText());
+				else
+					createStmt.setString(10, null);
 
-					// Create album song association
-					createIsOnStmt.setInt(1, s.getId());
-					createIsOnStmt.setInt(2, s.getAlbum().getId());
+				createStmt.executeUpdate();
 
-					createIsOnStmt.executeUpdate();
+				result = createStmt.getGeneratedKeys();
+				if (result.next()) {
+					s.setId(result.getInt(1));
+
+					if (s.getAlbum() != null) {
+						// Create album if it doesn't exist
+						ad.create(s.getAlbum());
+
+						// Create album song association
+						createIsOnStmt.setInt(1, s.getId());
+						createIsOnStmt.setInt(2, s.getAlbum().getId());
+
+						createIsOnStmt.executeUpdate();
+					}
+
+				} else {
+					throw new DataAccessException(
+							"Error creating song in database");
 				}
-
 			}
 		} catch (SQLException e) {
 			throw new DataAccessException("Error creating song in database");

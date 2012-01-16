@@ -225,35 +225,34 @@ public class VlcjCoreInteractionService implements CoreInteractionService {
 
 		List<Song> songs = this.currentPlaylist.getSongs();
 		int maxIndex = songs.size() - 1;
-		int index = 0;
+		int nextIndex = 0;
 
 		switch (this.playMode) {
 		case NORMAL:
-			index = getCurrentSongIndex() + 1;
-			if (index > maxIndex) {
-				// If the last song was the last of the playlist, stay at this
-				// song
-				index = maxIndex;
+			nextIndex = getCurrentSongIndex() + 1;
+			if (nextIndex > maxIndex) {
+				// If the last song was the last of the playlist, stop playing
+				nextIndex = -1;
 			}
 			break;
 		case REPEAT:
-			index = getCurrentSongIndex() + 1;
-			if (index > maxIndex) {
+			nextIndex = getCurrentSongIndex() + 1;
+			if (nextIndex > maxIndex) {
 				// If the last song was the last of the playlist, the next song
 				// is the first of the playlist
-				index = 0;
+				nextIndex = 0;
 			}
 			break;
 		case SHUFFLE:
-			index = (int) Math.floor(Math.random() * maxIndex);
+			nextIndex = (int) Math.floor(Math.random() * maxIndex);
 			break;
 		default:
-			index = 0;
+			nextIndex = 0;
 			break;
 		}
 
-		if (index >= 0 && index <= maxIndex) {
-			return songs.get(index);
+		if (nextIndex >= 0 && nextIndex <= maxIndex) {
+			return songs.get(nextIndex);
 		}
 		return null;
 	}
@@ -341,6 +340,7 @@ public class VlcjCoreInteractionService implements CoreInteractionService {
 				playerListener.songBeginnEvent();
 				playerListener.songEndEvent();
 			}
+			playNext();
 		}
 
 		@Override
