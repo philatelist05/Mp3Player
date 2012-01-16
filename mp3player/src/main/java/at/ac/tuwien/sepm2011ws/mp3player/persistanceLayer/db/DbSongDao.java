@@ -310,13 +310,12 @@ class DbSongDao implements SongDao {
 	}
 
 	@Override
-	public List<Song> getTopRatedSongs() throws DataAccessException {
-		ServiceFactory serviceFactory = ServiceFactory.getInstance();
-		SettingsService settingsService = serviceFactory.getSettingsService();
-
+	public List<Song> getTopRatedSongs(int number) throws DataAccessException {
+		if(number < 1)
+			throw new IllegalArgumentException("The number XX stands for in TopXX... playlist must be greater than zero");
+		
 		try {
-			int anzahl = settingsService.getTopXXRatedCount();
-			readRatedStmt.setInt(1, anzahl);
+			readRatedStmt.setInt(1, number);
 			return executeSelect(readRatedStmt);
 		} catch (SQLException e) {
 			throw new DataAccessException("Error reading song from database");
@@ -324,13 +323,12 @@ class DbSongDao implements SongDao {
 	}
 
 	@Override
-	public List<Song> getTopPlayedSongs() throws DataAccessException {
-		ServiceFactory serviceFactory = ServiceFactory.getInstance();
-		SettingsService settingsService = serviceFactory.getSettingsService();
+	public List<Song> getTopPlayedSongs(int number) throws DataAccessException {
+		if(number < 1)
+			throw new IllegalArgumentException("The number XX stands for in TopXX... playlist must be greater than zero");
 
 		try {
-			int anzahl = settingsService.getTopXXPlayedCount();
-			readPlayedStmt.setInt(1, anzahl);
+			readPlayedStmt.setInt(1, number);
 			return executeSelect(readPlayedStmt);
 		} catch (SQLException e) {
 			throw new DataAccessException("Error reading song from database");
