@@ -15,6 +15,7 @@ import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
+import at.ac.tuwien.sepm2011ws.mp3player.domainObjects.Lyric;
 import at.ac.tuwien.sepm2011ws.mp3player.domainObjects.Song;
 import at.ac.tuwien.sepm2011ws.mp3player.persistanceLayer.db.DaoFactory;
 
@@ -86,7 +87,7 @@ public class SongDaoTest {
 	@Test
 	public void testCreate_CreateValidSong() throws DataAccessException {
 		Song s = new Song("Machine Head", "Halo", 300, "C:\\music\\halo");
-
+	
 		sd.create(s);
 
 		assertTrue(s.getId() > 0);

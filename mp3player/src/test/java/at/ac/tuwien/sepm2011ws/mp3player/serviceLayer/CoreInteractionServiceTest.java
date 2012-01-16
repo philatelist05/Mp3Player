@@ -3,6 +3,7 @@
  */
 package at.ac.tuwien.sepm2011ws.mp3player.serviceLayer;
 
+import static org.junit.Assert.*;
 import static org.junit.Assert.assertTrue;
 
 import java.io.File;
@@ -76,12 +77,14 @@ public class CoreInteractionServiceTest {
 
 		cs.playPause(null);
 		Thread.sleep(500);
-		assertTrue(cs.getCurrentSong().equals(temp.getSongs().get(0)));
+		assertEquals(cs.getCurrentSong(),temp.getSongs().get(0));
 		cs.seek(100);
 		// Here the endOfMediaEvent should be fired
-		Thread.sleep(3000); // The player needs a bit time to realize that the
+		Thread.sleep(5000); // The player needs a bit time to realize that the
 							// song is at the end... -,-
-		assertTrue(cs.getCurrentSong().equals(temp.getSongs().get(1)));
+		Song actual = cs.getCurrentSong();
+		Song expected = temp.getSongs().get(1);
+		assertEquals(actual,expected);
 		cs.stop();
 	}
 
@@ -92,16 +95,19 @@ public class CoreInteractionServiceTest {
 		Song s = new Song("dummy", "dummy", 300, sPath.getAbsolutePath());
 
 		// play
-		cs.playPause(s);
+		cs.playFromBeginning(s);
 		Thread.sleep(500);
 		// pause
 		cs.playPause(s);
-		double then = cs.getPlayTime();
+		double then = cs.getPlayTimeInSeconds();
 		// play again
 		cs.playPause(s);
 		Thread.sleep(500);
 		// Now has to be greater than then
-		assertTrue(cs.getPlayTime() > then);
+		double actual = cs.getPlayTimeInSeconds();
+		System.out.println(then);
+		System.out.println(actual);
+		assertTrue(actual > then);
 		cs.stop();
 	}
 }
