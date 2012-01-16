@@ -46,8 +46,6 @@ public class JTreeSongTransferHandler extends SongTransferHandler {
 			} else {
 				Playlist cp = clicked.getNodePlaylist();
 				for (int i = 0; i < songs.length; i++) {
-					System.out.println(cp);
-					System.out.println(songs[i]);
 					cp.addSong(songs[i]);
 					try {
 						ps.updatePlaylist(cp);

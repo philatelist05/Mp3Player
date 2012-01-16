@@ -258,7 +258,7 @@ public class MainFrame extends JFrame implements ActionListener, Runnable,
 		setPlayIcons();
 
 		cis.playFromBeginning(x);
-
+		cis.setCurrentPlaylist(currentPlaylistGUI);
 		Song temp = cis.getCurrentSong();
 
 		progress.setEnabled(true);
@@ -496,6 +496,7 @@ public class MainFrame extends JFrame implements ActionListener, Runnable,
 				.getLastSelectedPathComponent();
 		if (tp != null && clicked != null) {
 			if (clicked.hasNodePlaylist()) {
+				currentPlaylistGUI = parseSongTable(currentPlaylistGUI);
 				try {
 					ps.updatePlaylist(currentPlaylistGUI);
 				} catch (DataAccessException e) {
@@ -660,7 +661,7 @@ public class MainFrame extends JFrame implements ActionListener, Runnable,
 					add(node_1);
 
 					node_1 = new PlaylistTreeNode("Intelligent Playlists");
-					node_1.add(new PlaylistTreeNode("asdasdasd"));
+					node_1.add(new PlaylistTreeNode("TopRated"));
 					/*
 					 * node_1.add(new PlaylistTreeNode(
 					 * ps.getTopRated().getTitle(), false, ps .getTopRated()));
