@@ -55,10 +55,11 @@ class DbSongDao implements SongDao {
 					+ "album FROM song LEFT JOIN is_on ON id=song WHERE id=?;");
 			readIsOnStmt = con
 					.prepareStatement("SELECT album FROM is_on WHERE song=?;");
-			readAllStmt = con.prepareStatement("SELECT id, "
-					+ "title, artist, path, year, "
-					+ "duration, playcount, rating, genre, pathOk, lyric, "
-					+ "album FROM song LEFT JOIN is_on ON id = song ORDER BY id;");
+			readAllStmt = con
+					.prepareStatement("SELECT id, "
+							+ "title, artist, path, year, "
+							+ "duration, playcount, rating, genre, pathOk, lyric, "
+							+ "album FROM song LEFT JOIN is_on ON id = song ORDER BY id;");
 			updateStmt = con.prepareStatement("UPDATE song SET "
 					+ "title=?, artist=?, path=?, year=?, duration=?, "
 					+ "playcount=?, rating=?, genre=?, pathOk=?, lyric=? "
@@ -96,13 +97,11 @@ class DbSongDao implements SongDao {
 			createStmt.setInt(7, s.getRating());
 			createStmt.setString(8, s.getGenre());
 			createStmt.setBoolean(9, s.isPathOk());
-			
 
-			if(s.getLyric() != null)
+			if (s.getLyric() != null)
 				createStmt.setString(10, s.getLyric().getText());
 			else
 				createStmt.setString(10, null);
-
 
 			createStmt.executeUpdate();
 
@@ -150,11 +149,10 @@ class DbSongDao implements SongDao {
 			updateStmt.setString(8, s.getGenre());
 			updateStmt.setBoolean(9, s.isPathOk());
 
-			if(s.getLyric() != null)
+			if (s.getLyric() != null)
 				updateStmt.setString(10, s.getLyric().getText());
 			else
 				updateStmt.setString(10, null);
-			
 
 			updateStmt.setInt(11, s.getId());
 
@@ -182,7 +180,7 @@ class DbSongDao implements SongDao {
 			deleteStmt.executeUpdate();
 
 			// TODO: Delete album too if there are no more songs of it;
-			// I guess this should actually do ON DELETE CASCASE ?????
+			// I guess this should actually do ON DELETE CASCASE ????? <- NO!
 		} catch (SQLException e) {
 			throw new DataAccessException("Error deleting song in database");
 		}
@@ -197,6 +195,7 @@ class DbSongDao implements SongDao {
 		}
 
 		Song s;
+		String lyric;
 
 		try {
 			readStmt.setInt(1, id);
@@ -214,9 +213,16 @@ class DbSongDao implements SongDao {
 			s.setRating(result.getInt("rating"));
 			s.setGenre(result.getString("genre"));
 			s.setPathOk(result.getBoolean("pathOk"));
-			s.setLyric(new Lyric(result.getString("lyric")));
 
-			// Reading album
+			// Read lyric
+			lyric = result.getString("lyric");
+			if (lyric != null) {
+				s.setLyric(new Lyric(lyric));
+			} else {
+				s.setLyric(null);
+			}
+
+			// Read album
 			readIsOnStmt.setInt(1, id);
 			result = readIsOnStmt.executeQuery();
 
@@ -250,6 +256,7 @@ class DbSongDao implements SongDao {
 		ResultSet result2 = null;
 		ArrayList<Song> sList = new ArrayList<Song>();
 		Song s;
+		String lyric;
 		try {
 			result = statement.executeQuery();
 
@@ -264,9 +271,16 @@ class DbSongDao implements SongDao {
 				s.setRating(result.getInt("rating"));
 				s.setGenre(result.getString("genre"));
 				s.setPathOk(result.getBoolean("pathOk"));
-				s.setLyric(new Lyric(result.getString("lyric")));
 
-				// Reading album
+				// Read lyric
+				lyric = result.getString("lyric");
+				if (lyric != null) {
+					s.setLyric(new Lyric(lyric));
+				} else {
+					s.setLyric(null);
+				}
+
+				// Read album
 				readIsOnStmt.setInt(1, s.getId());
 				result2 = readIsOnStmt.executeQuery();
 
@@ -295,10 +309,6 @@ class DbSongDao implements SongDao {
 		return sList;
 	}
 
-	public Connection getConnection() {
-		return this.con;
-	}
-
 	@Override
 	public List<Song> getTopRatedSongs() throws DataAccessException {
 		ServiceFactory serviceFactory = ServiceFactory.getInstance();
@@ -325,6 +335,10 @@ class DbSongDao implements SongDao {
 		} catch (SQLException e) {
 			throw new DataAccessException("Error reading song from database");
 		}
+	}
+
+	public Connection getConnection() {
+		return this.con;
 	}
 
 }
