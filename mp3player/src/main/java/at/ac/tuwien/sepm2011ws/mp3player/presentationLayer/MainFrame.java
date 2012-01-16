@@ -203,8 +203,8 @@ public class MainFrame extends JFrame implements ActionListener, Runnable,
 					x.getRating(), x.getPlaycount() });
 			else
 			{
-
-				songmodel.addRow(new Object[] { x , x.getTitle() + " ! ", x.getArtist(),
+				x.setTitle(x.getTitle().concat(" ! "));
+				songmodel.addRow(new Object[] { x , x.getTitle(), x.getArtist(),
 						album, x.getYear(), x.getGenre(), x.getDuration(),
 						x.getRating(), x.getPlaycount() });
 			}
