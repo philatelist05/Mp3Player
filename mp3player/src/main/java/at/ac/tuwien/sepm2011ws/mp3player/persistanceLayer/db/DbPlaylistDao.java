@@ -84,7 +84,7 @@ class DbPlaylistDao implements PlaylistDao {
 					createContainsStmt.setInt(1, i);
 					createContainsStmt.setInt(2, p.getId());
 					createContainsStmt.setInt(3, s.getId());
-					createContainsStmt.executeQuery();
+					createContainsStmt.executeUpdate();
 					i++;
 				}
 
@@ -105,26 +105,29 @@ class DbPlaylistDao implements PlaylistDao {
 		if (p == null) {
 			throw new IllegalArgumentException("Playlist must not be null");
 		}
-
+		
 		try {
 			updateStmt.setString(1, p.getTitle());
 			updateStmt.setInt(2, p.getId());
 			updateStmt.executeUpdate();
-
+			
 			deleteContainsStmt.setInt(1, p.getId());
-			deleteContainsStmt.executeQuery();
+			deleteContainsStmt.executeUpdate();
 			int i = 0;
+			
 			for (Song s : p.getSongs()) {
 				// Update song
 				// sd.update(s); Should not be necessary
-
+				
 				// Recreate playlist song association
 				createContainsStmt.setInt(1, i);
 				createContainsStmt.setInt(2, p.getId());
 				createContainsStmt.setInt(3, s.getId());
-				createContainsStmt.executeQuery();
+				createContainsStmt.executeUpdate();
 				i++;
 			}
+			
+			
 
 		} catch (SQLException e) {
 			throw new DataAccessException("Error updating playlist in database");

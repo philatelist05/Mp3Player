@@ -12,7 +12,9 @@ import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
+import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowStateListener;
 import java.io.IOException;
@@ -103,6 +105,7 @@ public class MainFrame extends JFrame implements ActionListener, Runnable,
 	private JCheckBox chckbxMute;
 	private JCheckBox chckbxRepeat;
 	private JCheckBox chckbxShuffle;
+	private JPopupMenu tablePopupMenu = new JPopupMenu();
 
 	private Icon l1 = new ImageIcon(getClass().getResource("img/left_blue.png"));
 	private Icon l2 = new ImageIcon(getClass().getResource(
@@ -268,7 +271,7 @@ public class MainFrame extends JFrame implements ActionListener, Runnable,
 		setPlayIcons();
 
 		cis.playFromBeginning(x);
-
+		cis.setCurrentPlaylist(currentPlaylistGUI);
 		Song temp = cis.getCurrentSong();
 
 		progress.setEnabled(true);
@@ -506,6 +509,12 @@ public class MainFrame extends JFrame implements ActionListener, Runnable,
 				.getLastSelectedPathComponent();
 		if (tp != null && clicked != null) {
 			if (clicked.hasNodePlaylist()) {
+				currentPlaylistGUI = parseSongTable(currentPlaylistGUI);
+				try {
+					ps.updatePlaylist(currentPlaylistGUI);
+				} catch (DataAccessException e) {
+				}
+				currentPlaylistGUI = clicked.getNodePlaylist();
 				fillSongTable(clicked.getNodePlaylist());
 			} else {
 			}
@@ -526,7 +535,15 @@ public class MainFrame extends JFrame implements ActionListener, Runnable,
 		setTitle("mp3@player");
 
 		initialize();
-
+		addWindowListener(new WindowAdapter() {
+			public void windowClosing(WindowEvent e) {
+				currentPlaylistGUI = parseSongTable(currentPlaylistGUI);
+				try {
+					ps.updatePlaylist(currentPlaylistGUI);
+				} catch (DataAccessException a) {
+				}
+			}
+		});
 		getWholeLibrary();
 
 		cis.setVolume(volume.getValue());
@@ -667,7 +684,7 @@ public class MainFrame extends JFrame implements ActionListener, Runnable,
 					add(node_1);
 
 					node_1 = new PlaylistTreeNode("Intelligent Playlists");
-					node_1.add(new PlaylistTreeNode("asdasdasd"));
+					node_1.add(new PlaylistTreeNode("TopRated"));
 					/*
 					 * node_1.add(new PlaylistTreeNode(
 					 * ps.getTopRated().getTitle(), false, ps .getTopRated()));
@@ -685,7 +702,7 @@ public class MainFrame extends JFrame implements ActionListener, Runnable,
 		pl_tree.setVisibleRowCount(5);
 		JScrollPane pl_tree_sp = new JScrollPane(pl_tree);
 		pl_tree.setDragEnabled(false);
-		pl_tree.setTransferHandler(new JTreeSongTransferHandler());
+		pl_tree.setTransferHandler(new JTreeSongTransferHandler(ps));
 
 		pl_tree.addMouseListener(new MouseAdapter() {
 			public void mouseClicked(MouseEvent me) {
@@ -699,6 +716,15 @@ public class MainFrame extends JFrame implements ActionListener, Runnable,
 		 * JTables
 		 */
 		// songTable
+		/*
+		 * JMenuItem menuItem = new JMenuItem("");
+		 * menuItem.addActionListener(new InsertRowsActionAdapter(this));
+		 * tablePopupMenu.add(menuItem);
+		 */
+		JMenuItem entry = new JMenuItem("Delete Song");
+		tablePopupMenu.add(entry);
+		entry.addActionListener(new TableActionAdapter());
+		entry.setActionCommand("deleteSong");
 
 		songTable = new JTable(songmodel);
 		songTable.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
@@ -717,13 +743,12 @@ public class MainFrame extends JFrame implements ActionListener, Runnable,
 		songTable.getModel().addTableModelListener(this);
 		cTableModel = new HidableTableColumnModel(songTable.getColumnModel());
 		// htcm.setColumnVisible(0, false);
-		JPopupMenu popup = new JPopupMenu("Hide Menu");
-		Action[] actions = cTableModel.createColumnActions();
-		for (Action act : actions) {
-			popup.add(new JCheckBoxMenuItem(act));
-		}
-		songTable.setComponentPopupMenu(popup);
-
+		/*
+		 * JPopupMenu popup = new JPopupMenu("Hide Menu"); Action[] actions =
+		 * cTableModel.createColumnActions(); for (Action act : actions) {
+		 * popup.add(new JCheckBoxMenuItem(act)); }
+		 * songTable.setComponentPopupMenu(popup);
+		 */
 		songTable.addMouseListener(new MouseAdapter() {
 			public void mouseClicked(MouseEvent e) {
 				if (e.getClickCount() == 2) {
@@ -737,6 +762,11 @@ public class MainFrame extends JFrame implements ActionListener, Runnable,
 				}
 			}
 		});
+
+		MouseListener popupListener = new PopupListener();
+		// add the listener specifically to the header
+		songTable.addMouseListener(popupListener);
+		songTable.getTableHeader().addMouseListener(popupListener);
 
 		/**
 		 * JButtons
@@ -1121,11 +1151,47 @@ public class MainFrame extends JFrame implements ActionListener, Runnable,
 
 	}
 
+
+	class PopupListener extends MouseAdapter {
+		public void mousePressed(MouseEvent e) {
+			showPopup(e);
+		}
+
+		public void mouseReleased(MouseEvent e) {
+			showPopup(e);
+		}
+
+		private void showPopup(MouseEvent e) {
+			if (e.isPopupTrigger()) {
+				tablePopupMenu.show(e.getComponent(), e.getX(), e.getY());
+			}
+		}
+	}
+
+	class TableActionAdapter implements ActionListener {
+
+		TableActionAdapter() {
+		}
+
+		public void actionPerformed(ActionEvent e) {
+			if (e.getActionCommand().equals("deleteSong")) {
+				int row = songTable.getSelectedRow();
+				Song x = null;
+
+				if (row > -1) {
+					x = (Song) songTable.getValueAt(row, 0);
+				}
+				currentPlaylistGUI.removeSong(x);
+				fillSongTable(currentPlaylistGUI);
+			}
+		}
+	}
+
 	@Override
-	public void tableChanged(TableModelEvent arg0) {
-		
-		TableModel model = (TableModel) arg0.getSource();
-		logger.info(model.getValueAt(0, 0));
+	public void tableChanged(TableModelEvent e) {
+		// TODO Auto-generated method stub
 		
 	}
+
+
 }
