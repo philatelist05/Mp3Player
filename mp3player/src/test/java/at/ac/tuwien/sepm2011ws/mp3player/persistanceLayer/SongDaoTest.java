@@ -112,7 +112,7 @@ public class SongDaoTest {
 	public void testGetTopPlayedSongs_ShouldReturnTopPlayedSongs() throws DataAccessException {
 	    List<Song> list = new ArrayList<Song>();
 	    for(int i = 0;i<10;i++) {
-		Song s = new Song("artist", "title", 0, "myPath");
+		Song s = new Song("artist", "title", 0, "myPath" + i);
 		s.setRating(i);
 		s.setPlaycount(9 - i);
 		list.add(s);
@@ -148,7 +148,7 @@ public class SongDaoTest {
 	public void testGetTopRatedSongs_ShouldReturnTopRatedSongs() throws DataAccessException {
 	    List<Song> list = new ArrayList<Song>();
 	    for(int i = 0;i<10;i++) {
-		Song s = new Song("artist", "title", 0, "myPath");
+		Song s = new Song("artist", "title", 0, "myPath" + i);
 		s.setRating(i);
 		s.setPlaycount(9 - i);
 		list.add(s);
