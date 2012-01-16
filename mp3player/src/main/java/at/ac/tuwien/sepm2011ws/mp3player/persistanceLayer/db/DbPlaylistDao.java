@@ -52,7 +52,7 @@ class DbPlaylistDao implements PlaylistDao {
 					+ "name=? WHERE id = ?;");
 			deleteContainsStmt = con
 					.prepareStatement("DELETE FROM contains WHERE playlist=?;");
-			deleteStmt = con.prepareStatement("DELETE FROM song "
+			deleteStmt = con.prepareStatement("DELETE FROM playlist "
 					+ "WHERE id = ?;");
 
 		} catch (SQLException e) {
