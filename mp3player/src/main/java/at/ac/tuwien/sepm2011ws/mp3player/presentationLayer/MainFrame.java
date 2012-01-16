@@ -16,6 +16,8 @@ import java.awt.event.MouseMotionListener;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowStateListener;
 import java.io.IOException;
+import java.util.Enumeration;
+import java.util.HashMap;
 
 import javax.imageio.ImageIO;
 import javax.swing.Action;
@@ -40,6 +42,8 @@ import javax.swing.ListSelectionModel;
 import javax.swing.ScrollPaneConstants;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
+import javax.swing.table.TableColumn;
+import javax.swing.table.TableModel;
 import javax.swing.tree.DefaultTreeModel;
 import javax.swing.tree.TreePath;
 
@@ -54,6 +58,7 @@ import at.ac.tuwien.sepm2011ws.mp3player.serviceLayer.CoreInteractionService;
 import at.ac.tuwien.sepm2011ws.mp3player.serviceLayer.PlayMode;
 import at.ac.tuwien.sepm2011ws.mp3player.serviceLayer.PlaylistService;
 import at.ac.tuwien.sepm2011ws.mp3player.serviceLayer.ServiceFactory;
+import at.ac.tuwien.sepm2011ws.mp3player.serviceLayer.SettingsService;
 
 public class MainFrame extends JFrame implements ActionListener, Runnable,
 		KeyListener {
@@ -121,6 +126,8 @@ public class MainFrame extends JFrame implements ActionListener, Runnable,
 
 	private PlaylistService ps;
 	private CoreInteractionService cis;
+	private SettingsService ss;
+	
 
 	/**
 	 * Gets all Songs from the Database
@@ -479,7 +486,8 @@ public class MainFrame extends JFrame implements ActionListener, Runnable,
 		ServiceFactory sf = ServiceFactory.getInstance();
 		cis = sf.getCoreInteractionService();
 		ps = sf.getPlaylistService();
-
+		ss = sf.getSettingsService();
+		
 		setBounds(100, 100, 1000, 600);
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setTitle("mp3@player");
@@ -971,7 +979,38 @@ public class MainFrame extends JFrame implements ActionListener, Runnable,
 
 		else if (e.getActionCommand().equals("settings")) {
 			new Settings();
-			// TODO: Add dynamically changing for songTable
+			
+			ss.getUserColumns();
+
+			String[] col = new String[] {"Playcount","Track Nr."};
+
+			HashMap Zuordnung = new HashMap();
+			
+			Zuordnung.put( "Track Nr.",0);
+			Zuordnung.put( "Title",1);
+			Zuordnung.put( "Artist",2);
+			Zuordnung.put( "Album",3);
+			Zuordnung.put( "Year",4);
+			Zuordnung.put( "Genre",5);
+			Zuordnung.put( "Duration", 6);
+			Zuordnung.put( "Rating",7);
+			Zuordnung.put( "Playcount",8);
+			
+			for(int i= 0; i < ss.getUserColumns().length; i++)
+			{
+				cTableModel.setColumnVisible(i, false);
+				System.out.println(ss.getUserColumns()[i]);
+			}
+			
+			for(int i= 0; i< ss.getUserColumns().length; i++)
+			{
+				if(Zuordnung.containsKey(ss.getUserColumns()[i]))
+				//	System.out.println(Zuordnung.get(col[i]));
+				//	System.out.println(ss.getUserColumns()[i]);
+					cTableModel.setColumnVisible((Integer) Zuordnung.get(ss.getUserColumns()[i]),true);
+
+			}
+
 			// TODO: Add reloading for "TopXX played" and "TopXX rated", if
 			// selected
 		}
