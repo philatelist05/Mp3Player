@@ -27,6 +27,13 @@ public class CoreInteractionServiceTest {
 		ServiceFactory sf = ServiceFactory.getInstance();
 		cs = sf.getCoreInteractionService();
 	}
+
+	@After
+	public void tearDown() throws Exception {
+	    	cs.stop();
+		cs.setCurrentPlaylist(null);
+		cs.setPlayMode(PlayMode.NORMAL);
+	}
 	
 	@Test
 	public void testEndOfMedia_ShouldPlayNext() throws InterruptedException {
@@ -53,14 +60,6 @@ public class CoreInteractionServiceTest {
 		System.out.println(actual);
 		System.out.println(expected);
 		assertEquals(actual,expected);
-	}
-
-	@After
-	public void tearDown() throws Exception {
-	    	cs.stop();
-		cs.setCurrentPlaylist(null);
-		cs.setPlayMode(PlayMode.NORMAL);
-		cs = null;
 	}
 
 	@Test
