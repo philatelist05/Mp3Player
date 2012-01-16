@@ -89,10 +89,26 @@ public class HidableTableColumnModel implements TableColumnModel
     } 
     
     /**
+     * @brief disable all column
+     * 
+     * this method makes all columns invisible
+     */
+    public void setAllColumnsInVisible() 
+    {
+        final int totalSize = m_allColumns.size();
+        
+        for (int idxColumn = 0; idxColumn < totalSize; idxColumn++)
+        {
+        	m_delegateModel.removeColumn(m_delegateModel.getColumn(m_delegateModel.getColumnIndexAtX(idxColumn)));
+        } 
+    } 
+    
+    /**
      * @brief shows all column
      * 
      * this method makes all columns visible
      */
+    
     public void setAllColumnsVisible() 
     {
         final int totalSize = m_allColumns.size();
