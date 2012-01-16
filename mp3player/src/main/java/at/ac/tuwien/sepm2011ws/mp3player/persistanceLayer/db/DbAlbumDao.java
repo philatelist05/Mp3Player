@@ -38,7 +38,7 @@ class DbAlbumDao implements AlbumDao {
 			readStmt = con.prepareStatement("SELECT "
 					+ "title, year, albumart_path FROM album WHERE id=?;");
 			updateStmt = con.prepareStatement("UPDATE album SET "
-					+ "title=?, year=?, albumart_path=?, " + "WHERE id = ?;");
+					+ "title=?, year=?, albumart_path=? WHERE id = ?;");
 			deleteStmt = con.prepareStatement("DELETE FROM album "
 					+ "WHERE id = ?;");
 			// existsStmt = con
