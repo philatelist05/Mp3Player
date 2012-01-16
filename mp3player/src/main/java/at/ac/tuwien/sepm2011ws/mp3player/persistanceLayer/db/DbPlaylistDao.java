@@ -84,7 +84,7 @@ class DbPlaylistDao implements PlaylistDao {
 					createContainsStmt.setInt(1, i);
 					createContainsStmt.setInt(2, p.getId());
 					createContainsStmt.setInt(3, s.getId());
-					createContainsStmt.executeQuery();
+					createContainsStmt.executeUpdate();
 					i++;
 				}
 
@@ -112,7 +112,7 @@ class DbPlaylistDao implements PlaylistDao {
 			updateStmt.executeUpdate();
 
 			deleteContainsStmt.setInt(1, p.getId());
-			deleteContainsStmt.executeQuery();
+			deleteContainsStmt.executeUpdate();
 			int i = 0;
 			for (Song s : p.getSongs()) {
 				// Update song
@@ -122,7 +122,7 @@ class DbPlaylistDao implements PlaylistDao {
 				createContainsStmt.setInt(1, i);
 				createContainsStmt.setInt(2, p.getId());
 				createContainsStmt.setInt(3, s.getId());
-				createContainsStmt.executeQuery();
+				createContainsStmt.executeUpdate();
 				i++;
 			}
 
