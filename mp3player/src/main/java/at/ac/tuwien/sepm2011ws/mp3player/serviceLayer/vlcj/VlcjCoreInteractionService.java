@@ -343,6 +343,7 @@ public class VlcjCoreInteractionService implements CoreInteractionService {
 		@Override
 		public void finished(MediaPlayer arg0) {
 			playerListener.songEndEvent();
+			playNext();
 		}
 
 		@Override
