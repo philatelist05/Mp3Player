@@ -1,7 +1,9 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <configuration>
 <FileTypes>wav</FileTypes>
-<Columns>year</Columns>
+<Columns>track nr.</Columns>
 <TopXXPlayed>10</TopXXPlayed>
 <TopXXRated>40</TopXXRated>
+<Columns>year</Columns>
+<Columns>duration</Columns>
 </configuration>
