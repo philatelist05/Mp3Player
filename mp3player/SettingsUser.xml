@@ -6,4 +6,5 @@
 <TopXXRated>40</TopXXRated>
 <Columns>year</Columns>
 <Columns>duration</Columns>
+<FileTypes>mp3</FileTypes>
 </configuration>

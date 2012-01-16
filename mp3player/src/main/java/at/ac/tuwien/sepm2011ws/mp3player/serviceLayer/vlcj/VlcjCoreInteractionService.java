@@ -348,6 +348,7 @@ public class VlcjCoreInteractionService implements CoreInteractionService {
 			if (playerListener != null)
 				playerListener.songEndEvent();
 			playNext();
+
 		}
 
 		@Override
