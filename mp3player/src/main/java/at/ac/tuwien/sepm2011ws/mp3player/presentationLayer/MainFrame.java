@@ -16,7 +16,7 @@ import java.awt.event.MouseMotionListener;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowStateListener;
 import java.io.IOException;
-import java.util.Iterator;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.ListIterator;
 
@@ -126,6 +126,26 @@ public class MainFrame extends JFrame implements ActionListener, Runnable,
 
 	private PlaylistService ps;
 	private CoreInteractionService cis;
+
+	/**
+	 * Parses and replaces the songs of the songTable into the specified playlist
+	 * @param list the specified playlist
+	 * @return the new parsed playlist
+	 */
+	public Playlist parseSongTable(Playlist list) {
+		ArrayList<Song> temp = new ArrayList<Song>();
+		Song song;
+		int row = songmodel.getRowCount();
+
+		for (int i = 0; i < row; i++) {
+			song = (Song) songTable.getValueAt(i, 0);
+			temp.add(song);
+		}
+		
+		list.setSongs(temp);
+		
+		return list;
+	}
 
 	/**
 	 * Gets all Songs from the Database
@@ -600,10 +620,11 @@ public class MainFrame extends JFrame implements ActionListener, Runnable,
 				private static final long serialVersionUID = -7228695694680777407L;
 
 				{
-					PlaylistTreeNode node_1; 
+					PlaylistTreeNode node_1;
+					PlaylistTreeNode node_2;
 					add(new PlaylistTreeNode(ps.getLibrary().toString(), false,
 							ps.getLibrary()));
-					
+
 					add(new PlaylistTreeNode("Queue"));
 
 					// node_1 = new PlaylistTreeNode(ps.getLibrary().toString(),
@@ -615,25 +636,27 @@ public class MainFrame extends JFrame implements ActionListener, Runnable,
 
 					while (iter.hasNext()) {
 						current = iter.next();
-						node_1.add(new PlaylistTreeNode(current.getTitle(), false,
-								current));
+						node_1.add(new PlaylistTreeNode(current.toString(),
+								false, current));
 					}
 					add(node_1);
-
-					node_1 = new PlaylistTreeNode("Intelligent Playlists");
-					//try {
 					/*
-						node_1.add(new PlaylistTreeNode(
-								ps.getTopRated().getTitle(), false, ps
-										.getTopRated()));
-						node_1.add(new PlaylistTreeNode(ps.getTopPlayed()
-								.getTitle(), false, ps.getTopPlayed()));
-					*/
-					//} catch (NullPointerException n) {
-					//	node_1.add(new PlaylistTreeNode("Top40 rated"));
-					//	node_1.add(new PlaylistTreeNode("Top40 played"));
-					//}
-					add(node_1);
+					 * node_2 = new PlaylistTreeNode("Intelligent Playlists");
+					 * node_2.add(new PlaylistTreeNode(current.getTitle(),
+					 * false, ps.getTopRated())); add(node_2);
+					 */
+					/*
+					 * try {
+					 * 
+					 * node_1.add(new PlaylistTreeNode(ps.getTopRated()
+					 * .getTitle(), false, ps.getTopRated())); node_1.add(new
+					 * PlaylistTreeNode(ps.getTopPlayed() .getTitle(), false,
+					 * ps.getTopPlayed()));
+					 * 
+					 * } catch (NullPointerException n) { node_1.add(new
+					 * PlaylistTreeNode("Top40 rated")); node_1.add(new
+					 * PlaylistTreeNode("Top40 played")); } add(node_1);
+					 */
 				}
 			}));
 		} catch (DataAccessException e1) {
@@ -974,8 +997,7 @@ public class MainFrame extends JFrame implements ActionListener, Runnable,
 			playlistgui = new PlaylistGUI();
 			playlistgui.importPlaylist();
 
-		}
-		else if (e.getActionCommand().equals("exportplaylist")) {
+		} else if (e.getActionCommand().equals("exportplaylist")) {
 			playlistgui = new PlaylistGUI();
 			playlistgui.exportPlaylist(currentPlaylistGUI);
 		}
