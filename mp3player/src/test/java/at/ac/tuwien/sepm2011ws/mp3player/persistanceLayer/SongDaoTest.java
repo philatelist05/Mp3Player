@@ -33,6 +33,13 @@ public class SongDaoTest {
 		sd = factory.getSongDao();
 		con = sd.getConnection();
 		con.setAutoCommit(false);
+		clearSongTable();
+	}
+
+	private void clearSongTable() throws Exception {
+	    for(Song song : sd.readAll()) {
+		sd.delete(song.getId());
+	    }
 	}
 
 	@After
@@ -54,9 +61,11 @@ public class SongDaoTest {
 
 	@Test
 	public void testRead_ReadsExistingSong() throws DataAccessException {
-		List<Song> sList = sd.readAll();
-		Song s = sd.read(sList.get(0).getId());
-		assertTrue(sList.get(0).equals(s));
+	    	Song expected = new Song("Machine Head", "Halo", 300, "C:\\music\\halo");
+	    	sd.create(expected);
+		
+		Song actual = sd.read(expected.getId());
+		assertEquals(expected, actual);
 	}
 
 	@Test
@@ -147,10 +156,10 @@ public class SongDaoTest {
 	@Test
 	public void testGetTopRatedSongs_ShouldReturnTopRatedSongs() throws DataAccessException {
 	    List<Song> list = new ArrayList<Song>();
-	    for(int i = 0;i<10;i++) {
+	    for(int i = 0;i < 10;i++) {
 		Song s = new Song("artist", "title", 0, "myPath" + i);
-		s.setRating(i);
-		s.setPlaycount(9 - i);
+		s.setRating(9 - i);
+		s.setPlaycount(i);
 		list.add(s);
 		sd.create(s);
 	    }
