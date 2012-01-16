@@ -292,6 +292,10 @@ public class Song {
 
 	@Override
 	public String toString() {
-		return String.valueOf(id);
+		if (isPathOk())
+			return "";
+		else
+			return "!";
+		//return String.valueOf(id);
 	}
 }

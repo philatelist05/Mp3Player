@@ -2,7 +2,6 @@
 <configuration>
 <FileTypes>wav</FileTypes>
 <FileTypes>mp3</FileTypes>
-<Columns>track nr.</Columns>
 <Columns>title</Columns>
 <Columns>album</Columns>
 <Columns>year</Columns>

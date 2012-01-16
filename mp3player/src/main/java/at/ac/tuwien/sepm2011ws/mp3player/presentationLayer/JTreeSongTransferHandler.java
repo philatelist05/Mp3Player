@@ -50,6 +50,7 @@ public class JTreeSongTransferHandler extends SongTransferHandler {
 					try {
 						ps.updatePlaylist(cp);
 					} catch (DataAccessException e) {
+						//TODO: ErrorDialog
 					}
 				}
 			}

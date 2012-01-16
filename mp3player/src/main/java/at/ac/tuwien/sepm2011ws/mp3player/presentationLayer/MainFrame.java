@@ -84,7 +84,7 @@ public class MainFrame extends JFrame implements ActionListener, Runnable,
 	private JTable songTable;
 	private HidableTableColumnModel cTableModel;
 	private SongTableModel songmodel = new SongTableModel(new String[] {
-			"Track Nr.", "Title", "Artist", "Album", "Year", "Genre",
+			"Status", "Title", "Artist", "Album", "Year", "Genre",
 			"Duration", "Rating", "Playcount" }, 0);
 	private RectButton btnPrevious;
 	private RoundButton btnPlayPause;
@@ -197,18 +197,9 @@ public class MainFrame extends JFrame implements ActionListener, Runnable,
 				album = x.getAlbum().getTitle();
 			else
 				album = "";			
-			if(x.isPathOk())
 				songmodel.addRow(new Object[] { x, x.getTitle(), x.getArtist(),
 					album, x.getYear(), x.getGenre(), x.getDuration(),
 					x.getRating(), x.getPlaycount() });
-			else
-			{
-				x.setTitle(x.getTitle().concat(" ! "));
-				songmodel.addRow(new Object[] { x , x.getTitle(), x.getArtist(),
-						album, x.getYear(), x.getGenre(), x.getDuration(),
-						x.getRating(), x.getPlaycount() });
-			}
-
 		}
 	}
 
@@ -574,6 +565,55 @@ public class MainFrame extends JFrame implements ActionListener, Runnable,
 		}
 	}
 	
+	
+	public void setVisibleColumns() {
+		HashMap Zuordnung = new HashMap();
+
+		for (int i = 0; i < 9; i++) {
+			cTableModel.setColumnVisible(i, false);
+
+		}
+
+		Zuordnung.put("status", 0);
+		Zuordnung.put("title", 1);
+		Zuordnung.put("artist", 2);
+		Zuordnung.put("album", 3);
+		Zuordnung.put("year", 4);
+		Zuordnung.put("genre", 5);
+		Zuordnung.put("duration", 6);
+		Zuordnung.put("rating", 7);
+		Zuordnung.put("playcount", 8);
+
+		/*
+		 * for(int i= 0; i < ss.getUserColumns().length; i++) {
+		 * cTableModel.setColumnVisible((Integer)
+		 * Zuordnung.get(ss.getUserColumns()[i]), false);
+		 * System.out.println(ss.getUserColumns()[i]);
+		 * System.out.println((Integer)
+		 * Zuordnung.get(ss.getUserColumns()[i])); }
+		 */
+		
+		String[] userCols = ss.getUserColumns();
+		String[] songTableCols = new String[userCols.length + 1];
+		songTableCols[0] = "status";
+		
+		for (int i = 0; i < userCols.length; i++) {
+			songTableCols[i+1] = userCols[i];
+		}
+					
+		for (int i = 0; i < songTableCols.length; i++) {
+			if (Zuordnung.containsKey(songTableCols[i]))
+				// System.out.println(Zuordnung.get(col[i]));
+				// System.out.println(ss.getUserColumns()[i]);
+				cTableModel.setColumnVisible(
+						(Integer) Zuordnung.get(songTableCols[i]),
+						true);
+		}
+
+		// TODO: Add reloading for "TopXX played" and "TopXX rated", if
+		// selected
+	}
+	
 	/**
 	 * Starts the MainFrame
 	 */
@@ -598,6 +638,7 @@ public class MainFrame extends JFrame implements ActionListener, Runnable,
 			}
 		});
 		getWholeLibrary();
+		setVisibleColumns();
 
 		cis.setVolume(volume.getValue());
 		cis.setPlayMode(PlayMode.NORMAL);
@@ -1151,15 +1192,16 @@ public class MainFrame extends JFrame implements ActionListener, Runnable,
 
 		else if (e.getActionCommand().equals("settings")) {
 			new Settings();
+			setVisibleColumns();
 
-			HashMap Zuordnung = new HashMap();
+			/*HashMap Zuordnung = new HashMap();
 
 			for (int i = 0; i < 9; i++) {
 				cTableModel.setColumnVisible(i, false);
 
 			}
 
-			Zuordnung.put("track nr.", 0);
+			Zuordnung.put("", 0);
 			Zuordnung.put("title", 1);
 			Zuordnung.put("artist", 2);
 			Zuordnung.put("album", 3);
@@ -1169,28 +1211,35 @@ public class MainFrame extends JFrame implements ActionListener, Runnable,
 			Zuordnung.put("rating", 7);
 			Zuordnung.put("playcount", 8);
 
-			/*
+			
 			 * for(int i= 0; i < ss.getUserColumns().length; i++) {
 			 * cTableModel.setColumnVisible((Integer)
 			 * Zuordnung.get(ss.getUserColumns()[i]), false);
 			 * System.out.println(ss.getUserColumns()[i]);
 			 * System.out.println((Integer)
 			 * Zuordnung.get(ss.getUserColumns()[i])); }
-			 */
-
-			for (int i = 0; i < ss.getUserColumns().length; i++) {
-				if (Zuordnung.containsKey(ss.getUserColumns()[i]))
+			 
+			
+			String[] userCols = ss.getUserColumns();
+			String[] songTableCols = new String[userCols.length + 1];
+			songTableCols[0] = "";
+			
+			for (int i = 0; i < userCols.length; i++) {
+				songTableCols[i+1] = userCols[i];
+			}
+						
+			for (int i = 0; i < songTableCols.length; i++) {
+				if (Zuordnung.containsKey(songTableCols[i]))
 					// System.out.println(Zuordnung.get(col[i]));
 					// System.out.println(ss.getUserColumns()[i]);
 					cTableModel.setColumnVisible(
-							(Integer) Zuordnung.get(ss.getUserColumns()[i]),
+							(Integer) Zuordnung.get(songTableCols[i]),
 							true);
-
 			}
 
 			// TODO: Add reloading for "TopXX played" and "TopXX rated", if
 			// selected
-		}
+*/		}
 		
 		else if (e.getActionCommand().equals("about")) {
 			logger.info("About: Going to show About dialog");
