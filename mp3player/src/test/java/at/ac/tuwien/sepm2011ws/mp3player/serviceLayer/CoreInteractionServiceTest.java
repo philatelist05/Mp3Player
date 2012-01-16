@@ -22,22 +22,44 @@ import at.ac.tuwien.sepm2011ws.mp3player.domainObjects.Song;
 public class CoreInteractionServiceTest {
 	private CoreInteractionService cs;
 
-	/**
-	 * @throws java.lang.Exception
-	 */
 	@Before
 	public void setUp() throws Exception {
 		ServiceFactory sf = ServiceFactory.getInstance();
 		cs = sf.getCoreInteractionService();
 	}
 
-	/**
-	 * @throws java.lang.Exception
-	 */
 	@After
 	public void tearDown() throws Exception {
+	    	cs.stop();
 		cs.setCurrentPlaylist(null);
 		cs.setPlayMode(PlayMode.NORMAL);
+	}
+	
+	@Test
+	public void testEndOfMedia_ShouldPlayNext() throws InterruptedException {
+		Playlist temp = new Playlist("Temp");
+
+		File sPath = new File("music/dummy-message.wav");
+		temp.addSong(new Song("dummy1", "dummy1", 300, sPath.getAbsolutePath()));
+		sPath = new File("music/The Other Thing.wav");
+		temp.addSong(new Song("dummy2", "dummy2", 300, sPath.getAbsolutePath()));
+
+		cs.setCurrentPlaylist(temp);
+		
+		//now start playing
+		cs.playPause();
+		System.out.println(Thread.currentThread().toString());
+		Thread.sleep(500);
+		System.out.println(Thread.currentThread().toString());
+		assertEquals(cs.getCurrentSong(),temp.getSongs().get(0));
+		// Here the endOfMediaEvent should be fired
+		Thread.sleep(3500); // The player needs a bit time to realize that the
+							// song is at the end... -,-
+		Song actual = cs.getCurrentSong();
+		Song expected = temp.getSongs().get(1);
+		System.out.println(actual);
+		System.out.println(expected);
+		assertEquals(actual,expected);
 	}
 
 	@Test
@@ -47,7 +69,6 @@ public class CoreInteractionServiceTest {
 
 		cs.playPause(s);
 		Thread.sleep(1000);
-		cs.stop();
 	}
 
 	@Test
@@ -61,35 +82,10 @@ public class CoreInteractionServiceTest {
 		Thread.sleep(1000);
 		cs.seek(50);
 		Thread.sleep(1000);
-		cs.stop();
 	}
 
 	@Test
-	public void testEndOfMedia_ShouldPlayNext() throws InterruptedException {
-		Playlist temp = new Playlist("Temp");
-
-		File sPath = new File("music/dummy-message.wav");
-		temp.addSong(new Song("dummy1", "dummy1", 300, sPath.getAbsolutePath()));
-		sPath = new File("music/The Other Thing.wav");
-		temp.addSong(new Song("dummy2", "dummy2", 300, sPath.getAbsolutePath()));
-
-		cs.setCurrentPlaylist(temp);
-
-		cs.playPause(null);
-		Thread.sleep(500);
-		assertEquals(cs.getCurrentSong(),temp.getSongs().get(0));
-		cs.seek(100);
-		// Here the endOfMediaEvent should be fired
-		Thread.sleep(5000); // The player needs a bit time to realize that the
-							// song is at the end... -,-
-		Song actual = cs.getCurrentSong();
-		Song expected = temp.getSongs().get(1);
-		assertEquals(actual,expected);
-		cs.stop();
-	}
-
-	@Test
-	public void testPlayPause_ShouldPauseAndContinue()
+	public void testPlayPause_ShouldIncrementPlayTime()
 			throws InterruptedException {
 		File sPath = new File("music/dummy-message.wav");
 		Song s = new Song("dummy", "dummy", 300, sPath.getAbsolutePath());
@@ -97,17 +93,10 @@ public class CoreInteractionServiceTest {
 		// play
 		cs.playFromBeginning(s);
 		Thread.sleep(500);
-		// pause
-		cs.playPause(s);
-		double then = cs.getPlayTimeInSeconds();
-		// play again
-		cs.playPause(s);
-		Thread.sleep(500);
+		double then = cs.getPlayTime();
+		Thread.sleep(1000);
 		// Now has to be greater than then
-		double actual = cs.getPlayTimeInSeconds();
-		System.out.println(then);
-		System.out.println(actual);
+		double actual = cs.getPlayTime();
 		assertTrue(actual > then);
-		cs.stop();
 	}
 }
