@@ -1,31 +1,16 @@
-<<<<<<< HEAD
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <configuration>
 <FileTypes>wav</FileTypes>
-<Columns>year</Columns>
-<TopXXPlayed>10</TopXXPlayed>
-<TopXXRated>40</TopXXRated>
-<Columns>duration</Columns>
 <FileTypes>mp3</FileTypes>
-<<<<<<< HEAD
-<Columns>title</Columns>
-<Columns>artist</Columns>
-<Columns>album</Columns>
-<Columns>genre</Columns>
-<Columns>rating</Columns>
-<Columns>playcount</Columns>
-=======
->>>>>>> 1cdb83c7c7bb3975ddce645ec8c9381b724d0c80
-</configuration>
-=======
-<?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<configuration>
-<FileTypes>wav</FileTypes>
-<Columns>track nr.</Columns>
-<TopXXPlayed>10</TopXXPlayed>
+<Columns>Track Nr.</Columns>
+<Columns>Title</Columns>
+<Columns>Artist</Columns>
+<Columns>Album</Columns>
+<Columns>Year</Columns>
+<Columns>Genre</Columns>
+<Columns>Duration</Columns>
+<Columns>Rating</Columns>
+<Columns>Playcount</Columns>
+<TopXXPlayed>40</TopXXPlayed>
 <TopXXRated>40</TopXXRated>
-<Columns>year</Columns>
-<Columns>duration</Columns>
-<FileTypes>mp3</FileTypes>
 </configuration>
->>>>>>> c220f14a4fbfb80a737d6f43233d64d589b5559d
