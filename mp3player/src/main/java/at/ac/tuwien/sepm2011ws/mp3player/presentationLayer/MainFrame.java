@@ -1,5 +1,6 @@
 package at.ac.tuwien.sepm2011ws.mp3player.presentationLayer;
 
+
 import java.awt.Dimension;
 import java.awt.Image;
 import java.awt.event.ActionEvent;
@@ -12,6 +13,7 @@ import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowStateListener;
@@ -102,6 +104,7 @@ public class MainFrame extends JFrame implements ActionListener, Runnable,
 	private JCheckBox chckbxMute;
 	private JCheckBox chckbxRepeat;
 	private JCheckBox chckbxShuffle;
+	private JPopupMenu tablePopupMenu = new JPopupMenu();
 
 	private Icon l1 = new ImageIcon(getClass().getResource("img/left_blue.png"));
 	private Icon l2 = new ImageIcon(getClass().getResource(
@@ -472,6 +475,11 @@ public class MainFrame extends JFrame implements ActionListener, Runnable,
 				.getLastSelectedPathComponent();
 		if (tp != null && clicked != null) {
 			if (clicked.hasNodePlaylist()) {
+				try {
+					ps.updatePlaylist(currentPlaylistGUI);
+				} catch (DataAccessException e) {
+				}
+				currentPlaylistGUI=clicked.getNodePlaylist();
 				fillSongTable(clicked.getNodePlaylist());
 			} else {
 			}
@@ -602,7 +610,8 @@ public class MainFrame extends JFrame implements ActionListener, Runnable,
 		}
 		pl_tree = new JTree();
 		try {
-			pl_tree.setModel(new DefaultTreeModel(new PlaylistTreeNode("mp3player") {
+			pl_tree.setModel(new DefaultTreeModel(new PlaylistTreeNode(
+					"mp3player") {
 				/**
 				 * mp3@player
 				 */
@@ -614,7 +623,6 @@ public class MainFrame extends JFrame implements ActionListener, Runnable,
 							ps.getLibrary()));
 					Playlist qu = new Playlist("Queue");
 					add(new PlaylistTreeNode("Queue", false, qu));
-
 
 					// node_1 = new PlaylistTreeNode(ps.getLibrary().toString(),
 					// false, ps.getLibrary());
@@ -631,13 +639,13 @@ public class MainFrame extends JFrame implements ActionListener, Runnable,
 					add(node_1);
 
 					node_1 = new PlaylistTreeNode("Intelligent Playlists");
-/*
-					node_1.add(new PlaylistTreeNode(
-							ps.getTopRated().getTitle(), false, ps
-									.getTopRated()));
-					node_1.add(new PlaylistTreeNode(ps.getTopPlayed()
-							.getTitle(), false, ps.getTopPlayed()));
-*/
+					node_1.add(new PlaylistTreeNode("asdasdasd"));
+					/*
+					 * node_1.add(new PlaylistTreeNode(
+					 * ps.getTopRated().getTitle(), false, ps .getTopRated()));
+					 * node_1.add(new PlaylistTreeNode(ps.getTopPlayed()
+					 * .getTitle(), false, ps.getTopPlayed()));
+					 */
 
 					add(node_1);
 
@@ -649,7 +657,7 @@ public class MainFrame extends JFrame implements ActionListener, Runnable,
 		pl_tree.setVisibleRowCount(5);
 		JScrollPane pl_tree_sp = new JScrollPane(pl_tree);
 		pl_tree.setDragEnabled(false);
-		pl_tree.setTransferHandler(new JTreeSongTransferHandler());
+		pl_tree.setTransferHandler(new JTreeSongTransferHandler(ps));
 
 		pl_tree.addMouseListener(new MouseAdapter() {
 			public void mouseClicked(MouseEvent me) {
@@ -663,6 +671,15 @@ public class MainFrame extends JFrame implements ActionListener, Runnable,
 		 * JTables
 		 */
 		// songTable
+		/*
+		 * JMenuItem menuItem = new JMenuItem("");
+		 * menuItem.addActionListener(new InsertRowsActionAdapter(this));
+		 * tablePopupMenu.add(menuItem);
+		 */
+		JMenuItem entry = new JMenuItem("Delete Song");
+		tablePopupMenu.add(entry);
+		entry.addActionListener(new TableActionAdapter());
+		entry.setActionCommand("deleteSong");
 
 		songTable = new JTable(songmodel);
 		songTable.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
@@ -679,13 +696,12 @@ public class MainFrame extends JFrame implements ActionListener, Runnable,
 		playerPanel.add(songTable_sp, "cell 1 1 3 1,grow");
 		cTableModel = new HidableTableColumnModel(songTable.getColumnModel());
 		// htcm.setColumnVisible(0, false);
-		JPopupMenu popup = new JPopupMenu("Hide Menu");
-		Action[] actions = cTableModel.createColumnActions();
-		for (Action act : actions) {
-			popup.add(new JCheckBoxMenuItem(act));
-		}
-		songTable.setComponentPopupMenu(popup);
-
+		/*
+		 * JPopupMenu popup = new JPopupMenu("Hide Menu"); Action[] actions =
+		 * cTableModel.createColumnActions(); for (Action act : actions) {
+		 * popup.add(new JCheckBoxMenuItem(act)); }
+		 * songTable.setComponentPopupMenu(popup);
+		 */
 		songTable.addMouseListener(new MouseAdapter() {
 			public void mouseClicked(MouseEvent e) {
 				if (e.getClickCount() == 2) {
@@ -699,6 +715,11 @@ public class MainFrame extends JFrame implements ActionListener, Runnable,
 				}
 			}
 		});
+
+		MouseListener popupListener = new PopupListener();
+		// add the listener specifically to the header
+		songTable.addMouseListener(popupListener);
+		songTable.getTableHeader().addMouseListener(popupListener);
 
 		/**
 		 * JButtons
@@ -1001,6 +1022,8 @@ public class MainFrame extends JFrame implements ActionListener, Runnable,
 			fillSongTable(currentPlaylistGUI);
 		}
 
+		
+
 		else if (e.getActionCommand().equals("settings")) {
 			new Settings();
 
@@ -1062,5 +1085,42 @@ public class MainFrame extends JFrame implements ActionListener, Runnable,
 
 	public void keyTyped(KeyEvent e) {
 
+	}
+
+	class PopupListener extends MouseAdapter {
+		public void mousePressed(MouseEvent e) {
+			showPopup(e);
+		}
+
+		public void mouseReleased(MouseEvent e) {
+			showPopup(e);
+		}
+
+		private void showPopup(MouseEvent e) {
+			if (e.isPopupTrigger()) {
+				tablePopupMenu.show(e.getComponent(), e.getX(), e.getY());
+			}
+		}
+	}
+
+	class TableActionAdapter implements ActionListener {
+
+		TableActionAdapter() {
+		}
+
+		public void actionPerformed(ActionEvent e) {
+			if (e.getActionCommand().equals("deleteSong")) {
+				int row = songTable.getSelectedRow();
+				Song x=null;
+
+				if (row > -1) {
+					x = (Song) songTable.getValueAt(row, 0);
+				}
+				System.out.println(currentPlaylistGUI);
+				currentPlaylistGUI.removeSong(x);
+				fillSongTable(currentPlaylistGUI);
+				System.out.println(currentPlaylistGUI);
+			}
+		}
 	}
 }

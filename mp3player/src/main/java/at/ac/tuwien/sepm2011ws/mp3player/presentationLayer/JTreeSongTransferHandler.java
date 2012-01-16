@@ -11,6 +11,8 @@ import javax.swing.tree.TreePath;
 
 import at.ac.tuwien.sepm2011ws.mp3player.domainObjects.Playlist;
 import at.ac.tuwien.sepm2011ws.mp3player.domainObjects.Song;
+import at.ac.tuwien.sepm2011ws.mp3player.persistanceLayer.DataAccessException;
+import at.ac.tuwien.sepm2011ws.mp3player.serviceLayer.PlaylistService;
 
 public class JTreeSongTransferHandler extends SongTransferHandler {
 
@@ -21,7 +23,11 @@ public class JTreeSongTransferHandler extends SongTransferHandler {
 	private int[] indices = null;
 	private int addIndex = -1; // Location where items were added
 	private int addCount = 0; // Number of items added.
-
+	private PlaylistService ps;
+	
+	public JTreeSongTransferHandler(PlaylistService ps) {
+		this.ps=ps;
+	}
 	protected Song[] exportSong(JComponent c) {
 		return null;
 	}
@@ -40,7 +46,13 @@ public class JTreeSongTransferHandler extends SongTransferHandler {
 			} else {
 				Playlist cp = clicked.getNodePlaylist();
 				for (int i = 0; i < songs.length; i++) {
+					System.out.println(cp);
+					System.out.println(songs[i]);
 					cp.addSong(songs[i]);
+					try {
+						ps.updatePlaylist(cp);
+					} catch (DataAccessException e) {
+					}
 				}
 			}
 		}
