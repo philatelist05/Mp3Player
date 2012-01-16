@@ -193,10 +193,18 @@ public class MainFrame extends JFrame implements ActionListener, Runnable,
 			if (x.getAlbum() != null)
 				album = x.getAlbum().getTitle();
 			else
-				album = "";
+				album = "";			
+			if(x.isPathOk())
 				songmodel.addRow(new Object[] { x, x.getTitle(), x.getArtist(),
 					album, x.getYear(), x.getGenre(), x.getDuration(),
 					x.getRating(), x.getPlaycount() });
+			else
+			{
+
+				songmodel.addRow(new Object[] { x , x.getTitle() + " ! ", x.getArtist(),
+						album, x.getYear(), x.getGenre(), x.getDuration(),
+						x.getRating(), x.getPlaycount() });
+			}
 
 		}
 	}
@@ -802,12 +810,16 @@ public class MainFrame extends JFrame implements ActionListener, Runnable,
 		
 			public void songBeginnEvent()
 			{
-				System.out.println("Beginn");
+				logger.info("Beginn");
+				new MainFrame("reloadsongTable");
+				
+				//fillSongTable(currentPlaylistGUI);
 			}
 
 			public void songEndEvent()
 			{
-				System.out.println("ende");
+			//	new MainFrame("reloadsongTable");
+				//fillSongTable(currentPlaylistGUI);
 			}
 
 		});
