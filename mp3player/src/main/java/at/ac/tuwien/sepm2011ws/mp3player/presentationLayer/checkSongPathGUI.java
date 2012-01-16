@@ -6,6 +6,7 @@ import java.awt.event.ActionListener;
 import javax.swing.JButton;
 import javax.swing.JDialog;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 
 import net.miginfocom.swing.MigLayout;
@@ -69,7 +70,8 @@ public class checkSongPathGUI extends JDialog implements ActionListener {
 			try {
 				ps.checkSongPaths();
 			} catch (DataAccessException e1) {
-				// TODO Auto-generated catch block
+				JOptionPane.showMessageDialog(null,
+						"Songpath check: " + e1);
 				e1.printStackTrace();
 			}
 			logger.info("checkSongPathGUI(): Songpaths successfully checked");

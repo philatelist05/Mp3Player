@@ -47,6 +47,8 @@ import javax.swing.ListSelectionModel;
 import javax.swing.ScrollPaneConstants;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
+import javax.swing.event.TableModelEvent;
+import javax.swing.event.TableModelListener;
 import javax.swing.table.TableColumn;
 import javax.swing.table.TableModel;
 import javax.swing.tree.DefaultTreeModel;
@@ -61,12 +63,13 @@ import at.ac.tuwien.sepm2011ws.mp3player.domainObjects.Song;
 import at.ac.tuwien.sepm2011ws.mp3player.persistanceLayer.DataAccessException;
 import at.ac.tuwien.sepm2011ws.mp3player.serviceLayer.CoreInteractionService;
 import at.ac.tuwien.sepm2011ws.mp3player.serviceLayer.PlayMode;
+import at.ac.tuwien.sepm2011ws.mp3player.serviceLayer.PlayerListener;
 import at.ac.tuwien.sepm2011ws.mp3player.serviceLayer.PlaylistService;
 import at.ac.tuwien.sepm2011ws.mp3player.serviceLayer.ServiceFactory;
 import at.ac.tuwien.sepm2011ws.mp3player.serviceLayer.SettingsService;
 
 public class MainFrame extends JFrame implements ActionListener, Runnable,
-		KeyListener {
+		KeyListener, TableModelListener {
 	/**
 	 * 
 	 */
@@ -142,6 +145,7 @@ public class MainFrame extends JFrame implements ActionListener, Runnable,
 		Playlist library;
 
 		try {
+			
 			// Holen aller Songs der Library
 			library = ps.getLibrary();
 			// Current Playlist setzen (Servicelayer and GUI)
@@ -169,9 +173,10 @@ public class MainFrame extends JFrame implements ActionListener, Runnable,
 				album = x.getAlbum().getTitle();
 			else
 				album = "";
-			songmodel.addRow(new Object[] { x, x.getTitle(), x.getArtist(),
+				songmodel.addRow(new Object[] { x, x.getTitle(), x.getArtist(),
 					album, x.getYear(), x.getGenre(), x.getDuration(),
 					x.getRating(), x.getPlaycount() });
+
 		}
 	}
 
@@ -551,6 +556,8 @@ public class MainFrame extends JFrame implements ActionListener, Runnable,
 				// setResizable(false);
 			}
 		});
+		
+		
 
 		// add Hotkey Strg+F for GlobalSearch
 		// KeyboardFocusManager kbfm =
@@ -677,6 +684,8 @@ public class MainFrame extends JFrame implements ActionListener, Runnable,
 		songTable.setDragEnabled(true);
 		songTable.setTransferHandler(new JTableSongTransferHandler());
 		playerPanel.add(songTable_sp, "cell 1 1 3 1,grow");
+		songTable.setAutoCreateRowSorter(true);
+		songTable.getModel().addTableModelListener(this);
 		cTableModel = new HidableTableColumnModel(songTable.getColumnModel());
 		// htcm.setColumnVisible(0, false);
 		JPopupMenu popup = new JPopupMenu("Hide Menu");
@@ -766,7 +775,22 @@ public class MainFrame extends JFrame implements ActionListener, Runnable,
 		 * stateChanged(ChangeEvent e) { setMediaTime(progress.getValue()); }
 		 * });
 		 */
+		
+		cis.setPlayerListener(new PlayerListener ()
+		{
+		
+			public void songBeginnEvent()
+			{
+				System.out.println("Beginn");
+			}
 
+			public void songEndEvent()
+			{
+				System.out.println("ende");
+			}
+
+		});
+		
 		progress.setPreferredSize(new Dimension(getWidth(), 25));
 		playerPanel.add(progress,
 				"flowx,cell 0 2 4 1,alignx left,aligny center");
@@ -1062,5 +1086,13 @@ public class MainFrame extends JFrame implements ActionListener, Runnable,
 
 	public void keyTyped(KeyEvent e) {
 
+	}
+
+	@Override
+	public void tableChanged(TableModelEvent arg0) {
+		
+		TableModel model = (TableModel) arg0.getSource();
+		logger.info(model.getValueAt(0, 0));
+		
 	}
 }

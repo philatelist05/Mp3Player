@@ -3,6 +3,7 @@ package at.ac.tuwien.sepm2011ws.mp3player.presentationLayer;
 import java.io.File;
 
 import javax.swing.JFileChooser;
+import javax.swing.JOptionPane;
 
 import org.apache.log4j.Logger;
 
@@ -40,7 +41,8 @@ public class LibraryGUI {
 			try {
 				ps.addSongs(songs);
 			} catch (DataAccessException e) {
-				// TODO Auto-generated catch block
+				JOptionPane.showMessageDialog(null,
+						"File: " + e);
 				e.printStackTrace();
 			}
 			logger.info("addFile(): Array of Files added");
@@ -66,7 +68,8 @@ public class LibraryGUI {
 			try {
 				ps.addFolder(folder);
 			} catch (DataAccessException e) {
-				// TODO Auto-generated catch block
+				JOptionPane.showMessageDialog(null,
+				"Folder: " + e);
 				e.printStackTrace();
 			}
 			logger.info("addFolder(): Folder "+folder.getAbsolutePath()+" added");
