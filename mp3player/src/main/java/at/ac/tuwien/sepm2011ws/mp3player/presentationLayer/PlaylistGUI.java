@@ -65,7 +65,8 @@ public class PlaylistGUI extends JDialog implements ActionListener {
 			try {
 				ps.importPlaylist(playlists);
 			} catch (DataAccessException e) {
-				// TODO Auto-generated catch block
+				JOptionPane.showMessageDialog(null,
+						"Import Playlist: " + e);
 				e.printStackTrace();
 			}
 			logger.info("importPlaylist(): Array of playlists added");
@@ -187,7 +188,8 @@ public class PlaylistGUI extends JDialog implements ActionListener {
 				try {
 					ps.createPlaylist(result);
 				} catch (DataAccessException e1) {
-					// TODO Auto-generated catch block
+					JOptionPane.showMessageDialog(null,
+							"createPlaylist: " + e);
 					e1.printStackTrace();
 				}
 				dispose();
@@ -206,7 +208,8 @@ public class PlaylistGUI extends JDialog implements ActionListener {
 				try {
 					ps.renamePlaylist(tempPlaylist, result);
 				} catch (DataAccessException e1) {
-					// TODO Auto-generated catch block
+					JOptionPane.showMessageDialog(null,
+							"renamePlaylist: " + e);
 					e1.printStackTrace();
 				}
 				tempPlaylist = null;
