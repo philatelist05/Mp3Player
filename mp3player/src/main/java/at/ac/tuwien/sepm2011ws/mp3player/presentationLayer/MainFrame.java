@@ -16,6 +16,10 @@ import java.awt.event.MouseMotionListener;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowStateListener;
 import java.io.IOException;
+
+import java.util.Enumeration;
+import java.util.HashMap;
+
 import java.util.Iterator;
 import java.util.List;
 import java.util.ListIterator;
@@ -43,6 +47,8 @@ import javax.swing.ListSelectionModel;
 import javax.swing.ScrollPaneConstants;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
+import javax.swing.table.TableColumn;
+import javax.swing.table.TableModel;
 import javax.swing.tree.DefaultTreeModel;
 import javax.swing.tree.TreePath;
 
@@ -57,6 +63,7 @@ import at.ac.tuwien.sepm2011ws.mp3player.serviceLayer.CoreInteractionService;
 import at.ac.tuwien.sepm2011ws.mp3player.serviceLayer.PlayMode;
 import at.ac.tuwien.sepm2011ws.mp3player.serviceLayer.PlaylistService;
 import at.ac.tuwien.sepm2011ws.mp3player.serviceLayer.ServiceFactory;
+import at.ac.tuwien.sepm2011ws.mp3player.serviceLayer.SettingsService;
 
 public class MainFrame extends JFrame implements ActionListener, Runnable,
 		KeyListener {
@@ -126,6 +133,7 @@ public class MainFrame extends JFrame implements ActionListener, Runnable,
 
 	private PlaylistService ps;
 	private CoreInteractionService cis;
+	private SettingsService ss;
 
 	/**
 	 * Gets all Songs from the Database
@@ -477,6 +485,7 @@ public class MainFrame extends JFrame implements ActionListener, Runnable,
 		ServiceFactory sf = ServiceFactory.getInstance();
 		cis = sf.getCoreInteractionService();
 		ps = sf.getPlaylistService();
+		ss = sf.getSettingsService();
 
 		setBounds(100, 100, 1000, 600);
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -606,6 +615,7 @@ public class MainFrame extends JFrame implements ActionListener, Runnable,
 					Playlist qu = new Playlist("Queue");
 					add(new PlaylistTreeNode("Queue", false, qu));
 
+
 					// node_1 = new PlaylistTreeNode(ps.getLibrary().toString(),
 					// false, ps.getLibrary());
 					node_1 = new PlaylistTreeNode("Playlists");
@@ -628,6 +638,7 @@ public class MainFrame extends JFrame implements ActionListener, Runnable,
 					node_1.add(new PlaylistTreeNode(ps.getTopPlayed()
 							.getTitle(), false, ps.getTopPlayed()));
 */
+
 					add(node_1);
 
 				}
@@ -992,7 +1003,43 @@ public class MainFrame extends JFrame implements ActionListener, Runnable,
 
 		else if (e.getActionCommand().equals("settings")) {
 			new Settings();
-			// TODO: Add dynamically changing for songTable
+
+			HashMap Zuordnung = new HashMap();
+
+			for (int i = 0; i < 9; i++) {
+				cTableModel.setColumnVisible(i, false);
+
+			}
+
+			Zuordnung.put("track nr.", 0);
+			Zuordnung.put("title", 1);
+			Zuordnung.put("artist", 2);
+			Zuordnung.put("album", 3);
+			Zuordnung.put("year", 4);
+			Zuordnung.put("genre", 5);
+			Zuordnung.put("duration", 6);
+			Zuordnung.put("rating", 7);
+			Zuordnung.put("playcount", 8);
+
+			/*
+			 * for(int i= 0; i < ss.getUserColumns().length; i++) {
+			 * cTableModel.setColumnVisible((Integer)
+			 * Zuordnung.get(ss.getUserColumns()[i]), false);
+			 * System.out.println(ss.getUserColumns()[i]);
+			 * System.out.println((Integer)
+			 * Zuordnung.get(ss.getUserColumns()[i])); }
+			 */
+
+			for (int i = 0; i < ss.getUserColumns().length; i++) {
+				if (Zuordnung.containsKey(ss.getUserColumns()[i]))
+					// System.out.println(Zuordnung.get(col[i]));
+					// System.out.println(ss.getUserColumns()[i]);
+					cTableModel.setColumnVisible(
+							(Integer) Zuordnung.get(ss.getUserColumns()[i]),
+							true);
+
+			}
+
 			// TODO: Add reloading for "TopXX played" and "TopXX rated", if
 			// selected
 		}
