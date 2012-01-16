@@ -128,7 +128,7 @@ public class Playlist {
 		if (obj != null && this.getClass() == obj.getClass()) {
 			Playlist other = (Playlist) obj;
 
-			if (!(this.readonly == other.readonly && this.id == other.id && this.title == other.title))
+			if (this.readonly != other.readonly || this.id != other.id || !this.title.equals(other.title))
 				return false;
 
 			for (int i = 0; i < this.songs.size(); i++) {
