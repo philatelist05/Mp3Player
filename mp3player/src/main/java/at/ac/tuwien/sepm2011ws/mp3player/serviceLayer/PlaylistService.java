@@ -39,7 +39,7 @@ public interface PlaylistService {
 	public void exportPlaylist(File file, Playlist playlist);
 
 	/**
-	 * Gets all saved playlists from the library
+	 * Gets all saved playlists from the library.
 	 * 
 	 * @return all playlists currently available
 	 * @throws DataAccessException 
@@ -47,13 +47,12 @@ public interface PlaylistService {
 	public List<Playlist> getAllPlaylists() throws DataAccessException;
 	
 	/**
-	 * Get a specific playlist by its name
+	 * Reloads and sets the specified playlist. 
 	 * 
-	 * @param name The name of the playlist
-	 * @return the first playlist with the specified name
+	 * @param p The playlist to reload
 	 * @throws DataAccessException
 	 */
-	public Playlist getPlaylist(String name) throws DataAccessException;
+	public void reloadPlaylist(Playlist p) throws DataAccessException;
 
 	/**
 	 * Recursively adds all files in the specified folder and subfolders with
