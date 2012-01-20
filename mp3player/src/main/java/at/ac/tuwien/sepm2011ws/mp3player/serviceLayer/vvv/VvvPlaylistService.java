@@ -211,17 +211,25 @@ class VvvPlaylistService implements PlaylistService {
 	}
 
 	@Override
-	public void deleteSong(Song song, Playlist playlist)
+	public void deleteSongs(List<Song> songs, Playlist playlist)
 			throws DataAccessException {
-		List<Song> songs = playlist.getSongs();
+		if (songs == null || playlist == null)
+			throw new IllegalArgumentException(
+					"Song list and playlist must not be null");
 
-		for (Iterator<Song> iterator = songs.iterator(); iterator.hasNext();) {
-			Song s = (Song) iterator.next();
-			if (song.equals(s))
-				iterator.remove();
+		if (songs.size() > 0) {
+
+			List<Song> plSongs = playlist.getSongs();
+
+			for (Iterator<Song> iterator = plSongs.iterator(); iterator
+					.hasNext();) {
+				Song s = (Song) iterator.next();
+				if (songs.contains(s))
+					iterator.remove();
+			}
+
+			updatePlaylist(playlist);
 		}
-
-		updatePlaylist(playlist);
 	}
 
 	@Override
@@ -307,7 +315,7 @@ class VvvPlaylistService implements PlaylistService {
 	@Override
 	public void reloadPlaylist(Playlist p) throws DataAccessException {
 		Playlist np = pd.read(p.getId());
-		
+
 		p.setReadonly(np.isReadonly());
 		p.setTitle(np.getTitle());
 		p.setSongs(np.getSongs());
