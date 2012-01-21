@@ -3,7 +3,7 @@
  */
 package at.ac.tuwien.sepm2011ws.mp3player.serviceLayer;
 
-import at.ac.tuwien.sepm2011ws.mp3player.domainObjects.Playlist;
+import at.ac.tuwien.sepm2011ws.mp3player.domainObjects.ReadonlyPlaylist;
 import at.ac.tuwien.sepm2011ws.mp3player.domainObjects.Song;
 
 /**
@@ -159,14 +159,14 @@ public interface CoreInteractionService {
 	 * 
 	 * @return the current playlist
 	 */
-	public Playlist getCurrentPlaylist();
+	public ReadonlyPlaylist getCurrentPlaylist();
 
 	/**
 	 * Sets the current active playlist
 	 * 
 	 * @param playlist
 	 */
-	public void setCurrentPlaylist(Playlist playlist);
+	public void setCurrentPlaylist(ReadonlyPlaylist playlist);
 
 	/**
 	 * Gets the next song in the playlist due to the play mode.

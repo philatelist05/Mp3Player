@@ -1,16 +1,18 @@
 package at.ac.tuwien.sepm2011ws.mp3player.serviceLayer.vlcj;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.List;
 
 import org.apache.log4j.Logger;
+import org.springframework.core.io.ClassPathResource;
 
 import uk.co.caprica.vlcj.player.MediaPlayer;
 import uk.co.caprica.vlcj.player.MediaPlayerEventListener;
 import uk.co.caprica.vlcj.player.MediaPlayerFactory;
 import uk.co.caprica.vlcj.player.VideoMetaData;
 import uk.co.caprica.vlcj.runtime.RuntimeUtil;
-import at.ac.tuwien.sepm2011ws.mp3player.domainObjects.Playlist;
+import at.ac.tuwien.sepm2011ws.mp3player.domainObjects.ReadonlyPlaylist;
 import at.ac.tuwien.sepm2011ws.mp3player.domainObjects.Song;
 import at.ac.tuwien.sepm2011ws.mp3player.persistanceLayer.DataAccessException;
 import at.ac.tuwien.sepm2011ws.mp3player.persistanceLayer.SongDao;
@@ -27,7 +29,7 @@ public class VlcjCoreInteractionService implements CoreInteractionService {
 			.getLogger(VlcjCoreInteractionService.class);
 	private final MediaPlayer mediaPlayer;
 	private PlayMode playMode;
-	private Playlist currentPlaylist;
+	private ReadonlyPlaylist currentPlaylist;
 	private Song currentSong;
 	private boolean isPaused;
 	private PlayerListener playerListener;
@@ -36,7 +38,6 @@ public class VlcjCoreInteractionService implements CoreInteractionService {
 
 		String libPath = getLibPath();
 		String pluginPath = getPluginPath();
-
 		System.setProperty("jna.library.path", libPath);
 
 		this.isPaused = false;
@@ -44,35 +45,51 @@ public class VlcjCoreInteractionService implements CoreInteractionService {
 
 		MediaPlayerFactory factory = new MediaPlayerFactory(
 				new String[] { "--plugin-path=" + pluginPath });
+		
 		this.mediaPlayer = factory.newMediaPlayer();
-
-		mediaPlayer
-				.addMediaPlayerEventListener(new VvvMediaPlayerEventListener());
+		mediaPlayer.addMediaPlayerEventListener(new VvvMediaPlayerEventListener());
 	}
 
 	private String getLibPath() {
-		if (RuntimeUtil.isMac())
-			return new File("lib/vlc/osx/lib").getAbsolutePath();
-		else if (RuntimeUtil.isWindows()) {
-			if (Platform.is64Bit())
-				return new File("lib/vlc/windows/64Bit/lib").getAbsolutePath();
+		try {
+			if (RuntimeUtil.isMac())
+				return new ClassPathResource("vlc/osx/lib").getFile()
+						.getAbsolutePath();
+			else if (RuntimeUtil.isWindows()) {
+				if (Platform.is64Bit())
+					return new ClassPathResource("vlc/windows/64Bit/lib")
+							.getFile().getAbsolutePath();
 
-			return new File("lib/vlc/windows/32Bit/lib").getAbsolutePath();
+				return new ClassPathResource("vlc/windows/32Bit/lib").getFile()
+						.getAbsolutePath();
+			}
+			return new ClassPathResource("vlc/linux/lib").getFile()
+					.getAbsolutePath();
+		} catch (IOException e) {
+
 		}
-		return new File("lib/vlc/linux/lib").getAbsolutePath();
+		return "";
 	}
 
 	private String getPluginPath() {
-		if (RuntimeUtil.isMac())
-			return new File("lib/vlc/osx/plugins").getAbsolutePath();
-		else if (RuntimeUtil.isWindows()) {
-			if (Platform.is64Bit())
-				return new File("lib/vlc/windows/64Bit/plugins")
+		try {
+			if (RuntimeUtil.isMac())
+				return new ClassPathResource("vlc/osx/plugins").getFile()
 						.getAbsolutePath();
+			else if (RuntimeUtil.isWindows()) {
+				if (Platform.is64Bit())
+					return new ClassPathResource("vlc/windows/64Bit/plugins")
+							.getFile().getAbsolutePath();
 
-			return new File("lib/vlc/windows/32Bit/plugins").getAbsolutePath();
+				return new ClassPathResource("vlc/windows/32Bit/plugins")
+						.getFile().getAbsolutePath();
+			}
+			return new ClassPathResource("vlc/linux/plugins").getFile()
+					.getAbsolutePath();
+		} catch (IOException e) {
+
 		}
-		return new File("lib/vlc/linux/plugins").getAbsolutePath();
+		return "";
 	}
 
 	public void playFromBeginning(Song song) {
@@ -195,11 +212,11 @@ public class VlcjCoreInteractionService implements CoreInteractionService {
 		this.playMode = playMode;
 	}
 
-	public Playlist getCurrentPlaylist() {
+	public ReadonlyPlaylist getCurrentPlaylist() {
 		return this.currentPlaylist;
 	}
 
-	public void setCurrentPlaylist(Playlist playlist) {
+	public void setCurrentPlaylist(ReadonlyPlaylist playlist) {
 		this.currentPlaylist = playlist;
 	}
 
@@ -210,21 +227,20 @@ public class VlcjCoreInteractionService implements CoreInteractionService {
 	public int getCurrentSongIndex() {
 		if (this.currentPlaylist == null) {
 			return -1;
-		} else if (this.currentPlaylist.getSongs() == null) {
+		} else if (this.currentPlaylist.size() == 0) {
 			return -1;
 		}
-		return this.currentPlaylist.getSongs().indexOf(currentSong);
+		return this.currentPlaylist.indexOf(currentSong);
 	}
 
 	public Song getNextSong() {
 		if (this.currentPlaylist == null) {
 			return null;
-		} else if (this.currentPlaylist.getSongs() == null) {
+		} else if (this.currentPlaylist.size() == 0) {
 			return null;
 		}
 
-		List<Song> songs = this.currentPlaylist.getSongs();
-		int maxIndex = songs.size() - 1;
+		int maxIndex = this.currentPlaylist.size() - 1;
 		int nextIndex = 0;
 
 		switch (this.playMode) {
@@ -252,7 +268,7 @@ public class VlcjCoreInteractionService implements CoreInteractionService {
 		}
 
 		if (nextIndex >= 0 && nextIndex <= maxIndex) {
-			return songs.get(nextIndex);
+			return this.currentPlaylist.get(nextIndex);
 		}
 		return null;
 	}
@@ -260,12 +276,11 @@ public class VlcjCoreInteractionService implements CoreInteractionService {
 	public Song getPreviousSong() {
 		if (this.currentPlaylist == null) {
 			return null;
-		} else if (this.currentPlaylist.getSongs() == null) {
+		} else if (this.currentPlaylist.size() == 0) {
 			return null;
 		}
 
-		List<Song> songs = this.currentPlaylist.getSongs();
-		int maxIndex = songs.size() - 1;
+		int maxIndex = this.currentPlaylist.size() - 1;
 		int index = 0;
 
 		switch (this.playMode) {
@@ -298,7 +313,7 @@ public class VlcjCoreInteractionService implements CoreInteractionService {
 		}
 
 		if (index >= 0 && index <= maxIndex) {
-			return songs.get(index);
+			return this.currentPlaylist.get(index);
 		}
 		return null;
 	}

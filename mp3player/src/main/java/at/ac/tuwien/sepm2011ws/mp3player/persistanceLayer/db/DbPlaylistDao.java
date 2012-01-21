@@ -11,6 +11,7 @@ import java.util.List;
 import javax.sql.DataSource;
 
 import at.ac.tuwien.sepm2011ws.mp3player.domainObjects.Playlist;
+import at.ac.tuwien.sepm2011ws.mp3player.domainObjects.ReadonlyPlaylist;
 import at.ac.tuwien.sepm2011ws.mp3player.domainObjects.Song;
 import at.ac.tuwien.sepm2011ws.mp3player.persistanceLayer.DataAccessException;
 import at.ac.tuwien.sepm2011ws.mp3player.persistanceLayer.PlaylistDao;
@@ -61,28 +62,29 @@ class DbPlaylistDao implements PlaylistDao {
 		}
 	}
 
-	public void create(Playlist p) throws DataAccessException {
+	@Override
+	public void create(Playlist playlist) throws DataAccessException {
 		ResultSet result = null;
 
-		if (p == null)
-			throw new IllegalArgumentException("Playlist must not be null");
+		if (playlist.getTitle() == null)
+			throw new IllegalArgumentException("Title of Playlist must not be null");
 
 		try {
-			createStmt.setString(1, p.getTitle());
+			createStmt.setString(1, playlist.getTitle());
 			createStmt.executeUpdate();
 
 			result = createStmt.getGeneratedKeys();
 			if (result.next()) {
-				p.setId(result.getInt(1));
+				playlist.setId(result.getInt(1));
 
 				int i = 0;
-				for (Song s : p.getSongs()) {
+				for (Song s : playlist) {
 					// Create song if it doesn't exist
 					// sd.create(s); Should not be necessary
 
 					// Create playlist song association
 					createContainsStmt.setInt(1, i);
-					createContainsStmt.setInt(2, p.getId());
+					createContainsStmt.setInt(2, playlist.getId());
 					createContainsStmt.setInt(3, s.getId());
 					createContainsStmt.executeUpdate();
 					i++;
@@ -102,28 +104,29 @@ class DbPlaylistDao implements PlaylistDao {
 		}
 	}
 
-	public void update(Playlist p) throws DataAccessException {
+	@Override
+	public void update(Playlist playlist) throws DataAccessException {
 
-		if (p == null) {
+		if (playlist == null) {
 			throw new IllegalArgumentException("Playlist must not be null");
 		}
 		
 		try {
-			updateStmt.setString(1, p.getTitle());
-			updateStmt.setInt(2, p.getId());
+			updateStmt.setString(1, playlist.getTitle());
+			updateStmt.setInt(2, playlist.getId());
 			updateStmt.executeUpdate();
 			
-			deleteContainsStmt.setInt(1, p.getId());
+			deleteContainsStmt.setInt(1, playlist.getId());
 			deleteContainsStmt.executeUpdate();
 			int i = 0;
 			
-			for (Song s : p.getSongs()) {
+			for (Song s : playlist) {
 				// Update song
 				// sd.update(s); Should not be necessary
 				
 				// Recreate playlist song association
 				createContainsStmt.setInt(1, i);
-				createContainsStmt.setInt(2, p.getId());
+				createContainsStmt.setInt(2, playlist.getId());
 				createContainsStmt.setInt(3, s.getId());
 				createContainsStmt.executeUpdate();
 				i++;
@@ -137,6 +140,7 @@ class DbPlaylistDao implements PlaylistDao {
 
 	}
 
+	@Override
 	public void delete(int id) throws DataAccessException {
 
 		if (id < 0) {
@@ -156,6 +160,7 @@ class DbPlaylistDao implements PlaylistDao {
 
 	}
 
+	@Override
 	public Playlist read(int id) throws DataAccessException {
 		ResultSet result = null;
 		Playlist p;
@@ -185,7 +190,7 @@ class DbPlaylistDao implements PlaylistDao {
 				songs.add(sd.read(result.getInt("song")));
 			}
 
-			p.setSongs(songs);
+			p.addAll(songs);
 
 		} catch (SQLException e) {
 			throw new DataAccessException(
@@ -201,6 +206,7 @@ class DbPlaylistDao implements PlaylistDao {
 		return p;
 	}
 
+	@Override
 	public List<Playlist> readAll() throws DataAccessException {
 		ResultSet result = null;
 		List<Playlist> playlists = new ArrayList<Playlist>();
@@ -224,6 +230,7 @@ class DbPlaylistDao implements PlaylistDao {
 		return playlists;
 	}
 
+	@Override
 	public void rename(Playlist p, String name) throws DataAccessException {
 
 		if (p == null || name == null || name.isEmpty()) {
@@ -244,6 +251,7 @@ class DbPlaylistDao implements PlaylistDao {
 	/**
 	 * @return the connection
 	 */
+	@Override
 	public Connection getConnection() {
 		return this.con;
 	}

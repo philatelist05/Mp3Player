@@ -17,7 +17,7 @@ import javax.media.Time;
 
 import org.apache.log4j.Logger;
 
-import at.ac.tuwien.sepm2011ws.mp3player.domainObjects.Playlist;
+import at.ac.tuwien.sepm2011ws.mp3player.domainObjects.ReadonlyPlaylist;
 import at.ac.tuwien.sepm2011ws.mp3player.domainObjects.Song;
 import at.ac.tuwien.sepm2011ws.mp3player.serviceLayer.CoreInteractionService;
 import at.ac.tuwien.sepm2011ws.mp3player.serviceLayer.PlayMode;
@@ -32,7 +32,7 @@ class JmfCoreInteractionService implements CoreInteractionService {
 	private boolean isStopped;
 	private float volume;
 	private PlayMode playMode;
-	private Playlist currentPlaylist;
+	private ReadonlyPlaylist currentPlaylist;
 	private Song currentSong;
 	private PlayerListener pl;
 
@@ -249,11 +249,11 @@ class JmfCoreInteractionService implements CoreInteractionService {
 		this.playMode = playMode;
 	}
 
-	public Playlist getCurrentPlaylist() {
+	public ReadonlyPlaylist getCurrentPlaylist() {
 		return this.currentPlaylist;
 	}
 
-	public void setCurrentPlaylist(Playlist playlist) {
+	public void setCurrentPlaylist(ReadonlyPlaylist playlist) {
 		this.currentPlaylist = playlist;
 	}
 
@@ -264,21 +264,20 @@ class JmfCoreInteractionService implements CoreInteractionService {
 	public int getCurrentSongIndex() {
 		if(this.currentPlaylist == null) {
 			return -1;
-		} else if(this.currentPlaylist.getSongs() == null) {
+		} else if(this.currentPlaylist.size() == 0) {
 			return -1;
 		}
-		return this.currentPlaylist.getSongs().indexOf(currentSong);
+		return this.currentPlaylist.indexOf(currentSong);
 	}
 
 	public Song getNextSong() {
 		if(this.currentPlaylist == null) {
 			return null;
-		} else if(this.currentPlaylist.getSongs() == null) {
+		} else if(this.currentPlaylist.size() == 0) {
 			return null;
 		}
 		
-		List<Song> songs = this.currentPlaylist.getSongs();
-		int maxIndex = songs.size() - 1;
+		int maxIndex = this.currentPlaylist.size() - 1;
 		int index = 0;
 
 		switch (this.playMode) {
@@ -307,7 +306,7 @@ class JmfCoreInteractionService implements CoreInteractionService {
 		}
 
 		if (index >= 0 && index <= maxIndex) {
-			return songs.get(index);
+			return this.currentPlaylist.get(index);
 		}
 		return null;
 	}
@@ -315,12 +314,11 @@ class JmfCoreInteractionService implements CoreInteractionService {
 	public Song getPreviousSong() {
 		if(this.currentPlaylist == null) {
 			return null;
-		} else if(this.currentPlaylist.getSongs() == null) {
+		} else if(this.currentPlaylist.size() == 0) {
 			return null;
 		}
 		
-		List<Song> songs = this.currentPlaylist.getSongs();
-		int maxIndex = songs.size() - 1;
+		int maxIndex = this.currentPlaylist.size() - 1;
 		int index = 0;
 
 		switch (this.playMode) {
@@ -353,7 +351,7 @@ class JmfCoreInteractionService implements CoreInteractionService {
 		}
 
 		if (index >= 0 && index <= maxIndex) {
-			return songs.get(index);
+			return this.currentPlaylist.get(index);
 		}
 		return null;
 	}

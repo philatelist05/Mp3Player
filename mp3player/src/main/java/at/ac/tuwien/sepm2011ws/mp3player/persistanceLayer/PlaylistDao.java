@@ -7,6 +7,7 @@ import java.sql.Connection;
 import java.util.List;
 
 import at.ac.tuwien.sepm2011ws.mp3player.domainObjects.Playlist;
+import at.ac.tuwien.sepm2011ws.mp3player.domainObjects.ReadonlyPlaylist;
 
 /**
  * @author klaus
@@ -49,7 +50,7 @@ public interface PlaylistDao {
 	 * @return The playlist from the DB.
 	 * @throws DataAccessException
 	 */
-	public Playlist read(int id) throws DataAccessException;
+	public ReadonlyPlaylist read(int id) throws DataAccessException;
 
 	/**
 	 * Reads all playlists from the DB.
@@ -57,7 +58,7 @@ public interface PlaylistDao {
 	 * @return A list of all playlists from the DB.
 	 * @throws DataAccessException
 	 */
-	public List<Playlist> readAll() throws DataAccessException;
+	public List<? extends ReadonlyPlaylist> readAll() throws DataAccessException;
 
 	/**
 	 * Only renames the playlist to the new name in opposition to

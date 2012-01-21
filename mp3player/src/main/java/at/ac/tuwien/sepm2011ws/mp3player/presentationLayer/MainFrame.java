@@ -57,8 +57,11 @@ import javax.swing.tree.TreePath;
 import net.miginfocom.swing.MigLayout;
 
 import org.apache.log4j.Logger;
+import org.springframework.core.io.ClassPathResource;
+import org.springframework.core.io.Resource;
 
 import at.ac.tuwien.sepm2011ws.mp3player.domainObjects.Playlist;
+import at.ac.tuwien.sepm2011ws.mp3player.domainObjects.ReadonlyPlaylist;
 import at.ac.tuwien.sepm2011ws.mp3player.domainObjects.Song;
 import at.ac.tuwien.sepm2011ws.mp3player.persistanceLayer.DataAccessException;
 import at.ac.tuwien.sepm2011ws.mp3player.serviceLayer.CoreInteractionService;
@@ -75,7 +78,7 @@ public class MainFrame extends JFrame implements ActionListener, Runnable,
 	 */
 	private static final long serialVersionUID = -959319978002415594L;
 	private static Logger logger = Logger.getLogger(MainFrame.class);
-	private static Playlist currentPlaylistGUI;
+	private static ReadonlyPlaylist currentPlaylistGUI;
 
 	private JTree pl_tree = new JTree();
 
@@ -107,38 +110,43 @@ public class MainFrame extends JFrame implements ActionListener, Runnable,
 	private JCheckBox chckbxShuffle;
 	private JPopupMenu tablePopupMenu = new JPopupMenu();
 	private JPopupMenu treePopupMenu = new JPopupMenu();
-
-	private Icon l1 = new ImageIcon(getClass().getResource("img/left_blue.png"));
-	private Icon l2 = new ImageIcon(getClass().getResource(
-			"img/left_orange.png"));
-	private Icon l3 = new ImageIcon(getClass().getResource(
-			"img/left_orange_pressed.png"));
-
-	private Icon m1 = new ImageIcon(getClass().getResource("img/play_blue.png"));
-	private Icon m2 = new ImageIcon(getClass().getResource(
-			"img/play_orange.png"));
-	private Icon m3 = new ImageIcon(getClass().getResource(
-			"img/play_orange_pressed.png"));
-
-	private Icon r1 = new ImageIcon(getClass()
-			.getResource("img/right_blue.png"));
-	private Icon r2 = new ImageIcon(getClass().getResource(
-			"img/right_orange.png"));
-	private Icon r3 = new ImageIcon(getClass().getResource(
-			"img/right_orange_pressed.png"));
-
-	private Icon mp1 = new ImageIcon(getClass().getResource(
-			"img/pause_blue.png"));
-	private Icon mp2 = new ImageIcon(getClass().getResource(
-			"img/pause_orange.png"));
-	private Icon mp3 = new ImageIcon(getClass().getResource(
-			"img/pause_orange_pressed.png"));
-
-	private List<Playlist> playlists = null;
-
+	
+	private Icon l1;
+	private Icon l2;
+	private Icon l3;
+	private Icon m1;
+	private Icon m2;
+	private Icon m3;
+	private Icon r1;
+	private Icon r2;
+	private Icon r3;
+	private Icon mp1;
+	private Icon mp2;
+	private Icon mp3;
+	
+	private List<? extends ReadonlyPlaylist> playlists = null;
 	private PlaylistService ps;
 	private CoreInteractionService cis;
 	private SettingsService ss;
+	
+	
+	private void initIcons() throws IOException {
+		l1 = new ImageIcon(new ClassPathResource("img/left_blue.png").getURL());
+		l2 = new ImageIcon(new ClassPathResource("img/left_orange.png").getURL());
+		l3 = new ImageIcon(new ClassPathResource("img/left_orange_pressed.png").getURL());
+
+		m1 = new ImageIcon(new ClassPathResource("img/play_blue.png").getURL());
+		m2 = new ImageIcon(new ClassPathResource("img/play_orange.png").getURL());
+		m3 = new ImageIcon(new ClassPathResource("img/play_orange_pressed.png").getURL());
+
+		r1 = new ImageIcon(new ClassPathResource("img/right_blue.png").getURL());
+		r2 = new ImageIcon(new ClassPathResource("img/right_orange.png").getURL());
+		r3 = new ImageIcon(new ClassPathResource("img/right_orange_pressed.png").getURL());
+
+		mp1 = new ImageIcon(new ClassPathResource("img/pause_blue.png").getURL());
+		mp2 = new ImageIcon(new ClassPathResource("img/pause_orange.png").getURL());
+		mp3 = new ImageIcon(new ClassPathResource("img/pause_orange_pressed.png").getURL());
+	}
 
 	/**
 	 * Parses and replaces the songs of the songTable into the specified
@@ -148,7 +156,7 @@ public class MainFrame extends JFrame implements ActionListener, Runnable,
 	 *            the specified playlist
 	 * @return the new parsed playlist
 	 */
-	public Playlist parseSongTable(Playlist list) {
+	public ReadonlyPlaylist parseSongTable(ReadonlyPlaylist list) {
 		ArrayList<Song> temp = new ArrayList<Song>();
 		Song song;
 		int row = songmodel.getRowCount();
@@ -158,7 +166,7 @@ public class MainFrame extends JFrame implements ActionListener, Runnable,
 			temp.add(song);
 		}
 
-		list.setSongs(temp);
+		list.addAll(temp);
 
 		return list;
 	}
@@ -167,7 +175,7 @@ public class MainFrame extends JFrame implements ActionListener, Runnable,
 	 * Gets all Songs from the Database
 	 */
 	public void getWholeLibrary() {
-		Playlist library;
+		ReadonlyPlaylist library;
 
 		try {
 
@@ -189,10 +197,10 @@ public class MainFrame extends JFrame implements ActionListener, Runnable,
 	 * @param List
 	 *            containing song items
 	 */
-	protected void fillSongTable(Playlist list) {
+	protected void fillSongTable(ReadonlyPlaylist list) {
 		String album = null;
 		songmodel.setRowCount(0);
-		for (Song x : list.getSongs()) {
+		for (Song x : list) {
 			if (x.getAlbum() != null)
 				album = x.getAlbum().getTitle();
 			else
@@ -502,7 +510,8 @@ public class MainFrame extends JFrame implements ActionListener, Runnable,
 			if (clicked.hasNodePlaylist()) {
 				currentPlaylistGUI = parseSongTable(currentPlaylistGUI);
 				try {
-					ps.updatePlaylist(currentPlaylistGUI);
+					if(currentPlaylistGUI.getClass() == Playlist.class)
+						ps.updatePlaylist((Playlist)currentPlaylistGUI);
 				} catch (DataAccessException e) {
 					// TODO: Show error dialog
 				}
@@ -516,10 +525,10 @@ public class MainFrame extends JFrame implements ActionListener, Runnable,
 	private void buildPlTree() {
 		logger.info("start buildPlTree...");
 		try {
-			try {
-				playlists = ps.getAllPlaylists();
-			} catch (DataAccessException e1) {
-			}
+			playlists = ps.getAllPlaylists();
+		} catch (DataAccessException e1) {
+		}
+		try {
 			pl_tree.setModel(new DefaultTreeModel(new PlaylistTreeNode(
 					"mp3player") {
 				/**
@@ -538,8 +547,8 @@ public class MainFrame extends JFrame implements ActionListener, Runnable,
 					// false, ps.getLibrary());
 					node_1 = new PlaylistTreeNode("Playlists");
 
-					Playlist current = null;
-					ListIterator<Playlist> iter = playlists.listIterator();
+					ReadonlyPlaylist current = null;
+					ListIterator<? extends ReadonlyPlaylist> iter = playlists.listIterator();
 
 					while (iter.hasNext()) {
 						current = iter.next();
@@ -561,7 +570,8 @@ public class MainFrame extends JFrame implements ActionListener, Runnable,
 
 				}
 			}));
-		} catch (DataAccessException e1) {
+		} catch (DataAccessException e) {
+			e.printStackTrace();
 		}
 	}
 
@@ -630,7 +640,8 @@ public class MainFrame extends JFrame implements ActionListener, Runnable,
 			public void windowClosing(WindowEvent e) {
 				currentPlaylistGUI = parseSongTable(currentPlaylistGUI);
 				try {
-					ps.updatePlaylist(currentPlaylistGUI);
+					if(currentPlaylistGUI.getClass() == Playlist.class)
+						ps.updatePlaylist((Playlist)currentPlaylistGUI);
 				} catch (DataAccessException a) {
 				}
 			}
@@ -649,7 +660,7 @@ public class MainFrame extends JFrame implements ActionListener, Runnable,
 		logger.info("Components successfully initialized");
 	}
 
-	public MainFrame(Playlist list) {
+	public MainFrame(ReadonlyPlaylist list) {
 		currentPlaylistGUI = list;
 	}
 
@@ -662,10 +673,12 @@ public class MainFrame extends JFrame implements ActionListener, Runnable,
 	 * Initializes the contents of the frame
 	 */
 	private void initialize() {
-
-		/**
-		 * MainFrame
-		 */
+		
+		try {
+			initIcons();
+		} catch (IOException e2) {
+			logger.error(e2);
+		}
 		// Resizing MainFrame
 		addComponentListener(new ComponentAdapter() {
 			@Override
@@ -716,7 +729,7 @@ public class MainFrame extends JFrame implements ActionListener, Runnable,
 		// playerPanel
 		Image image = null;
 		try {
-			image = ImageIO.read(getClass().getResource("img/background.png"));
+			image = ImageIO.read(new ClassPathResource("img/background.png").getFile());
 		} catch (IOException e1) {
 		}
 		JPanel playerPanel = new ImagePanel(new MigLayout("",
@@ -1150,7 +1163,7 @@ public class MainFrame extends JFrame implements ActionListener, Runnable,
 			librarygui.addFile();
 			buildPlTree();
 			try {
-				Playlist list = ps.getLibrary();
+				ReadonlyPlaylist list = ps.getLibrary();
 				fillSongTable(list);
 				currentPlaylistGUI = list;
 			} catch (DataAccessException e1) {
@@ -1164,7 +1177,7 @@ public class MainFrame extends JFrame implements ActionListener, Runnable,
 			librarygui.addFolder();
 			buildPlTree();
 			try {
-				Playlist list = ps.getLibrary();
+				ReadonlyPlaylist list = ps.getLibrary();
 				fillSongTable(list);
 				currentPlaylistGUI = list;
 			} catch (DataAccessException e1) {
@@ -1178,7 +1191,7 @@ public class MainFrame extends JFrame implements ActionListener, Runnable,
 			playlistgui.importPlaylist();
 			buildPlTree();
 			try {
-				Playlist list = ps.getLibrary();
+				ReadonlyPlaylist list = ps.getLibrary();
 				fillSongTable(list);
 				currentPlaylistGUI = list;
 			} catch (DataAccessException e1) {
@@ -1208,7 +1221,7 @@ public class MainFrame extends JFrame implements ActionListener, Runnable,
 			new checkSongPathGUI();
 			buildPlTree();
 			try {
-				Playlist list = ps.getLibrary();
+				ReadonlyPlaylist list = ps.getLibrary();
 				fillSongTable(list);
 				currentPlaylistGUI = list;
 			} catch (DataAccessException e1) {
@@ -1332,7 +1345,7 @@ public class MainFrame extends JFrame implements ActionListener, Runnable,
 				if (row > -1) {
 					x = (Song) songTable.getValueAt(row, 0);
 				}
-				currentPlaylistGUI.removeSong(x);
+				currentPlaylistGUI.remove(x);
 				fillSongTable(currentPlaylistGUI);
 			}
 
@@ -1348,9 +1361,10 @@ public class MainFrame extends JFrame implements ActionListener, Runnable,
 			if (e.getActionCommand().equals("deletePlaylist")) {
 				PlaylistTreeNode selectedNode = (PlaylistTreeNode) pl_tree
 						.getLastSelectedPathComponent();
-				Playlist selectedPlaylist = selectedNode.getNodePlaylist();
+				ReadonlyPlaylist selectedPlaylist = selectedNode.getNodePlaylist();
 				try {
-					ps.deletePlaylist(selectedPlaylist);
+					if(selectedPlaylist.getClass() == Playlist.class)
+						ps.deletePlaylist((Playlist)selectedPlaylist);
 				} catch (DataAccessException e1) {
 				}
 				buildPlTree();
@@ -1358,9 +1372,10 @@ public class MainFrame extends JFrame implements ActionListener, Runnable,
 			} else if (e.getActionCommand().equals("renamePlaylist")) {
 				PlaylistTreeNode selectedNode = (PlaylistTreeNode) pl_tree
 						.getLastSelectedPathComponent();
-				Playlist selectedPlaylist = selectedNode.getNodePlaylist();
+				ReadonlyPlaylist selectedPlaylist = selectedNode.getNodePlaylist();
 				playlistgui = new PlaylistGUI();
-				playlistgui.renamePlaylistGUI(selectedPlaylist);
+				if(selectedPlaylist.getClass() == Playlist.class)
+					playlistgui.renamePlaylistGUI((Playlist)selectedPlaylist);
 				buildPlTree();
 			}
 		}

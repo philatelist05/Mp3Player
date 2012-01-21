@@ -37,9 +37,9 @@ public class SongDaoTest {
 	}
 
 	private void clearSongTable() throws Exception {
-	    for(Song song : sd.readAll()) {
-		sd.delete(song.getId());
-	    }
+		for (Song song : sd.readAll()) {
+			sd.delete(song.getId());
+		}
 	}
 
 	@After
@@ -49,11 +49,11 @@ public class SongDaoTest {
 
 	@Test
 	public void testReadAll_AtLeastOne() throws DataAccessException {
-	    	Song s = new Song("Machine Head", "Halo", 300, "C:\\music\\halo");
-	    	sd.create(s);
-	    	Song s1 = new Song("Machine Head", "Halo", 300, "C:\\music\\halo");
-	    	sd.create(s1);
-	    	
+		Song s = new Song("Machine Head", "Halo", 300, "C:\\music\\halo");
+		sd.create(s);
+		Song s1 = new Song("Machine Head", "Halo", 300, "C:\\music\\halo");
+		sd.create(s1);
+
 		List<Song> dList = sd.readAll();
 		assertTrue(dList.contains(s));
 		assertTrue(dList.contains(s1));
@@ -61,9 +61,9 @@ public class SongDaoTest {
 
 	@Test
 	public void testRead_ReadsExistingSong() throws DataAccessException {
-	    	Song expected = new Song("Machine Head", "Halo", 300, "C:\\music\\halo");
-	    	sd.create(expected);
-		
+		Song expected = new Song("Machine Head", "Halo", 300, "C:\\music\\halo");
+		sd.create(expected);
+
 		Song actual = sd.read(expected.getId());
 		assertEquals(expected, actual);
 	}
@@ -82,7 +82,8 @@ public class SongDaoTest {
 	}
 
 	@Test(expected = IllegalArgumentException.class)
-	public void testCreate_CreateSongWithInvalidArtist() throws DataAccessException {
+	public void testCreate_CreateSongWithInvalidArtist()
+			throws DataAccessException {
 		Song s = new Song(null, "Halo", 300, "C:\\music\\halo");
 
 		sd.create(s);
@@ -97,12 +98,12 @@ public class SongDaoTest {
 		Song actual = sd.read(excepted.getId());
 		assertEquals(excepted, actual);
 	}
-	
-	@Test(expected=IllegalArgumentException.class)
+
+	@Test(expected = IllegalArgumentException.class)
 	public void testUpdate_TestsInvalidSong() throws DataAccessException {
 		sd.update(null);
 	}
-	
+
 	@Test
 	public void testDelete_TestsValidDelete() throws DataAccessException {
 		Song s = new Song("Machine Head", "Halo", 300, "C:\\music\\halo");
@@ -111,81 +112,83 @@ public class SongDaoTest {
 		Song actual = sd.read(s.getId());
 		assertNull(actual);
 	}
-	
-	@Test(expected=IllegalArgumentException.class)
+
+	@Test(expected = IllegalArgumentException.class)
 	public void testDelete_TestsInvalidId() throws DataAccessException {
 		sd.delete(-1);
 	}
-	
+
 	@Test
-	public void testGetTopPlayedSongs_ShouldReturnTopPlayedSongs() throws DataAccessException {
-	    List<Song> list = new ArrayList<Song>();
-	    for(int i = 0;i<10;i++) {
-		Song s = new Song("artist", "title", 0, "myPath" + i);
-		s.setRating(i);
-		s.setPlaycount(9 - i);
-		list.add(s);
-		sd.create(s);
-	    }
-	    
-	    Collections.sort(list,new Comparator<Song>() {
-		public int compare(Song s1, Song s2) {
-		    if (s1.getPlaycount() < s2.getPlaycount())
-			return 1;
-		    else if (s1.getPlaycount() < s2.getPlaycount())
-			return 0;
-		    return -1;
+	public void testGetTopPlayedSongs_ShouldReturnTopPlayedSongs()
+			throws DataAccessException {
+		List<Song> list = new ArrayList<Song>();
+		for (int i = 0; i < 10; i++) {
+			Song s = new Song("artist", "title", 0, "myPath" + i);
+			s.setRating(i);
+			s.setPlaycount(9 - i);
+			list.add(s);
+			sd.create(s);
 		}
-	    });
-	    
-	    List<Song> topPlayed = sd.getTopPlayedSongs(40);
-	    Iterator<Song> iter = topPlayed.iterator();
-	    
-	    while (iter.hasNext()) {
-		Song current = iter.next();
-		if (!list.contains(current))
-		    iter.remove();
-	    }
-	    
-	    assertEquals(topPlayed.size(), list.size());
-	    for (int i = 0; i < topPlayed.size(); i++) {
-		assertEquals(topPlayed.get(i), list.get(i));
-	    }
+
+		Collections.sort(list, new Comparator<Song>() {
+			public int compare(Song s1, Song s2) {
+				if (s1.getPlaycount() < s2.getPlaycount())
+					return 1;
+				else if (s1.getPlaycount() < s2.getPlaycount())
+					return 0;
+				return -1;
+			}
+		});
+
+		List<Song> topPlayed = sd.getTopPlayedSongs(40);
+		Iterator<Song> iter = topPlayed.iterator();
+
+		while (iter.hasNext()) {
+			Song current = iter.next();
+			if (!list.contains(current))
+				iter.remove();
+		}
+
+		assertEquals(topPlayed.size(), list.size());
+		for (int i = 0; i < topPlayed.size(); i++) {
+			assertEquals(topPlayed.get(i), list.get(i));
+		}
 	}
 
 	@Test
-	public void testGetTopRatedSongs_ShouldReturnTopRatedSongs() throws DataAccessException {
-	    List<Song> list = new ArrayList<Song>();
-	    for(int i = 0;i < 10;i++) {
-		Song s = new Song("artist", "title", 0, "myPath" + i);
-		s.setRating(9 - i);
-		s.setPlaycount(i);
-		list.add(s);
-		sd.create(s);
-	    }
-	    
-	    Collections.sort(list,new Comparator<Song>() {
-		public int compare(Song s1, Song s2) {
-		    if (s1.getRating() < s2.getRating())
-			return 1;
-		    else if (s1.getRating() < s2.getRating())
-			return 0;
-		    return -1;
+	public void testGetTopRatedSongs_ShouldReturnTopRatedSongs()
+			throws DataAccessException {
+		List<Song> list = new ArrayList<Song>();
+		for (int i = 0; i < 10; i++) {
+			Song s = new Song("artist", "title", 0, "myPath" + i);
+			s.setRating(9 - i);
+			s.setPlaycount(i);
+			list.add(s);
+			sd.create(s);
 		}
-	    });
-	    
-	    List<Song> topRated = sd.getTopRatedSongs(40);
-	    Iterator<Song> iter = topRated.iterator();
-	    
-	    while (iter.hasNext()) {
-		Song current = iter.next();
-		if (!list.contains(current))
-		    iter.remove();
-	    }
-	    
-	    assertEquals(topRated.size(), list.size());
-	    for (int i = 0; i < topRated.size(); i++) {
-		assertEquals(topRated.get(i), list.get(i));
-	    }
+
+		Collections.sort(list, new Comparator<Song>() {
+			public int compare(Song s1, Song s2) {
+				if (s1.getRating() < s2.getRating())
+					return 1;
+				else if (s1.getRating() < s2.getRating())
+					return 0;
+				return -1;
+			}
+		});
+
+		List<Song> topRated = sd.getTopRatedSongs(40);
+		Iterator<Song> iter = topRated.iterator();
+
+		while (iter.hasNext()) {
+			Song current = iter.next();
+			if (!list.contains(current))
+				iter.remove();
+		}
+
+		assertEquals(topRated.size(), list.size());
+		for (int i = 0; i < topRated.size(); i++) {
+			assertEquals(topRated.get(i), list.get(i));
+		}
 	}
 }

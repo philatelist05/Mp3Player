@@ -3,7 +3,7 @@
  */
 package at.ac.tuwien.sepm2011ws.mp3player.serviceLayer;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
 import java.io.File;
@@ -40,21 +40,21 @@ public class CoreInteractionServiceTest {
 		Playlist temp = new Playlist("Temp");
 
 		File sPath = new File("music/dummy-message.wav");
-		temp.addSong(new Song("dummy1", "dummy1", 300, sPath.getAbsolutePath()));
+		temp.add(new Song("dummy1", "dummy1", 300, sPath.getAbsolutePath()));
 		sPath = new File("music/The Other Thing.wav");
-		temp.addSong(new Song("dummy2", "dummy2", 300, sPath.getAbsolutePath()));
+		temp.add(new Song("dummy2", "dummy2", 300, sPath.getAbsolutePath()));
 
 		cs.setCurrentPlaylist(temp);
 		
 		//now start playing
 		cs.playPause();
 		Thread.sleep(500);
-		assertEquals(cs.getCurrentSong(),temp.getSongs().get(0));
+		assertEquals(cs.getCurrentSong(),temp.get(0));
 		// Here the endOfMediaEvent should be fired
 		Thread.sleep(3500); // The player needs a bit time to realize that the
 							// song is at the end... -,-
 		Song actual = cs.getCurrentSong();
-		Song expected = temp.getSongs().get(1);
+		Song expected = temp.get(1);
 		
 		assertEquals(actual,expected);
 	}
