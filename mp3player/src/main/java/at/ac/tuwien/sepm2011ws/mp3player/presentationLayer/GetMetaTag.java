@@ -8,6 +8,8 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
+import java.awt.event.ItemEvent;
+import java.awt.event.ItemListener;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
 import java.util.ArrayList;
@@ -23,7 +25,7 @@ import org.apache.log4j.Logger;
 import at.ac.tuwien.sepm2011ws.mp3player.domainObjects.Song;
 import at.ac.tuwien.sepm2011ws.mp3player.domainObjects.SongWrapper;
 
-public class GetMetaTag extends JDialog implements ActionListener, Runnable {
+public class GetMetaTag extends JDialog implements ActionListener, ItemListener, Runnable {
 
 	/**
 	 * 
@@ -72,27 +74,20 @@ public class GetMetaTag extends JDialog implements ActionListener, Runnable {
 
 			song = songlist.get(0);
 			String temp = "";
-			logger.info("GetMetaTag(): Start initializing GetMetaTag");
 
-			initialize();
-
+			initialize();			
+			
+			tags.add(new SongWrapper(song, ComponentType.ComboBox, "stored Metatags"));
+			tags.add(new SongWrapper(songlist.get(1), ComponentType.ComboBox, "stored Metatags2"));
+			
+			for (SongWrapper x : tags)
+				songBox.addItem(x);
+			
 			temp = song.getArtist() + " - " + song.getTitle();
-
 			if (temp.length() > 35)
 				temp = temp.substring(0, 30) + "...";
 			lblArtistTitle.setText(temp);
-			textArtist.setText(song.getArtist());
-			
-			tags.add(new SongWrapper(song, ComponentType.ComboBox, "stored Metatags"));
-			
-			songBox.addItem(tags.get(0));
-			
-			textTitle.setText(song.getTitle());
-			
-			if (song.getAlbum() != null)
-				textAlbum.setText(song.getAlbum().getTitle());
-			textYear.setText(Integer.toString(song.getYear()));
-			textGenre.setText(song.getGenre());
+			fillFields((SongWrapper)songBox.getSelectedItem());
 
 			width = 400;
 			height = 232;
@@ -130,7 +125,10 @@ public class GetMetaTag extends JDialog implements ActionListener, Runnable {
 
 		getPanel.add(lblSong, "cell 0 0");
 		getPanel.add(lblArtistTitle, "cell 1 0");
+		
+		songBox.addItemListener(this);
 		getPanel.add(songBox, "cell 1 1");
+		
 		getPanel.add(lblArtist, "cell 0 2");
 		getPanel.add(textArtist, "cell 1 2, growx");
 		getPanel.add(lblTitle, "cell 0 3");
@@ -239,12 +237,12 @@ public class GetMetaTag extends JDialog implements ActionListener, Runnable {
 		checkDialog = new JDialog();
 		
 		checkPanel = new JPanel(new MigLayout("", "[grow]", "[]"));
-		checklabel = new JLabel("Adding Song(s)...");
+		checklabel = new JLabel("Searching for Meta-Tags...");
 		
 		checkDialog.getContentPane().add(checkPanel);
 		checkPanel.add(checklabel, "cell 0 0");
 		
-		checkDialog.setTitle("Checking songpaths...");
+		checkDialog.setTitle("Searching for Meta-Tags...");
 		
 		int width = 200, height = 100;
 		int positionX = (int) Math.round(dim.getWidth() / 2 - width / 2);
@@ -261,6 +259,20 @@ public class GetMetaTag extends JDialog implements ActionListener, Runnable {
 		checkDialog.setVisible(true);
 		logger.info("GetMetaTag(): Made checkDialog visible");
 	}
+	
+	private void fillFields (SongWrapper sw) {
+		if (sw != null) {
+			if (sw.getSong() != null) {
+				Song temp = sw.getSong();
+				textArtist.setText(temp.getArtist());
+				textTitle.setText(temp.getTitle());
+				if (temp.getAlbum() != null)
+					textAlbum.setText(temp.getAlbum().getTitle());
+				textYear.setText(Integer.toString(temp.getYear()));
+				textGenre.setText(song.getGenre());
+			}
+		}
+	}
 
 	@Override
 	public void run() {
@@ -273,5 +285,14 @@ public class GetMetaTag extends JDialog implements ActionListener, Runnable {
 		}
 		checkDialog.dispose();
 		fred.stop();
+	}
+
+	@Override
+	public void itemStateChanged(ItemEvent evt) {
+		if (evt.getStateChange() == ItemEvent.SELECTED) {
+        	SongWrapper result = (SongWrapper) evt.getItem();
+        	logger.info(result.getSong().getTitle());
+        	fillFields(result);
+        }
 	}
 }

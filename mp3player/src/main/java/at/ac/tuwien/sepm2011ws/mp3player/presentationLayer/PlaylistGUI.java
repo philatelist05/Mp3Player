@@ -17,6 +17,7 @@ import net.miginfocom.swing.MigLayout;
 import org.apache.log4j.Logger;
 
 import at.ac.tuwien.sepm2011ws.mp3player.domainObjects.Playlist;
+import at.ac.tuwien.sepm2011ws.mp3player.domainObjects.ReadonlyPlaylist;
 import at.ac.tuwien.sepm2011ws.mp3player.persistanceLayer.DataAccessException;
 import at.ac.tuwien.sepm2011ws.mp3player.serviceLayer.PlaylistService;
 import at.ac.tuwien.sepm2011ws.mp3player.serviceLayer.ServiceFactory;
@@ -80,7 +81,7 @@ public class PlaylistGUI extends JDialog implements ActionListener {
 	 * Opens a "saveFile" Dialog, prompting the user to choose to choose a path
 	 * in the filesystem where the playlist should be exported to
 	 */
-	public void exportPlaylist(Playlist list) {
+	public void exportPlaylist(ReadonlyPlaylist list) {
 		File export;
 		chooser = new JFileChooser();
 		chooser.setAcceptAllFileFilterUsed(false);

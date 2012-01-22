@@ -15,6 +15,7 @@ import java.util.List;
 import org.apache.log4j.Logger;
 
 import at.ac.tuwien.sepm2011ws.mp3player.domainObjects.Playlist;
+import at.ac.tuwien.sepm2011ws.mp3player.domainObjects.ReadonlyPlaylist;
 import at.ac.tuwien.sepm2011ws.mp3player.domainObjects.Song;
 import at.ac.tuwien.sepm2011ws.mp3player.persistanceLayer.DataAccessException;
 import at.ac.tuwien.sepm2011ws.mp3player.persistanceLayer.PlaylistDao;
@@ -26,8 +27,6 @@ import christophedelory.playlist.Media;
 import christophedelory.playlist.Sequence;
 import christophedelory.playlist.SpecificPlaylist;
 import christophedelory.playlist.SpecificPlaylistFactory;
-import christophedelory.playlist.m3u.M3U;
-import christophedelory.playlist.m3u.M3UProvider;
 
 /**
  * @author klaus
@@ -47,19 +46,20 @@ class VvvPlaylistService implements PlaylistService {
 		this.ss = ss;
 	}
 
-	public Playlist getLibrary() throws DataAccessException {
-		Playlist lib = new Playlist("Library");
-		lib.setReadonly(true);
+	@Override
+	public ReadonlyPlaylist getLibrary() throws DataAccessException {
+		ReadonlyPlaylist lib = new ReadonlyPlaylist("Library");
 
-		lib.setSongs(this.sd.readAll());
+		lib.addAll(this.sd.readAll());
 
 		return lib;
 	}
 
+	@Override
 	public void importPlaylist(File[] files) throws DataAccessException {
 		for (File file : files) {
 			if (checkFileExtensionAccepted(file.getName(), PlaylistFileTypes)) {
-				Playlist playlist = readPlaylist(file);
+				importPlaylist(file);
 			}
 		}
 	}
@@ -86,7 +86,7 @@ class VvvPlaylistService implements PlaylistService {
 		return fileName.substring(0, dotIndex);
 	}
 
-	private Playlist readPlaylist(File file) throws DataAccessException {
+	private Playlist importPlaylist(File file) throws DataAccessException {
 		Playlist playlist;
 
 		// Initialize playlist
@@ -117,13 +117,14 @@ class VvvPlaylistService implements PlaylistService {
 		return playlist;
 	}
 
-	public void exportPlaylist(File file, Playlist playlist) {
+	@Override
+	public void exportPlaylist(File file, ReadonlyPlaylist playlist) {
 		FileWriter writer = null;
 		BufferedWriter bwriter = null;
 		try {
 			writer = new FileWriter(file.getAbsolutePath() + ".m3u");
 			bwriter = new BufferedWriter(writer);
-			for (Song song : playlist.getSongs()) {
+			for (Song song : playlist) {
 				bwriter.write(song.getPath());
 				bwriter.newLine();
 			}
@@ -142,10 +143,12 @@ class VvvPlaylistService implements PlaylistService {
 		}
 	}
 
-	public List<Playlist> getAllPlaylists() throws DataAccessException {
+	@Override
+	public List<? extends ReadonlyPlaylist> getAllPlaylists() throws DataAccessException {
 		return this.pd.readAll();
 	}
 
+	@Override
 	public void addFolder(File folder) throws DataAccessException {
 		addSongs(traverseFolderRecursively(folder).toArray(new File[] {}));
 	}
@@ -170,16 +173,18 @@ class VvvPlaylistService implements PlaylistService {
 		return retFiles;
 	}
 
+	@Override
 	public void addSongs(File[] files) throws DataAccessException {
 		createSongs(files);
 	}
 
+	@Override
 	public void addSongsToPlaylist(File[] files, Playlist playlist)
 			throws DataAccessException {
 		List<Song> list = createSongs(files);
 
 		for (Song s : list) {
-			playlist.addSong(s);
+			playlist.add(s);
 		}
 
 		updatePlaylist(playlist);
@@ -205,66 +210,103 @@ class VvvPlaylistService implements PlaylistService {
 		return songs;
 	}
 
-	public void deleteSong(Song song, Playlist playlist)
+	@Override
+	public void deleteSongs(List<Song> songs, Playlist playlist)
 			throws DataAccessException {
-		List<Song> songs = playlist.getSongs();
+		if (songs == null || playlist == null)
+			throw new IllegalArgumentException(
+					"Song list and playlist must not be null");
 
-		for (Iterator iterator = songs.iterator(); iterator.hasNext();) {
-			Song s = (Song) iterator.next();
-			if (song.equals(s))
-				iterator.remove();
+		if (songs.size() > 0) {
+			for (Iterator<Song> iterator = playlist.iterator(); iterator
+					.hasNext();) {
+				Song s = iterator.next();
+				if (songs.contains(s))
+					iterator.remove();
+			}
+
+			updatePlaylist(playlist);
 		}
-
-		updatePlaylist(playlist);
 	}
 
+	@Override
 	public Playlist createPlaylist(String name) throws DataAccessException {
 		Playlist playlist = new Playlist(name);
 		this.pd.create(playlist);
 		return playlist;
 	}
 
+	@Override
 	public void deletePlaylist(Playlist playlist) throws DataAccessException {
-		if (!playlist.isReadonly())
 			this.pd.delete(playlist.getId());
 	}
 
+	@Override
 	public void updatePlaylist(Playlist playlist) throws DataAccessException {
-		if (!playlist.isReadonly())
 			this.pd.update(playlist);
 	}
 
+	@Override
 	public void renamePlaylist(Playlist playlist, String name)
 			throws DataAccessException {
-		if (!playlist.isReadonly())
 			pd.rename(playlist, name);
 	}
 
-	public Playlist getTopRated() throws DataAccessException {
-		Playlist playlist = new Playlist("TopRated");
-		playlist.setReadonly(true);
-		playlist.setSongs(sd.getTopRatedSongs(ss.getTopXXRatedCount()));
+	@Override
+	public ReadonlyPlaylist getTopRated() throws DataAccessException {
+		ReadonlyPlaylist playlist = new ReadonlyPlaylist("TopRated");
+		playlist.addAll(sd.getTopRatedSongs(ss.getTopXXRatedCount()));
 
 		return playlist;
 	}
 
-	public Playlist getTopPlayed() throws DataAccessException {
-		Playlist playlist = new Playlist("TopPlayed");
-		playlist.setReadonly(true);
-		playlist.setSongs(sd.getTopRatedSongs(ss.getTopXXPlayedCount()));
+	@Override
+	public ReadonlyPlaylist getTopPlayed() throws DataAccessException {
+		ReadonlyPlaylist playlist = new ReadonlyPlaylist("TopPlayed");
+		playlist.addAll(sd.getTopRatedSongs(ss.getTopXXPlayedCount()));
 
 		return playlist;
 	}
 
-	public Playlist globalSearch(String pattern) {
-		// TODO globalsearch
-		return null;
+	@Override
+	public ReadonlyPlaylist globalSearch(String pattern) throws DataAccessException {
+		ReadonlyPlaylist plst = getLibrary();
+
+		for (Iterator<Song> iterator = plst.iterator(); iterator.hasNext();) {
+			Song s = iterator.next();
+			// If song doesn't match pattern, remove it from search results
+			if (!(s.getArtist().contains(pattern)
+					|| s.getTitle().contains(pattern)
+					|| (s.getGenre() != null && s.getGenre().contains(pattern))
+					|| (s.getLyric() != null && s.getLyric().getText() != null && s
+							.getLyric().getText().contains(pattern))
+					|| String.valueOf(s.getYear()).contains(pattern)
+					|| (s.getAlbum() != null && s.getAlbum().getTitle() != null && s
+							.getAlbum().getTitle().contains(pattern)) || s
+					.getPath().contains(pattern))) {
+
+				iterator.remove();
+			}
+		}
+
+		ReadonlyPlaylist pl = new ReadonlyPlaylist("Search");
+		pl.addAll(plst);
+
+		return pl;
 	}
 
+	@Override
 	public void checkSongPaths() throws DataAccessException {
 		List<Song> songs = this.sd.readAll();
 		for (Song song : songs) {
 			song.setPathOk(new File(song.getPath()).isFile());
 		}
+	}
+
+	@Override
+	public void reloadPlaylist(Playlist p) throws DataAccessException {
+		ReadonlyPlaylist np = pd.read(p.getId());
+		p.setTitle(np.getTitle());
+		p.addAll(np);
 	}
 }

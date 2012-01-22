@@ -7,6 +7,7 @@ import java.io.File;
 import java.util.List;
 
 import at.ac.tuwien.sepm2011ws.mp3player.domainObjects.Playlist;
+import at.ac.tuwien.sepm2011ws.mp3player.domainObjects.ReadonlyPlaylist;
 import at.ac.tuwien.sepm2011ws.mp3player.domainObjects.Song;
 import at.ac.tuwien.sepm2011ws.mp3player.persistanceLayer.DataAccessException;
 
@@ -36,15 +37,23 @@ public interface PlaylistService {
 	 * @param playlist
 	 *            The playlist to export
 	 */
-	public void exportPlaylist(File file, Playlist playlist);
+	public void exportPlaylist(File file, ReadonlyPlaylist playlist);
 
 	/**
-	 * Gets all saved playlists from the library
+	 * Gets all saved playlists from the library.
 	 * 
 	 * @return all playlists currently available
 	 * @throws DataAccessException 
 	 */
-	public List<Playlist> getAllPlaylists() throws DataAccessException;
+	public List<? extends ReadonlyPlaylist> getAllPlaylists() throws DataAccessException;
+	
+	/**
+	 * Reloads and sets the specified playlist. 
+	 * 
+	 * @param p The playlist to reload
+	 * @throws DataAccessException
+	 */
+	public void reloadPlaylist(Playlist p) throws DataAccessException;
 
 	/**
 	 * Recursively adds all files in the specified folder and subfolders with
@@ -79,15 +88,15 @@ public interface PlaylistService {
 	public void addSongsToPlaylist(File[] files, Playlist playlist) throws DataAccessException;
 
 	/**
-	 * Deletes the given Song from the playlist.
+	 * Deletes the given songs from the playlist.
 	 * 
-	 * @param song
-	 *            The song to delete
+	 * @param songs
+	 *            The songs to delete
 	 * @param playlist
 	 *            The playlist from which to delete
 	 * @throws DataAccessException 
 	 */
-	public void deleteSong(Song song, Playlist playlist) throws DataAccessException;
+	public void deleteSongs(List<Song> songs, Playlist playlist) throws DataAccessException;
 
 	/**
 	 * Creates an empty playlist with the specitied name.
@@ -97,7 +106,7 @@ public interface PlaylistService {
 	 * @return the created playlist
 	 * @throws DataAccessException 
 	 */
-	public Playlist createPlaylist(String name) throws DataAccessException;
+	public ReadonlyPlaylist createPlaylist(String name) throws DataAccessException;
 
 	/**
 	 * Deletes the specified playlist from the library.
@@ -133,7 +142,7 @@ public interface PlaylistService {
 	 * @return the magic playlist
 	 * @throws DataAccessException 
 	 */
-	public Playlist getTopRated() throws DataAccessException;
+	public ReadonlyPlaylist getTopRated() throws DataAccessException;
 
 	/**
 	 * Generates the magic TopXXPlayed playlist.
@@ -141,7 +150,7 @@ public interface PlaylistService {
 	 * @return the magic playlist
 	 * @throws DataAccessException 
 	 */
-	public Playlist getTopPlayed() throws DataAccessException;
+	public ReadonlyPlaylist getTopPlayed() throws DataAccessException;
 
 	/**
 	 * Searches the whole library for songs where any of the songs fields
@@ -154,8 +163,9 @@ public interface PlaylistService {
 	 *            The search pattern
 	 * @return a playlist named "Search Results" which contains the search
 	 *         results
+	 * @throws DataAccessException 
 	 */
-	public Playlist globalSearch(String pattern);
+	public ReadonlyPlaylist globalSearch(String pattern) throws DataAccessException;
 
 	/**
 	 * Checks the song paths of all songs of the library and sets their
@@ -170,6 +180,6 @@ public interface PlaylistService {
 	 * @return a playlist with all songs of the library
 	 * @throws DataAccessException
 	 */
-	public Playlist getLibrary() throws DataAccessException;
+	public ReadonlyPlaylist getLibrary() throws DataAccessException;
 
 }
