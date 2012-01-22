@@ -2,6 +2,8 @@ package at.ac.tuwien.sepm2011ws.mp3player.presentationLayer;
 
 import java.awt.Dimension;
 import java.awt.Image;
+import java.awt.Rectangle;
+import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ComponentAdapter;
@@ -130,14 +132,18 @@ public class MainFrame extends JFrame implements ActionListener, Runnable,
 			"img/pause_blue.png"));
 	private Icon mp2 = new ImageIcon(getClass().getResource(
 			"img/pause_orange.png"));
+
 	private Icon mp3 = new ImageIcon(getClass().getResource(
 			"img/pause_orange_pressed.png"));
 
+	private static int positionX, positionY, width, height;
+	
 	private List<Playlist> playlists = null;
 
 	private PlaylistService ps;
 	private CoreInteractionService cis;
 	private SettingsService ss;
+	
 
 	/**
 	 * Parses and replaces the songs of the songTable into the specified
@@ -623,8 +629,15 @@ public class MainFrame extends JFrame implements ActionListener, Runnable,
 		cis = sf.getCoreInteractionService();
 		ps = sf.getPlaylistService();
 		ss = sf.getSettingsService();
+		Toolkit toolkit =  Toolkit.getDefaultToolkit ();
+		Dimension dim = toolkit.getScreenSize();
 
-		setBounds(100, 100, 1000, 600);
+		width = 1000;
+		height = 600;
+		positionX = (int) Math.round(dim.getWidth()/2 - width/2);
+		positionY = (int) Math.round(dim.getHeight()/2 - height/2);
+		
+		setBounds(positionX, positionY, width, height);
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setTitle("mp3@player");
 
@@ -639,6 +652,7 @@ public class MainFrame extends JFrame implements ActionListener, Runnable,
 			}
 		});
 		getWholeLibrary();
+		
 		setVisibleColumns();
 
 		cis.setVolume(volume.getValue());
@@ -648,6 +662,12 @@ public class MainFrame extends JFrame implements ActionListener, Runnable,
 
 		setVisible(true);
 		// setResizable(false);
+		
+		// test for GetMetaTag
+		ArrayList<Song> list = new ArrayList<Song>();
+		list.add((Song) songTable.getValueAt(0, 0));
+		list.add((Song) songTable.getValueAt(15, 0));
+		new GetMetaTag(list);
 
 		logger.info("Components successfully initialized");
 	}
@@ -687,6 +707,12 @@ public class MainFrame extends JFrame implements ActionListener, Runnable,
 				progress.setPreferredSize(new Dimension(getWidth(), 25));
 				// System.out.println("Main progress: "+progress.getPreferredSize()+"");
 				// setResizable(false);
+				Rectangle rv = getBounds();
+				positionX = rv.x;
+				positionY = rv.y;
+				width = rv.width;
+				height = rv.height;
+				logger.info(rv);
 			}
 		});
 
@@ -896,7 +922,7 @@ public class MainFrame extends JFrame implements ActionListener, Runnable,
 		// ProgressBar
 		progress = new JSlider(0, 100, 0);
 		progress.setOpaque(false);
-		progress.setMajorTickSpacing(10);
+		progress.setMajorTickSpacing(100);
 		progress.setMinorTickSpacing(1);
 		progress.setPaintTicks(true);
 		progress.setSnapToTicks(false);
@@ -1211,7 +1237,7 @@ public class MainFrame extends JFrame implements ActionListener, Runnable,
 		}
 
 		else if (e.getActionCommand().equals("checksongpaths")) {
-			new checkSongPathGUI();
+			new CheckSongPathGUI();
 			buildPlTree();
 			try {
 				Playlist list = ps.getLibrary();
@@ -1340,6 +1366,4 @@ public class MainFrame extends JFrame implements ActionListener, Runnable,
 		// TODO Auto-generated method stub
 		
 	}
-
-
 }

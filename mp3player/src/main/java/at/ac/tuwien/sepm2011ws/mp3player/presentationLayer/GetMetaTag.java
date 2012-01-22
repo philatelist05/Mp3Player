@@ -1,0 +1,277 @@
+package at.ac.tuwien.sepm2011ws.mp3player.presentationLayer;
+
+import java.awt.Dimension;
+import java.awt.Font;
+import java.awt.Rectangle;
+import java.awt.Toolkit;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.ComponentAdapter;
+import java.awt.event.ComponentEvent;
+import java.awt.event.WindowEvent;
+import java.awt.event.WindowListener;
+import java.util.ArrayList;
+import javax.swing.JButton;
+import javax.swing.JComboBox;
+import javax.swing.JDialog;
+import javax.swing.JLabel;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.JTextField;
+import net.miginfocom.swing.MigLayout;
+import org.apache.log4j.Logger;
+import at.ac.tuwien.sepm2011ws.mp3player.domainObjects.Song;
+import at.ac.tuwien.sepm2011ws.mp3player.domainObjects.SongWrapper;
+
+public class GetMetaTag extends JDialog implements ActionListener, Runnable {
+
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -382149403700069523L;
+	private static Logger logger = Logger.getLogger(GetMetaTag.class);
+	private Song song;
+
+	private JPanel getPanel = new JPanel(new MigLayout("", "[][grow]",
+			"[][][][][][][][]"));
+	private JComboBox songBox = new JComboBox();
+
+	private JLabel lblSong = new JLabel("Song:");
+	private JLabel lblArtist = new JLabel("Artist:");
+	private JLabel lblTitle = new JLabel("Title:");
+	private JLabel lblAlbum = new JLabel("Album:");
+	private JLabel lblYear = new JLabel("Year:");
+	private JLabel lblGenre = new JLabel("Genre:");
+
+	private JLabel lblArtistTitle = new JLabel("");
+	private JTextField textArtist = new JTextField("");
+	private JTextField textTitle = new JTextField("");
+	private JTextField textAlbum = new JTextField("");
+	private JTextField textYear = new JTextField("");
+	private JTextField textGenre = new JTextField("");
+
+	private JButton btnCancel = new JButton("Cancel");
+	private JButton btnSave = new JButton("Save");
+
+	private static int positionX, positionY, width, height;
+	private ArrayList<SongWrapper> tags = new ArrayList<SongWrapper>();
+	private JPanel checkPanel;
+	private JLabel checklabel;
+	private Thread fred;
+	JDialog checkDialog;
+	
+	private Toolkit toolkit = Toolkit.getDefaultToolkit();
+	private Dimension dim = toolkit.getScreenSize();
+
+	protected Song getSong() {
+		return song;
+	}
+
+	public GetMetaTag(ArrayList<Song> songlist) {
+		if (!songlist.isEmpty()) {
+
+			song = songlist.get(0);
+			String temp = "";
+			logger.info("GetMetaTag(): Start initializing GetMetaTag");
+
+			initialize();
+
+			temp = song.getArtist() + " - " + song.getTitle();
+
+			if (temp.length() > 35)
+				temp = temp.substring(0, 30) + "...";
+			lblArtistTitle.setText(temp);
+			textArtist.setText(song.getArtist());
+			
+			tags.add(new SongWrapper(song, ComponentType.ComboBox, "stored Metatags"));
+			
+			songBox.addItem(tags.get(0));
+			
+			textTitle.setText(song.getTitle());
+			
+			if (song.getAlbum() != null)
+				textAlbum.setText(song.getAlbum().getTitle());
+			textYear.setText(Integer.toString(song.getYear()));
+			textGenre.setText(song.getGenre());
+
+			width = 400;
+			height = 232;
+			positionX = (int) Math.round(dim.getWidth() / 2 - width / 2);
+			positionY = (int) Math.round(dim.getHeight() / 2 - height / 2);
+
+			setBounds(positionX, positionY, width, height);
+			setTitle("Get Metatags from LastFM...");
+
+			setModal(true);
+			setVisible(true);
+		}
+
+		else {
+			int response = JOptionPane.showConfirmDialog(null,
+					"No song chosen!", "No song chosen!",
+					JOptionPane.CLOSED_OPTION);
+			if (response == JOptionPane.CLOSED_OPTION) {
+				logger.info("GetMetaTag(): close GetMetaTag()");
+				dispose();
+			} else {
+				logger.info("GetMetaTag(): close GetMetaTag()");
+				dispose();
+			}
+		}
+	}
+
+	private void initialize() {
+		logger.info("GetMetaTag(): start initializing components...");
+
+		getContentPane().add(getPanel);
+		
+		lblSong.setFont(lblSong.getFont().deriveFont(Font.BOLD));
+		lblArtistTitle.setFont(lblArtistTitle.getFont().deriveFont(Font.BOLD));
+
+		getPanel.add(lblSong, "cell 0 0");
+		getPanel.add(lblArtistTitle, "cell 1 0");
+		getPanel.add(songBox, "cell 1 1");
+		getPanel.add(lblArtist, "cell 0 2");
+		getPanel.add(textArtist, "cell 1 2, growx");
+		getPanel.add(lblTitle, "cell 0 3");
+		getPanel.add(textTitle, "cell 1 3, growx");
+		getPanel.add(lblAlbum, "cell 0 4");
+		getPanel.add(textAlbum, "cell 1 4, growx");
+		getPanel.add(lblYear, "cell 0 5");
+		getPanel.add(textYear, "cell 1 5, growx");
+		getPanel.add(lblGenre, "cell 0 6");
+		getPanel.add(textGenre, "cell 1 6, growx");
+
+		getPanel.add(btnCancel, "cell 1 7, alignx right, aligny center");
+		btnCancel.addActionListener(this);
+		btnCancel.setActionCommand("cancel");
+
+		getPanel.add(btnSave, "cell 1 7, alignx right, aligny center");
+		btnSave.addActionListener(this);
+		btnSave.setActionCommand("save");
+
+		logger.info("GetMetaTag(): successfully initialized components");
+
+		addComponentListener(new ComponentAdapter() {
+			@Override
+			public void componentResized(ComponentEvent e) {
+				Rectangle rv = getBounds();
+				positionX = rv.x;
+				positionY = rv.y;
+				width = rv.width;
+				height = rv.height;
+				logger.info(rv);
+			}
+		});
+		
+		addWindowListener(new WindowListener() {
+            public void windowClosed(WindowEvent arg0) {
+                
+            }
+            public void windowActivated(WindowEvent arg0) {
+                
+            }
+            public void windowClosing(WindowEvent arg0) {
+                
+            }
+            public void windowDeactivated(WindowEvent arg0) {
+                
+            }
+            public void windowDeiconified(WindowEvent arg0) {
+                
+            }
+            public void windowIconified(WindowEvent arg0) {
+                
+            }
+            public void windowOpened(WindowEvent arg0) {
+    			checkTags();
+            }
+        });
+	}
+
+	@Override
+	public void actionPerformed(ActionEvent e) {
+		if (e.getActionCommand().equals("save")) {
+			if (textYear.getText().trim().matches("^[0-9]+$")) {
+				song.setArtist("untitled");
+				song.setTitle("untitled");
+
+				if (textArtist.getText().trim().length() > 0)
+					song.setArtist(textArtist.getText().trim());
+				if (textTitle.getText().trim().length() > 0)
+					song.setTitle(textTitle.getText().trim());
+				
+				if (song.getAlbum() != null) {
+					song.getAlbum().setTitle("untitled");
+					
+					if (textAlbum.getText().trim().length() > 0)
+						song.getAlbum().setTitle(textAlbum.getText().trim());
+				}
+				
+				song.setYear(Integer.parseInt(textYear.getText().trim()));
+				song.setGenre(textGenre.getText().trim());
+
+				// TODO: Update song in DB and File and/or in songTable (reload
+				// or not to
+				// reload songTable; that's the question...)
+
+				dispose();
+			}
+
+			else {
+				JOptionPane
+						.showConfirmDialog(
+								null,
+								"The year textfield must contain a valid date (e.g. 1988). Minimum Date is 0",
+								"Check specified year!",
+								JOptionPane.CLOSED_OPTION);
+			}
+		}
+
+		else if (e.getActionCommand().equals("cancel")) {
+			SongWrapper test = (SongWrapper) songBox.getSelectedItem();
+			logger.info(test.getSong().getTitle());
+			dispose();
+		}
+	}
+	
+	private void checkTags() {
+		checkDialog = new JDialog();
+		
+		checkPanel = new JPanel(new MigLayout("", "[grow]", "[]"));
+		checklabel = new JLabel("Adding Song(s)...");
+		
+		checkDialog.getContentPane().add(checkPanel);
+		checkPanel.add(checklabel, "cell 0 0");
+		
+		checkDialog.setTitle("Checking songpaths...");
+		
+		int width = 200, height = 100;
+		int positionX = (int) Math.round(dim.getWidth() / 2 - width / 2);
+		int positionY = (int) Math.round(dim.getHeight() / 2 - height / 2);
+
+		checkDialog.setBounds(positionX, positionY, width, height);
+		checkDialog.setDefaultCloseOperation(DO_NOTHING_ON_CLOSE);
+		checkDialog.setModal(true);
+		
+		fred = new Thread(this);
+		fred.start();
+		logger.info("GetMetaTag(): Started Thread");
+		
+		checkDialog.setVisible(true);
+		logger.info("GetMetaTag(): Made checkDialog visible");
+	}
+
+	@Override
+	public void run() {
+		//TODO: Get MetaTags from LastFM and save them into songBox
+		logger.info("GetMetaTag(): Got into thread");
+		try {
+			Thread.sleep(2000);
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+		}
+		checkDialog.dispose();
+		fred.stop();
+	}
+}

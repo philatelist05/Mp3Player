@@ -18,7 +18,7 @@ import at.ac.tuwien.sepm2011ws.mp3player.persistanceLayer.DataAccessException;
 import at.ac.tuwien.sepm2011ws.mp3player.serviceLayer.PlaylistService;
 import at.ac.tuwien.sepm2011ws.mp3player.serviceLayer.ServiceFactory;
 
-public class checkSongPathGUI extends JDialog implements ActionListener, Runnable {
+public class CheckSongPathGUI extends JDialog implements ActionListener, Runnable {
 
 	/**
 	 * 
@@ -61,7 +61,7 @@ public class checkSongPathGUI extends JDialog implements ActionListener, Runnabl
 			}
 	}
 	
-	public checkSongPathGUI() {
+	public CheckSongPathGUI() {
 		logger.info("checkSongPathGUI(): Started constructor checkSongPathGUI()");
 		initialize();
 		logger.info("checkSongPathGUI(): Components successfully initialized");

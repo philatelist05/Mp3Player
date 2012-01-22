@@ -290,7 +290,6 @@ public class Song {
 		return false;
 	}
 
-	@Override
 	public String toString() {
 		if (isPathOk())
 			return "";
