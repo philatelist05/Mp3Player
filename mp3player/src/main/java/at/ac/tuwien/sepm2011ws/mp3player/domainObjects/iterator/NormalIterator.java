@@ -1,4 +1,4 @@
-package at.ac.tuwien.sepm2011ws.mp3player.domainObjects;
+package at.ac.tuwien.sepm2011ws.mp3player.domainObjects.iterator;
 
 import java.util.List;
 import java.util.ListIterator;
@@ -15,10 +15,11 @@ public class NormalIterator<T> implements ListIterator<T> {
 		this._prevIndex = -1;
 		this._nextIndex = 0;
 	}
+
 	public NormalIterator(NormalIterator<T> iterator) {
-		this._nextIndex=iterator._nextIndex;
-		this._prevIndex=iterator._prevIndex;
-		this.list =iterator.list;
+		this._nextIndex = iterator._nextIndex;
+		this._prevIndex = iterator._prevIndex;
+		this.list = iterator.list;
 	}
 
 	@Override
