@@ -1498,6 +1498,6 @@ public class MainFrame extends JFrame implements ActionListener, Runnable,
 		//logger.info("sorterChanged");
 		currentPlaylistGUI = parseSongTable(currentPlaylistGUI);
 		cis.setCurrentPlaylist(currentPlaylistGUI);
-		new MainFrame("reloadsongTable");
+		songTable.repaint();	
 	}
 }
