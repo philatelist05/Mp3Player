@@ -1,6 +1,3 @@
-/**
- * 
- */
 package at.ac.tuwien.sepm2011ws.mp3player.serviceLayer;
 
 import java.util.List;

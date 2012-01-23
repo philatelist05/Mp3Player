@@ -1,6 +1,3 @@
-/**
- * 
- */
 package at.ac.tuwien.sepm2011ws.mp3player.persistanceLayer;
 
 import java.sql.Connection;
@@ -9,10 +6,6 @@ import java.util.List;
 import at.ac.tuwien.sepm2011ws.mp3player.domainObjects.WritablePlaylist;
 import at.ac.tuwien.sepm2011ws.mp3player.domainObjects.Playlist;
 
-/**
- * @author klaus
- * 
- */
 public interface PlaylistDao {
 	/**
 	 * Creates a playlist.
