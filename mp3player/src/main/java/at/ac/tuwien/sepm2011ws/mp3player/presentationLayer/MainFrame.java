@@ -300,11 +300,11 @@ public class MainFrame extends JFrame implements ActionListener, Runnable,
 	 * @param x
 	 *            The Song to play
 	 */
-	public void play(Song x) {
+	public void play(int songIndex) {
 		setPlayIcons();
 
-		cis.playFromBeginning(x);
 		cis.setCurrentPlaylist(currentPlaylistGUI);
+		cis.playFromBeginning(songIndex);
 		// Song temp = cis.getCurrentSong();
 
 		progress.setEnabled(true);
@@ -941,11 +941,9 @@ public class MainFrame extends JFrame implements ActionListener, Runnable,
 			public void mouseClicked(MouseEvent e) {
 				if (e.getClickCount() == 2) {
 					int row = songTable.getSelectedRow();
-					Song x;
-
-					if (row > -1) {
-						x = (Song) songTable.getValueAt(row, 0);		
-						play(x);
+					
+					if (row > -1) {	
+						play(row);
 					}
 				}
 			}
@@ -1247,11 +1245,9 @@ public class MainFrame extends JFrame implements ActionListener, Runnable,
 
 		else if (e.getActionCommand().equals("play")) {
 			int row = this.songTable.getSelectedRow();
-			Song x;
 
 			if (row > -1) {
-				x = (Song) this.songTable.getValueAt(row, 0);
-				play(x);
+				play(row);
 			}
 		}
 
