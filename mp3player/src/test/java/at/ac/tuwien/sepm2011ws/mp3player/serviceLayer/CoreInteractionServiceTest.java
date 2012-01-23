@@ -12,7 +12,9 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
+import at.ac.tuwien.sepm2011ws.mp3player.domainObjects.PlayMode;
 import at.ac.tuwien.sepm2011ws.mp3player.domainObjects.Playlist;
+import at.ac.tuwien.sepm2011ws.mp3player.domainObjects.WritablePlaylist;
 import at.ac.tuwien.sepm2011ws.mp3player.domainObjects.Song;
 
 /**
@@ -37,7 +39,7 @@ public class CoreInteractionServiceTest {
 	
 	@Test
 	public void testEndOfMedia_ShouldPlayNext() throws InterruptedException {
-		Playlist temp = new Playlist("Temp");
+		WritablePlaylist temp = new WritablePlaylist("Temp");
 
 		File sPath = new File("music/dummy-message.wav");
 		temp.add(new Song("dummy1", "dummy1", 300, sPath.getAbsolutePath()));
@@ -63,8 +65,11 @@ public class CoreInteractionServiceTest {
 	public void testPlayPause_ShouldPlay() throws InterruptedException {
 		File sPath = new File("music/dummy-message.wav");
 		Song s = new Song("dummy", "dummy", 300, sPath.getAbsolutePath());
+		Playlist p = new Playlist("Test");
+		p.add(s);
+		cs.setCurrentPlaylist(p);
 
-		cs.playPause(s);
+		cs.playPause(0);
 		Thread.sleep(1000);
 	}
 
@@ -72,8 +77,11 @@ public class CoreInteractionServiceTest {
 	public void testSeek_ShouldSeek() throws InterruptedException {
 		File sPath = new File("music/The Other Thing.wav");
 		Song s = new Song("dummy", "dummy", 300, sPath.getAbsolutePath());
+		Playlist p = new Playlist("Test");
+		p.add(s);
+		cs.setCurrentPlaylist(p);
 
-		cs.playPause(s);
+		cs.playPause(0);
 		Thread.sleep(500);
 		cs.seek(20);
 		Thread.sleep(1000);
@@ -86,9 +94,12 @@ public class CoreInteractionServiceTest {
 			throws InterruptedException {
 		File sPath = new File("music/dummy-message.wav");
 		Song s = new Song("dummy", "dummy", 300, sPath.getAbsolutePath());
+		Playlist p = new Playlist("Test");
+		p.add(s);
+		cs.setCurrentPlaylist(p);
 
 		// play
-		cs.playFromBeginning(s);
+		cs.playFromBeginning(0);
 		Thread.sleep(500);
 		double then = cs.getPlayTime();
 		Thread.sleep(1000);

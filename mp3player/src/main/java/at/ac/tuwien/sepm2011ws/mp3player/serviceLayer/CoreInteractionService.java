@@ -1,25 +1,19 @@
-/**
- * 
- */
 package at.ac.tuwien.sepm2011ws.mp3player.serviceLayer;
 
-import at.ac.tuwien.sepm2011ws.mp3player.domainObjects.ReadonlyPlaylist;
+import at.ac.tuwien.sepm2011ws.mp3player.domainObjects.PlayMode;
+import at.ac.tuwien.sepm2011ws.mp3player.domainObjects.Playlist;
 import at.ac.tuwien.sepm2011ws.mp3player.domainObjects.Song;
 
-/**
- * @author klaus
- * 
- */
 public interface CoreInteractionService {
 	public final int MAX_VOLUME = 100;
 
 	/**
 	 * Plays the song from the beginning of the song.
 	 * 
-	 * @param song
-	 *            The song containing the path to the file that should be played
+	 * @param index
+	 *            The index of the song in the current playlist
 	 */
-	public void playFromBeginning(Song song);
+	public void playFromBeginning(int index);
 
 	/**
 	 * Plays or pauses the playing song.
@@ -28,13 +22,13 @@ public interface CoreInteractionService {
 	public void playPause();
 
 	/**
-	 * Plays the song or pauses the playing if the song is the current playing
+	 * Plays a song or pauses the playing if the song is the currently playing
 	 * song.
 	 * 
-	 * @param song
-	 *            The song containing the path to the file that should be played
+	 * @param index
+	 *            The index of the song in the current playlist
 	 */
-	public void playPause(Song song);
+	public void playPause(int index);
 
 	/**
 	 * Pauses the currently playing song
@@ -159,28 +153,14 @@ public interface CoreInteractionService {
 	 * 
 	 * @return the current playlist
 	 */
-	public ReadonlyPlaylist getCurrentPlaylist();
+	public Playlist getCurrentPlaylist();
 
 	/**
 	 * Sets the current active playlist
 	 * 
 	 * @param playlist
 	 */
-	public void setCurrentPlaylist(ReadonlyPlaylist playlist);
-
-	/**
-	 * Gets the next song in the playlist due to the play mode.
-	 * 
-	 * @return the next song or <code>null</code> if no song is available
-	 */
-	public Song getNextSong();
-
-	/**
-	 * Gets the previous song in the playlist due to the play mode.
-	 * 
-	 * @return the previous song or <code>null</code> if no song is available
-	 */
-	public Song getPreviousSong();
+	public void setCurrentPlaylist(Playlist playlist);
 
 	/**
 	 * Sets the play mode.

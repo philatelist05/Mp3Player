@@ -1,32 +1,64 @@
 package at.ac.tuwien.sepm2011ws.mp3player.domainObjects;
 
-public class Playlist extends ReadonlyPlaylist {
+import java.util.ArrayList;
 
-	public Playlist(int id, String title) {
-		super(id, title);
-	}
+public class Playlist extends ArrayList<Song> {
 
+	private static final long serialVersionUID = 7141247972795466434L;
+	protected int id;
+	protected String title;
+
+	/**
+	 * @param title
+	 */
 	public Playlist(String title) {
-		super(title);
+		this(0, title);
 	}
 
 	/**
 	 * @param id
-	 *            the id to set
+	 * @param title
 	 */
-	public void setId(int id) {
-		if (id < 0)
-			throw new IllegalArgumentException("ID must be greater or equal 0");
+	public Playlist(int id, String title) {
 		this.id = id;
+		this.title = title;
 	}
 
 	/**
-	 * @param title
-	 *            the title to set
+	 * @return the id
 	 */
-	public void setTitle(String title) {
-		if (title == null || title.isEmpty())
-			throw new IllegalArgumentException("Title must not be empty");
-		this.title = title;
+	public int getId() {
+		return this.id;
 	}
+
+	/**
+	 * @return the title
+	 */
+	public String getTitle() {
+		return this.title;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (obj != null && this.getClass() == obj.getClass()) {
+			Playlist other = (Playlist) obj;
+
+			if (this.id != other.id || !this.title.equals(other.title))
+				return false;
+
+			for (int i = 0; i < this.size(); i++) {
+				if (i >= other.size() || !this.get(i).equals(other.get(i)))
+					return false;
+			}
+
+			return true;
+		}
+		return false;
+	}
+
+	@Override
+	public String toString() {
+		return this.title;
+	}
+
 }

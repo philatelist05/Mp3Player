@@ -33,8 +33,7 @@ public class Main {
 							.getSystemLookAndFeelClassName());
 					new MainFrame();
 				} catch (Exception e) {
-					e.printStackTrace();
-					logger.error("Error starting Main Window");
+					logger.error(e);
 				}
 			}
 		});

@@ -140,9 +140,8 @@ public class VvvSettingsService implements SettingsService {
 
 		if (retList.size() != 0) {
 			return retList.toArray(testees);
-		} else {
-			return accepted;
 		}
+		return accepted;
 	}
 
 	/**
@@ -158,9 +157,8 @@ public class VvvSettingsService implements SettingsService {
 	private int checkSetting(int setting, int defaultValue) {
 		if (setting < 1) {
 			return defaultValue;
-		} else {
-			return setting;
 		}
+		return setting;
 	}
 
 }

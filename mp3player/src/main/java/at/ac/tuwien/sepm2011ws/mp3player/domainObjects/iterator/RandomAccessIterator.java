@@ -1,4 +1,4 @@
-package at.ac.tuwien.sepm2011ws.mp3player.domainObjects;
+package at.ac.tuwien.sepm2011ws.mp3player.domainObjects.iterator;
 
 import java.util.List;
 import java.util.NoSuchElementException;

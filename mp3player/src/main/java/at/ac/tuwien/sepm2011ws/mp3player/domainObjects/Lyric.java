@@ -1,12 +1,5 @@
-/**
- * 
- */
 package at.ac.tuwien.sepm2011ws.mp3player.domainObjects;
 
-/**
- * @author oli
- * 
- */
 public class Lyric {
 
 	private String text;
@@ -53,5 +46,10 @@ public class Lyric {
 					.equals(other.text)));
 		}
 		return false;
+	}
+
+	@Override
+	public int hashCode() {
+		return (text == null) ? 0 : text.hashCode();
 	}
 }
