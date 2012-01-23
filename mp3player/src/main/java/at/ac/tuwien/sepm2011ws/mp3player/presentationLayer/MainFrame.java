@@ -37,6 +37,7 @@ import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
+import javax.swing.JPopupMenu.Separator;
 import javax.swing.JScrollPane;
 import javax.swing.JSeparator;
 import javax.swing.JSlider;
@@ -171,29 +172,10 @@ public class MainFrame extends JFrame implements ActionListener, Runnable,
 		ArrayList<Song> temp = new ArrayList<Song>();
 		Song song;
 		
-		//int row2 = sorter.getModel().getRowCount();
 		int row = songmodel.getRowCount();
 
-		
-		for (int i = 0; i < row; i++) {
-			
-			//System.out.println(sorter.convertRowIndexToView(0));
-			
+		for (int i = 0; i < row; i++) {			
 			song = (Song) songTable.getValueAt(i, 0);
-			//song.setId(i);
-			logger.info(song.getId());
-			logger.info(song.getArtist());
-			temp.add(song);
-		}
-		
-		for (int i = 0; i < row; i++) {
-			
-			//System.out.println(sorter.convertRowIndexToView(0));
-			
-			song = (Song) songTable.getValueAt(sorter.convertRowIndexToView(i), 0);
-			//song.setId(i);
-			logger.info(song.getId());
-			logger.info(song.getArtist());
 			temp.add(song);
 		}
 		
@@ -907,6 +889,31 @@ public class MainFrame extends JFrame implements ActionListener, Runnable,
 		entry.addActionListener(new TableActionAdapter());
 		entry.setActionCommand("deleteSong");
 
+		Separator sep = new JPopupMenu.Separator();
+		tablePopupMenu.add(sep);
+		
+		JMenuItem entry1 = new JMenuItem("Get Lyrics");
+		tablePopupMenu.add(entry1);
+		entry1.addActionListener(new TableActionAdapter());
+		entry1.setActionCommand("getLyrics");
+		
+		JMenuItem entry2 = new JMenuItem("Edit Lyrics");
+		tablePopupMenu.add(entry2);
+		entry2.addActionListener(new TableActionAdapter());
+		entry2.setActionCommand("editLyrics");
+		
+		JMenuItem entry3 = new JMenuItem("Get Meta-Tags");
+		tablePopupMenu.add(entry3);
+		entry3.addActionListener(new TableActionAdapter());
+		entry3.setActionCommand("getMetatags");
+		
+		JMenuItem entry4 = new JMenuItem("Edit Meta-Tags");
+		tablePopupMenu.add(entry4);
+		entry4.addActionListener(new TableActionAdapter());
+		entry4.setActionCommand("editMetatags");
+
+		
+		
 		songTable = new JTable(songmodel);
 		songTable.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 		JScrollPane songTable_sp = new JScrollPane(songTable);
@@ -1466,6 +1473,65 @@ public class MainFrame extends JFrame implements ActionListener, Runnable,
 					new DynamicDialog("ERROR", e1.toString());
 				}
 				fillSongTable(currentPlaylistGUI);
+			}			
+			else if (e.getActionCommand().equals("getLyrics")) {
+				int[] row = songTable.getSelectedRows();
+				Song x = null;
+				ArrayList<Song> getLyricSongs = new ArrayList<Song>();
+				for (int i=0; i<row.length; i++) {
+					int currentRow = row[i];
+					if (currentRow > -1) {
+						x = (Song) songTable.getValueAt(currentRow, 0);
+						getLyricSongs.add(x);
+					}
+				}
+				new GetLyric(getLyricSongs);
+				fillSongTable(currentPlaylistGUI);
+			}
+			
+			else if (e.getActionCommand().equals("editLyrics")) {
+				int[] row = songTable.getSelectedRows();
+				Song x = null;
+				ArrayList<Song> editLyricSongs = new ArrayList<Song>();
+				for (int i=0; i<row.length; i++) {
+					int currentRow = row[i];
+					if (currentRow > -1) {
+						x = (Song) songTable.getValueAt(currentRow, 0);
+						editLyricSongs.add(x);
+					}
+				}
+				new EditLyric(editLyricSongs);
+				fillSongTable(currentPlaylistGUI);
+			}
+			
+			else if (e.getActionCommand().equals("getMetatags")) {
+				int[] row = songTable.getSelectedRows();
+				Song x = null;
+				ArrayList<Song> getMetaSongs = new ArrayList<Song>();
+				for (int i=0; i<row.length; i++) {
+					int currentRow = row[i];
+					if (currentRow > -1) {
+						x = (Song) songTable.getValueAt(currentRow, 0);
+						getMetaSongs.add(x);
+					}
+				}
+				new GetMetaTag(getMetaSongs);
+				fillSongTable(currentPlaylistGUI);
+			}
+			
+			else if (e.getActionCommand().equals("editMetatags")) {
+				int[] row = songTable.getSelectedRows();
+				Song x = null;
+				ArrayList<Song> editMetaSongs = new ArrayList<Song>();
+				for (int i=0; i<row.length; i++) {
+					int currentRow = row[i];
+					if (currentRow > -1) {
+						x = (Song) songTable.getValueAt(currentRow, 0);
+						editMetaSongs.add(x);
+					}
+				}
+				new EditMetaTag(editMetaSongs);
+				fillSongTable(currentPlaylistGUI);
 			}
 
 		}
@@ -1513,10 +1579,6 @@ public class MainFrame extends JFrame implements ActionListener, Runnable,
 		//logger.info("sorterChanged");
 		currentPlaylistGUI = parseSongTable(currentPlaylistGUI);
 		cis.setCurrentPlaylist(currentPlaylistGUI);
-		
-		//currentPlaylistGUI.
-		//for( int i = 0; i< currentPlaylistGUI.size(); )
-		//ps.reloadPlaylist(currentPlaylistGUI);
 		new MainFrame("reloadsongTable");
 	}
 }
