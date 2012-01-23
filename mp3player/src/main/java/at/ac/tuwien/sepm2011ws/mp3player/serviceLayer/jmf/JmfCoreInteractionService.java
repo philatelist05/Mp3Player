@@ -2,8 +2,6 @@ package at.ac.tuwien.sepm2011ws.mp3player.serviceLayer.jmf;
 
 import java.io.IOException;
 import java.net.URL;
-import java.util.List;
-
 import javax.media.Controller;
 import javax.media.ControllerEvent;
 import javax.media.ControllerListener;
@@ -36,21 +34,7 @@ class JmfCoreInteractionService implements CoreInteractionService {
 	private Song currentSong;
 	private PlayerListener pl;
 
-	/**
-	 * 
-	 */
 	public JmfCoreInteractionService() {
-		// Register the mp3 plugin
-		// Format input1 = new AudioFormat(AudioFormat.MPEGLAYER3);
-		// Format input2 = new AudioFormat(AudioFormat.MPEG);
-		// Format output = new AudioFormat(AudioFormat.LINEAR);
-		// PlugInManager.addPlugIn(
-		// "com.sun.media.codec.audio.mp3.JavaDecoder",
-		// new Format[]{input1, input2},
-		// new Format[]{output},
-		// PlugInManager.CODEC
-		// );
-
 		this.isMute = false;
 		this.isPaused = false;
 		this.isStopped = true;

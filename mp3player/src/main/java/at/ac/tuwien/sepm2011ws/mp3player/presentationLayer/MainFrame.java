@@ -51,6 +51,7 @@ import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import javax.swing.event.TableModelEvent;
 import javax.swing.event.TableModelListener;
+import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.TableColumn;
 import javax.swing.table.TableModel;
 import javax.swing.tree.DefaultTreeModel;
@@ -587,7 +588,7 @@ public class MainFrame extends JFrame implements ActionListener, Runnable,
 
 		for (int i = 0; i < 9; i++) {
 			cTableModel.setColumnVisible(i, false);
-
+			
 		}
 
 		Zuordnung.put("status", 0);
@@ -616,14 +617,28 @@ public class MainFrame extends JFrame implements ActionListener, Runnable,
 		for (int i = 0; i < userCols.length; i++) {
 			songTableCols[i + 1] = userCols[i];
 		}
-
+		boolean color = false;
 		for (int i = 0; i < songTableCols.length; i++) {
 			if (Zuordnung.containsKey(songTableCols[i]))
+			{
 				// System.out.println(Zuordnung.get(col[i]));
 				// System.out.println(ss.getUserColumns()[i]);
 				cTableModel.setColumnVisible(
 						(Integer) Zuordnung.get(songTableCols[i]), true);
+			}
+
 		}
+		
+		
+		
+		for(int i = 0; i< songTableCols.length; i++)
+		{
+			cTableModel.getColumn(i).setCellRenderer(new DefaultTableCellRenderer());
+			if(color)
+				cTableModel.getColumn(i).setCellRenderer(new SongTableRenderer());
+			color = !color;
+		}
+		
 
 		// TODO: Add reloading for "TopXX played" and "TopXX rated", if
 		// selected
@@ -877,6 +892,10 @@ public class MainFrame extends JFrame implements ActionListener, Runnable,
 		// songTable.setAutoCreateRowSorter(true);
 		songTable.getModel().addTableModelListener(this);
 		cTableModel = new HidableTableColumnModel(songTable.getColumnModel());
+		
+		DefaultTableCellRenderer renderer = new SongTableRenderer();
+		
+		
 		// htcm.setColumnVisible(0, false);
 		/*
 		 * JPopupMenu popup = new JPopupMenu("Hide Menu"); Action[] actions =
@@ -1245,7 +1264,7 @@ public class MainFrame extends JFrame implements ActionListener, Runnable,
 		}
 
 		else if (e.getActionCommand().equals("checksongpaths")) {
-			new CheckSongPathGUI();
+			new checkSongPathGUI();
 			buildPlTree();
 			try {
 				ReadonlyPlaylist list = ps.getLibrary();
