@@ -32,7 +32,6 @@ public class Song {
 		this.setTitle(title);
 		this.setDuration(duration);
 		this.setPath(path);
-		this.setRating(-1);
 		this.setPathOk(true);
 	}
 
