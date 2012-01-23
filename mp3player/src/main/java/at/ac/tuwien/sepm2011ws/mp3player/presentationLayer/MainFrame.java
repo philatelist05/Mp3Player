@@ -1583,7 +1583,7 @@ public class MainFrame extends JFrame implements ActionListener, Runnable,
 
 	@Override
 	public void sorterChanged(RowSorterEvent e) {
-		//logger.info("sorterChanged");
+		logger.info("sorterChanged");
 		currentPlaylistGUI = parseSongTable(currentPlaylistGUI);
 		cis.setCurrentPlaylist(currentPlaylistGUI);
 		songTable.repaint();	
