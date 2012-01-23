@@ -41,6 +41,7 @@ import javax.swing.JPopupMenu.Separator;
 import javax.swing.JScrollPane;
 import javax.swing.JSeparator;
 import javax.swing.JSlider;
+import javax.swing.JSplitPane;
 import javax.swing.JTable;
 import javax.swing.JTree;
 import javax.swing.ListSelectionModel;
@@ -81,9 +82,9 @@ public class MainFrame extends JFrame implements ActionListener, Runnable,
 	private static final long serialVersionUID = -959319978002415594L;
 	private static Logger logger = Logger.getLogger(MainFrame.class);
 	private static Playlist currentPlaylistGUI;
-
+	private JSplitPane jsplit;
 	private JTree pl_tree = new JTree();
-
+	
 	private PlaylistGUI playlistgui;
 	private LibraryGUI librarygui;
 	private JTable songTable;
@@ -873,7 +874,7 @@ public class MainFrame extends JFrame implements ActionListener, Runnable,
 		// add the listener specifically to the header
 		pl_tree.addMouseListener(treePopupListener);
 
-		playerPanel.add(pl_tree_sp, "cell 0 1,grow");
+		//playerPanel.add(pl_tree_sp, "cell 0 1,grow");
 
 		/**
 		 * JTables
@@ -926,7 +927,13 @@ public class MainFrame extends JFrame implements ActionListener, Runnable,
 				.setSelectionMode(ListSelectionModel.SINGLE_INTERVAL_SELECTION);
 		songTable.setDragEnabled(true);
 		songTable.setTransferHandler(new JTableSongTransferHandler());
-		playerPanel.add(songTable_sp, "cell 1 1 3 1,grow");
+		
+		jsplit = new JSplitPane();
+		jsplit.setLeftComponent(pl_tree_sp);
+		jsplit.setRightComponent(songTable_sp);
+		
+		//playerPanel.add(songTable_sp, "cell 1 1 3 1,grow");
+		playerPanel.add(jsplit, "cell 0 1 4 1 ,grow");
 		//songTable.setAutoCreateRowSorter(true);
 		songTable.getModel().addTableModelListener(this);
 		cTableModel = new HidableTableColumnModel(songTable.getColumnModel());
