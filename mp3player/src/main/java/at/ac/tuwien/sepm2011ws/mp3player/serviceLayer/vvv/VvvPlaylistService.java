@@ -1,6 +1,3 @@
-/**
- * Veni Vidi Vici PlaylistService
- */
 package at.ac.tuwien.sepm2011ws.mp3player.serviceLayer.vvv;
 
 import java.io.BufferedWriter;
@@ -12,11 +9,9 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-import org.apache.log4j.Logger;
-
-import at.ac.tuwien.sepm2011ws.mp3player.domainObjects.WritablePlaylist;
 import at.ac.tuwien.sepm2011ws.mp3player.domainObjects.Playlist;
 import at.ac.tuwien.sepm2011ws.mp3player.domainObjects.Song;
+import at.ac.tuwien.sepm2011ws.mp3player.domainObjects.WritablePlaylist;
 import at.ac.tuwien.sepm2011ws.mp3player.persistanceLayer.DataAccessException;
 import at.ac.tuwien.sepm2011ws.mp3player.persistanceLayer.PlaylistDao;
 import at.ac.tuwien.sepm2011ws.mp3player.persistanceLayer.SongDao;
@@ -28,14 +23,8 @@ import christophedelory.playlist.Sequence;
 import christophedelory.playlist.SpecificPlaylist;
 import christophedelory.playlist.SpecificPlaylistFactory;
 
-/**
- * @author klaus
- * 
- */
 class VvvPlaylistService implements PlaylistService {
 
-	private static final Logger logger = Logger
-			.getLogger(VvvPlaylistService.class);
 	private final PlaylistDao pd;
 	private final SongDao sd;
 	private final SettingsService ss;
@@ -49,9 +38,7 @@ class VvvPlaylistService implements PlaylistService {
 	@Override
 	public Playlist getLibrary() throws DataAccessException {
 		Playlist lib = new Playlist("Library");
-
 		lib.addAll(this.sd.readAll());
-
 		return lib;
 	}
 

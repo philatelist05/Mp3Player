@@ -1,14 +1,7 @@
-/**
- * 
- */
 package at.ac.tuwien.sepm2011ws.mp3player.domainObjects;
 
 import java.util.ArrayList;
 
-/**
- * @author klaus
- * 
- */
 public class Playlist extends ArrayList<Song> {
 
 	private static final long serialVersionUID = 7141247972795466434L;

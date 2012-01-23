@@ -1,6 +1,3 @@
-/**
- * 
- */
 package at.ac.tuwien.sepm2011ws.mp3player.serviceLayer;
 
 import java.io.File;
@@ -11,10 +8,6 @@ import at.ac.tuwien.sepm2011ws.mp3player.domainObjects.Playlist;
 import at.ac.tuwien.sepm2011ws.mp3player.domainObjects.Song;
 import at.ac.tuwien.sepm2011ws.mp3player.persistanceLayer.DataAccessException;
 
-/**
- * @author klaus
- * 
- */
 public interface PlaylistService {
 
 	public static final String[] PlaylistFileTypes = new String[] { "m3u" };

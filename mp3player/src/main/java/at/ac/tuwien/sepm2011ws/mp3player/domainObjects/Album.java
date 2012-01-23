@@ -1,12 +1,5 @@
-/**
- * 
- */
 package at.ac.tuwien.sepm2011ws.mp3player.domainObjects;
 
-/**
- * @author oli
- * 
- */
 public class Album {
 
 	private int id;
@@ -15,7 +8,6 @@ public class Album {
 	private String albumartPath;
 
 	/**
-	 * 
 	 * @param title
 	 */
 	public Album(String title) {
@@ -133,6 +125,16 @@ public class Album {
 							.equals(other.albumartPath)));
 		}
 		return false;
+	}
+
+	@Override
+	public int hashCode() {
+		int result = 0;
+		result = 31 * result ^ id;
+		result = 31 * result ^ year;
+		result = 31 * result ^ ((title == null) ? 0 : title.hashCode());
+		result = 31 * result ^ ((albumartPath == null) ? 0 : albumartPath.hashCode());
+		return result;
 	}
 
 }

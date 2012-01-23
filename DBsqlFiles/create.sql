@@ -13,7 +13,7 @@ CREATE TABLE Song (
   genre		VARCHAR(255),
   lyric		TEXT,
   pathOk	BOOLEAN DEFAULT true,
-  CHECK (rating BETWEEN -1 AND 10)
+  CHECK (rating BETWEEN 0 AND 5)
 );
 ALTER SEQUENCE song_sequence OWNED BY Song.ID;
 
@@ -50,39 +50,3 @@ CREATE TABLE contains (
   song		INTEGER	REFERENCES Song(ID) ON DELETE CASCADE,
   PRIMARY KEY (position, playlist, song)
 );
-
-
--- Trigger
-
-CREATE LANGUAGE plpgsql;
-
-CREATE OR REPLACE FUNCTION songExistingCheck () RETURNS TRIGGER AS $$
-BEGIN
-	-- If the path of the new song is a new song file, add it, otherwise omit it.
-	IF EXISTS(SELECT * FROM song WHERE path = NEW.path)
-	THEN
-		RETURN NULL;
-	ELSE
-		RETURN NEW;
-	END IF;
-END;
-$$ LANGUAGE plpgsql;
-
-CREATE TRIGGER songExistingCheck BEFORE INSERT ON song
-  FOR EACH ROW EXECUTE PROCEDURE songExistingCheck();
-
-CREATE OR REPLACE FUNCTION albumExistingCheck () RETURNS TRIGGER AS $$
-BEGIN
-	-- If the new album doesn't exist, add it, otherwise omit it.
-	IF EXISTS(SELECT * FROM album WHERE title=NEW.title 
-		AND year=NEW.year AND albumart_path=NEW.albumart_path)
-	THEN
-		RETURN NULL;
-	ELSE
-		RETURN NEW;
-	END IF;
-END;
-$$ LANGUAGE plpgsql;
-
-CREATE TRIGGER albumExistingCheck BEFORE INSERT ON album
-  FOR EACH ROW EXECUTE PROCEDURE albumExistingCheck();

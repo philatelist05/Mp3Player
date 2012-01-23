@@ -12,11 +12,6 @@ import at.ac.tuwien.sepm2011ws.mp3player.domainObjects.Album;
 import at.ac.tuwien.sepm2011ws.mp3player.persistanceLayer.AlbumDao;
 import at.ac.tuwien.sepm2011ws.mp3player.persistanceLayer.DataAccessException;
 
-/**
- * @author klaus
- * 
- */
-
 class DbAlbumDao implements AlbumDao {
 	private Connection con;
 

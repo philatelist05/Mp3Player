@@ -1,12 +1,5 @@
-/**
- * 
- */
 package at.ac.tuwien.sepm2011ws.mp3player.domainObjects;
 
-/**
- * @author klaus
- * 
- */
 public class Song {
 	private int id;
 	private String title;
@@ -32,7 +25,6 @@ public class Song {
 		this.setTitle(title);
 		this.setDuration(duration);
 		this.setPath(path);
-		this.setRating(-1);
 		this.setPathOk(true);
 	}
 
@@ -149,9 +141,9 @@ public class Song {
 	 *            the rating to set
 	 */
 	public void setRating(int rating) throws IllegalArgumentException {
-		if (rating < -1 || rating > 10)
+		if (rating < 0 || rating > 5)
 			throw new IllegalArgumentException(
-					"Rating must be between -1 and 10");
+					"Rating must be between 0 and 5");
 		this.rating = rating;
 	}
 
@@ -184,8 +176,8 @@ public class Song {
 	 *            the year to set
 	 */
 	public void setYear(int year) throws IllegalArgumentException {
-		if (year < -1 || year > 9999)
-			throw new IllegalArgumentException("Year must have 4 digits");
+		if (year < 0)
+			throw new IllegalArgumentException("Year must be above 0");
 		this.year = year;
 	}
 
@@ -293,8 +285,24 @@ public class Song {
 	public String toString() {
 		if (isPathOk())
 			return "";
-		else
-			return "!";
-		//return String.valueOf(id);
+		return "!";
+	}
+
+	@Override
+	public int hashCode() {
+		int result = 0;
+		result = 31 * result ^ id;
+		result = 31 * result ^ (title == null ? 0 : title.hashCode());
+		result = 31 * result ^ duration;
+		result = 31 * result ^ playcount;
+		result = 31 * result ^ rating;
+		result = 31 * result ^ (path == null ? 0 : path.hashCode());
+		result = 31 * result ^ year;
+		result = 31 * result ^ (artist == null ? 0 : artist.hashCode());
+		result = 31 * result ^ (genre == null ? 0 : genre.hashCode());
+		result = 31 * result ^ (pathOk ? 1 : 0);
+		result = 31 * result ^ album.hashCode();
+		result = 31 * result ^ lyric.hashCode();
+		return result;
 	}
 }

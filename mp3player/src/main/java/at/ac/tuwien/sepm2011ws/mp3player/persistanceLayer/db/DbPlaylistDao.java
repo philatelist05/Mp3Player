@@ -16,11 +16,6 @@ import at.ac.tuwien.sepm2011ws.mp3player.persistanceLayer.DataAccessException;
 import at.ac.tuwien.sepm2011ws.mp3player.persistanceLayer.PlaylistDao;
 import at.ac.tuwien.sepm2011ws.mp3player.persistanceLayer.SongDao;
 
-/**
- * @author klaus
- * 
- */
-
 class DbPlaylistDao implements PlaylistDao {
 	private Connection con;
 	private SongDao sd;
