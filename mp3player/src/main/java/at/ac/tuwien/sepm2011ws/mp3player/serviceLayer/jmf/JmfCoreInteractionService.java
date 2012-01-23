@@ -15,10 +15,10 @@ import javax.media.Time;
 
 import org.apache.log4j.Logger;
 
-import at.ac.tuwien.sepm2011ws.mp3player.domainObjects.ReadonlyPlaylist;
+import at.ac.tuwien.sepm2011ws.mp3player.domainObjects.PlayMode;
+import at.ac.tuwien.sepm2011ws.mp3player.domainObjects.Playlist;
 import at.ac.tuwien.sepm2011ws.mp3player.domainObjects.Song;
 import at.ac.tuwien.sepm2011ws.mp3player.serviceLayer.CoreInteractionService;
-import at.ac.tuwien.sepm2011ws.mp3player.serviceLayer.PlayMode;
 import at.ac.tuwien.sepm2011ws.mp3player.serviceLayer.PlayerListener;
 
 class JmfCoreInteractionService implements CoreInteractionService {
@@ -30,7 +30,7 @@ class JmfCoreInteractionService implements CoreInteractionService {
 	private boolean isStopped;
 	private float volume;
 	private PlayMode playMode;
-	private ReadonlyPlaylist currentPlaylist;
+	private Playlist currentPlaylist;
 	private Song currentSong;
 	private PlayerListener pl;
 
@@ -233,11 +233,11 @@ class JmfCoreInteractionService implements CoreInteractionService {
 		this.playMode = playMode;
 	}
 
-	public ReadonlyPlaylist getCurrentPlaylist() {
+	public Playlist getCurrentPlaylist() {
 		return this.currentPlaylist;
 	}
 
-	public void setCurrentPlaylist(ReadonlyPlaylist playlist) {
+	public void setCurrentPlaylist(Playlist playlist) {
 		this.currentPlaylist = playlist;
 	}
 

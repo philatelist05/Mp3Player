@@ -56,12 +56,12 @@ import net.miginfocom.swing.MigLayout;
 import org.apache.log4j.Logger;
 import org.springframework.core.io.ClassPathResource;
 
+import at.ac.tuwien.sepm2011ws.mp3player.domainObjects.PlayMode;
+import at.ac.tuwien.sepm2011ws.mp3player.domainObjects.WritablePlaylist;
 import at.ac.tuwien.sepm2011ws.mp3player.domainObjects.Playlist;
-import at.ac.tuwien.sepm2011ws.mp3player.domainObjects.ReadonlyPlaylist;
 import at.ac.tuwien.sepm2011ws.mp3player.domainObjects.Song;
 import at.ac.tuwien.sepm2011ws.mp3player.persistanceLayer.DataAccessException;
 import at.ac.tuwien.sepm2011ws.mp3player.serviceLayer.CoreInteractionService;
-import at.ac.tuwien.sepm2011ws.mp3player.serviceLayer.PlayMode;
 import at.ac.tuwien.sepm2011ws.mp3player.serviceLayer.PlayerListener;
 import at.ac.tuwien.sepm2011ws.mp3player.serviceLayer.PlaylistService;
 import at.ac.tuwien.sepm2011ws.mp3player.serviceLayer.ServiceFactory;
@@ -74,7 +74,7 @@ public class MainFrame extends JFrame implements ActionListener, Runnable,
 	 */
 	private static final long serialVersionUID = -959319978002415594L;
 	private static Logger logger = Logger.getLogger(MainFrame.class);
-	private static ReadonlyPlaylist currentPlaylistGUI;
+	private static Playlist currentPlaylistGUI;
 
 	private JTree pl_tree = new JTree();
 
@@ -121,7 +121,7 @@ public class MainFrame extends JFrame implements ActionListener, Runnable,
 	private Icon mp2;
 	private Icon mp3;
 	
-	private List<? extends ReadonlyPlaylist> playlists = null;
+	private List<? extends Playlist> playlists = null;
 	private PlaylistService ps;
 	private CoreInteractionService cis;
 	private SettingsService ss;
@@ -153,7 +153,7 @@ public class MainFrame extends JFrame implements ActionListener, Runnable,
 	 *            the specified playlist
 	 * @return the new parsed playlist
 	 */
-	public ReadonlyPlaylist parseSongTable(ReadonlyPlaylist list) {
+	public Playlist parseSongTable(Playlist list) {
 		ArrayList<Song> temp = new ArrayList<Song>();
 		Song song;
 		int row = songmodel.getRowCount();
@@ -172,7 +172,7 @@ public class MainFrame extends JFrame implements ActionListener, Runnable,
 	 * Gets all Songs from the Database
 	 */
 	public void getWholeLibrary() {
-		ReadonlyPlaylist library;
+		Playlist library;
 
 		try {
 
@@ -194,7 +194,7 @@ public class MainFrame extends JFrame implements ActionListener, Runnable,
 	 * @param List
 	 *            containing song items
 	 */
-	protected void fillSongTable(ReadonlyPlaylist list) {
+	protected void fillSongTable(Playlist list) {
 		String album = null;
 		songmodel.setRowCount(0);
 		for (Song x : list) {
@@ -511,8 +511,8 @@ public class MainFrame extends JFrame implements ActionListener, Runnable,
 			if (clicked.hasNodePlaylist()) {
 				currentPlaylistGUI = parseSongTable(currentPlaylistGUI);
 				try {
-					if(currentPlaylistGUI.getClass() == Playlist.class)
-						ps.updatePlaylist((Playlist)currentPlaylistGUI);
+					if(currentPlaylistGUI.getClass() == WritablePlaylist.class)
+						ps.updatePlaylist((WritablePlaylist)currentPlaylistGUI);
 				} catch (DataAccessException e) {
 					// TODO: Show error dialog
 				}
@@ -541,15 +541,15 @@ public class MainFrame extends JFrame implements ActionListener, Runnable,
 					PlaylistTreeNode node_1;
 					add(new PlaylistTreeNode(ps.getLibrary().toString(), false,
 							ps.getLibrary()));
-					Playlist qu = new Playlist("Queue");
+					WritablePlaylist qu = new WritablePlaylist("Queue");
 					add(new PlaylistTreeNode("Queue", false, qu));
 
 					// node_1 = new PlaylistTreeNode(ps.getLibrary().toString(),
 					// false, ps.getLibrary());
 					node_1 = new PlaylistTreeNode("Playlists");
 
-					ReadonlyPlaylist current = null;
-					ListIterator<? extends ReadonlyPlaylist> iter = playlists.listIterator();
+					Playlist current = null;
+					ListIterator<? extends Playlist> iter = playlists.listIterator();
 
 					while (iter.hasNext()) {
 						current = iter.next();
@@ -658,8 +658,8 @@ public class MainFrame extends JFrame implements ActionListener, Runnable,
 			public void windowClosing(WindowEvent e) {
 				currentPlaylistGUI = parseSongTable(currentPlaylistGUI);
 				try {
-					if(currentPlaylistGUI.getClass() == Playlist.class)
-						ps.updatePlaylist((Playlist)currentPlaylistGUI);
+					if(currentPlaylistGUI.getClass() == WritablePlaylist.class)
+						ps.updatePlaylist((WritablePlaylist)currentPlaylistGUI);
 				} catch (DataAccessException a) {
 				}
 			}
@@ -685,7 +685,7 @@ public class MainFrame extends JFrame implements ActionListener, Runnable,
 		new EditLyric(list);*/
 	}
 
-	public MainFrame(ReadonlyPlaylist list) {
+	public MainFrame(Playlist list) {
 		currentPlaylistGUI = list;
 	}
 
@@ -808,13 +808,13 @@ public class MainFrame extends JFrame implements ActionListener, Runnable,
 		 * 
 		 * { PlaylistTreeNode node_1; add(new
 		 * PlaylistTreeNode(ps.getLibrary().toString(), false,
-		 * ps.getLibrary())); Playlist qu = new Playlist("Queue"); add(new
+		 * ps.getLibrary())); WritablePlaylist qu = new WritablePlaylist("Queue"); add(new
 		 * PlaylistTreeNode("Queue", false, qu));
 		 * 
 		 * // node_1 = new PlaylistTreeNode(ps.getLibrary().toString(), //
 		 * false, ps.getLibrary()); node_1 = new PlaylistTreeNode("Playlists");
 		 * 
-		 * Playlist current = null; ListIterator<Playlist> iter =
+		 * WritablePlaylist current = null; ListIterator<WritablePlaylist> iter =
 		 * playlists.listIterator();
 		 * 
 		 * while (iter.hasNext()) { current = iter.next(); node_1.add(new
@@ -1198,7 +1198,7 @@ public class MainFrame extends JFrame implements ActionListener, Runnable,
 			librarygui.addFile();
 			buildPlTree();
 			try {
-				ReadonlyPlaylist list = ps.getLibrary();
+				Playlist list = ps.getLibrary();
 				fillSongTable(list);
 				currentPlaylistGUI = list;
 			} catch (DataAccessException e1) {
@@ -1212,7 +1212,7 @@ public class MainFrame extends JFrame implements ActionListener, Runnable,
 			librarygui.addFolder();
 			buildPlTree();
 			try {
-				ReadonlyPlaylist list = ps.getLibrary();
+				Playlist list = ps.getLibrary();
 				fillSongTable(list);
 				currentPlaylistGUI = list;
 			} catch (DataAccessException e1) {
@@ -1226,7 +1226,7 @@ public class MainFrame extends JFrame implements ActionListener, Runnable,
 			playlistgui.importPlaylist();
 			buildPlTree();
 			try {
-				ReadonlyPlaylist list = ps.getLibrary();
+				Playlist list = ps.getLibrary();
 				fillSongTable(list);
 				currentPlaylistGUI = list;
 			} catch (DataAccessException e1) {
@@ -1256,7 +1256,7 @@ public class MainFrame extends JFrame implements ActionListener, Runnable,
 			new checkSongPathGUI();
 			buildPlTree();
 			try {
-				ReadonlyPlaylist list = ps.getLibrary();
+				Playlist list = ps.getLibrary();
 				fillSongTable(list);
 				currentPlaylistGUI = list;
 			} catch (DataAccessException e1) {
@@ -1396,10 +1396,10 @@ public class MainFrame extends JFrame implements ActionListener, Runnable,
 			if (e.getActionCommand().equals("deletePlaylist")) {
 				PlaylistTreeNode selectedNode = (PlaylistTreeNode) pl_tree
 						.getLastSelectedPathComponent();
-				ReadonlyPlaylist selectedPlaylist = selectedNode.getNodePlaylist();
+				Playlist selectedPlaylist = selectedNode.getNodePlaylist();
 				try {
-					if(selectedPlaylist.getClass() == Playlist.class)
-						ps.deletePlaylist((Playlist)selectedPlaylist);
+					if(selectedPlaylist.getClass() == WritablePlaylist.class)
+						ps.deletePlaylist((WritablePlaylist)selectedPlaylist);
 				} catch (DataAccessException e1) {
 				}
 				buildPlTree();
@@ -1407,10 +1407,10 @@ public class MainFrame extends JFrame implements ActionListener, Runnable,
 			} else if (e.getActionCommand().equals("renamePlaylist")) {
 				PlaylistTreeNode selectedNode = (PlaylistTreeNode) pl_tree
 						.getLastSelectedPathComponent();
-				ReadonlyPlaylist selectedPlaylist = selectedNode.getNodePlaylist();
+				Playlist selectedPlaylist = selectedNode.getNodePlaylist();
 				playlistgui = new PlaylistGUI();
-				if(selectedPlaylist.getClass() == Playlist.class)
-					playlistgui.renamePlaylistGUI((Playlist)selectedPlaylist);
+				if(selectedPlaylist.getClass() == WritablePlaylist.class)
+					playlistgui.renamePlaylistGUI((WritablePlaylist)selectedPlaylist);
 				buildPlTree();
 			}
 		}

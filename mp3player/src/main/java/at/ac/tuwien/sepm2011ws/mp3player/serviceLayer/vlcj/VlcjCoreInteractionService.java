@@ -2,7 +2,6 @@ package at.ac.tuwien.sepm2011ws.mp3player.serviceLayer.vlcj;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.List;
 
 import org.apache.log4j.Logger;
 import org.springframework.core.io.ClassPathResource;
@@ -12,13 +11,14 @@ import uk.co.caprica.vlcj.player.MediaPlayerEventListener;
 import uk.co.caprica.vlcj.player.MediaPlayerFactory;
 import uk.co.caprica.vlcj.player.VideoMetaData;
 import uk.co.caprica.vlcj.runtime.RuntimeUtil;
-import at.ac.tuwien.sepm2011ws.mp3player.domainObjects.ReadonlyPlaylist;
+import at.ac.tuwien.sepm2011ws.mp3player.domainObjects.PlayDirection;
+import at.ac.tuwien.sepm2011ws.mp3player.domainObjects.PlayMode;
+import at.ac.tuwien.sepm2011ws.mp3player.domainObjects.Playlist;
 import at.ac.tuwien.sepm2011ws.mp3player.domainObjects.Song;
 import at.ac.tuwien.sepm2011ws.mp3player.persistanceLayer.DataAccessException;
 import at.ac.tuwien.sepm2011ws.mp3player.persistanceLayer.SongDao;
 import at.ac.tuwien.sepm2011ws.mp3player.persistanceLayer.db.DaoFactory;
 import at.ac.tuwien.sepm2011ws.mp3player.serviceLayer.CoreInteractionService;
-import at.ac.tuwien.sepm2011ws.mp3player.serviceLayer.PlayMode;
 import at.ac.tuwien.sepm2011ws.mp3player.serviceLayer.PlayerListener;
 
 import com.sun.jna.Platform;
@@ -29,10 +29,11 @@ public class VlcjCoreInteractionService implements CoreInteractionService {
 			.getLogger(VlcjCoreInteractionService.class);
 	private final MediaPlayer mediaPlayer;
 	private PlayMode playMode;
-	private ReadonlyPlaylist currentPlaylist;
+	private Playlist currentPlaylist;
 	private Song currentSong;
 	private boolean isPaused;
 	private PlayerListener playerListener;
+	private PlayDirection playDirection;
 
 	public VlcjCoreInteractionService() {
 
@@ -42,12 +43,14 @@ public class VlcjCoreInteractionService implements CoreInteractionService {
 
 		this.isPaused = false;
 		this.playMode = PlayMode.NORMAL;
+		this.playDirection = PlayDirection.NEXT;
 
 		MediaPlayerFactory factory = new MediaPlayerFactory(
 				new String[] { "--plugin-path=" + pluginPath });
-		
+
 		this.mediaPlayer = factory.newMediaPlayer();
-		mediaPlayer.addMediaPlayerEventListener(new VvvMediaPlayerEventListener());
+		mediaPlayer
+				.addMediaPlayerEventListener(new VvvMediaPlayerEventListener());
 	}
 
 	private String getLibPath() {
@@ -125,6 +128,7 @@ public class VlcjCoreInteractionService implements CoreInteractionService {
 
 	public void playNext() {
 		Song nextSong = getNextSong();
+		playDirection = PlayDirection.NEXT;
 
 		if (nextSong != null)
 			playFromBeginning(nextSong);
@@ -132,6 +136,7 @@ public class VlcjCoreInteractionService implements CoreInteractionService {
 
 	public void playPrevious() {
 		Song previousSong = getPreviousSong();
+		playDirection = PlayDirection.PREVIOUS;
 
 		if (previousSong != null)
 			playFromBeginning(previousSong);
@@ -212,11 +217,11 @@ public class VlcjCoreInteractionService implements CoreInteractionService {
 		this.playMode = playMode;
 	}
 
-	public ReadonlyPlaylist getCurrentPlaylist() {
+	public Playlist getCurrentPlaylist() {
 		return this.currentPlaylist;
 	}
 
-	public void setCurrentPlaylist(ReadonlyPlaylist playlist) {
+	public void setCurrentPlaylist(Playlist playlist) {
 		this.currentPlaylist = playlist;
 	}
 
@@ -241,34 +246,34 @@ public class VlcjCoreInteractionService implements CoreInteractionService {
 		}
 
 		int maxIndex = this.currentPlaylist.size() - 1;
-		int nextIndex = 0;
+		int index = 0;
 
 		switch (this.playMode) {
 		case NORMAL:
-			nextIndex = getCurrentSongIndex() + 1;
-			if (nextIndex > maxIndex) {
+			index = getCurrentSongIndex() + 1;
+			if (index > maxIndex) {
 				// If the last song was the last of the playlist, stop playing
-				nextIndex = -1;
+				index = -1;
 			}
 			break;
 		case REPEAT:
-			nextIndex = getCurrentSongIndex() + 1;
-			if (nextIndex > maxIndex) {
+			index = getCurrentSongIndex() + 1;
+			if (index > maxIndex) {
 				// If the last song was the last of the playlist, the next song
 				// is the first of the playlist
-				nextIndex = 0;
+				index = 0;
 			}
 			break;
 		case SHUFFLE:
-			nextIndex = (int) Math.floor(Math.random() * maxIndex);
+			index = (int) Math.floor(Math.random() * maxIndex);
 			break;
 		default:
-			nextIndex = 0;
+			index = 0;
 			break;
 		}
 
-		if (nextIndex >= 0 && nextIndex <= maxIndex) {
-			return this.currentPlaylist.get(nextIndex);
+		if (index >= 0 && index <= maxIndex) {
+			return this.currentPlaylist.get(index);
 		}
 		return null;
 	}
@@ -286,9 +291,13 @@ public class VlcjCoreInteractionService implements CoreInteractionService {
 		switch (this.playMode) {
 		case NORMAL:
 			index = getCurrentSongIndex() - 1;
-			if (index < 0) {
-				// If the last song was not in the playlist or it was the first
-				// of the playlist, the next song is the first
+			if (index == -1) {
+				// If the last song was the first song of the playlist, stop
+				// playing
+				// index = -1;
+			} else if (index < -1) {
+				// If the last song was not in the playlist, the next song is
+				// the first
 				index = 0;
 			}
 			break;
@@ -355,7 +364,17 @@ public class VlcjCoreInteractionService implements CoreInteractionService {
 				playerListener.songBeginnEvent();
 				playerListener.songEndEvent();
 			}
-			playNext();
+
+			switch (playDirection) {
+			case NEXT:
+				playNext();
+				break;
+			case PREVIOUS:
+				playPrevious();
+				break;
+			default:
+				break;
+			}
 		}
 
 		@Override

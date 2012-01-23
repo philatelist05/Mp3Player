@@ -2,8 +2,8 @@ package at.ac.tuwien.sepm2011ws.mp3player.presentationLayer;
 
 import javax.swing.tree.DefaultMutableTreeNode;
 
+import at.ac.tuwien.sepm2011ws.mp3player.domainObjects.WritablePlaylist;
 import at.ac.tuwien.sepm2011ws.mp3player.domainObjects.Playlist;
-import at.ac.tuwien.sepm2011ws.mp3player.domainObjects.ReadonlyPlaylist;
 
 /**
  * Special TreeNode class, extends DefaultMutableTreeNode. Offers the option to 
@@ -15,7 +15,7 @@ public class PlaylistTreeNode extends DefaultMutableTreeNode {
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;
-	private ReadonlyPlaylist nodePL = null;
+	private Playlist nodePL = null;
     
 	/**
 	 * Normal Constructer, inherit from DefaultMutableTreeNode
@@ -40,19 +40,19 @@ public class PlaylistTreeNode extends DefaultMutableTreeNode {
 	 * Special Constructer, inherit from DefaultMutableTreeNode, saves a Playlist
 	 * @param Object
 	 * @param boolean
-	 * @param ReadonlyPlaylist
+	 * @param Playlist
 	 * @see DefaultMutableTreeNode
 	 */
-    public PlaylistTreeNode(Object userObject, boolean childrenAllowed, ReadonlyPlaylist nodePL) {
+    public PlaylistTreeNode(Object userObject, boolean childrenAllowed, Playlist nodePL) {
         super(userObject, childrenAllowed);
         this.nodePL = nodePL;
     }
     
 	/**
 	 * Sets the Playlist
-	 * @param ReadonlyPlaylist
+	 * @param Playlist
 	 */
-    public void setNodePlaylist(Playlist nodePL) {
+    public void setNodePlaylist(WritablePlaylist nodePL) {
         this.nodePL = nodePL;
     }
     
@@ -60,7 +60,7 @@ public class PlaylistTreeNode extends DefaultMutableTreeNode {
 	 * Returns the Playlist
 	 * @return Playlist
 	 */
-    public ReadonlyPlaylist getNodePlaylist() {
+    public Playlist getNodePlaylist() {
         return nodePL;
     }
     
