@@ -34,6 +34,7 @@ public class VlcjCoreInteractionService implements CoreInteractionService {
 	private boolean isPaused;
 	private PlayerListener playerListener;
 	private PlayDirection playDirection;
+	private int currentSongIndex;
 
 	public VlcjCoreInteractionService() {
 
@@ -95,12 +96,13 @@ public class VlcjCoreInteractionService implements CoreInteractionService {
 		return "";
 	}
 
-	public void playFromBeginning(Song song) {
-		if (song == null) {
-			playNext();
-		} else {
+	public void playFromBeginning(int index) {
+		this.currentSongIndex = index;
+		Song song = getSong(index);
+		this.currentSong = song;
+
+		if (song != null) {
 			isPaused = false;
-			this.currentSong = song;
 			File songFile = new File(song.getPath());
 
 			mediaPlayer.playMedia(songFile.getAbsolutePath());
@@ -108,16 +110,33 @@ public class VlcjCoreInteractionService implements CoreInteractionService {
 	}
 
 	public void playPause() {
-		playPause(this.currentSong);
+		playPause(this.currentSongIndex);
 	}
 
-	public void playPause(Song song) {
+	public void playPause(int index) {
+		Song song = getSong(index);
+
 		if (song != null && song.equals(this.currentSong)) {
 			// If song is the current song, toggle pause
 			pause();
 		} else {
 			// Play the song from the beginning
-			playFromBeginning(song);
+			playFromBeginning(index);
+		}
+	}
+
+	/**
+	 * Gets a song by its index in the current playlist
+	 * 
+	 * @param index
+	 *            The index of the song in the current playlist
+	 * @return the song with specified index
+	 */
+	private Song getSong(int index) {
+		if (index < 0 || index >= this.currentPlaylist.size()) {
+			return null;
+		} else {
+			return this.currentPlaylist.get(index);
 		}
 	}
 
@@ -127,19 +146,15 @@ public class VlcjCoreInteractionService implements CoreInteractionService {
 	}
 
 	public void playNext() {
-		Song nextSong = getNextSong();
 		playDirection = PlayDirection.NEXT;
-
-		if (nextSong != null)
-			playFromBeginning(nextSong);
+		this.currentSongIndex = getNextSongIndex();
+		playFromBeginning(this.currentSongIndex);
 	}
 
 	public void playPrevious() {
-		Song previousSong = getPreviousSong();
 		playDirection = PlayDirection.PREVIOUS;
-
-		if (previousSong != null)
-			playFromBeginning(previousSong);
+		this.currentSongIndex = getPreviousSongIndex();
+		playFromBeginning(this.currentSongIndex);
 	}
 
 	public void stop() {
@@ -230,19 +245,14 @@ public class VlcjCoreInteractionService implements CoreInteractionService {
 	}
 
 	public int getCurrentSongIndex() {
-		if (this.currentPlaylist == null) {
-			return -1;
-		} else if (this.currentPlaylist.size() == 0) {
-			return -1;
-		}
-		return this.currentPlaylist.indexOf(currentSong);
+		return this.currentSongIndex;
 	}
 
-	public Song getNextSong() {
+	private int getNextSongIndex() {
 		if (this.currentPlaylist == null) {
-			return null;
+			return -1;
 		} else if (this.currentPlaylist.size() == 0) {
-			return null;
+			return -1;
 		}
 
 		int maxIndex = this.currentPlaylist.size() - 1;
@@ -273,16 +283,16 @@ public class VlcjCoreInteractionService implements CoreInteractionService {
 		}
 
 		if (index >= 0 && index <= maxIndex) {
-			return this.currentPlaylist.get(index);
+			return index;
 		}
-		return null;
+		return -1;
 	}
 
-	public Song getPreviousSong() {
+	private int getPreviousSongIndex() {
 		if (this.currentPlaylist == null) {
-			return null;
+			return -1;
 		} else if (this.currentPlaylist.size() == 0) {
-			return null;
+			return -1;
 		}
 
 		int maxIndex = this.currentPlaylist.size() - 1;
@@ -322,9 +332,9 @@ public class VlcjCoreInteractionService implements CoreInteractionService {
 		}
 
 		if (index >= 0 && index <= maxIndex) {
-			return this.currentPlaylist.get(index);
+			return index;
 		}
-		return null;
+		return -1;
 	}
 
 	public void setPlayerListener(PlayerListener playerListener) {
