@@ -21,17 +21,13 @@ import java.awt.event.WindowEvent;
 import java.awt.event.WindowStateListener;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Enumeration;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.ListIterator;
 import javax.imageio.ImageIO;
-import javax.swing.Action;
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
 import javax.swing.JCheckBox;
-import javax.swing.JCheckBoxMenuItem;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JMenu;
@@ -52,8 +48,6 @@ import javax.swing.event.ChangeListener;
 import javax.swing.event.TableModelEvent;
 import javax.swing.event.TableModelListener;
 import javax.swing.table.DefaultTableCellRenderer;
-import javax.swing.table.TableColumn;
-import javax.swing.table.TableModel;
 import javax.swing.tree.DefaultTreeModel;
 import javax.swing.tree.TreePath;
 
@@ -61,7 +55,6 @@ import net.miginfocom.swing.MigLayout;
 
 import org.apache.log4j.Logger;
 import org.springframework.core.io.ClassPathResource;
-import org.springframework.core.io.Resource;
 
 import at.ac.tuwien.sepm2011ws.mp3player.domainObjects.Playlist;
 import at.ac.tuwien.sepm2011ws.mp3player.domainObjects.ReadonlyPlaylist;
@@ -89,7 +82,7 @@ public class MainFrame extends JFrame implements ActionListener, Runnable,
 	private LibraryGUI librarygui;
 	private JTable songTable;
 	private HidableTableColumnModel cTableModel;
-	private SongTableModel songmodel = new SongTableModel(new String[] { "",
+	private SongTableModel songmodel = new SongTableModel(new String[] { "Status",
 			"Title", "Artist", "Album", "Year", "Genre", "Duration", "Rating",
 			"Playcount" }, 0);
 	private RectButton btnPrevious;
@@ -244,7 +237,7 @@ public class MainFrame extends JFrame implements ActionListener, Runnable,
 			lblCurrentStateSong.setText("");
 
 			cis.playPrevious();
-			Song temp = cis.getCurrentSong();
+			//Song temp = cis.getCurrentSong();
 
 			// progress.setEnabled(true);
 			if (fred == null || fred.isAlive() == false) {
@@ -584,22 +577,18 @@ public class MainFrame extends JFrame implements ActionListener, Runnable,
 	}
 
 	public void setVisibleColumns() {
-		HashMap Zuordnung = new HashMap();
-
-		for (int i = 0; i < 9; i++) {
-			cTableModel.setColumnVisible(i, false);
-			
+		HashMap<String, Integer> Zuordnung = new HashMap<String, Integer>();
+		String[] columnsAll = new String[SettingsService.SongTableColumnsAll.length + 1];
+		
+		columnsAll[0] = "Status";
+		for (int i = 0; i < SettingsService.SongTableColumnsAll.length; i++) {
+			columnsAll[i+1] = SettingsService.SongTableColumnsAll[i];
 		}
-
-		Zuordnung.put("status", 0);
-		Zuordnung.put("title", 1);
-		Zuordnung.put("artist", 2);
-		Zuordnung.put("album", 3);
-		Zuordnung.put("year", 4);
-		Zuordnung.put("genre", 5);
-		Zuordnung.put("duration", 6);
-		Zuordnung.put("rating", 7);
-		Zuordnung.put("playcount", 8);
+		
+		for (int i = 0; i < columnsAll.length; i++) {
+			cTableModel.setColumnVisible(i, false);
+			Zuordnung.put(columnsAll[i], i);
+		}
 
 		/*
 		 * for(int i= 0; i < ss.getUserColumns().length; i++) {
@@ -612,10 +601,10 @@ public class MainFrame extends JFrame implements ActionListener, Runnable,
 
 		String[] userCols = ss.getUserColumns();
 		String[] songTableCols = new String[userCols.length + 1];
-		songTableCols[0] = "status";
+		songTableCols[0] = "Status";
 
 		for (int i = 0; i < userCols.length; i++) {
-			songTableCols[i + 1] = userCols[i];
+			songTableCols[i+1] = userCols[i];
 		}
 		boolean color = false;
 		for (int i = 0; i < songTableCols.length; i++) {
