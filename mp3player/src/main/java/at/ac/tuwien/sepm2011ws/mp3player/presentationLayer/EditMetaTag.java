@@ -25,13 +25,13 @@ import org.apache.log4j.Logger;
 
 import at.ac.tuwien.sepm2011ws.mp3player.domainObjects.Song;
 
-public class AlterMetaTag extends JDialog implements ActionListener {
+public class EditMetaTag extends JDialog implements ActionListener {
 
 	/**
 	 * 
 	 */
 	private static final long serialVersionUID = -382149403700069523L;
-	private static Logger logger = Logger.getLogger(AlterMetaTag.class);
+	private static Logger logger = Logger.getLogger(EditMetaTag.class);
 	private Song song;
 
 	private JPanel alterPanel = new JPanel(new MigLayout("", "[][grow]",
@@ -60,7 +60,7 @@ public class AlterMetaTag extends JDialog implements ActionListener {
 		return song;
 	}
 
-	public AlterMetaTag(ArrayList<Song> songlist) {
+	public EditMetaTag(ArrayList<Song> songlist) {
 		if (!songlist.isEmpty()) {
 			Toolkit toolkit = Toolkit.getDefaultToolkit();
 			Dimension dim = toolkit.getScreenSize();
