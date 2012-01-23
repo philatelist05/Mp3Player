@@ -835,7 +835,7 @@ public class MainFrame extends JFrame implements ActionListener, Runnable,
 		 * node_1.add(new PlaylistTreeNode("TopRated"));
 		 * 
 		 * node_1.add(new PlaylistTreeNode( ps.getTopRated().getTitle(), false,
-		 * ps .getTopRated())); node_1.add(new
+		 * ps.getTopRated())); node_1.add(new
 		 * PlaylistTreeNode(ps.getTopPlayed() .getTitle(), false,
 		 * ps.getTopPlayed()));
 		 * 
