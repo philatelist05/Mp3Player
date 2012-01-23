@@ -255,6 +255,14 @@ public class MainFrame extends JFrame implements ActionListener, Runnable,
 			lblCurrentStateSong.setText("");
 
 			cis.playPrevious();
+			
+			progress.setEnabled(true);
+			lblPlayedTime.setText(getPlayedTimeInSeconds());
+			progress.setVisible(true);
+			lblCurrentStateSong.setVisible(true);
+			lblPlayedTime.setVisible(true);
+			lblDurationSeperator.setVisible(true);
+			lblDuration.setVisible(true);
 
 			// Song temp = cis.getCurrentSong();
 
@@ -368,6 +376,13 @@ public class MainFrame extends JFrame implements ActionListener, Runnable,
 			lblCurrentStateSong.setText("");
 
 			cis.playNext();
+			progress.setEnabled(true);
+			lblPlayedTime.setText(getPlayedTimeInSeconds());
+			progress.setVisible(true);
+			lblCurrentStateSong.setVisible(true);
+			lblPlayedTime.setVisible(true);
+			lblDurationSeperator.setVisible(true);
+			lblDuration.setVisible(true);
 
 			// Song temp = cis.getCurrentSong();
 			// progress.setEnabled(true);

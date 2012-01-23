@@ -42,8 +42,8 @@ public class SongTableRenderer extends DefaultTableCellRenderer {
 		Color cb = new Color(255, 255, 230);
 		if(row % 2 == 0 )
 			{setBackground(cb);}
-		//if(cis.isPlaying())
-		//{
+	//	if(cis.isPlaying())
+	//	{
 			if (cis.getCurrentSongIndex() > -1) {
 				//if (table.getRowSorter().convertRowIndexToView(
 					if(	cis.getCurrentSongIndex() == row) {
@@ -51,7 +51,7 @@ public class SongTableRenderer extends DefaultTableCellRenderer {
 					component.setFont(component.getFont().deriveFont(Font.BOLD));
 				}
 			}
-		//}
+	//	}
 		return component;
 	}
 }
