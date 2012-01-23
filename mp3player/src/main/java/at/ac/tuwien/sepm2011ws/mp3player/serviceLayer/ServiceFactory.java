@@ -3,7 +3,6 @@ package at.ac.tuwien.sepm2011ws.mp3player.serviceLayer;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
-
 public class ServiceFactory {
 	private static ServiceFactory instance;
 	private final ApplicationContext context;

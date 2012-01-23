@@ -1,6 +1,3 @@
-/**
- * 
- */
 package at.ac.tuwien.sepm2011ws.mp3player.persistanceLayer;
 
 import java.sql.Connection;
@@ -8,10 +5,6 @@ import java.util.List;
 
 import at.ac.tuwien.sepm2011ws.mp3player.domainObjects.Song;
 
-/**
- * @author klaus
- * 
- */
 public interface SongDao {
 	/**
 	 * Creates a song.

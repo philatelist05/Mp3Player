@@ -1,16 +1,9 @@
-/**
- * 
- */
 package at.ac.tuwien.sepm2011ws.mp3player.serviceLayer;
 
 import at.ac.tuwien.sepm2011ws.mp3player.domainObjects.PlayMode;
 import at.ac.tuwien.sepm2011ws.mp3player.domainObjects.Playlist;
 import at.ac.tuwien.sepm2011ws.mp3player.domainObjects.Song;
 
-/**
- * @author klaus
- * 
- */
 public interface CoreInteractionService {
 	public final int MAX_VOLUME = 100;
 

@@ -1,6 +1,3 @@
-/**
- * Veni Vidi Vici PlaylistService
- */
 package at.ac.tuwien.sepm2011ws.mp3player.serviceLayer.vvv;
 
 import java.io.BufferedWriter;
@@ -28,10 +25,6 @@ import christophedelory.playlist.Sequence;
 import christophedelory.playlist.SpecificPlaylist;
 import christophedelory.playlist.SpecificPlaylistFactory;
 
-/**
- * @author klaus
- * 
- */
 class VvvPlaylistService implements PlaylistService {
 
 	private static final Logger logger = Logger

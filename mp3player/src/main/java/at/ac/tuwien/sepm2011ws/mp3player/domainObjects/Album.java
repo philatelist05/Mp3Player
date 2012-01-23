@@ -8,7 +8,6 @@ public class Album {
 	private String albumartPath;
 
 	/**
-	 * 
 	 * @param title
 	 */
 	public Album(String title) {

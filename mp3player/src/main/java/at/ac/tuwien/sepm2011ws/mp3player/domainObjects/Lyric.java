@@ -1,12 +1,5 @@
-/**
- * 
- */
 package at.ac.tuwien.sepm2011ws.mp3player.domainObjects;
 
-/**
- * @author oli
- * 
- */
 public class Lyric {
 
 	private String text;
