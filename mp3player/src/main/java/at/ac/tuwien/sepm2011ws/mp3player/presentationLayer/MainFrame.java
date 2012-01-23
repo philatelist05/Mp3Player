@@ -172,29 +172,10 @@ public class MainFrame extends JFrame implements ActionListener, Runnable,
 		ArrayList<Song> temp = new ArrayList<Song>();
 		Song song;
 		
-		//int row2 = sorter.getModel().getRowCount();
 		int row = songmodel.getRowCount();
 
-		
-		for (int i = 0; i < row; i++) {
-			
-			//System.out.println(sorter.convertRowIndexToView(0));
-			
+		for (int i = 0; i < row; i++) {			
 			song = (Song) songTable.getValueAt(i, 0);
-			//song.setId(i);
-			logger.info(song.getId());
-			logger.info(song.getArtist());
-			temp.add(song);
-		}
-		
-		for (int i = 0; i < row; i++) {
-			
-			//System.out.println(sorter.convertRowIndexToView(0));
-			
-			song = (Song) songTable.getValueAt(sorter.convertRowIndexToView(i), 0);
-			//song.setId(i);
-			logger.info(song.getId());
-			logger.info(song.getArtist());
 			temp.add(song);
 		}
 		
@@ -1602,10 +1583,6 @@ public class MainFrame extends JFrame implements ActionListener, Runnable,
 		//logger.info("sorterChanged");
 		currentPlaylistGUI = parseSongTable(currentPlaylistGUI);
 		cis.setCurrentPlaylist(currentPlaylistGUI);
-		
-		//currentPlaylistGUI.
-		//for( int i = 0; i< currentPlaylistGUI.size(); )
-		//ps.reloadPlaylist(currentPlaylistGUI);
 		new MainFrame("reloadsongTable");
 	}
 }
