@@ -173,7 +173,7 @@ public class MainFrame extends JFrame implements ActionListener, Runnable,
 		Song song;
 		
 		int row = songmodel.getRowCount();
-
+		list.clear();
 		for (int i = 0; i < row; i++) {			
 			song = (Song) songTable.getValueAt(i, 0);
 			temp.add(song);
