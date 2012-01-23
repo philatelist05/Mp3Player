@@ -74,7 +74,7 @@ public class GetMetaTag extends JDialog implements ActionListener, ItemListener,
 
 			song = songlist.get(0);
 			String temp = "";
-
+			
 			initialize();			
 			
 			tags.add(new SongWrapper(song, ComponentType.ComboBox, "stored Metatags"));
