@@ -54,4 +54,9 @@ public class Lyric {
 		}
 		return false;
 	}
+
+	@Override
+	public int hashCode() {
+		return (text == null) ? 0 : text.hashCode();
+	}
 }
