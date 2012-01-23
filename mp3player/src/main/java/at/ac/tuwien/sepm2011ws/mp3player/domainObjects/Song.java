@@ -142,8 +142,7 @@ public class Song {
 	 */
 	public void setRating(int rating) throws IllegalArgumentException {
 		if (rating < 0 || rating > 5)
-			throw new IllegalArgumentException(
-					"Rating must be between 0 and 5");
+			throw new IllegalArgumentException("Rating must be between 0 and 5");
 		this.rating = rating;
 	}
 
@@ -301,8 +300,8 @@ public class Song {
 		result = 31 * result ^ (artist == null ? 0 : artist.hashCode());
 		result = 31 * result ^ (genre == null ? 0 : genre.hashCode());
 		result = 31 * result ^ (pathOk ? 1 : 0);
-		result = 31 * result ^ album.hashCode();
-		result = 31 * result ^ lyric.hashCode();
+		result = 31 * result ^ (album == null ? 0 : album.hashCode());
+		result = 31 * result ^ (lyric == null ? 0 : lyric.hashCode());
 		return result;
 	}
 }
