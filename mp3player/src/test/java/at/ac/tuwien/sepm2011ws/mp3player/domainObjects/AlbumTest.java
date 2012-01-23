@@ -9,7 +9,7 @@ public class AlbumTest {
 	@Test(expected = IllegalArgumentException.class)
 	public void testSetYear_ShouldThrowIllegalArgumentException() {
 		Album album = new Album("test");
-		album.setYear(0);
+		album.setYear(-1);
 	}
 
 	@Test(expected = IllegalArgumentException.class)
@@ -18,27 +18,31 @@ public class AlbumTest {
 		album.setId(-1);
 	}
 
+	@Test
 	public void testEquals_ShouldBeEqual1() {
 		Album album1 = new Album("test");
 		Album album2 = new Album("test");
 		assertEquals(album1, album2);
 	}
 
+	@Test
 	public void testEquals_ShouldBeEqual2() {
-		Album album1 = new Album(1,"title",2000,"/");
-		Album album2 = new Album(1,"title",2000,"/");
+		Album album1 = new Album(1, "title", 2000, "/");
+		Album album2 = new Album(1, "title", 2000, "/");
 		assertEquals(album1, album2);
 	}
-	
+
+	@Test
 	public void testHashcode_ShouldBeEqual1() {
 		Album album1 = new Album("test");
 		Album album2 = new Album("test");
 		assertEquals(album1.hashCode(), album2.hashCode());
 	}
 
+	@Test
 	public void testHashcode_ShouldBeEqual2() {
-		Album album1 = new Album(1,"title",2000,"/");
-		Album album2 = new Album(1,"title",2000,"/");
+		Album album1 = new Album(1, "title", 2000, "/");
+		Album album2 = new Album(1, "title", 2000, "/");
 		assertEquals(album1.hashCode(), album2.hashCode());
 	}
 }

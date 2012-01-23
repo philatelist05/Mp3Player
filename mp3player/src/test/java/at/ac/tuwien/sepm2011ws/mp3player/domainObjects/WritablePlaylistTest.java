@@ -11,7 +11,8 @@ public class WritablePlaylistTest {
 		WritablePlaylist playlist = new WritablePlaylist("Title");
 		playlist.setId(-1);
 	}
-	
+
+	@Test
 	public void testSetTitle_ShouldSetTitle() {
 		WritablePlaylist playlist = new WritablePlaylist("Title");
 		playlist.setTitle("Mytitle");
