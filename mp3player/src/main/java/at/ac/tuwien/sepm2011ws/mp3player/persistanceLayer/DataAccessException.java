@@ -1,9 +1,5 @@
 package at.ac.tuwien.sepm2011ws.mp3player.persistanceLayer;
 
-/**
- * @author klaus
- * 
- */
 public class DataAccessException extends Exception {
 	private static final long serialVersionUID = -2911645354109063445L;
 

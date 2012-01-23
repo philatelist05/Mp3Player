@@ -1,16 +1,8 @@
-/**
- * 
- */
 package at.ac.tuwien.sepm2011ws.mp3player.persistanceLayer;
 
 import java.sql.Connection;
 
 import at.ac.tuwien.sepm2011ws.mp3player.domainObjects.Album;
-
-/**
- * @author klaus K
- * 
- */
 
 public interface AlbumDao {
 	/**

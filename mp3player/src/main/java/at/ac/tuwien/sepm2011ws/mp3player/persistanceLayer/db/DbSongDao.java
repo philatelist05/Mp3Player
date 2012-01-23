@@ -15,13 +15,6 @@ import at.ac.tuwien.sepm2011ws.mp3player.domainObjects.Song;
 import at.ac.tuwien.sepm2011ws.mp3player.persistanceLayer.AlbumDao;
 import at.ac.tuwien.sepm2011ws.mp3player.persistanceLayer.DataAccessException;
 import at.ac.tuwien.sepm2011ws.mp3player.persistanceLayer.SongDao;
-import at.ac.tuwien.sepm2011ws.mp3player.serviceLayer.ServiceFactory;
-import at.ac.tuwien.sepm2011ws.mp3player.serviceLayer.SettingsService;
-
-/**
- * @author klaus
- * 
- */
 
 class DbSongDao implements SongDao {
 	private Connection con;
