@@ -6,8 +6,8 @@ package at.ac.tuwien.sepm2011ws.mp3player.persistanceLayer;
 import java.sql.Connection;
 import java.util.List;
 
+import at.ac.tuwien.sepm2011ws.mp3player.domainObjects.WritablePlaylist;
 import at.ac.tuwien.sepm2011ws.mp3player.domainObjects.Playlist;
-import at.ac.tuwien.sepm2011ws.mp3player.domainObjects.ReadonlyPlaylist;
 
 /**
  * @author klaus
@@ -21,7 +21,7 @@ public interface PlaylistDao {
 	 *            The playlist which will be created.
 	 * @throws DataAccessException
 	 */
-	public void create(Playlist p) throws DataAccessException;
+	public void create(WritablePlaylist p) throws DataAccessException;
 
 	/**
 	 * Updates a playlist.
@@ -31,7 +31,7 @@ public interface PlaylistDao {
 	 *            playlist.
 	 * @throws DataAccessException
 	 */
-	public void update(Playlist p) throws DataAccessException;
+	public void update(WritablePlaylist p) throws DataAccessException;
 
 	/**
 	 * Deletes a playlist.
@@ -50,7 +50,7 @@ public interface PlaylistDao {
 	 * @return The playlist from the DB.
 	 * @throws DataAccessException
 	 */
-	public ReadonlyPlaylist read(int id) throws DataAccessException;
+	public Playlist read(int id) throws DataAccessException;
 
 	/**
 	 * Reads all playlists from the DB.
@@ -58,7 +58,7 @@ public interface PlaylistDao {
 	 * @return A list of all playlists from the DB.
 	 * @throws DataAccessException
 	 */
-	public List<? extends ReadonlyPlaylist> readAll() throws DataAccessException;
+	public List<? extends Playlist> readAll() throws DataAccessException;
 
 	/**
 	 * Only renames the playlist to the new name in opposition to
@@ -70,7 +70,7 @@ public interface PlaylistDao {
 	 *            The new name of the playlist
 	 * @throws DataAccessException
 	 */
-	public void rename(Playlist p, String name) throws DataAccessException;
+	public void rename(WritablePlaylist p, String name) throws DataAccessException;
 
 	/**
 	 * @return the connection used by this DAO

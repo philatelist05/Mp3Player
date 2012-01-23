@@ -9,8 +9,8 @@ import javax.swing.JTree;
 import javax.swing.tree.DefaultTreeModel;
 import javax.swing.tree.TreePath;
 
+import at.ac.tuwien.sepm2011ws.mp3player.domainObjects.WritablePlaylist;
 import at.ac.tuwien.sepm2011ws.mp3player.domainObjects.Playlist;
-import at.ac.tuwien.sepm2011ws.mp3player.domainObjects.ReadonlyPlaylist;
 import at.ac.tuwien.sepm2011ws.mp3player.domainObjects.Song;
 import at.ac.tuwien.sepm2011ws.mp3player.persistanceLayer.DataAccessException;
 import at.ac.tuwien.sepm2011ws.mp3player.serviceLayer.PlaylistService;
@@ -45,12 +45,12 @@ public class JTreeSongTransferHandler extends SongTransferHandler {
 			TreePath check = new TreePath(new String[] { "", "Library" });
 			if (path.toString().equals(check.toString())) {
 			} else {
-				ReadonlyPlaylist cp = clicked.getNodePlaylist();
+				Playlist cp = clicked.getNodePlaylist();
 				for (int i = 0; i < songs.length; i++) {
 					cp.add(songs[i]);
 					try {
-						if(cp.getClass() == Playlist.class)
-							ps.updatePlaylist((Playlist)cp);
+						if(cp.getClass() == WritablePlaylist.class)
+							ps.updatePlaylist((WritablePlaylist)cp);
 					} catch (DataAccessException e) {
 						//TODO: ErrorDialog
 					}

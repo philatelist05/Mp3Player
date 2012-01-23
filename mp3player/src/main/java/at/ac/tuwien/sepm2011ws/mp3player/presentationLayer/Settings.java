@@ -69,7 +69,7 @@ public class Settings extends JDialog implements ActionListener {
 			filetypes = SettingsService.SongFileTypesAll;
 		// filetypes = new String[] {"wav"};
 		for (int i = 0; i < filetypes.length; i++) {
-			model.addElement(filetypes[i].toLowerCase());
+			model.addElement(filetypes[i]);
 		}
 	}
 
@@ -79,7 +79,7 @@ public class Settings extends JDialog implements ActionListener {
 			columns = SettingsService.SongTableColumnsAll;
 		// columns = new String[] {"Artist"};
 		for (int i = 0; i < columns.length; i++) {
-			model.addElement(columns[i].toLowerCase());
+			model.addElement(columns[i]);
 		}
 	}
 

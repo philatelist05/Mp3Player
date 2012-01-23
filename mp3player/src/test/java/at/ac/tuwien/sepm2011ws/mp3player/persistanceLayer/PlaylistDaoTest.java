@@ -8,8 +8,8 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
+import at.ac.tuwien.sepm2011ws.mp3player.domainObjects.WritablePlaylist;
 import at.ac.tuwien.sepm2011ws.mp3player.domainObjects.Playlist;
-import at.ac.tuwien.sepm2011ws.mp3player.domainObjects.ReadonlyPlaylist;
 import at.ac.tuwien.sepm2011ws.mp3player.domainObjects.Song;
 import at.ac.tuwien.sepm2011ws.mp3player.persistanceLayer.db.DaoFactory;
 
@@ -37,17 +37,17 @@ public class PlaylistDaoTest {
 	@Test
 	public void testReplstdao_ReplstdaosExistingSimplePlaylist()
 			throws DataAccessException {
-		Playlist expected = new Playlist("Test1");
+		WritablePlaylist expected = new WritablePlaylist("Test1");
 		plstdao.create(expected);
 
-		ReadonlyPlaylist actual = plstdao.read(expected.getId());
+		Playlist actual = plstdao.read(expected.getId());
 		assertEquals(expected, actual);
 	}
 
 	@Test
 	public void testReplstdao_ReplstdaosExistingComplexPlaylist()
 			throws DataAccessException {
-		Playlist expected = new Playlist("Test1");
+		WritablePlaylist expected = new WritablePlaylist("Test1");
 
 		List<Song> list = new ArrayList<Song>();
 		Song s1 = new Song("Artist1", "Title1", 0, "/myPath/test1.mp3");
@@ -65,20 +65,20 @@ public class PlaylistDaoTest {
 		expected.addAll(list);
 		plstdao.create(expected);
 
-		ReadonlyPlaylist actual = plstdao.read(expected.getId());
+		Playlist actual = plstdao.read(expected.getId());
 		assertEquals(expected, actual);
 	}
 
 	@Test
 	public void testReplstdao_ReplstdaosUnexistingSong()
 			throws DataAccessException {
-		ReadonlyPlaylist a = plstdao.read(Integer.MAX_VALUE);
+		Playlist a = plstdao.read(Integer.MAX_VALUE);
 		assertNull(a);
 	}
 
 	@Test
 	public void testCreate_CreateValidPlaylist() throws DataAccessException {
-		Playlist expected = new Playlist("Test1");
+		WritablePlaylist expected = new WritablePlaylist("Test1");
 		plstdao.create(expected);
 		assertTrue(expected.getId() > 0);
 	}
@@ -86,17 +86,17 @@ public class PlaylistDaoTest {
 	@Test(expected = IllegalArgumentException.class)
 	public void testCreate_CreateSongWithInvalidTitle()
 			throws DataAccessException, IllegalArgumentException {
-		Playlist expected = new Playlist(null);
+		WritablePlaylist expected = new WritablePlaylist(null);
 		plstdao.create(expected);
 	}
 
 	@Test
 	public void testUpdate_TestsValidUpdate() throws DataAccessException {
-		Playlist expected = new Playlist("Test1");
+		WritablePlaylist expected = new WritablePlaylist("Test1");
 		plstdao.create(expected);
 		expected.setTitle("Test2");
 		plstdao.update(expected);
-		ReadonlyPlaylist actual = plstdao.read(expected.getId());
+		Playlist actual = plstdao.read(expected.getId());
 		assertEquals(expected, actual);
 	}
 
@@ -107,10 +107,10 @@ public class PlaylistDaoTest {
 
 	@Test
 	public void testDelete_TestsValidDelete() throws DataAccessException {
-		Playlist a = new Playlist("Test1");
+		WritablePlaylist a = new WritablePlaylist("Test1");
 		plstdao.create(a);
 		plstdao.delete(a.getId());
-		ReadonlyPlaylist actual = plstdao.read(a.getId());
+		Playlist actual = plstdao.read(a.getId());
 		assertNull(actual);
 	}
 

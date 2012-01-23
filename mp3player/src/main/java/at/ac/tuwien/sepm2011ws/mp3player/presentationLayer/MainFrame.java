@@ -1,6 +1,9 @@
 package at.ac.tuwien.sepm2011ws.mp3player.presentationLayer;
 
+import java.awt.Color;
+import java.awt.Component;
 import java.awt.Dimension;
+import java.awt.Font;
 import java.awt.Image;
 import java.awt.Rectangle;
 import java.awt.Toolkit;
@@ -21,17 +24,13 @@ import java.awt.event.WindowEvent;
 import java.awt.event.WindowStateListener;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Enumeration;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.ListIterator;
 import javax.imageio.ImageIO;
-import javax.swing.Action;
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
 import javax.swing.JCheckBox;
-import javax.swing.JCheckBoxMenuItem;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JMenu;
@@ -52,8 +51,6 @@ import javax.swing.event.ChangeListener;
 import javax.swing.event.TableModelEvent;
 import javax.swing.event.TableModelListener;
 import javax.swing.table.DefaultTableCellRenderer;
-import javax.swing.table.TableColumn;
-import javax.swing.table.TableModel;
 import javax.swing.tree.DefaultTreeModel;
 import javax.swing.tree.TreePath;
 
@@ -61,14 +58,13 @@ import net.miginfocom.swing.MigLayout;
 
 import org.apache.log4j.Logger;
 import org.springframework.core.io.ClassPathResource;
-import org.springframework.core.io.Resource;
 
+import at.ac.tuwien.sepm2011ws.mp3player.domainObjects.PlayMode;
+import at.ac.tuwien.sepm2011ws.mp3player.domainObjects.WritablePlaylist;
 import at.ac.tuwien.sepm2011ws.mp3player.domainObjects.Playlist;
-import at.ac.tuwien.sepm2011ws.mp3player.domainObjects.ReadonlyPlaylist;
 import at.ac.tuwien.sepm2011ws.mp3player.domainObjects.Song;
 import at.ac.tuwien.sepm2011ws.mp3player.persistanceLayer.DataAccessException;
 import at.ac.tuwien.sepm2011ws.mp3player.serviceLayer.CoreInteractionService;
-import at.ac.tuwien.sepm2011ws.mp3player.serviceLayer.PlayMode;
 import at.ac.tuwien.sepm2011ws.mp3player.serviceLayer.PlayerListener;
 import at.ac.tuwien.sepm2011ws.mp3player.serviceLayer.PlaylistService;
 import at.ac.tuwien.sepm2011ws.mp3player.serviceLayer.ServiceFactory;
@@ -81,7 +77,7 @@ public class MainFrame extends JFrame implements ActionListener, Runnable,
 	 */
 	private static final long serialVersionUID = -959319978002415594L;
 	private static Logger logger = Logger.getLogger(MainFrame.class);
-	private static ReadonlyPlaylist currentPlaylistGUI;
+	private static Playlist currentPlaylistGUI;
 
 	private JTree pl_tree = new JTree();
 
@@ -89,9 +85,9 @@ public class MainFrame extends JFrame implements ActionListener, Runnable,
 	private LibraryGUI librarygui;
 	private JTable songTable;
 	private HidableTableColumnModel cTableModel;
-	private SongTableModel songmodel = new SongTableModel(new String[] { "",
-			"Title", "Artist", "Album", "Year", "Genre", "Duration", "Rating",
-			"Playcount" }, 0);
+	private SongTableModel songmodel = new SongTableModel(new String[] {
+			"Status", "Title", "Artist", "Album", "Year", "Genre", "Duration",
+			"Rating", "Playcount" }, 0);
 	private RectButton btnPrevious;
 	private RoundButton btnPlayPause;
 	private RectButton btnNext;
@@ -114,7 +110,7 @@ public class MainFrame extends JFrame implements ActionListener, Runnable,
 	private JPopupMenu tablePopupMenu = new JPopupMenu();
 
 	private JPopupMenu treePopupMenu = new JPopupMenu();
-	
+
 	private Icon l1;
 	private Icon l2;
 	private Icon l3;
@@ -127,29 +123,37 @@ public class MainFrame extends JFrame implements ActionListener, Runnable,
 	private Icon mp1;
 	private Icon mp2;
 	private Icon mp3;
-	
-	private List<? extends ReadonlyPlaylist> playlists = null;
+
+	private List<? extends Playlist> playlists = null;
 	private PlaylistService ps;
 	private CoreInteractionService cis;
 	private SettingsService ss;
-	
-	
+
 	private void initIcons() throws IOException {
 		l1 = new ImageIcon(new ClassPathResource("img/left_blue.png").getURL());
-		l2 = new ImageIcon(new ClassPathResource("img/left_orange.png").getURL());
-		l3 = new ImageIcon(new ClassPathResource("img/left_orange_pressed.png").getURL());
+		l2 = new ImageIcon(
+				new ClassPathResource("img/left_orange.png").getURL());
+		l3 = new ImageIcon(
+				new ClassPathResource("img/left_orange_pressed.png").getURL());
 
 		m1 = new ImageIcon(new ClassPathResource("img/play_blue.png").getURL());
-		m2 = new ImageIcon(new ClassPathResource("img/play_orange.png").getURL());
-		m3 = new ImageIcon(new ClassPathResource("img/play_orange_pressed.png").getURL());
+		m2 = new ImageIcon(
+				new ClassPathResource("img/play_orange.png").getURL());
+		m3 = new ImageIcon(
+				new ClassPathResource("img/play_orange_pressed.png").getURL());
 
 		r1 = new ImageIcon(new ClassPathResource("img/right_blue.png").getURL());
-		r2 = new ImageIcon(new ClassPathResource("img/right_orange.png").getURL());
-		r3 = new ImageIcon(new ClassPathResource("img/right_orange_pressed.png").getURL());
+		r2 = new ImageIcon(
+				new ClassPathResource("img/right_orange.png").getURL());
+		r3 = new ImageIcon(
+				new ClassPathResource("img/right_orange_pressed.png").getURL());
 
-		mp1 = new ImageIcon(new ClassPathResource("img/pause_blue.png").getURL());
-		mp2 = new ImageIcon(new ClassPathResource("img/pause_orange.png").getURL());
-		mp3 = new ImageIcon(new ClassPathResource("img/pause_orange_pressed.png").getURL());
+		mp1 = new ImageIcon(
+				new ClassPathResource("img/pause_blue.png").getURL());
+		mp2 = new ImageIcon(
+				new ClassPathResource("img/pause_orange.png").getURL());
+		mp3 = new ImageIcon(new ClassPathResource(
+				"img/pause_orange_pressed.png").getURL());
 	}
 
 	/**
@@ -160,7 +164,7 @@ public class MainFrame extends JFrame implements ActionListener, Runnable,
 	 *            the specified playlist
 	 * @return the new parsed playlist
 	 */
-	public ReadonlyPlaylist parseSongTable(ReadonlyPlaylist list) {
+	public Playlist parseSongTable(Playlist list) {
 		ArrayList<Song> temp = new ArrayList<Song>();
 		Song song;
 		int row = songmodel.getRowCount();
@@ -179,7 +183,7 @@ public class MainFrame extends JFrame implements ActionListener, Runnable,
 	 * Gets all Songs from the Database
 	 */
 	public void getWholeLibrary() {
-		ReadonlyPlaylist library;
+		Playlist library;
 
 		try {
 
@@ -201,7 +205,7 @@ public class MainFrame extends JFrame implements ActionListener, Runnable,
 	 * @param List
 	 *            containing song items
 	 */
-	protected void fillSongTable(ReadonlyPlaylist list) {
+	protected void fillSongTable(Playlist list) {
 		String album = null;
 		songmodel.setRowCount(0);
 		for (Song x : list) {
@@ -244,13 +248,15 @@ public class MainFrame extends JFrame implements ActionListener, Runnable,
 			lblCurrentStateSong.setText("");
 
 			cis.playPrevious();
-			Song temp = cis.getCurrentSong();
+
+			// Song temp = cis.getCurrentSong();
 
 			// progress.setEnabled(true);
-			if (fred == null || fred.isAlive() == false) {
-				createThread();
-
-			}
+			/*
+			 * if (fred == null || fred.isAlive() == false) { createThread();
+			 * 
+			 * }
+			 */
 			/*
 			 * else fred.start();
 			 * 
@@ -285,14 +291,15 @@ public class MainFrame extends JFrame implements ActionListener, Runnable,
 		lblPlayedTime.setVisible(true);
 		lblDurationSeperator.setVisible(true);
 		lblDuration.setVisible(true);
-		if (fred == null || fred.isAlive() == false) {
-			createThread();
-
-		}
+		/*
+		 * if (fred == null || fred.isAlive() == false) { createThread();
+		 * 
+		 * }
+		 */
 
 		if (cis.isPlaying()) {
-			lblCurrentStateSong.setText("Currently playing: "
-					+ temp.getArtist() + " - " + temp.getTitle() + "");
+			/*lblCurrentStateSong.setText("Currently playing: "
+					+ temp.getArtist() + " - " + temp.getTitle() + "");*/
 			btnPlayPause.setActionCommand("pause");
 			setPauseIcons();
 			btnNext.setActionCommand("next");
@@ -331,9 +338,9 @@ public class MainFrame extends JFrame implements ActionListener, Runnable,
 	 */
 	public void pause() throws InterruptedException {
 		cis.pause();
-		if (fred != null) {
-			fred.interrupt();
-		}
+		/*
+		 * if (fred != null) { fred.interrupt(); }
+		 */
 
 		progress.setVisible(true);
 		if (cis.isPaused()) {
@@ -354,12 +361,14 @@ public class MainFrame extends JFrame implements ActionListener, Runnable,
 			lblCurrentStateSong.setText("");
 
 			cis.playNext();
+
 			// Song temp = cis.getCurrentSong();
 			// progress.setEnabled(true);
-			if (fred == null || fred.isAlive() == false) {
-				createThread();
-
-			}
+			/*
+			 * if (fred == null || fred.isAlive() == false) { createThread();
+			 * 
+			 * }
+			 */
 			/*
 			 * else { fred.start(); } if (cis.isPlaying()) {
 			 * lblCurrentStateSong.setText("Currently playing: " +
@@ -462,17 +471,17 @@ public class MainFrame extends JFrame implements ActionListener, Runnable,
 
 		while (!fred.isInterrupted()) {
 
-			Song temp = cis.getCurrentSong();
+			// Song temp = cis.getCurrentSong();
 			progress.setValue((int) cis.getPlayTime());
 			lblPlayedTime.setText(getPlayedTimeInSeconds());
 			lblDuration.setText(getMediaTimeAt(100)); // in percent
 
-			if (cis.isPlaying()) {
-				lblCurrentStateSong.setText("Currently playing: "
-						+ temp.getArtist() + " - " + temp.getTitle() + "");
-				btnPlayPause.setActionCommand("pause");
-				setPauseIcons();
-			}
+			/*
+			 * if (cis.isPlaying()) {
+			 * lblCurrentStateSong.setText("Currently playing: " +
+			 * temp.getArtist() + " - " + temp.getTitle() + "");
+			 * btnPlayPause.setActionCommand("pause"); setPauseIcons(); }
+			 */
 			try {
 				Thread.sleep(500);
 			} catch (InterruptedException ex) {
@@ -518,8 +527,8 @@ public class MainFrame extends JFrame implements ActionListener, Runnable,
 			if (clicked.hasNodePlaylist()) {
 				currentPlaylistGUI = parseSongTable(currentPlaylistGUI);
 				try {
-					if(currentPlaylistGUI.getClass() == Playlist.class)
-						ps.updatePlaylist((Playlist)currentPlaylistGUI);
+					if (currentPlaylistGUI.getClass() == WritablePlaylist.class)
+						ps.updatePlaylist((WritablePlaylist) currentPlaylistGUI);
 				} catch (DataAccessException e) {
 					// TODO: Show error dialog
 				}
@@ -548,15 +557,16 @@ public class MainFrame extends JFrame implements ActionListener, Runnable,
 					PlaylistTreeNode node_1;
 					add(new PlaylistTreeNode(ps.getLibrary().toString(), false,
 							ps.getLibrary()));
-					Playlist qu = new Playlist("Queue");
+					WritablePlaylist qu = new WritablePlaylist("Queue");
 					add(new PlaylistTreeNode("Queue", false, qu));
 
 					// node_1 = new PlaylistTreeNode(ps.getLibrary().toString(),
 					// false, ps.getLibrary());
 					node_1 = new PlaylistTreeNode("Playlists");
 
-					ReadonlyPlaylist current = null;
-					ListIterator<? extends ReadonlyPlaylist> iter = playlists.listIterator();
+					Playlist current = null;
+					ListIterator<? extends Playlist> iter = playlists
+							.listIterator();
 
 					while (iter.hasNext()) {
 						current = iter.next();
@@ -584,22 +594,18 @@ public class MainFrame extends JFrame implements ActionListener, Runnable,
 	}
 
 	public void setVisibleColumns() {
-		HashMap Zuordnung = new HashMap();
+		HashMap<String, Integer> Zuordnung = new HashMap<String, Integer>();
+		String[] columnsAll = new String[SettingsService.SongTableColumnsAll.length + 1];
 
-		for (int i = 0; i < 9; i++) {
-			cTableModel.setColumnVisible(i, false);
-			
+		columnsAll[0] = "Status";
+		for (int i = 0; i < SettingsService.SongTableColumnsAll.length; i++) {
+			columnsAll[i + 1] = SettingsService.SongTableColumnsAll[i];
 		}
 
-		Zuordnung.put("status", 0);
-		Zuordnung.put("title", 1);
-		Zuordnung.put("artist", 2);
-		Zuordnung.put("album", 3);
-		Zuordnung.put("year", 4);
-		Zuordnung.put("genre", 5);
-		Zuordnung.put("duration", 6);
-		Zuordnung.put("rating", 7);
-		Zuordnung.put("playcount", 8);
+		for (int i = 0; i < columnsAll.length; i++) {
+			cTableModel.setColumnVisible(i, false);
+			Zuordnung.put(columnsAll[i], i);
+		}
 
 		/*
 		 * for(int i= 0; i < ss.getUserColumns().length; i++) {
@@ -612,15 +618,14 @@ public class MainFrame extends JFrame implements ActionListener, Runnable,
 
 		String[] userCols = ss.getUserColumns();
 		String[] songTableCols = new String[userCols.length + 1];
-		songTableCols[0] = "status";
+		songTableCols[0] = "Status";
 
 		for (int i = 0; i < userCols.length; i++) {
 			songTableCols[i + 1] = userCols[i];
 		}
 		boolean color = false;
 		for (int i = 0; i < songTableCols.length; i++) {
-			if (Zuordnung.containsKey(songTableCols[i]))
-			{
+			if (Zuordnung.containsKey(songTableCols[i])) {
 				// System.out.println(Zuordnung.get(col[i]));
 				// System.out.println(ss.getUserColumns()[i]);
 				cTableModel.setColumnVisible(
@@ -628,18 +633,16 @@ public class MainFrame extends JFrame implements ActionListener, Runnable,
 			}
 
 		}
-		
-		
-		
-		for(int i = 0; i< songTableCols.length; i++)
-		{
-			cTableModel.getColumn(i).setCellRenderer(new DefaultTableCellRenderer());
-			if(color)
-				cTableModel.getColumn(i).setCellRenderer(new SongTableRenderer());
+
+		for (int i = 0; i < songTableCols.length; i++) {
+			cTableModel.getColumn(i).setCellRenderer(
+					new SongTableRendererDefault());
+			if (color)
+				cTableModel.getColumn(i).setCellRenderer(
+						new SongTableRenderer());
 			color = !color;
 		}
 		
-
 		// TODO: Add reloading for "TopXX played" and "TopXX rated", if
 		// selected
 	}
@@ -652,14 +655,14 @@ public class MainFrame extends JFrame implements ActionListener, Runnable,
 		cis = sf.getCoreInteractionService();
 		ps = sf.getPlaylistService();
 		ss = sf.getSettingsService();
-		Toolkit toolkit =  Toolkit.getDefaultToolkit ();
+		Toolkit toolkit = Toolkit.getDefaultToolkit();
 		Dimension dim = toolkit.getScreenSize();
 
 		width = 1000;
 		height = 600;
-		positionX = (int) Math.round(dim.getWidth()/2 - width/2);
-		positionY = (int) Math.round(dim.getHeight()/2 - height/2);
-		
+		positionX = (int) Math.round(dim.getWidth() / 2 - width / 2);
+		positionY = (int) Math.round(dim.getHeight() / 2 - height / 2);
+
 		setBounds(positionX, positionY, width, height);
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setTitle("mp3@player");
@@ -669,14 +672,14 @@ public class MainFrame extends JFrame implements ActionListener, Runnable,
 			public void windowClosing(WindowEvent e) {
 				currentPlaylistGUI = parseSongTable(currentPlaylistGUI);
 				try {
-					if(currentPlaylistGUI.getClass() == Playlist.class)
-						ps.updatePlaylist((Playlist)currentPlaylistGUI);
+					if (currentPlaylistGUI.getClass() == WritablePlaylist.class)
+						ps.updatePlaylist((WritablePlaylist) currentPlaylistGUI);
 				} catch (DataAccessException a) {
 				}
 			}
 		});
 		getWholeLibrary();
-		
+
 		setVisibleColumns();
 
 		cis.setVolume(volume.getValue());
@@ -688,15 +691,16 @@ public class MainFrame extends JFrame implements ActionListener, Runnable,
 		// setResizable(false);
 
 		logger.info("Components successfully initialized");
-		
+
 		// test for EditLyric
-		/*ArrayList<Song> list = new ArrayList<Song>();
-		list.add((Song) songTable.getValueAt(0, 0));
-		list.add((Song) songTable.getValueAt(15, 0));
-		new EditLyric(list);*/
+		/*
+		 * ArrayList<Song> list = new ArrayList<Song>(); list.add((Song)
+		 * songTable.getValueAt(0, 0)); list.add((Song) songTable.getValueAt(15,
+		 * 0)); new EditLyric(list);
+		 */
 	}
 
-	public MainFrame(ReadonlyPlaylist list) {
+	public MainFrame(Playlist list) {
 		currentPlaylistGUI = list;
 	}
 
@@ -709,7 +713,7 @@ public class MainFrame extends JFrame implements ActionListener, Runnable,
 	 * Initializes the contents of the frame
 	 */
 	private void initialize() {
-		
+
 		try {
 			initIcons();
 		} catch (IOException e2) {
@@ -771,7 +775,8 @@ public class MainFrame extends JFrame implements ActionListener, Runnable,
 		// playerPanel
 		Image image = null;
 		try {
-			image = ImageIO.read(new ClassPathResource("img/background.png").getFile());
+			image = ImageIO.read(new ClassPathResource("img/background.png")
+					.getFile());
 		} catch (IOException e1) {
 		}
 		JPanel playerPanel = new ImagePanel(new MigLayout("",
@@ -799,7 +804,7 @@ public class MainFrame extends JFrame implements ActionListener, Runnable,
 		treePopupMenu.add(treeentry1);
 		treeentry1.addActionListener(new TreeActionAdapter());
 		treeentry1.setActionCommand("deletePlaylist");
-		
+
 		JMenuItem treeentry2 = new JMenuItem("Rename Playlist");
 		treePopupMenu.add(treeentry2);
 		treeentry2.addActionListener(new TreeActionAdapter());
@@ -819,14 +824,15 @@ public class MainFrame extends JFrame implements ActionListener, Runnable,
 		 * 
 		 * { PlaylistTreeNode node_1; add(new
 		 * PlaylistTreeNode(ps.getLibrary().toString(), false,
-		 * ps.getLibrary())); Playlist qu = new Playlist("Queue"); add(new
-		 * PlaylistTreeNode("Queue", false, qu));
+		 * ps.getLibrary())); WritablePlaylist qu = new
+		 * WritablePlaylist("Queue"); add(new PlaylistTreeNode("Queue", false,
+		 * qu));
 		 * 
 		 * // node_1 = new PlaylistTreeNode(ps.getLibrary().toString(), //
 		 * false, ps.getLibrary()); node_1 = new PlaylistTreeNode("Playlists");
 		 * 
-		 * Playlist current = null; ListIterator<Playlist> iter =
-		 * playlists.listIterator();
+		 * WritablePlaylist current = null; ListIterator<WritablePlaylist> iter
+		 * = playlists.listIterator();
 		 * 
 		 * while (iter.hasNext()) { current = iter.next(); node_1.add(new
 		 * PlaylistTreeNode(current.getTitle(), false, current)); } add(node_1);
@@ -892,10 +898,9 @@ public class MainFrame extends JFrame implements ActionListener, Runnable,
 		// songTable.setAutoCreateRowSorter(true);
 		songTable.getModel().addTableModelListener(this);
 		cTableModel = new HidableTableColumnModel(songTable.getColumnModel());
-		
+
 		DefaultTableCellRenderer renderer = new SongTableRenderer();
-		
-		
+
 		// htcm.setColumnVisible(0, false);
 		/*
 		 * JPopupMenu popup = new JPopupMenu("Hide Menu"); Action[] actions =
@@ -993,12 +998,32 @@ public class MainFrame extends JFrame implements ActionListener, Runnable,
 
 			public void songBeginnEvent() {
 				logger.info("Beginn");
+
+				if (fred == null || fred.isAlive() == false) {
+					createThread();
+
+				}
 				new MainFrame("reloadsongTable");
+				
+				songTable.repaint();
+				if (cis.isPlaying()) {
+					lblCurrentStateSong.setText("Currently playing: "
+							+ cis.getCurrentSong().getArtist() + " - "
+							+ cis.getCurrentSong().getTitle() + "");
+					btnPlayPause.setActionCommand("pause");
+					setPauseIcons();
+				}
 
 				// fillSongTable(currentPlaylistGUI);
 			}
 
 			public void songEndEvent() {
+
+				if (fred != null) {
+					fred.interrupt();
+				}
+				
+				songTable.repaint();
 				// new MainFrame("reloadsongTable");
 				// fillSongTable(currentPlaylistGUI);
 			}
@@ -1209,7 +1234,7 @@ public class MainFrame extends JFrame implements ActionListener, Runnable,
 			librarygui.addFile();
 			buildPlTree();
 			try {
-				ReadonlyPlaylist list = ps.getLibrary();
+				Playlist list = ps.getLibrary();
 				fillSongTable(list);
 				currentPlaylistGUI = list;
 			} catch (DataAccessException e1) {
@@ -1223,7 +1248,7 @@ public class MainFrame extends JFrame implements ActionListener, Runnable,
 			librarygui.addFolder();
 			buildPlTree();
 			try {
-				ReadonlyPlaylist list = ps.getLibrary();
+				Playlist list = ps.getLibrary();
 				fillSongTable(list);
 				currentPlaylistGUI = list;
 			} catch (DataAccessException e1) {
@@ -1237,7 +1262,7 @@ public class MainFrame extends JFrame implements ActionListener, Runnable,
 			playlistgui.importPlaylist();
 			buildPlTree();
 			try {
-				ReadonlyPlaylist list = ps.getLibrary();
+				Playlist list = ps.getLibrary();
 				fillSongTable(list);
 				currentPlaylistGUI = list;
 			} catch (DataAccessException e1) {
@@ -1267,7 +1292,7 @@ public class MainFrame extends JFrame implements ActionListener, Runnable,
 			new checkSongPathGUI();
 			buildPlTree();
 			try {
-				ReadonlyPlaylist list = ps.getLibrary();
+				Playlist list = ps.getLibrary();
 				fillSongTable(list);
 				currentPlaylistGUI = list;
 			} catch (DataAccessException e1) {
@@ -1407,10 +1432,10 @@ public class MainFrame extends JFrame implements ActionListener, Runnable,
 			if (e.getActionCommand().equals("deletePlaylist")) {
 				PlaylistTreeNode selectedNode = (PlaylistTreeNode) pl_tree
 						.getLastSelectedPathComponent();
-				ReadonlyPlaylist selectedPlaylist = selectedNode.getNodePlaylist();
+				Playlist selectedPlaylist = selectedNode.getNodePlaylist();
 				try {
-					if(selectedPlaylist.getClass() == Playlist.class)
-						ps.deletePlaylist((Playlist)selectedPlaylist);
+					if (selectedPlaylist.getClass() == WritablePlaylist.class)
+						ps.deletePlaylist((WritablePlaylist) selectedPlaylist);
 				} catch (DataAccessException e1) {
 				}
 				buildPlTree();
@@ -1418,10 +1443,11 @@ public class MainFrame extends JFrame implements ActionListener, Runnable,
 			} else if (e.getActionCommand().equals("renamePlaylist")) {
 				PlaylistTreeNode selectedNode = (PlaylistTreeNode) pl_tree
 						.getLastSelectedPathComponent();
-				ReadonlyPlaylist selectedPlaylist = selectedNode.getNodePlaylist();
+				Playlist selectedPlaylist = selectedNode.getNodePlaylist();
 				playlistgui = new PlaylistGUI();
-				if(selectedPlaylist.getClass() == Playlist.class)
-					playlistgui.renamePlaylistGUI((Playlist)selectedPlaylist);
+				if (selectedPlaylist.getClass() == WritablePlaylist.class)
+					playlistgui
+							.renamePlaylistGUI((WritablePlaylist) selectedPlaylist);
 				buildPlTree();
 			}
 		}
@@ -1429,6 +1455,6 @@ public class MainFrame extends JFrame implements ActionListener, Runnable,
 
 	@Override
 	public void tableChanged(TableModelEvent e) {
-		// TODO Auto-generated method stub		
+		// TODO Auto-generated method stub
 	}
 }
