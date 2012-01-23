@@ -9,7 +9,7 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
-import at.ac.tuwien.sepm2011ws.mp3player.domainObjects.ReadonlyPlaylist;
+import at.ac.tuwien.sepm2011ws.mp3player.domainObjects.Playlist;
 import at.ac.tuwien.sepm2011ws.mp3player.persistanceLayer.DataAccessException;
 
 /**
@@ -37,7 +37,7 @@ public class PlaylistServiceTest {
 
 	@Test
 	public void testGetLibrary_AtLeastOneSong() {
-		ReadonlyPlaylist lib = null;
+		Playlist lib = null;
 
 		try {
 			lib = ps.getLibrary();

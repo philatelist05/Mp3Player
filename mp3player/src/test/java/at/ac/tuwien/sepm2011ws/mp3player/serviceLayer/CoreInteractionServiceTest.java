@@ -12,7 +12,8 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
-import at.ac.tuwien.sepm2011ws.mp3player.domainObjects.Playlist;
+import at.ac.tuwien.sepm2011ws.mp3player.domainObjects.PlayMode;
+import at.ac.tuwien.sepm2011ws.mp3player.domainObjects.WritablePlaylist;
 import at.ac.tuwien.sepm2011ws.mp3player.domainObjects.Song;
 
 /**
@@ -37,7 +38,7 @@ public class CoreInteractionServiceTest {
 	
 	@Test
 	public void testEndOfMedia_ShouldPlayNext() throws InterruptedException {
-		Playlist temp = new Playlist("Temp");
+		WritablePlaylist temp = new WritablePlaylist("Temp");
 
 		File sPath = new File("music/dummy-message.wav");
 		temp.add(new Song("dummy1", "dummy1", 300, sPath.getAbsolutePath()));

@@ -10,9 +10,8 @@ import java.util.List;
 
 import javax.sql.DataSource;
 
-import at.ac.tuwien.sepm2011ws.mp3player.domainObjects.Playlist;
-import at.ac.tuwien.sepm2011ws.mp3player.domainObjects.ReadonlyPlaylist;
 import at.ac.tuwien.sepm2011ws.mp3player.domainObjects.Song;
+import at.ac.tuwien.sepm2011ws.mp3player.domainObjects.WritablePlaylist;
 import at.ac.tuwien.sepm2011ws.mp3player.persistanceLayer.DataAccessException;
 import at.ac.tuwien.sepm2011ws.mp3player.persistanceLayer.PlaylistDao;
 import at.ac.tuwien.sepm2011ws.mp3player.persistanceLayer.SongDao;
@@ -63,7 +62,7 @@ class DbPlaylistDao implements PlaylistDao {
 	}
 
 	@Override
-	public void create(Playlist playlist) throws DataAccessException {
+	public void create(WritablePlaylist playlist) throws DataAccessException {
 		ResultSet result = null;
 
 		if (playlist.getTitle() == null)
@@ -105,7 +104,7 @@ class DbPlaylistDao implements PlaylistDao {
 	}
 
 	@Override
-	public void update(Playlist playlist) throws DataAccessException {
+	public void update(WritablePlaylist playlist) throws DataAccessException {
 
 		if (playlist == null) {
 			throw new IllegalArgumentException("Playlist must not be null");
@@ -161,9 +160,9 @@ class DbPlaylistDao implements PlaylistDao {
 	}
 
 	@Override
-	public Playlist read(int id) throws DataAccessException {
+	public WritablePlaylist read(int id) throws DataAccessException {
 		ResultSet result = null;
-		Playlist p;
+		WritablePlaylist p;
 		List<Song> songs;
 
 		if (id < 0) {
@@ -178,7 +177,7 @@ class DbPlaylistDao implements PlaylistDao {
 				return null;
 			}
 
-			p = new Playlist(result.getString("name"));
+			p = new WritablePlaylist(result.getString("name"));
 			p.setId(id);
 
 			// Reading songs
@@ -207,9 +206,9 @@ class DbPlaylistDao implements PlaylistDao {
 	}
 
 	@Override
-	public List<Playlist> readAll() throws DataAccessException {
+	public List<WritablePlaylist> readAll() throws DataAccessException {
 		ResultSet result = null;
-		List<Playlist> playlists = new ArrayList<Playlist>();
+		List<WritablePlaylist> playlists = new ArrayList<WritablePlaylist>();
 		try {
 			result = readAllStmt.executeQuery();
 
@@ -231,7 +230,7 @@ class DbPlaylistDao implements PlaylistDao {
 	}
 
 	@Override
-	public void rename(Playlist p, String name) throws DataAccessException {
+	public void rename(WritablePlaylist p, String name) throws DataAccessException {
 
 		if (p == null || name == null || name.isEmpty()) {
 			throw new IllegalArgumentException(

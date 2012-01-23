@@ -2,8 +2,6 @@ package at.ac.tuwien.sepm2011ws.mp3player.serviceLayer.jmf;
 
 import java.io.IOException;
 import java.net.URL;
-import java.util.List;
-
 import javax.media.Controller;
 import javax.media.ControllerEvent;
 import javax.media.ControllerListener;
@@ -17,10 +15,10 @@ import javax.media.Time;
 
 import org.apache.log4j.Logger;
 
-import at.ac.tuwien.sepm2011ws.mp3player.domainObjects.ReadonlyPlaylist;
+import at.ac.tuwien.sepm2011ws.mp3player.domainObjects.PlayMode;
+import at.ac.tuwien.sepm2011ws.mp3player.domainObjects.Playlist;
 import at.ac.tuwien.sepm2011ws.mp3player.domainObjects.Song;
 import at.ac.tuwien.sepm2011ws.mp3player.serviceLayer.CoreInteractionService;
-import at.ac.tuwien.sepm2011ws.mp3player.serviceLayer.PlayMode;
 import at.ac.tuwien.sepm2011ws.mp3player.serviceLayer.PlayerListener;
 
 class JmfCoreInteractionService implements CoreInteractionService {
@@ -32,25 +30,11 @@ class JmfCoreInteractionService implements CoreInteractionService {
 	private boolean isStopped;
 	private float volume;
 	private PlayMode playMode;
-	private ReadonlyPlaylist currentPlaylist;
+	private Playlist currentPlaylist;
 	private Song currentSong;
 	private PlayerListener pl;
 
-	/**
-	 * 
-	 */
 	public JmfCoreInteractionService() {
-		// Register the mp3 plugin
-		// Format input1 = new AudioFormat(AudioFormat.MPEGLAYER3);
-		// Format input2 = new AudioFormat(AudioFormat.MPEG);
-		// Format output = new AudioFormat(AudioFormat.LINEAR);
-		// PlugInManager.addPlugIn(
-		// "com.sun.media.codec.audio.mp3.JavaDecoder",
-		// new Format[]{input1, input2},
-		// new Format[]{output},
-		// PlugInManager.CODEC
-		// );
-
 		this.isMute = false;
 		this.isPaused = false;
 		this.isStopped = true;
@@ -249,11 +233,11 @@ class JmfCoreInteractionService implements CoreInteractionService {
 		this.playMode = playMode;
 	}
 
-	public ReadonlyPlaylist getCurrentPlaylist() {
+	public Playlist getCurrentPlaylist() {
 		return this.currentPlaylist;
 	}
 
-	public void setCurrentPlaylist(ReadonlyPlaylist playlist) {
+	public void setCurrentPlaylist(Playlist playlist) {
 		this.currentPlaylist = playlist;
 	}
 

@@ -14,8 +14,8 @@ import java.util.List;
 
 import org.apache.log4j.Logger;
 
+import at.ac.tuwien.sepm2011ws.mp3player.domainObjects.WritablePlaylist;
 import at.ac.tuwien.sepm2011ws.mp3player.domainObjects.Playlist;
-import at.ac.tuwien.sepm2011ws.mp3player.domainObjects.ReadonlyPlaylist;
 import at.ac.tuwien.sepm2011ws.mp3player.domainObjects.Song;
 import at.ac.tuwien.sepm2011ws.mp3player.persistanceLayer.DataAccessException;
 import at.ac.tuwien.sepm2011ws.mp3player.persistanceLayer.PlaylistDao;
@@ -47,8 +47,8 @@ class VvvPlaylistService implements PlaylistService {
 	}
 
 	@Override
-	public ReadonlyPlaylist getLibrary() throws DataAccessException {
-		ReadonlyPlaylist lib = new ReadonlyPlaylist("Library");
+	public Playlist getLibrary() throws DataAccessException {
+		Playlist lib = new Playlist("Library");
 
 		lib.addAll(this.sd.readAll());
 
@@ -86,8 +86,8 @@ class VvvPlaylistService implements PlaylistService {
 		return fileName.substring(0, dotIndex);
 	}
 
-	private Playlist importPlaylist(File file) throws DataAccessException {
-		Playlist playlist;
+	private WritablePlaylist importPlaylist(File file) throws DataAccessException {
+		WritablePlaylist playlist;
 
 		// Initialize playlist
 		playlist = createPlaylist(getBasename(file.getName()));
@@ -118,7 +118,7 @@ class VvvPlaylistService implements PlaylistService {
 	}
 
 	@Override
-	public void exportPlaylist(File file, ReadonlyPlaylist playlist) {
+	public void exportPlaylist(File file, Playlist playlist) {
 		FileWriter writer = null;
 		BufferedWriter bwriter = null;
 		try {
@@ -144,7 +144,7 @@ class VvvPlaylistService implements PlaylistService {
 	}
 
 	@Override
-	public List<? extends ReadonlyPlaylist> getAllPlaylists() throws DataAccessException {
+	public List<? extends Playlist> getAllPlaylists() throws DataAccessException {
 		return this.pd.readAll();
 	}
 
@@ -179,7 +179,7 @@ class VvvPlaylistService implements PlaylistService {
 	}
 
 	@Override
-	public void addSongsToPlaylist(File[] files, Playlist playlist)
+	public void addSongsToPlaylist(File[] files, WritablePlaylist playlist)
 			throws DataAccessException {
 		List<Song> list = createSongs(files);
 
@@ -211,7 +211,7 @@ class VvvPlaylistService implements PlaylistService {
 	}
 
 	@Override
-	public void deleteSongs(List<Song> songs, Playlist playlist)
+	public void deleteSongs(List<Song> songs, WritablePlaylist playlist)
 			throws DataAccessException {
 		if (songs == null || playlist == null)
 			throw new IllegalArgumentException(
@@ -230,47 +230,47 @@ class VvvPlaylistService implements PlaylistService {
 	}
 
 	@Override
-	public Playlist createPlaylist(String name) throws DataAccessException {
-		Playlist playlist = new Playlist(name);
+	public WritablePlaylist createPlaylist(String name) throws DataAccessException {
+		WritablePlaylist playlist = new WritablePlaylist(name);
 		this.pd.create(playlist);
 		return playlist;
 	}
 
 	@Override
-	public void deletePlaylist(Playlist playlist) throws DataAccessException {
+	public void deletePlaylist(WritablePlaylist playlist) throws DataAccessException {
 			this.pd.delete(playlist.getId());
 	}
 
 	@Override
-	public void updatePlaylist(Playlist playlist) throws DataAccessException {
+	public void updatePlaylist(WritablePlaylist playlist) throws DataAccessException {
 			this.pd.update(playlist);
 	}
 
 	@Override
-	public void renamePlaylist(Playlist playlist, String name)
+	public void renamePlaylist(WritablePlaylist playlist, String name)
 			throws DataAccessException {
 			pd.rename(playlist, name);
 	}
 
 	@Override
-	public ReadonlyPlaylist getTopRated() throws DataAccessException {
-		ReadonlyPlaylist playlist = new ReadonlyPlaylist("TopRated");
+	public Playlist getTopRated() throws DataAccessException {
+		Playlist playlist = new Playlist("TopRated");
 		playlist.addAll(sd.getTopRatedSongs(ss.getTopXXRatedCount()));
 
 		return playlist;
 	}
 
 	@Override
-	public ReadonlyPlaylist getTopPlayed() throws DataAccessException {
-		ReadonlyPlaylist playlist = new ReadonlyPlaylist("TopPlayed");
+	public Playlist getTopPlayed() throws DataAccessException {
+		Playlist playlist = new Playlist("TopPlayed");
 		playlist.addAll(sd.getTopRatedSongs(ss.getTopXXPlayedCount()));
 
 		return playlist;
 	}
 
 	@Override
-	public ReadonlyPlaylist globalSearch(String pattern) throws DataAccessException {
-		ReadonlyPlaylist plst = getLibrary();
+	public Playlist globalSearch(String pattern) throws DataAccessException {
+		Playlist plst = getLibrary();
 
 		for (Iterator<Song> iterator = plst.iterator(); iterator.hasNext();) {
 			Song s = iterator.next();
@@ -289,7 +289,7 @@ class VvvPlaylistService implements PlaylistService {
 			}
 		}
 
-		ReadonlyPlaylist pl = new ReadonlyPlaylist("Search");
+		Playlist pl = new Playlist("Search");
 		pl.addAll(plst);
 
 		return pl;
@@ -304,8 +304,8 @@ class VvvPlaylistService implements PlaylistService {
 	}
 
 	@Override
-	public void reloadPlaylist(Playlist p) throws DataAccessException {
-		ReadonlyPlaylist np = pd.read(p.getId());
+	public void reloadPlaylist(WritablePlaylist p) throws DataAccessException {
+		Playlist np = pd.read(p.getId());
 		p.setTitle(np.getTitle());
 		p.addAll(np);
 	}
