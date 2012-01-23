@@ -662,6 +662,7 @@ public class MainFrame extends JFrame implements ActionListener, Runnable,
 			cTableModel.getColumn(i).setCellRenderer(
 					new SongTableRenderer());
 		/*	if (color)
+
 				cTableModel.getColumn(i).setCellRenderer(
 						new SongTableRenderer());
 			color = !color;*/
@@ -865,7 +866,7 @@ public class MainFrame extends JFrame implements ActionListener, Runnable,
 		 * node_1.add(new PlaylistTreeNode("TopRated"));
 		 * 
 		 * node_1.add(new PlaylistTreeNode( ps.getTopRated().getTitle(), false,
-		 * ps .getTopRated())); node_1.add(new
+		 * ps.getTopRated())); node_1.add(new
 		 * PlaylistTreeNode(ps.getTopPlayed() .getTitle(), false,
 		 * ps.getTopPlayed()));
 		 * 
@@ -1451,13 +1452,23 @@ public class MainFrame extends JFrame implements ActionListener, Runnable,
 
 		public void actionPerformed(ActionEvent e) {
 			if (e.getActionCommand().equals("deleteSong")) {
-				int row = songTable.getSelectedRow();
+				int[] row = songTable.getSelectedRows();
 				Song x = null;
-
-				if (row > -1) {
-					x = (Song) songTable.getValueAt(row, 0);
+				ArrayList<Song> deleteSongs = new ArrayList<Song>();
+				for (int i=0; i<row.length; i++) {
+					int currentRow = row[i];
+					if (currentRow > -1) {
+						x = (Song) songTable.getValueAt(currentRow, 0);
+						deleteSongs.add(x);
+					}
 				}
-				currentPlaylistGUI.remove(x);
+				
+				try {
+					ps.deleteSongs(deleteSongs, (WritablePlaylist) currentPlaylistGUI);
+					currentPlaylistGUI.removeAll(deleteSongs);
+				} catch (DataAccessException e1) {
+					new DynamicDialog("ERROR", e1.toString());
+				}
 				fillSongTable(currentPlaylistGUI);
 			}
 
@@ -1489,6 +1500,7 @@ public class MainFrame extends JFrame implements ActionListener, Runnable,
 				if (selectedPlaylist.getClass() == WritablePlaylist.class)
 					playlistgui
 							.renamePlaylistGUI((WritablePlaylist) selectedPlaylist);
+				
 				buildPlTree();
 			}
 		}
