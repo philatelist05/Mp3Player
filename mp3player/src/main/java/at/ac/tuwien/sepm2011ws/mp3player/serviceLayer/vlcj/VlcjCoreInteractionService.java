@@ -135,9 +135,8 @@ public class VlcjCoreInteractionService implements CoreInteractionService {
 	private Song getSong(int index) {
 		if (index < 0 || index >= this.currentPlaylist.size()) {
 			return null;
-		} else {
-			return this.currentPlaylist.get(index);
 		}
+		return this.currentPlaylist.get(index);
 	}
 
 	public void pause() {
