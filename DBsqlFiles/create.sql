@@ -13,7 +13,7 @@ CREATE TABLE Song (
   genre		VARCHAR(255),
   lyric		TEXT,
   pathOk	BOOLEAN DEFAULT true,
-  CHECK (rating BETWEEN -1 AND 10)
+  CHECK (rating BETWEEN 0 AND 5)
 );
 ALTER SEQUENCE song_sequence OWNED BY Song.ID;
 
