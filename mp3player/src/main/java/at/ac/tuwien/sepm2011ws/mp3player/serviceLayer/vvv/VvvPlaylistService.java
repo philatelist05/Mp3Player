@@ -287,6 +287,7 @@ class VvvPlaylistService implements PlaylistService {
 		List<Song> songs = this.sd.readAll();
 		for (Song song : songs) {
 			song.setPathOk(new File(song.getPath()).isFile());
+			sd.update(song);
 		}
 	}
 
