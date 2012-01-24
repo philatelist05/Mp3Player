@@ -271,6 +271,7 @@ public class MainFrame extends JFrame implements ActionListener, Runnable,
 			lblPlayedTime.setVisible(false);
 			lblDurationSeperator.setVisible(false);
 			lblDuration.setVisible(false);
+			songTable.repaint();
 		}
 		
 		cis.playPrevious();
@@ -405,6 +406,7 @@ public class MainFrame extends JFrame implements ActionListener, Runnable,
 			lblPlayedTime.setVisible(false);
 			lblDurationSeperator.setVisible(false);
 			lblDuration.setVisible(false);
+			songTable.repaint();
 		}
 		
 		cis.playNext();
@@ -953,8 +955,7 @@ public class MainFrame extends JFrame implements ActionListener, Runnable,
 		entry4.setActionCommand("editMetatags");
 
 		songTable = new JTable(songmodel);
-		songTable
-				.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
+		//songTable.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
 		JScrollPane songTable_sp = new JScrollPane(songTable);
 		songTable_sp
 				.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_AS_NEEDED);
@@ -962,7 +963,7 @@ public class MainFrame extends JFrame implements ActionListener, Runnable,
 				.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED);
 		songTable.getTableHeader().setReorderingAllowed(false);
 		songTable
-				.setSelectionMode(ListSelectionModel.SINGLE_INTERVAL_SELECTION);
+				.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
 		songTable.setDragEnabled(true);
 		songTable.setTransferHandler(new JTableSongTransferHandler());
 		songTable.setSelectionBackground(new Color(255, 0, 0));
@@ -1627,7 +1628,7 @@ public class MainFrame extends JFrame implements ActionListener, Runnable,
 			cis.setCurrentSongIndex(sorter.convertRowIndexToView(cis
 					.getCurrentSongIndex()));
 		// sorter
-		currentPlaylistGUI = parseSongTable(currentPlaylistGUI);
+		//currentPlaylistGUI = parseSongTable(currentPlaylistGUI);
 		cis.setCurrentPlaylist(currentPlaylistGUI);
 		songTable.repaint();
 	}
