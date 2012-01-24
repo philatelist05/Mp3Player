@@ -84,12 +84,12 @@ public class MainFrame extends JFrame implements ActionListener, Runnable,
 	private static Playlist currentPlaylistGUI;
 	private JSplitPane jsplit;
 	private JTree pl_tree = new JTree();
-	
+
 	private PlaylistGUI playlistgui;
 	private LibraryGUI librarygui;
 	private JTable songTable;
 	private HidableTableColumnModel cTableModel;
-	private TableRowSorter <TableModel> sorter;
+	private TableRowSorter<TableModel> sorter;
 	private SongTableModel songmodel = new SongTableModel(new String[] {
 			"Status", "Title", "Artist", "Album", "Year", "Genre", "Duration",
 			"Rating", "Playcount" }, 0);
@@ -112,9 +112,9 @@ public class MainFrame extends JFrame implements ActionListener, Runnable,
 	private JCheckBox chckbxMute;
 	private JCheckBox chckbxRepeat;
 	private JCheckBox chckbxShuffle;
-	private JPopupMenu tablePopupMenu = new JPopupMenu();
+	// private JPopupMenu tablePopupMenu = new JPopupMenu();
 
-	private JPopupMenu treePopupMenu = new JPopupMenu();
+	// private JPopupMenu treePopupMenu = new JPopupMenu();
 
 	private Icon l1;
 	private Icon l2;
@@ -172,16 +172,15 @@ public class MainFrame extends JFrame implements ActionListener, Runnable,
 	public Playlist parseSongTable(Playlist list) {
 		ArrayList<Song> temp = new ArrayList<Song>();
 		Song song;
-		
+
 		int row = songmodel.getRowCount();
 		list.clear();
-		for (int i = 0; i < row; i++) {			
+		for (int i = 0; i < row; i++) {
 			song = (Song) songTable.getValueAt(i, 0);
 			temp.add(song);
 		}
-		
-		list.addAll(temp);
 
+		list.addAll(temp);
 
 		return list;
 	}
@@ -248,33 +247,33 @@ public class MainFrame extends JFrame implements ActionListener, Runnable,
 	 * Sends the "previous Song" Signal to the Service Layer
 	 */
 	public void previous() {
-		//if (cis.isPlaying()) {
+		// if (cis.isPlaying()) {
 
-			btnPlayPause.setActionCommand("play");
-			setPlayIcons();
-			lblCurrentStateSong.setText("");
+		btnPlayPause.setActionCommand("play");
+		setPlayIcons();
+		lblCurrentStateSong.setText("");
 
-			cis.playPrevious();
+		cis.playPrevious();
 
-			// Song temp = cis.getCurrentSong();
+		// Song temp = cis.getCurrentSong();
 
-			// progress.setEnabled(true);
-			/*
-			 * if (fred == null || fred.isAlive() == false) { createThread();
-			 * 
-			 * }
-			 */
-			/*
-			 * else fred.start();
-			 * 
-			 * if (cis.isPlaying()) {
-			 * lblCurrentStateSong.setText("Currently playing: " +
-			 * temp.getArtist() + " - " + temp.getTitle() + "");
-			 * 
-			 * btnPlayPause.setActionCommand("pause"); setPauseIcons(); } else
-			 * setProgressBartoDefault();
-			 */
-		//}
+		// progress.setEnabled(true);
+		/*
+		 * if (fred == null || fred.isAlive() == false) { createThread();
+		 * 
+		 * }
+		 */
+		/*
+		 * else fred.start();
+		 * 
+		 * if (cis.isPlaying()) {
+		 * lblCurrentStateSong.setText("Currently playing: " + temp.getArtist()
+		 * + " - " + temp.getTitle() + "");
+		 * 
+		 * btnPlayPause.setActionCommand("pause"); setPauseIcons(); } else
+		 * setProgressBartoDefault();
+		 */
+		// }
 	}
 
 	/**
@@ -305,8 +304,10 @@ public class MainFrame extends JFrame implements ActionListener, Runnable,
 		 */
 
 		if (cis.isPlaying()) {
-			/*lblCurrentStateSong.setText("Currently playing: "
-					+ temp.getArtist() + " - " + temp.getTitle() + "");*/
+			/*
+			 * lblCurrentStateSong.setText("Currently playing: " +
+			 * temp.getArtist() + " - " + temp.getTitle() + "");
+			 */
 			btnPlayPause.setActionCommand("pause");
 			setPauseIcons();
 			btnNext.setActionCommand("next");
@@ -362,29 +363,29 @@ public class MainFrame extends JFrame implements ActionListener, Runnable,
 	 * Sends the next Song action to the ServiceLayer
 	 */
 	public void next() {
-		//if (cis.isPlaying()) {
-			btnPlayPause.setActionCommand("play");
-			setPlayIcons();
-			lblCurrentStateSong.setText("");
+		// if (cis.isPlaying()) {
+		btnPlayPause.setActionCommand("play");
+		setPlayIcons();
+		lblCurrentStateSong.setText("");
 
-			cis.playNext();
+		cis.playNext();
 
-			// Song temp = cis.getCurrentSong();
-			// progress.setEnabled(true);
-			/*
-			 * if (fred == null || fred.isAlive() == false) { createThread();
-			 * 
-			 * }
-			 */
-			/*
-			 * else { fred.start(); } if (cis.isPlaying()) {
-			 * lblCurrentStateSong.setText("Currently playing: " +
-			 * temp.getArtist() + " - " + temp.getTitle() + "");
-			 * 
-			 * btnPlayPause.setActionCommand("pause"); setPauseIcons(); } else
-			 * setProgressBartoDefault();
-			 */
-		//}
+		// Song temp = cis.getCurrentSong();
+		// progress.setEnabled(true);
+		/*
+		 * if (fred == null || fred.isAlive() == false) { createThread();
+		 * 
+		 * }
+		 */
+		/*
+		 * else { fred.start(); } if (cis.isPlaying()) {
+		 * lblCurrentStateSong.setText("Currently playing: " + temp.getArtist()
+		 * + " - " + temp.getTitle() + "");
+		 * 
+		 * btnPlayPause.setActionCommand("pause"); setPauseIcons(); } else
+		 * setProgressBartoDefault();
+		 */
+		// }
 	}
 
 	/**
@@ -584,9 +585,11 @@ public class MainFrame extends JFrame implements ActionListener, Runnable,
 
 					node_1 = new PlaylistTreeNode("Intelligent Playlists");
 					Playlist toprated = ps.getTopRated();
-					node_1.add(new PlaylistTreeNode(toprated.getTitle() , false, toprated));
-					Playlist topplayed = ps.getTopRated();
-					node_1.add(new PlaylistTreeNode(topplayed.getTitle(), false, topplayed));
+					node_1.add(new PlaylistTreeNode(toprated.getTitle(), false,
+							toprated));
+					Playlist topplayed = ps.getTopPlayed();
+					node_1.add(new PlaylistTreeNode(topplayed.getTitle(),
+							false, topplayed));
 					/*
 					 * node_1.add(new PlaylistTreeNode(
 					 * ps.getTopRated().getTitle(), false, ps .getTopRated()));
@@ -645,15 +648,15 @@ public class MainFrame extends JFrame implements ActionListener, Runnable,
 		}
 
 		for (int i = 0; i < songTableCols.length; i++) {
-			cTableModel.getColumn(i).setCellRenderer(
-					new SongTableRenderer());
-		/*	if (color)
-
-				cTableModel.getColumn(i).setCellRenderer(
-						new SongTableRenderer());
-			color = !color;*/
+			cTableModel.getColumn(i).setCellRenderer(new SongTableRenderer());
+			/*
+			 * if (color)
+			 * 
+			 * cTableModel.getColumn(i).setCellRenderer( new
+			 * SongTableRenderer()); color = !color;
+			 */
 		}
-		
+
 		// TODO: Add reloading for "TopXX played" and "TopXX rated", if
 		// selected
 	}
@@ -810,17 +813,15 @@ public class MainFrame extends JFrame implements ActionListener, Runnable,
 		 * JTrees
 		 */
 		// pl_tree
-
-		JMenuItem treeentry1 = new JMenuItem("Delete Playlist");
-		treePopupMenu.add(treeentry1);
-		treeentry1.addActionListener(new TreeActionAdapter());
-		treeentry1.setActionCommand("deletePlaylist");
-
-		JMenuItem treeentry2 = new JMenuItem("Rename Playlist");
-		treePopupMenu.add(treeentry2);
-		treeentry2.addActionListener(new TreeActionAdapter());
-		treeentry2.setActionCommand("renamePlaylist");
-
+		/*
+		 * JMenuItem treeentry1 = new JMenuItem("Delete Playlist");
+		 * treePopupMenu.add(treeentry1); treeentry1.addActionListener(new
+		 * TreeActionAdapter()); treeentry1.setActionCommand("deletePlaylist");
+		 * 
+		 * JMenuItem treeentry2 = new JMenuItem("Rename Playlist");
+		 * treePopupMenu.add(treeentry2); treeentry2.addActionListener(new
+		 * TreeActionAdapter()); treeentry2.setActionCommand("renamePlaylist");
+		 */
 		buildPlTree();
 
 		/*
@@ -852,9 +853,8 @@ public class MainFrame extends JFrame implements ActionListener, Runnable,
 		 * node_1.add(new PlaylistTreeNode("TopRated"));
 		 * 
 		 * node_1.add(new PlaylistTreeNode( ps.getTopRated().getTitle(), false,
-		 * ps.getTopRated())); node_1.add(new
-		 * PlaylistTreeNode(ps.getTopPlayed() .getTitle(), false,
-		 * ps.getTopPlayed()));
+		 * ps.getTopRated())); node_1.add(new PlaylistTreeNode(ps.getTopPlayed()
+		 * .getTitle(), false, ps.getTopPlayed()));
 		 * 
 		 * 
 		 * add(node_1);
@@ -877,7 +877,7 @@ public class MainFrame extends JFrame implements ActionListener, Runnable,
 		// add the listener specifically to the header
 		pl_tree.addMouseListener(treePopupListener);
 
-		//playerPanel.add(pl_tree_sp, "cell 0 1,grow");
+		// playerPanel.add(pl_tree_sp, "cell 0 1,grow");
 
 		/**
 		 * JTables
@@ -888,38 +888,32 @@ public class MainFrame extends JFrame implements ActionListener, Runnable,
 		 * menuItem.addActionListener(new InsertRowsActionAdapter(this));
 		 * tablePopupMenu.add(menuItem);
 		 */
-		JMenuItem entry = new JMenuItem("Delete Song");
-		tablePopupMenu.add(entry);
-		entry.addActionListener(new TableActionAdapter());
-		entry.setActionCommand("deleteSong");
-
-		Separator sep = new JPopupMenu.Separator();
-		tablePopupMenu.add(sep);
-		
-		JMenuItem entry1 = new JMenuItem("Get Lyrics");
-		tablePopupMenu.add(entry1);
-		entry1.addActionListener(new TableActionAdapter());
-		entry1.setActionCommand("getLyrics");
-		
-		JMenuItem entry2 = new JMenuItem("Edit Lyrics");
-		tablePopupMenu.add(entry2);
-		entry2.addActionListener(new TableActionAdapter());
-		entry2.setActionCommand("editLyrics");
-		
-		JMenuItem entry3 = new JMenuItem("Get Meta-Tags");
-		tablePopupMenu.add(entry3);
-		entry3.addActionListener(new TableActionAdapter());
-		entry3.setActionCommand("getMetatags");
-		
-		JMenuItem entry4 = new JMenuItem("Edit Meta-Tags");
-		tablePopupMenu.add(entry4);
-		entry4.addActionListener(new TableActionAdapter());
-		entry4.setActionCommand("editMetatags");
-
-		
-		
+		/*
+		 * JMenuItem entry = new JMenuItem("Delete Song");
+		 * tablePopupMenu.add(entry); entry.addActionListener(new
+		 * TableActionAdapter()); entry.setActionCommand("deleteSong");
+		 * 
+		 * Separator sep = new JPopupMenu.Separator(); tablePopupMenu.add(sep);
+		 * 
+		 * JMenuItem entry1 = new JMenuItem("Get Lyrics");
+		 * tablePopupMenu.add(entry1); entry1.addActionListener(new
+		 * TableActionAdapter()); entry1.setActionCommand("getLyrics");
+		 * 
+		 * JMenuItem entry2 = new JMenuItem("Edit Lyrics");
+		 * tablePopupMenu.add(entry2); entry2.addActionListener(new
+		 * TableActionAdapter()); entry2.setActionCommand("editLyrics");
+		 * 
+		 * JMenuItem entry3 = new JMenuItem("Get Meta-Tags");
+		 * tablePopupMenu.add(entry3); entry3.addActionListener(new
+		 * TableActionAdapter()); entry3.setActionCommand("getMetatags");
+		 * 
+		 * JMenuItem entry4 = new JMenuItem("Edit Meta-Tags");
+		 * tablePopupMenu.add(entry4); entry4.addActionListener(new
+		 * TableActionAdapter()); entry4.setActionCommand("editMetatags");
+		 */
 		songTable = new JTable(songmodel);
-		songTable.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
+		songTable
+				.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
 		JScrollPane songTable_sp = new JScrollPane(songTable);
 		songTable_sp
 				.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_AS_NEEDED);
@@ -930,23 +924,23 @@ public class MainFrame extends JFrame implements ActionListener, Runnable,
 				.setSelectionMode(ListSelectionModel.SINGLE_INTERVAL_SELECTION);
 		songTable.setDragEnabled(true);
 		songTable.setTransferHandler(new JTableSongTransferHandler());
-		
+
 		jsplit = new JSplitPane();
 		jsplit.setLeftComponent(pl_tree_sp);
 		jsplit.setRightComponent(songTable_sp);
-		
-		//playerPanel.add(songTable_sp, "cell 1 1 3 1,grow");
+
+		// playerPanel.add(songTable_sp, "cell 1 1 3 1,grow");
 		playerPanel.add(jsplit, "cell 0 1 4 1 ,grow");
-		//songTable.setAutoCreateRowSorter(true);
+		// songTable.setAutoCreateRowSorter(true);
 		songTable.getModel().addTableModelListener(this);
 		cTableModel = new HidableTableColumnModel(songTable.getColumnModel());
-		
+
 		sorter = new TableRowSorter<TableModel>();
 		songTable.setRowSorter(sorter);
 		sorter.setModel(songmodel);
-		
+
 		sorter.addRowSorterListener(this);
-		
+
 		// htcm.setColumnVisible(0, false);
 		/*
 		 * JPopupMenu popup = new JPopupMenu("Hide Menu"); Action[] actions =
@@ -958,8 +952,8 @@ public class MainFrame extends JFrame implements ActionListener, Runnable,
 			public void mouseClicked(MouseEvent e) {
 				if (e.getClickCount() == 2) {
 					int row = songTable.getSelectedRow();
-					
-					if (row > -1) {	
+
+					if (row > -1) {
 						play(row);
 					}
 				}
@@ -1006,19 +1000,19 @@ public class MainFrame extends JFrame implements ActionListener, Runnable,
 		progress.setPaintTicks(true);
 		progress.setSnapToTicks(false);
 		progress.putClientProperty("JSlider.isFilled", Boolean.TRUE);
-		
-		/*progress.addChangeListener(new ChangeListener() {
 
-			@Override
-			public void stateChanged(ChangeEvent ce) {
-				// TODO Auto-generated method stub
-				JSlider source = (JSlider) ce.getSource();
-				setMediaTime(source.getValue());
-				
-			}
-			
-		});*/
-		
+		/*
+		 * progress.addChangeListener(new ChangeListener() {
+		 * 
+		 * @Override public void stateChanged(ChangeEvent ce) { // TODO
+		 * Auto-generated method stub JSlider source = (JSlider) ce.getSource();
+		 * setMediaTime(source.getValue());
+		 * 
+		 * }
+		 * 
+		 * });
+		 */
+
 		progress.addMouseListener(new MouseAdapter() {
 			public void mouseReleased(MouseEvent evt) {
 				setMediaTime(progress.getValue());
@@ -1046,10 +1040,10 @@ public class MainFrame extends JFrame implements ActionListener, Runnable,
 		});
 
 		/*
-		  progress.addChangeListener(new ChangeListener() { public void
-		  stateChanged(ChangeEvent e) { setMediaTime(progress.getValue()); }
-		  });*/
-		 
+		 * progress.addChangeListener(new ChangeListener() { public void
+		 * stateChanged(ChangeEvent e) { setMediaTime(progress.getValue()); }
+		 * });
+		 */
 
 		cis.setPlayerListener(new PlayerListener() {
 
@@ -1061,7 +1055,7 @@ public class MainFrame extends JFrame implements ActionListener, Runnable,
 
 				}
 				new MainFrame("reloadsongTable");
-				
+
 				songTable.repaint();
 				if (cis.isPlaying()) {
 					lblCurrentStateSong.setText("Currently playing: "
@@ -1079,7 +1073,7 @@ public class MainFrame extends JFrame implements ActionListener, Runnable,
 				if (fred != null) {
 					fred.interrupt();
 				}
-				
+
 				songTable.repaint();
 				// new MainFrame("reloadsongTable");
 				// fillSongTable(currentPlaylistGUI);
@@ -1436,6 +1430,41 @@ public class MainFrame extends JFrame implements ActionListener, Runnable,
 		}
 
 		private void showPopup(MouseEvent e) {
+			JPopupMenu tablePopupMenu = new JPopupMenu();
+			JMenuItem entry = new JMenuItem("Delete Song");
+			tablePopupMenu.add(entry);
+			entry.addActionListener(new TableActionAdapter());
+			entry.setActionCommand("deleteSong");
+
+			if (currentPlaylistGUI.getTitle().equals("Library")
+					|| currentPlaylistGUI.getTitle().equals("TopRated")
+					|| currentPlaylistGUI.getTitle().equals("TopPlayed")
+					|| currentPlaylistGUI.getTitle().equals("Queue")) {
+				entry.setEnabled(false);
+			}
+
+			Separator sep = new JPopupMenu.Separator();
+			tablePopupMenu.add(sep);
+
+			JMenuItem entry1 = new JMenuItem("Get Lyrics");
+			tablePopupMenu.add(entry1);
+			entry1.addActionListener(new TableActionAdapter());
+			entry1.setActionCommand("getLyrics");
+
+			JMenuItem entry2 = new JMenuItem("Edit Lyrics");
+			tablePopupMenu.add(entry2);
+			entry2.addActionListener(new TableActionAdapter());
+			entry2.setActionCommand("editLyrics");
+
+			JMenuItem entry3 = new JMenuItem("Get Meta-Tags");
+			tablePopupMenu.add(entry3);
+			entry3.addActionListener(new TableActionAdapter());
+			entry3.setActionCommand("getMetatags");
+
+			JMenuItem entry4 = new JMenuItem("Edit Meta-Tags");
+			tablePopupMenu.add(entry4);
+			entry4.addActionListener(new TableActionAdapter());
+			entry4.setActionCommand("editMetatags");
 			if (e.isPopupTrigger()) {
 				tablePopupMenu.show(e.getComponent(), e.getX(), e.getY());
 			}
@@ -1453,7 +1482,60 @@ public class MainFrame extends JFrame implements ActionListener, Runnable,
 
 		private void showPopup(MouseEvent e) {
 			if (e.isPopupTrigger()) {
-				treePopupMenu.show(e.getComponent(), e.getX(), e.getY());
+				try {
+					JTree tree = null;
+					tree = (JTree) e.getComponent();
+					Playlist clickedPlaylist = null;
+					PlaylistTreeNode clickedNode = null;
+					if (tree != null) {
+						TreePath path = tree.getPathForLocation(e.getX(),
+								e.getY());
+
+						clickedNode = (PlaylistTreeNode) path
+								.getLastPathComponent();
+						if (!clickedNode.isLeaf()) {
+								throw new NullPointerException();
+						} else {
+							clickedPlaylist = clickedNode.getNodePlaylist();
+						}
+
+					}
+
+					JPopupMenu treePopupMenu = new JPopupMenu();
+					JMenuItem treeentry1 = new JMenuItem("Delete Playlist");
+					treePopupMenu.add(treeentry1);
+					treeentry1.addActionListener(new TreeActionAdapter());
+					treeentry1.setActionCommand("deletePlaylist");
+
+					if (clickedPlaylist != null) {
+						if (clickedPlaylist.getTitle().equals("Library")
+								|| clickedPlaylist.getTitle()
+										.equals("TopRated")
+								|| clickedPlaylist.getTitle().equals(
+										"TopPlayed")
+								|| clickedPlaylist.getTitle().equals("Queue")) {
+							treeentry1.setEnabled(false);
+						}
+					}
+
+					JMenuItem treeentry2 = new JMenuItem("Rename Playlist");
+					treePopupMenu.add(treeentry2);
+					treeentry2.addActionListener(new TreeActionAdapter());
+					treeentry2.setActionCommand("renamePlaylist");
+
+					if (clickedPlaylist != null) {
+						if (clickedPlaylist.getTitle().equals("Library")
+								|| clickedPlaylist.getTitle()
+										.equals("TopRated")
+								|| clickedPlaylist.getTitle().equals(
+										"TopPlayed")
+								|| clickedPlaylist.getTitle().equals("Queue")) {
+							treeentry2.setEnabled(false);
+						}
+					}
+					treePopupMenu.show(e.getComponent(), e.getX(), e.getY());
+				} catch (NullPointerException ex) {
+				}
 			}
 		}
 	}
@@ -1468,27 +1550,27 @@ public class MainFrame extends JFrame implements ActionListener, Runnable,
 				int[] row = songTable.getSelectedRows();
 				Song x = null;
 				ArrayList<Song> deleteSongs = new ArrayList<Song>();
-				for (int i=0; i<row.length; i++) {
+				for (int i = 0; i < row.length; i++) {
 					int currentRow = row[i];
 					if (currentRow > -1) {
 						x = (Song) songTable.getValueAt(currentRow, 0);
 						deleteSongs.add(x);
 					}
 				}
-				
+
 				try {
-					ps.deleteSongs(deleteSongs, (WritablePlaylist) currentPlaylistGUI);
+					ps.deleteSongs(deleteSongs,
+							(WritablePlaylist) currentPlaylistGUI);
 					currentPlaylistGUI.removeAll(deleteSongs);
 				} catch (DataAccessException e1) {
 					new DynamicDialog("ERROR", e1.toString());
 				}
 				fillSongTable(currentPlaylistGUI);
-			}			
-			else if (e.getActionCommand().equals("getLyrics")) {
+			} else if (e.getActionCommand().equals("getLyrics")) {
 				int[] row = songTable.getSelectedRows();
 				Song x = null;
 				ArrayList<Song> getLyricSongs = new ArrayList<Song>();
-				for (int i=0; i<row.length; i++) {
+				for (int i = 0; i < row.length; i++) {
 					int currentRow = row[i];
 					if (currentRow > -1) {
 						x = (Song) songTable.getValueAt(currentRow, 0);
@@ -1498,12 +1580,12 @@ public class MainFrame extends JFrame implements ActionListener, Runnable,
 				new GetLyric(getLyricSongs);
 				fillSongTable(currentPlaylistGUI);
 			}
-			
+
 			else if (e.getActionCommand().equals("editLyrics")) {
 				int[] row = songTable.getSelectedRows();
 				Song x = null;
 				ArrayList<Song> editLyricSongs = new ArrayList<Song>();
-				for (int i=0; i<row.length; i++) {
+				for (int i = 0; i < row.length; i++) {
 					int currentRow = row[i];
 					if (currentRow > -1) {
 						x = (Song) songTable.getValueAt(currentRow, 0);
@@ -1513,12 +1595,12 @@ public class MainFrame extends JFrame implements ActionListener, Runnable,
 				new EditLyric(editLyricSongs);
 				fillSongTable(currentPlaylistGUI);
 			}
-			
+
 			else if (e.getActionCommand().equals("getMetatags")) {
 				int[] row = songTable.getSelectedRows();
 				Song x = null;
 				ArrayList<Song> getMetaSongs = new ArrayList<Song>();
-				for (int i=0; i<row.length; i++) {
+				for (int i = 0; i < row.length; i++) {
 					int currentRow = row[i];
 					if (currentRow > -1) {
 						x = (Song) songTable.getValueAt(currentRow, 0);
@@ -1528,12 +1610,12 @@ public class MainFrame extends JFrame implements ActionListener, Runnable,
 				new GetMetaTag(getMetaSongs);
 				fillSongTable(currentPlaylistGUI);
 			}
-			
+
 			else if (e.getActionCommand().equals("editMetatags")) {
 				int[] row = songTable.getSelectedRows();
 				Song x = null;
 				ArrayList<Song> editMetaSongs = new ArrayList<Song>();
-				for (int i=0; i<row.length; i++) {
+				for (int i = 0; i < row.length; i++) {
 					int currentRow = row[i];
 					if (currentRow > -1) {
 						x = (Song) songTable.getValueAt(currentRow, 0);
@@ -1572,17 +1654,16 @@ public class MainFrame extends JFrame implements ActionListener, Runnable,
 				if (selectedPlaylist.getClass() == WritablePlaylist.class)
 					playlistgui
 							.renamePlaylistGUI((WritablePlaylist) selectedPlaylist);
-				
+
 				buildPlTree();
 			}
 		}
 	}
-	
 
 	@Override
 	public void tableChanged(TableModelEvent e) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
@@ -1590,6 +1671,6 @@ public class MainFrame extends JFrame implements ActionListener, Runnable,
 		logger.info("sorterChanged");
 		currentPlaylistGUI = parseSongTable(currentPlaylistGUI);
 		cis.setCurrentPlaylist(currentPlaylistGUI);
-		songTable.repaint();	
+		songTable.repaint();
 	}
 }
