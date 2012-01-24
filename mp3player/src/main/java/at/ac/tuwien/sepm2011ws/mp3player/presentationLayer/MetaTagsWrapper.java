@@ -11,9 +11,21 @@ public class MetaTagsWrapper {
 
 	public MetaTagsWrapper(MetaTags tags, Lyric lyric, ComponentType type, String text) {
 		this.setTags(tags);
+		this.lyric = lyric;
 		this.setType(type);
 		this.text = text;
+	}
+	
+	public MetaTagsWrapper(Lyric lyric, ComponentType type, String text) {
 		this.lyric = lyric;
+		this.setType(type);
+		this.text = text;
+	}
+	
+	public MetaTagsWrapper(MetaTags tags, ComponentType type, String text) {
+		this.setTags(tags);
+		this.setType(type);
+		this.text = text;
 	}
 
 	public MetaTags getTags() {

@@ -11,7 +11,6 @@ import java.awt.event.ComponentEvent;
 import java.util.ArrayList;
 
 import javax.swing.JButton;
-import javax.swing.JComboBox;
 import javax.swing.JDialog;
 import javax.swing.JEditorPane;
 import javax.swing.JLabel;
@@ -23,7 +22,10 @@ import net.miginfocom.swing.MigLayout;
 
 import org.apache.log4j.Logger;
 
+import at.ac.tuwien.sepm2011ws.mp3player.domainObjects.Lyric;
 import at.ac.tuwien.sepm2011ws.mp3player.domainObjects.Song;
+import at.ac.tuwien.sepm2011ws.mp3player.serviceLayer.ServiceFactory;
+import at.ac.tuwien.sepm2011ws.mp3player.serviceLayer.SongInformationService;
 
 public class EditLyric extends JDialog implements ActionListener {
 
@@ -36,6 +38,7 @@ public class EditLyric extends JDialog implements ActionListener {
 	private int height;
 	private int positionX;
 	private int positionY;
+	private SongInformationService sis;
 
 	private JPanel getPanel = new JPanel(new MigLayout("", "[][grow]",
 			"[][][grow][]"));
@@ -53,6 +56,8 @@ public class EditLyric extends JDialog implements ActionListener {
 	
 	public EditLyric(ArrayList<Song> songlist) {
 		if (!songlist.isEmpty()) {
+			ServiceFactory sf = ServiceFactory.getInstance();
+			sis = sf.getSongInformationService();
 			width = 400;
 			height = 360;
 			positionX = (int) Math.round(dim.getWidth() / 2 - width / 2);
@@ -137,9 +142,10 @@ public class EditLyric extends JDialog implements ActionListener {
 	public void actionPerformed(ActionEvent e) {
 		if (e.getActionCommand().equals("save")) {
 			logger.info("EditLyric(): Started saving of Lyric");
-			// TODO: Update song in DB and File and/or in songTable (reload
-			// or not to
-			// reload songTable; that's the question...)
+			if (song.getLyric() != null)
+				song.setLyric(new Lyric(lyricEditorPane.getText()));
+
+			sis.setMetaTags(song);
 			dispose();
 		}
 

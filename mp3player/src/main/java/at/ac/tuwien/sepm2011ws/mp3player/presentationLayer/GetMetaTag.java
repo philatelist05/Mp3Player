@@ -13,6 +13,8 @@ import java.awt.event.ItemListener;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
 import java.util.ArrayList;
+import java.util.List;
+
 import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JDialog;
@@ -23,8 +25,11 @@ import javax.swing.JTextField;
 import net.miginfocom.swing.MigLayout;
 import org.apache.log4j.Logger;
 
+import at.ac.tuwien.sepm2011ws.mp3player.domainObjects.Lyric;
 import at.ac.tuwien.sepm2011ws.mp3player.domainObjects.MetaTags;
 import at.ac.tuwien.sepm2011ws.mp3player.domainObjects.Song;
+import at.ac.tuwien.sepm2011ws.mp3player.serviceLayer.ServiceFactory;
+import at.ac.tuwien.sepm2011ws.mp3player.serviceLayer.SongInformationService;
 
 public class GetMetaTag extends JDialog implements ActionListener, ItemListener, Runnable {
 
@@ -34,6 +39,11 @@ public class GetMetaTag extends JDialog implements ActionListener, ItemListener,
 	private static final long serialVersionUID = -382149403700069523L;
 	private static Logger logger = Logger.getLogger(GetMetaTag.class);
 	private Song song;
+	private Toolkit toolkit = Toolkit.getDefaultToolkit();
+	private Dimension dim = toolkit.getScreenSize();
+	private static int positionX, positionY, width, height;
+	private ArrayList<MetaTagsWrapper> tags = new ArrayList<MetaTagsWrapper>();
+	private SongInformationService sis;
 
 	private JPanel getPanel = new JPanel(new MigLayout("", "[][grow]",
 			"[][][][][][][][]"));
@@ -56,15 +66,10 @@ public class GetMetaTag extends JDialog implements ActionListener, ItemListener,
 	private JButton btnCancel = new JButton("Cancel");
 	private JButton btnSave = new JButton("Save");
 
-	private static int positionX, positionY, width, height;
-	private ArrayList<MetaTagsWrapper> tags = new ArrayList<MetaTagsWrapper>();
 	private JPanel checkPanel;
 	private JLabel checklabel;
 	private Thread fred;
 	JDialog checkDialog;
-	
-	private Toolkit toolkit = Toolkit.getDefaultToolkit();
-	private Dimension dim = toolkit.getScreenSize();
 
 	protected Song getSong() {
 		return song;
@@ -90,10 +95,20 @@ public class GetMetaTag extends JDialog implements ActionListener, ItemListener,
 		else
 			return null;
 	}
+	
+	public MetaTagsWrapper createMetaTagsWrapFromLyric(MetaTags tags, String text) {
+		if (tags != null) {
+			return new MetaTagsWrapper(tags, ComponentType.ComboBox, text);
+		}
+
+		return null;
+	}
 
 	public GetMetaTag(ArrayList<Song> songlist) {
 		if (!songlist.isEmpty()) {
-
+			ServiceFactory sf = ServiceFactory.getInstance();
+			sis = sf.getSongInformationService();
+			
 			song = songlist.get(0);
 			String temp = "";
 			
@@ -233,6 +248,8 @@ public class GetMetaTag extends JDialog implements ActionListener, ItemListener,
 				// TODO: Update song in DB and File and/or in songTable (reload
 				// or not to
 				// reload songTable; that's the question...)
+				
+				sis.setMetaTags(song);
 
 				dispose();
 			}
@@ -297,9 +314,21 @@ public class GetMetaTag extends JDialog implements ActionListener, ItemListener,
 
 	@Override
 	public void run() {
-		//TODO: Get MetaTags from LastFM and save them into songBox
 		logger.info("GetMetaTag(): Got into thread");
 		try {
+			int i = 0;
+			List<MetaTags> tagList= sis.downloadMetaTags(song);
+			
+			if (tagList != null) {
+				if (tagList.size() > 0) {
+					for (MetaTags x : tagList) {
+						songBox.addItem(createMetaTagsWrapFromLyric(x,
+								"LastFM: #" + i));
+						i++;
+					}
+				}
+			}
+			
 			Thread.sleep(2000);
 		} catch (InterruptedException e) {
 			e.printStackTrace();

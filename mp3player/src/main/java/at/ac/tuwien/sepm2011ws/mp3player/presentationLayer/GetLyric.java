@@ -2,17 +2,16 @@ package at.ac.tuwien.sepm2011ws.mp3player.presentationLayer;
 
 import java.awt.Dimension;
 import java.awt.Font;
-import java.awt.Rectangle;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.ComponentAdapter;
-import java.awt.event.ComponentEvent;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
 import java.util.ArrayList;
+import java.util.List;
+
 import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JDialog;
@@ -23,11 +22,12 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import net.miginfocom.swing.MigLayout;
 import org.apache.log4j.Logger;
+
+import at.ac.tuwien.sepm2011ws.mp3player.domainObjects.Lyric;
 import at.ac.tuwien.sepm2011ws.mp3player.domainObjects.MetaTags;
 import at.ac.tuwien.sepm2011ws.mp3player.domainObjects.Song;
 import at.ac.tuwien.sepm2011ws.mp3player.serviceLayer.ServiceFactory;
 import at.ac.tuwien.sepm2011ws.mp3player.serviceLayer.SongInformationService;
-
 
 public class GetLyric extends JDialog implements ActionListener, ItemListener,
 		Runnable {
@@ -64,32 +64,41 @@ public class GetLyric extends JDialog implements ActionListener, ItemListener,
 	public Song getSong() {
 		return song;
 	}
-	
-	public MetaTagsWrapper createMetaTagsWrap (Song song) {
+
+	public MetaTagsWrapper createMetaTagsWrapFromSong(Song song) {
 		if (song != null) {
 			MetaTags firstTags = new MetaTags(song.getArtist(),
 					song.getTitle(), song.getDuration(), song.getYear(),
 					song.getGenre(), null);
-			
+
 			if (song.getAlbum() != null)
 				firstTags.setAlbum(song.getAlbum());
-			
-			MetaTagsWrapper wrap = new MetaTagsWrapper(firstTags, null, ComponentType.ComboBox, "stored Lyric");
-			
+
+			MetaTagsWrapper wrap = new MetaTagsWrapper(firstTags, null,
+					ComponentType.ComboBox, "stored Lyric");
+
 			if (song.getLyric() != null)
 				wrap.setLyric(song.getLyric());
-			
+
 			return wrap;
 		}
-		
+
 		else
 			return null;
+	}
+
+	public MetaTagsWrapper createMetaTagsWrapFromLyric(Lyric lyric, String text) {
+		if (lyric != null) {
+			return new MetaTagsWrapper(lyric, ComponentType.ComboBox, text);
+		}
+
+		return null;
 	}
 
 	public GetLyric(ArrayList<Song> songlist) {
 		if (!songlist.isEmpty()) {
 			ServiceFactory sf = ServiceFactory.getInstance();
-			//sis = sf.getSongInformationService();
+			sis = sf.getSongInformationService();
 			width = 400;
 			height = 360;
 			positionX = (int) Math.round(dim.getWidth() / 2 - width / 2);
@@ -98,7 +107,6 @@ public class GetLyric extends JDialog implements ActionListener, ItemListener,
 			setTitle("Get Lyrics from LastFM...");
 			setModal(true);
 			song = songlist.get(0);
-
 
 			String temp = "";
 			logger.info("GetLyric(): Start initializing GetLyic()");
@@ -111,7 +119,7 @@ public class GetLyric extends JDialog implements ActionListener, ItemListener,
 				temp = temp.substring(0, 30) + "...";
 			lblArtistTitle.setText(temp);
 
-			tags.add(createMetaTagsWrap(song));
+			tags.add(createMetaTagsWrapFromSong(song));
 
 			for (MetaTagsWrapper x : tags)
 				lyricBox.addItem(x);
@@ -162,17 +170,13 @@ public class GetLyric extends JDialog implements ActionListener, ItemListener,
 
 		logger.info("GetMetaTag(): successfully initialized components");
 
-		addComponentListener(new ComponentAdapter() {
-			@Override
-			public void componentResized(ComponentEvent e) {
-				Rectangle rv = getBounds();
-				positionX = rv.x;
-				positionY = rv.y;
-				width = rv.width;
-				height = rv.height;
-				logger.info(rv);
-			}
-		});
+		/*
+		 * addComponentListener(new ComponentAdapter() {
+		 * 
+		 * @Override public void componentResized(ComponentEvent e) { Rectangle
+		 * rv = getBounds(); positionX = rv.x; positionY = rv.y; width =
+		 * rv.width; height = rv.height; logger.info(rv); } });
+		 */
 
 		addWindowListener(new WindowListener() {
 			public void windowClosed(WindowEvent arg0) {
@@ -243,10 +247,23 @@ public class GetLyric extends JDialog implements ActionListener, ItemListener,
 
 	@Override
 	public void run() {
-		// TODO: Get Lyrics from CDDB and save them into lyricBox and
-		// lyricEditorPane
 		logger.info("GetMetaTag(): Got into thread");
+
 		try {
+			int i = 1;
+
+			List<Lyric> lyricList = sis.downloadLyrics(song);
+
+			if (lyricList != null) {
+				if (lyricList.size() > 0) {
+					for (Lyric x : lyricList) {
+						lyricBox.addItem(createMetaTagsWrapFromLyric(x,
+								"LastFM: #" + i));
+						i++;
+					}
+				}
+			}
+
 			Thread.sleep(2000);
 		} catch (InterruptedException e) {
 			e.printStackTrace();
@@ -260,9 +277,11 @@ public class GetLyric extends JDialog implements ActionListener, ItemListener,
 	public void actionPerformed(ActionEvent e) {
 		if (e.getActionCommand().equals("save")) {
 			logger.info("GetLyric(): Started saving of Lyric");
-			// TODO: Update song in DB and File and/or in songTable (reload
-			// or not to
-			// reload songTable; that's the question...)
+
+			if (song.getLyric() != null)
+				song.setLyric(new Lyric(lyricEditorPane.getText()));
+
+			sis.setMetaTags(song);
 			dispose();
 		}
 
