@@ -1,5 +1,6 @@
 package at.ac.tuwien.sepm2011ws.mp3player.presentationLayer;
 
+import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Image;
 import java.awt.Rectangle;
@@ -374,7 +375,7 @@ public class MainFrame extends JFrame implements ActionListener, Runnable,
 			btnPlayPause.setActionCommand("play");
 			setPlayIcons();
 			lblCurrentStateSong.setText("");
-
+			//cis.g
 			cis.playNext();
 			progress.setEnabled(true);
 			lblPlayedTime.setText(getPlayedTimeInSeconds());
@@ -942,7 +943,7 @@ public class MainFrame extends JFrame implements ActionListener, Runnable,
 				.setSelectionMode(ListSelectionModel.SINGLE_INTERVAL_SELECTION);
 		songTable.setDragEnabled(true);
 		songTable.setTransferHandler(new JTableSongTransferHandler());
-		
+		songTable.setSelectionBackground(new Color(255,0,0));
 		jsplit = new JSplitPane();
 		jsplit.setLeftComponent(pl_tree_sp);
 		jsplit.setRightComponent(songTable_sp);
@@ -1600,6 +1601,10 @@ public class MainFrame extends JFrame implements ActionListener, Runnable,
 	@Override
 	public void sorterChanged(RowSorterEvent e) {
 		logger.info("sorterChanged");
+		
+		if(cis.getCurrentSongIndex()>-1)
+			cis.setCurrentSongIndex(sorter.convertRowIndexToView(cis.getCurrentSongIndex()));
+		//sorter
 		currentPlaylistGUI = parseSongTable(currentPlaylistGUI);
 		cis.setCurrentPlaylist(currentPlaylistGUI);
 		songTable.repaint();	
