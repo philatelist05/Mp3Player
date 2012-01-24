@@ -1072,7 +1072,7 @@ public class MainFrame extends JFrame implements ActionListener, Runnable,
 					createThread();
 
 				}
-				new MainFrame("reloadsongTable");
+				//new MainFrame("reloadsongTable");
 				
 				songTable.repaint();
 				if (cis.isPlaying()) {

@@ -45,8 +45,9 @@ public class SongTableRenderer extends DefaultTableCellRenderer {
 	//	if(cis.isPlaying())
 	//	{
 			if (cis.getCurrentSongIndex() > -1) {
-				//if (table.getRowSorter().convertRowIndexToView(
-					if(	cis.getCurrentSongIndex() == row) {
+				if (table.getRowSorter().convertRowIndexToView(row) == cis.getCurrentSongIndex())
+			//		if(	cis.getCurrentSongIndex() == row) 
+						{
 					// System.out.println(table.getRowSorter().convertRowIndexToView(cis.getCurrentSongIndex()));
 					component.setFont(component.getFont().deriveFont(Font.BOLD));
 				}
