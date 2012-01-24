@@ -240,8 +240,8 @@ public class SimilarArtist extends JDialog implements ActionListener,
 	@Override
 	public void itemStateChanged(ItemEvent evt) {
 		if (evt.getStateChange() == ItemEvent.SELECTED) {
-			SongWrapper result = (SongWrapper) evt.getItem();
-			logger.info(result.getSong().getTitle());
+			MetaTagsWrapper result = (MetaTagsWrapper) evt.getItem();
+			logger.info(result.getTags().getTitle());
 			//fillFields(result);
 		}
 	}
