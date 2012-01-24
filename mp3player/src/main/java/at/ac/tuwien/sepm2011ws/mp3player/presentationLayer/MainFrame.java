@@ -1,5 +1,6 @@
 package at.ac.tuwien.sepm2011ws.mp3player.presentationLayer;
 
+import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Image;
 import java.awt.Rectangle;
@@ -148,6 +149,7 @@ public class MainFrame extends JFrame implements ActionListener, Runnable,
 				new ClassPathResource("img/play_orange_pressed.png").getURL());
 
 		r1 = new ImageIcon(new ClassPathResource("img/right_blue.png").getURL());
+
 		r2 = new ImageIcon(
 				new ClassPathResource("img/right_orange.png").getURL());
 		r3 = new ImageIcon(
@@ -253,6 +255,25 @@ public class MainFrame extends JFrame implements ActionListener, Runnable,
 		setPlayIcons();
 		lblCurrentStateSong.setText("");
 
+
+		if (cis.hasPreviousSong()) {
+			progress.setEnabled(true);
+			lblPlayedTime.setText(getPlayedTimeInSeconds());
+			progress.setVisible(true);
+			lblCurrentStateSong.setVisible(true);
+			lblPlayedTime.setVisible(true);
+			lblDurationSeperator.setVisible(true);
+			lblDuration.setVisible(true);
+		} else {
+			progress.setEnabled(false);
+			lblPlayedTime.setText("");
+			progress.setVisible(true);
+			lblCurrentStateSong.setVisible(false);
+			lblPlayedTime.setVisible(false);
+			lblDurationSeperator.setVisible(false);
+			lblDuration.setVisible(false);
+		}
+		
 		cis.playPrevious();
 
 		// Song temp = cis.getCurrentSong();
@@ -368,8 +389,25 @@ public class MainFrame extends JFrame implements ActionListener, Runnable,
 		setPlayIcons();
 		lblCurrentStateSong.setText("");
 
+		if (cis.hasNextSong()) {
+			progress.setEnabled(true);
+			lblPlayedTime.setText(getPlayedTimeInSeconds());
+			progress.setVisible(true);
+			lblCurrentStateSong.setVisible(true);
+			lblPlayedTime.setVisible(true);
+			lblDurationSeperator.setVisible(true);
+			lblDuration.setVisible(true);
+		} else {
+			progress.setEnabled(false);
+			lblPlayedTime.setText("");
+			progress.setVisible(true);
+			lblCurrentStateSong.setVisible(false);
+			lblPlayedTime.setVisible(false);
+			lblDurationSeperator.setVisible(false);
+			lblDuration.setVisible(false);
+		}
+		
 		cis.playNext();
-
 		// Song temp = cis.getCurrentSong();
 		// progress.setEnabled(true);
 		/*
@@ -888,6 +926,7 @@ public class MainFrame extends JFrame implements ActionListener, Runnable,
 		 * menuItem.addActionListener(new InsertRowsActionAdapter(this));
 		 * tablePopupMenu.add(menuItem);
 		 */
+
 		/*
 		 * JMenuItem entry = new JMenuItem("Delete Song");
 		 * tablePopupMenu.add(entry); entry.addActionListener(new
@@ -911,6 +950,7 @@ public class MainFrame extends JFrame implements ActionListener, Runnable,
 		 * tablePopupMenu.add(entry4); entry4.addActionListener(new
 		 * TableActionAdapter()); entry4.setActionCommand("editMetatags");
 		 */
+
 		songTable = new JTable(songmodel);
 		songTable
 				.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
@@ -925,6 +965,7 @@ public class MainFrame extends JFrame implements ActionListener, Runnable,
 		songTable.setDragEnabled(true);
 		songTable.setTransferHandler(new JTableSongTransferHandler());
 
+		songTable.setSelectionBackground(new Color(255, 0, 0));
 		jsplit = new JSplitPane();
 		jsplit.setLeftComponent(pl_tree_sp);
 		jsplit.setRightComponent(songTable_sp);
@@ -1054,7 +1095,8 @@ public class MainFrame extends JFrame implements ActionListener, Runnable,
 					createThread();
 
 				}
-				new MainFrame("reloadsongTable");
+
+				// new MainFrame("reloadsongTable");
 
 				songTable.repaint();
 				if (cis.isPlaying()) {
@@ -1669,6 +1711,11 @@ public class MainFrame extends JFrame implements ActionListener, Runnable,
 	@Override
 	public void sorterChanged(RowSorterEvent e) {
 		logger.info("sorterChanged");
+
+		if (cis.getCurrentSongIndex() > -1)
+			cis.setCurrentSongIndex(sorter.convertRowIndexToView(cis
+					.getCurrentSongIndex()));
+		// sorter
 		currentPlaylistGUI = parseSongTable(currentPlaylistGUI);
 		cis.setCurrentPlaylist(currentPlaylistGUI);
 		songTable.repaint();
