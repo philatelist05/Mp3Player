@@ -178,6 +178,20 @@ public interface CoreInteractionService {
 	public PlayMode getPlayMode();
 
 	/**
+	 * Return if there is a next song in the playlist
+	 * 
+	 * @return true if there is a next song, otherwise false
+	 */
+	public boolean hasNextSong();
+
+	/**
+	 * Return if there is a previous song in the playlist
+	 * 
+	 * @return true if there is a previous song, otherwise false
+	 */
+	public boolean hasPreviousSong();
+
+	/**
 	 * Gets the index of the current song in the current playlist.
 	 * 
 	 * @return the index of the current song or -1 if it is not in the current

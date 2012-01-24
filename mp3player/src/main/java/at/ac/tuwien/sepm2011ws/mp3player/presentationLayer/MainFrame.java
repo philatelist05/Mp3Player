@@ -149,6 +149,7 @@ public class MainFrame extends JFrame implements ActionListener, Runnable,
 				new ClassPathResource("img/play_orange_pressed.png").getURL());
 
 		r1 = new ImageIcon(new ClassPathResource("img/right_blue.png").getURL());
+
 		r2 = new ImageIcon(
 				new ClassPathResource("img/right_orange.png").getURL());
 		r3 = new ImageIcon(
@@ -162,6 +163,7 @@ public class MainFrame extends JFrame implements ActionListener, Runnable,
 				"img/pause_orange_pressed.png").getURL());
 	}
 
+	
 	/**
 	 * Parses and replaces the songs of the songTable into the specified
 	 * playlist
@@ -182,7 +184,6 @@ public class MainFrame extends JFrame implements ActionListener, Runnable,
 		}
 		
 		list.addAll(temp);
-
 
 		return list;
 	}
