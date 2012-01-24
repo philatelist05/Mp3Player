@@ -251,6 +251,20 @@ public class VlcjCoreInteractionService implements CoreInteractionService {
 	public void setCurrentSongIndex(int index) {
 		this.currentSongIndex = index;
 	}
+	
+	public boolean hasNextSong() {
+		if(getNextSongIndex() >= 0) {
+			return true;
+		}
+		return false;
+	}
+	
+	public boolean hasPreviousSong() {
+		if(getPreviousSongIndex() >= 0) {
+			return true;
+		}
+		return false;
+	}
 
 	private int getNextSongIndex() {
 		if (this.currentPlaylist == null) {
