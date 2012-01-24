@@ -21,5 +21,13 @@ http://www.springframework.org/schema/beans/spring-beans-3.0.xsd">
 </bean>
 
 
+<bean id="SongInformationService" class="at.ac.tuwien.sepm2011ws.mp3player.serviceLayer.vvv.VvvSongInformationService">
+</bean>
+
+
+<bean id="LastFmService" class="at.ac.tuwien.sepm2011ws.mp3player.serviceLayer.vvv.VvvLastFmService">
+</bean>
+
+
 
 </beans>

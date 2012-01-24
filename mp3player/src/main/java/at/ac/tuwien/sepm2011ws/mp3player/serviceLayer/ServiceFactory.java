@@ -28,4 +28,12 @@ public class ServiceFactory {
 	public SettingsService getSettingsService() {
 	    return (SettingsService) context.getBean("SettingsService");
 	}
+
+	public SongInformationService getSongInformationService() {
+	    return (SongInformationService) context.getBean("SongInformationService");
+	}
+
+	public LastFmService getLastFmService() {
+	    return (LastFmService) context.getBean("LastFmService");
+	}
 }

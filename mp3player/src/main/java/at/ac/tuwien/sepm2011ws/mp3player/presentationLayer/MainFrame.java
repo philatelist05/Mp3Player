@@ -249,13 +249,21 @@ public class MainFrame extends JFrame implements ActionListener, Runnable,
 	 * Sends the "previous Song" Signal to the Service Layer
 	 */
 	public void previous() {
-		if (cis.isPlaying()) {
+		//if (cis.isPlaying()) {
 
 			btnPlayPause.setActionCommand("play");
 			setPlayIcons();
 			lblCurrentStateSong.setText("");
 
 			cis.playPrevious();
+			
+			progress.setEnabled(true);
+			lblPlayedTime.setText(getPlayedTimeInSeconds());
+			progress.setVisible(true);
+			lblCurrentStateSong.setVisible(true);
+			lblPlayedTime.setVisible(true);
+			lblDurationSeperator.setVisible(true);
+			lblDuration.setVisible(true);
 
 			// Song temp = cis.getCurrentSong();
 
@@ -275,7 +283,7 @@ public class MainFrame extends JFrame implements ActionListener, Runnable,
 			 * btnPlayPause.setActionCommand("pause"); setPauseIcons(); } else
 			 * setProgressBartoDefault();
 			 */
-		}
+		//}
 	}
 
 	/**
@@ -363,12 +371,19 @@ public class MainFrame extends JFrame implements ActionListener, Runnable,
 	 * Sends the next Song action to the ServiceLayer
 	 */
 	public void next() {
-		if (cis.isPlaying()) {
+		//if (cis.isPlaying()) {
 			btnPlayPause.setActionCommand("play");
 			setPlayIcons();
 			lblCurrentStateSong.setText("");
 
 			cis.playNext();
+			progress.setEnabled(true);
+			lblPlayedTime.setText(getPlayedTimeInSeconds());
+			progress.setVisible(true);
+			lblCurrentStateSong.setVisible(true);
+			lblPlayedTime.setVisible(true);
+			lblDurationSeperator.setVisible(true);
+			lblDuration.setVisible(true);
 
 			// Song temp = cis.getCurrentSong();
 			// progress.setEnabled(true);
@@ -385,7 +400,7 @@ public class MainFrame extends JFrame implements ActionListener, Runnable,
 			 * btnPlayPause.setActionCommand("pause"); setPauseIcons(); } else
 			 * setProgressBartoDefault();
 			 */
-		}
+		//}
 	}
 
 	/**
@@ -917,7 +932,7 @@ public class MainFrame extends JFrame implements ActionListener, Runnable,
 		
 		
 		songTable = new JTable(songmodel);
-		songTable.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+		songTable.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
 		JScrollPane songTable_sp = new JScrollPane(songTable);
 		songTable_sp
 				.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_AS_NEEDED);
@@ -1575,6 +1590,7 @@ public class MainFrame extends JFrame implements ActionListener, Runnable,
 			}
 		}
 	}
+	
 
 	@Override
 	public void tableChanged(TableModelEvent e) {
@@ -1584,7 +1600,7 @@ public class MainFrame extends JFrame implements ActionListener, Runnable,
 
 	@Override
 	public void sorterChanged(RowSorterEvent e) {
-		//logger.info("sorterChanged");
+		logger.info("sorterChanged");
 		currentPlaylistGUI = parseSongTable(currentPlaylistGUI);
 		cis.setCurrentPlaylist(currentPlaylistGUI);
 		songTable.repaint();	

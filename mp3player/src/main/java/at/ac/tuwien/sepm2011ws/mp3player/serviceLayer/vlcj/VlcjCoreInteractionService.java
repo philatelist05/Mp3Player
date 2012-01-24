@@ -45,6 +45,7 @@ public class VlcjCoreInteractionService implements CoreInteractionService {
 		this.isPaused = false;
 		this.playMode = PlayMode.NORMAL;
 		this.playDirection = PlayDirection.NEXT;
+		this.currentSongIndex = -1;
 
 		MediaPlayerFactory factory = new MediaPlayerFactory(
 				new String[] { "--plugin-path=" + pluginPath });
@@ -106,6 +107,8 @@ public class VlcjCoreInteractionService implements CoreInteractionService {
 			File songFile = new File(song.getPath());
 
 			mediaPlayer.playMedia(songFile.getAbsolutePath());
+		} else if(isPlaying() || isPaused()) {
+			stop();
 		}
 	}
 
