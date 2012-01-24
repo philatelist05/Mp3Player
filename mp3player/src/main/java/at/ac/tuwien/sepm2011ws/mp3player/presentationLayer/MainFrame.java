@@ -1745,35 +1745,48 @@ public class MainFrame extends JFrame implements ActionListener, Runnable,
 
 		public void actionPerformed(ActionEvent e) {
 			if (e.getActionCommand().equals("deletePlaylist")) {
-				PlaylistTreeNode selectedNode = (PlaylistTreeNode) pl_tree
-						.getLastSelectedPathComponent();
-
-				if (selectedNode != null) {
-					Playlist selectedPlaylist = selectedNode.getNodePlaylist();
-					try {
-						if (selectedPlaylist.getClass() == WritablePlaylist.class)
-							ps.deletePlaylist((WritablePlaylist) selectedPlaylist);
-					} catch (DataAccessException e1) {
+				// PlaylistTreeNode selectedNode = (PlaylistTreeNode) pl_tree
+				// .getLastSelectedPathComponent();
+				TreePath[] treePaths = pl_tree.getSelectionPaths();
+				if (treePaths.length != 0) {
+					for (int i = 0; i < treePaths.length; i++) {
+						TreePath currentPath = treePaths[i];
+						PlaylistTreeNode selectedNode = (PlaylistTreeNode) currentPath
+								.getLastPathComponent();
+						Playlist selectedPlaylist = selectedNode
+								.getNodePlaylist();
+						try {
+							if (selectedPlaylist.getClass() == WritablePlaylist.class)
+								ps.deletePlaylist((WritablePlaylist) selectedPlaylist);
+						} catch (DataAccessException e1) {
+						}
 					}
 				} else {
 					int response = JOptionPane.showConfirmDialog(null,
-							"No Playlist chosen!", "No Playlist chosen!",
+							"No Playlists chosen!", "No Playlists chosen!",
 							JOptionPane.CLOSED_OPTION);
 				}
 				buildPlTree();
 
 			} else if (e.getActionCommand().equals("renamePlaylist")) {
-				PlaylistTreeNode selectedNode = (PlaylistTreeNode) pl_tree
-						.getLastSelectedPathComponent();
-				if (selectedNode != null) {
-					Playlist selectedPlaylist = selectedNode.getNodePlaylist();
-					playlistgui = new PlaylistGUI();
-					if (selectedPlaylist.getClass() == WritablePlaylist.class)
-						playlistgui
-								.renamePlaylistGUI((WritablePlaylist) selectedPlaylist);
+				// PlaylistTreeNode selectedNode = (PlaylistTreeNode) pl_tree
+				// .getLastSelectedPathComponent();
+				TreePath[] treePaths = pl_tree.getSelectionPaths();
+				if (treePaths.length != 0) {
+					for (int i = 0; i < treePaths.length; i++) {
+						TreePath currentPath = treePaths[i];
+						PlaylistTreeNode selectedNode = (PlaylistTreeNode) currentPath
+								.getLastPathComponent();
+						Playlist selectedPlaylist = selectedNode
+								.getNodePlaylist();
+						playlistgui = new PlaylistGUI();
+						if (selectedPlaylist.getClass() == WritablePlaylist.class)
+							playlistgui
+									.renamePlaylistGUI((WritablePlaylist) selectedPlaylist);
+					}
 				} else {
 					int response = JOptionPane.showConfirmDialog(null,
-							"No Playlist chosen!", "No Playlist chosen!",
+							"No Playlists chosen!", "No Playlists chosen!",
 							JOptionPane.CLOSED_OPTION);
 				}
 				buildPlTree();
