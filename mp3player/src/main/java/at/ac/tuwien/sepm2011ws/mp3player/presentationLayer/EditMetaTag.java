@@ -24,6 +24,8 @@ import net.miginfocom.swing.MigLayout;
 import org.apache.log4j.Logger;
 
 import at.ac.tuwien.sepm2011ws.mp3player.domainObjects.Song;
+import at.ac.tuwien.sepm2011ws.mp3player.serviceLayer.ServiceFactory;
+import at.ac.tuwien.sepm2011ws.mp3player.serviceLayer.SongInformationService;
 
 public class EditMetaTag extends JDialog implements ActionListener {
 
@@ -33,6 +35,9 @@ public class EditMetaTag extends JDialog implements ActionListener {
 	private static final long serialVersionUID = -382149403700069523L;
 	private static Logger logger = Logger.getLogger(EditMetaTag.class);
 	private Song song;
+	private Toolkit toolkit = Toolkit.getDefaultToolkit();
+	private Dimension dim = toolkit.getScreenSize();
+	private SongInformationService sis;
 
 	private JPanel alterPanel = new JPanel(new MigLayout("", "[][grow]",
 			"[][][][][][][]"));
@@ -62,8 +67,8 @@ public class EditMetaTag extends JDialog implements ActionListener {
 
 	public EditMetaTag(ArrayList<Song> songlist) {
 		if (!songlist.isEmpty()) {
-			Toolkit toolkit = Toolkit.getDefaultToolkit();
-			Dimension dim = toolkit.getScreenSize();
+			ServiceFactory sf = ServiceFactory.getInstance();
+			sis = sf.getSongInformationService();
 
 			song = songlist.get(0);
 			String temp = "";
@@ -175,10 +180,8 @@ public class EditMetaTag extends JDialog implements ActionListener {
 				song.setYear(Integer.parseInt(textYear.getText().trim()));
 				song.setGenre(textGenre.getText().trim());
 
-				// TODO: Update song in DB and File and/or in songTable (reload
-				// or not to
-				// reload songTable; that's the question...)
-
+				sis.setMetaTags(song);
+				
 				dispose();
 			}
 

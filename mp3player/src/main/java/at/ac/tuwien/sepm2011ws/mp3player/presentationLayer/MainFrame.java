@@ -756,6 +756,12 @@ public class MainFrame extends JFrame implements ActionListener, Runnable,
 		if (command == "reloadsongTable")
 			fillSongTable(currentPlaylistGUI);
 	}
+	
+	public MainFrame(Playlist list, String command) {
+		currentPlaylistGUI = list;
+		if (command == "reloadsongTable")
+			fillSongTable(currentPlaylistGUI);
+	}
 
 	/**
 	 * Initializes the contents of the frame
@@ -1437,8 +1443,12 @@ public class MainFrame extends JFrame implements ActionListener, Runnable,
 
 		else if (e.getActionCommand().equals("about")) {
 			logger.info("About: Going to show About dialog");
-			new DynamicDialog("About mp3@Player...",
-					"mp3@Player Beta Version by SEPM team VVV");
+			JOptionPane
+			.showConfirmDialog(
+					null,
+					"mp3@Player Beta Version by SEPM team VVV",
+					"About mp3@Player...",
+					JOptionPane.CLOSED_OPTION);
 		}
 
 		else if (e.getActionCommand().equals("exit")) {

@@ -1,5 +1,7 @@
 package at.ac.tuwien.sepm2011ws.mp3player.presentationLayer;
 
+import java.awt.Dimension;
+import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
@@ -17,6 +19,12 @@ public class DynamicDialog extends JDialog implements ActionListener{
 	private JPanel ok = new JPanel(new MigLayout("", "[grow]", "[]"));;
 	private JButton btnOK = new JButton("OK");
 	private JLabel msg = new JLabel("");
+	private int width;
+	private int height;
+	private int positionX;
+	private int positionY;
+	private Toolkit toolkit = Toolkit.getDefaultToolkit();
+	private Dimension dim = toolkit.getScreenSize();
 
 	/**
 	 * Create the frame.
@@ -26,16 +34,18 @@ public class DynamicDialog extends JDialog implements ActionListener{
 		msg.setText(message);
 		initialize();
 		setDefaultCloseOperation(DISPOSE_ON_CLOSE);
-		setBounds(100, 100, 400, 100);
+		
+		width = 400;
+		height = 100;
+		positionX = (int) Math.round(dim.getWidth() / 2 - width / 2);
+		positionY = (int) Math.round(dim.getHeight() / 2 - height / 2);
+		setBounds(positionX, positionY, width, height);
+		setResizable(false);
 		setModal(true);
 		setVisible(true);
 	}
 
 	private void initialize() {
-		setDefaultCloseOperation(DISPOSE_ON_CLOSE);
-		setBounds(100, 100, 400, 100);
-		setModal(true);
-		
 		getContentPane().add(ok);
 		
 		msg.setHorizontalAlignment(SwingConstants.LEFT);

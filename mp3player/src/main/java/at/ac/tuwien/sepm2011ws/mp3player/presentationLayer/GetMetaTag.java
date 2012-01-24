@@ -244,10 +244,6 @@ public class GetMetaTag extends JDialog implements ActionListener, ItemListener,
 				
 				song.setYear(Integer.parseInt(textYear.getText().trim()));
 				song.setGenre(textGenre.getText().trim());
-
-				// TODO: Update song in DB and File and/or in songTable (reload
-				// or not to
-				// reload songTable; that's the question...)
 				
 				sis.setMetaTags(song);
 
@@ -289,6 +285,7 @@ public class GetMetaTag extends JDialog implements ActionListener, ItemListener,
 		checkDialog.setBounds(positionX, positionY, width, height);
 		checkDialog.setDefaultCloseOperation(DO_NOTHING_ON_CLOSE);
 		checkDialog.setModal(true);
+		checkDialog.setResizable(false);
 		
 		fred = new Thread(this);
 		fred.start();
@@ -330,11 +327,11 @@ public class GetMetaTag extends JDialog implements ActionListener, ItemListener,
 			}
 			
 			Thread.sleep(2000);
+			checkDialog.dispose();
+			fred.stop();
 		} catch (InterruptedException e) {
 			e.printStackTrace();
 		}
-		checkDialog.dispose();
-		fred.stop();
 	}
 
 	@Override

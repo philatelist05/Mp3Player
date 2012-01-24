@@ -227,6 +227,7 @@ public class GetLyric extends JDialog implements ActionListener, ItemListener,
 		checkDialog.setBounds(positionX, positionY, width, height);
 		checkDialog.setDefaultCloseOperation(DO_NOTHING_ON_CLOSE);
 		checkDialog.setModal(true);
+		checkDialog.setResizable(false);
 
 		fred = new Thread(this);
 		fred.start();

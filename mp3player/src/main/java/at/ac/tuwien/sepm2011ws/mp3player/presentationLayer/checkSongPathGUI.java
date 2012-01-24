@@ -1,5 +1,7 @@
 package at.ac.tuwien.sepm2011ws.mp3player.presentationLayer;
 
+import java.awt.Dimension;
+import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
@@ -30,6 +32,12 @@ public class checkSongPathGUI extends JDialog implements ActionListener, Runnabl
 	private JButton btnStart;
 	private PlaylistService ps;
 	private Thread fred;
+	private Toolkit toolkit = Toolkit.getDefaultToolkit();
+	private Dimension dim = toolkit.getScreenSize();
+	private int width;
+	private int height;
+	private int positionX;
+	private int positionY;
 
 	private void createThread() {
 		fred = new Thread(this);
@@ -37,27 +45,32 @@ public class checkSongPathGUI extends JDialog implements ActionListener, Runnabl
 	}
 
 	public void run() {
-			try {
-				btnCancel.setEnabled(false);
-				btnStart.setEnabled(false);
-				checklabel.setText(checklabel.getText().concat(" Working..."));
-				
-				ps.checkSongPaths();
-				
-				logger.info("checkSongPathGUI(): Songpaths successfully checked");
-				new MainFrame("reloadsongTable");
-				logger.info("checkSongPathGUI(): Back from Mainframe");
-				
-				checklabel.setText("Press start to check for missing songs: Finished!");
-				btnCancel.setEnabled(true);
-				btnStart.setEnabled(true);
-				
-				fred.stop();
-			} catch (DataAccessException e) {
-				JOptionPane.showMessageDialog(null,
-						"Songpath check: " + e);
-				e.printStackTrace();
-			}
+		try {
+			setDefaultCloseOperation(DO_NOTHING_ON_CLOSE);
+			btnCancel.setEnabled(false);
+			btnStart.setEnabled(false);
+			checklabel.setText("Working...");
+			
+			ps.checkSongPaths();
+			
+			logger.info("checkSongPathGUI(): Songpaths successfully checked");
+			new MainFrame("reloadsongTable");
+			logger.info("checkSongPathGUI(): Back from Mainframe");
+			
+			checklabel.setText("Press start to check for missing songs:");
+			btnCancel.setEnabled(true);
+			btnStart.setEnabled(true);
+			setDefaultCloseOperation(DISPOSE_ON_CLOSE);
+			
+			JOptionPane.showConfirmDialog(null, "Successfully checked songpaths!",
+					"Checking songspath...", JOptionPane.CLOSED_OPTION);
+			
+			fred.stop();
+		} catch (DataAccessException e) {
+			JOptionPane.showMessageDialog(null,
+					"Songpath check: " + e);
+			e.printStackTrace();
+		}
 	}
 	
 	public checkSongPathGUI() {
@@ -69,8 +82,14 @@ public class checkSongPathGUI extends JDialog implements ActionListener, Runnabl
 		ps = sf.getPlaylistService();
 		
 		setTitle("Checking songpaths...");
-		setBounds(100, 100, 450, 150);
-		setDefaultCloseOperation(DO_NOTHING_ON_CLOSE);
+		
+		width = 450;
+		height = 100;
+		positionX = (int) Math.round(dim.getWidth() / 2 - width / 2);
+		positionY = (int) Math.round(dim.getHeight() / 2 - height / 2);
+
+		setBounds(positionX, positionY, width, height);
+		setResizable(false);
 		setModal(true);
 		setVisible(true);
 	}
@@ -101,5 +120,12 @@ public class checkSongPathGUI extends JDialog implements ActionListener, Runnabl
 			logger.info("checkSongPathGUI(): started Thread");
 			createThread();
 		}
+		
+		/*else if (e.getActionCommand().equals("runcancel")) {
+			logger.info("checkSongPathGUI(): started Thread");
+			fred.interrupt();
+			btnCancel.setActionCommand("cancel");
+			dispose();
+		}*/
 	}
 }

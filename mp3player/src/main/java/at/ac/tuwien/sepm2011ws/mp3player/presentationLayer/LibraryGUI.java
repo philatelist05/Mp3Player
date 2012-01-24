@@ -1,5 +1,7 @@
 package at.ac.tuwien.sepm2011ws.mp3player.presentationLayer;
 
+import java.awt.Dimension;
+import java.awt.Toolkit;
 import java.io.File;
 
 import javax.sql.rowset.JdbcRowSet;
@@ -20,7 +22,7 @@ import at.ac.tuwien.sepm2011ws.mp3player.serviceLayer.ServiceFactory;
 import at.ac.tuwien.sepm2011ws.mp3player.serviceLayer.SettingsService;
 
 public class LibraryGUI extends JDialog implements Runnable {
-	
+
 	/**
 	 * 
 	 */
@@ -31,96 +33,137 @@ public class LibraryGUI extends JDialog implements Runnable {
 	private SettingsService ss;
 	private JPanel checkPanel;
 	private JLabel checklabel;
-	private JButton btnCancel;
-	private JButton btnStart;
+	private File[] songs;
 	private File folder;
 	private Thread fred;
+	private Toolkit toolkit = Toolkit.getDefaultToolkit();
+	private Dimension dim = toolkit.getScreenSize();
+	private String command;
 
-	private void initialize() {
+	private void add(String command) {
+		this.command = command;
+		new JDialog();
+
 		checkPanel = new JPanel(new MigLayout("", "[grow]", "[]"));
-		checklabel = new JLabel("Adding Song(s)...");
-		
+		checklabel = new JLabel("Adding files...");
+
 		getContentPane().add(checkPanel);
 		checkPanel.add(checklabel, "cell 0 0");
-		
-		setTitle("Checking songpaths...");
-		setBounds(100, 100, 450, 150);
+
+		setTitle("Adding files...");
+
+		int width = 200, height = 100;
+		int positionX = (int) Math.round(dim.getWidth() / 2 - width / 2);
+		int positionY = (int) Math.round(dim.getHeight() / 2 - height / 2);
+
+		setBounds(positionX, positionY, width, height);
 		setDefaultCloseOperation(DO_NOTHING_ON_CLOSE);
 		setModal(true);
-		
+		setResizable(false);
+
 		fred = new Thread(this);
 		fred.start();
-		
+		logger.info("GetMetaTag(): Started Thread");
+
 		setVisible(true);
-		//dispose();
+		logger.info("GetMetaTag(): Made checkDialog visible");
 	}
-	
+
 	public void run() {
-			try {
-				ps.addFolder(folder);
-				logger.info("addFolder(): Folder "+folder.getAbsolutePath()+" added");
-				
-				new MainFrame("reloadsongTable");
-				logger.info("checkSongPathGUI(): Back from Mainframe");
-				
-				this.dispose();
-				fred.stop();
-			} catch (DataAccessException e) {
-				JOptionPane.showMessageDialog(null,
-						"Folder: " + e);
-						e.printStackTrace();
+		try {
+			if (command == "folders") {
+				if (folder != null) {
+					ps.addFolder(folder);
+					logger.info("addFolder(): Folder "
+							+ folder.getAbsolutePath() + " added");
+					
+					new MainFrame("reloadsongTable");
+					logger.info("checkSongPathGUI(): Back from Mainframe");
+					
+					JOptionPane.showConfirmDialog(null, "Folder successfully added!",
+							"Add folder...",
+							JOptionPane.CLOSED_OPTION);
+				} else
+					JOptionPane.showConfirmDialog(null, "No folder chosen!",
+							"No folder chosen!", JOptionPane.CLOSED_OPTION);
 			}
+
+			else if (command == "files") {
+				if (songs != null) {
+					ps.addSongs(songs);
+					logger.info("addFile(): Array of files added");
+					
+					new MainFrame("reloadsongTable");
+					logger.info("checkSongPathGUI(): Back from Mainframe");
+					
+					JOptionPane.showConfirmDialog(null, "Files(s) successfully added!",
+							"Add folder...",
+							JOptionPane.CLOSED_OPTION);
+				} else
+					JOptionPane.showConfirmDialog(null, "No files chosen!",
+							"No files chosen!", JOptionPane.CLOSED_OPTION);
+			}
+			
+			else
+				JOptionPane.showConfirmDialog(null, "Kind of adding not chosen!",
+						"Kind of adding not chosen!", JOptionPane.CLOSED_OPTION);
+			
+			this.dispose();
+			fred.stop();
+			
+		} catch (DataAccessException e) {
+			JOptionPane.showMessageDialog(null, "Folder: " + e);
+			e.printStackTrace();
+		}
 	}
-	
+
 	public LibraryGUI() {
 		ServiceFactory sf = ServiceFactory.getInstance();
 		ps = sf.getPlaylistService();
 		ss = sf.getSettingsService();
 	}
-	
+
 	/**
-	 * Opens a "openFile" Dialog, prompting the user to choose a file from the filesystem which should be added to the library (only, if the file matches the specified filetypes and the library hasn't contained it yet)
+	 * Opens a "openFile" Dialog, prompting the user to choose a file from the
+	 * filesystem which should be added to the library (only, if the file
+	 * matches the specified filetypes and the library hasn't contained it yet)
 	 */
 	public void addFile() {
-		File[] songs;
 		chooser = new JFileChooser();
 		chooser.setAcceptAllFileFilterUsed(false);
 		chooser.setMultiSelectionEnabled(true);
-		chooser.addChoosableFileFilter(new CustomFileFilter(ss.getUserFileTypes(),"Audio files"));
-		
+		chooser.addChoosableFileFilter(new CustomFileFilter(ss
+				.getUserFileTypes(), "Audio files"));
+
 		int rVal = chooser.showOpenDialog(null);
 		if (rVal == JFileChooser.APPROVE_OPTION) {
 			songs = chooser.getSelectedFiles();
-			try {
-				ps.addSongs(songs);
-			} catch (DataAccessException e) {
-				JOptionPane.showMessageDialog(null,
-						"File: " + e);
-				e.printStackTrace();
-			}
-			logger.info("addFile(): Array of Files added");
+			add("files");
 		}
+
 		if (rVal == JFileChooser.CANCEL_OPTION) {
 			logger.info("addFile(): canceled");
 		}
 	}
-	
+
 	/**
-	 * Opens a "openFolder" Dialog, prompting the user to choose a folder from the filesystem. All new (recursively) found files matching the specified filetypes are added to the library
+	 * Opens a "openFolder" Dialog, prompting the user to choose a folder from
+	 * the filesystem. All new (recursively) found files matching the specified
+	 * filetypes are added to the library
 	 */
 	public void addFolder() {
 		chooser = new JFileChooser();
-		//chooser.setAcceptAllFileFilterUsed(false);
-		//chooser.addChoosableFileFilter(new CustomFileFilter(".wav"));
+		// chooser.setAcceptAllFileFilterUsed(false);
+		// chooser.addChoosableFileFilter(new CustomFileFilter(".wav"));
 		chooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
-		
+
 		int rVal = chooser.showOpenDialog(null);
 		if (rVal == JFileChooser.APPROVE_OPTION) {
 			folder = chooser.getSelectedFile();
-			
+
 			logger.info("addFolder(): Start thread...");
-			
-			initialize();
+
+			add("folders");
 		}
 		if (rVal == JFileChooser.CANCEL_OPTION) {
 			logger.info("addFolder(): canceled");

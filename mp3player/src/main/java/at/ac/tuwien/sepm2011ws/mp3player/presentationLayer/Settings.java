@@ -1,13 +1,18 @@
 package at.ac.tuwien.sepm2011ws.mp3player.presentationLayer;
 
+import java.awt.Dimension;
+import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.Arrays;
+import java.util.List;
 
 import javax.swing.DefaultListModel;
 import javax.swing.JButton;
 import javax.swing.JDialog;
 import javax.swing.JLabel;
 import javax.swing.JList;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTabbedPane;
@@ -47,10 +52,10 @@ public class Settings extends JDialog implements ActionListener {
 	private JButton btnAddFT = new JButton(">>");
 	private JButton btnDeleteTM = new JButton("<<");
 	private JButton btnAddTM = new JButton(">>");
-	private JLabel lblSupportedFiletypes = new JLabel("Supported Filetypes:");
+	private JLabel lblSupportedFiletypes = new JLabel("Available Filetypes:");
 	private JLabel lblAcceptedFiletypes = new JLabel("Accepted Filetypes:");
-	private JLabel lblSupportedColumns = new JLabel("Supported Columns:");
-	private JLabel lblAcceptedColumns = new JLabel("Accepted Columns:");
+	private JLabel lblSupportedColumns = new JLabel("Available Columns:");
+	private JLabel lblAcceptedColumns = new JLabel("Chosen Columns:");
 	private JLabel lblXXplayed = new JLabel(
 			"Number of songs in playlist \"TopXX\" played\":");
 	private JLabel lblXXrated = new JLabel(
@@ -62,22 +67,44 @@ public class Settings extends JDialog implements ActionListener {
 	private DefaultListModel tmAllListModel = new DefaultListModel();
 	private DefaultListModel tmUserListModel = new DefaultListModel();
 	private SettingsService ss;
+	private Toolkit toolkit = Toolkit.getDefaultToolkit();
+	private Dimension dim = toolkit.getScreenSize();
+	private int width;
+	private int height;
+	private int positionX;
+	private int positionY;
 
-	public void fillFiletypes(String[] filetypes, DefaultListModel model) {
-		logger.info("fillAllFiletypes(): start filling filetypes into the specified model");
-		if (filetypes == null)
-			filetypes = SettingsService.SongFileTypesAll;
-		// filetypes = new String[] {"wav"};
+	public void fillFiletypesAll(String[] filetypes, DefaultListModel model) {
+		logger.info("fillFiletypesAll(): start filling filetypes into the specified model");
+		List<String> all = Arrays.asList(filetypes);
+		List<String> user = Arrays.asList(ss.getUserFileTypes());
+
+		for (String x : all) {
+			if (!user.contains(x))
+				model.addElement(x);
+		}
+	}
+
+	public void fillColumnsAll(String[] columns, DefaultListModel model) {
+		logger.info("fillColumnsAll(): start filling filetypes into the specified model");
+		List<String> all = Arrays.asList(columns);
+		List<String> user = Arrays.asList(ss.getUserColumns());
+
+		for (String x : all) {
+			if (!user.contains(x))
+				model.addElement(x);
+		}
+	}
+
+	public void fillFiletypesUser(String[] filetypes, DefaultListModel model) {
+		logger.info("fillFiletypesUser(): start filling filetypes into the specified model");
 		for (int i = 0; i < filetypes.length; i++) {
 			model.addElement(filetypes[i]);
 		}
 	}
 
-	public void fillColumns(String[] columns, DefaultListModel model) {
-		logger.info("fillAllFiletypes(): start filling filetypes into the specified model");
-		if (columns == null)
-			columns = SettingsService.SongTableColumnsAll;
-		// columns = new String[] {"Artist"};
+	public void fillColumnsUser(String[] columns, DefaultListModel model) {
+		logger.info("fillColumnsUser(): start filling filetypes into the specified model");
 		for (int i = 0; i < columns.length; i++) {
 			model.addElement(columns[i]);
 		}
@@ -97,7 +124,12 @@ public class Settings extends JDialog implements ActionListener {
 
 	public Settings() {
 		logger.info("Settings(): started Settings()");
-		setBounds(100, 100, 450, 300);
+
+		width = 450;
+		height = 300;
+		positionX = (int) Math.round(dim.getWidth() / 2 - width / 2);
+		positionY = (int) Math.round(dim.getHeight() / 2 - height / 2);
+		setBounds(positionX, positionY, width, height);
 		setTitle("Settings");
 
 		ServiceFactory sf = ServiceFactory.getInstance();
@@ -105,15 +137,16 @@ public class Settings extends JDialog implements ActionListener {
 
 		initialize();
 
-		fillFiletypes(SettingsService.SongFileTypesAll, ftAllListModel);
-		fillFiletypes(ss.getUserFileTypes(), ftUserListModel);
+		fillFiletypesAll(SettingsService.SongFileTypesAll, ftAllListModel);
+		fillFiletypesUser(ss.getUserFileTypes(), ftUserListModel);
 
 		fillXXXPlayedCount(ss.getTopXXPlayedCount());
 		fillXXXRatedCount(ss.getTopXXRatedCount());
 
-		fillColumns(SettingsService.SongTableColumnsAll, tmAllListModel);
-		fillColumns(ss.getUserColumns(), tmUserListModel);
+		fillColumnsAll(SettingsService.SongTableColumnsAll, tmAllListModel);
+		fillColumnsUser(ss.getUserColumns(), tmUserListModel);
 
+		setResizable(false);
 		setModal(true);
 		setVisible(true);
 	}
@@ -135,21 +168,21 @@ public class Settings extends JDialog implements ActionListener {
 		allFileTypesList.setFixedCellWidth(165);
 		allFileTypesList.setModel(ftAllListModel);
 		spAllFiletypes = new JScrollPane(allFileTypesList);
-		ft.add(spAllFiletypes, "flowx,cell 0 1");
+		ft.add(spAllFiletypes, "flowx,cell 0 1, growx");
 
 		btnAddFT.addActionListener(this);
 		btnAddFT.setActionCommand("addft");
-		ft.add(btnAddFT, "flowy,cell 1 1");
+		ft.add(btnAddFT, "flowy,cell 1 1, alignx center");
 
 		btnDeleteFT.addActionListener(this);
 		btnDeleteFT.setActionCommand("deleteft");
-		ft.add(btnDeleteFT, "cell 1 1");
+		ft.add(btnDeleteFT, "cell 1 1, alignx center");
 
 		userFileTypesList.setVisibleRowCount(9);
 		userFileTypesList.setFixedCellWidth(165);
 		userFileTypesList.setModel(ftUserListModel);
 		spUserFiletypes = new JScrollPane(userFileTypesList);
-		ft.add(spUserFiletypes, "flowx,cell 2 1");
+		ft.add(spUserFiletypes, "flowx,cell 2 1, growx");
 
 		// Intelligent Playlists
 		ip.add(lblXXplayed, "cell 0 0");
@@ -165,21 +198,21 @@ public class Settings extends JDialog implements ActionListener {
 		allColumnsList.setFixedCellWidth(165);
 		allColumnsList.setModel(tmAllListModel);
 		spAllColumns = new JScrollPane(allColumnsList);
-		tm.add(spAllColumns, "flowx,cell 0 1");
+		tm.add(spAllColumns, "flowx,cell 0 1, growx");
 
 		btnAddTM.addActionListener(this);
 		btnAddTM.setActionCommand("addtm");
-		tm.add(btnAddTM, "flowy,cell 1 1");
+		tm.add(btnAddTM, "flowy,cell 1 1, alignx center");
 
 		btnDeleteTM.addActionListener(this);
 		btnDeleteTM.setActionCommand("deletetm");
-		tm.add(btnDeleteTM, "cell 1 1");
+		tm.add(btnDeleteTM, "cell 1 1, alignx center");
 
 		userColumnsList.setVisibleRowCount(9);
 		userColumnsList.setFixedCellWidth(165);
 		userColumnsList.setModel(tmUserListModel);
 		spUserColumns = new JScrollPane(userColumnsList);
-		tm.add(spUserColumns, "flowx,cell 2 1");
+		tm.add(spUserColumns, "flowx,cell 2 1, growx");
 
 		settingsPane.addTab("Filetypes", ft);
 		settingsPane.addTab("Intelligent Playlists", ip);
@@ -199,8 +232,7 @@ public class Settings extends JDialog implements ActionListener {
 		if (xxPlayed.getText().trim().matches("^[1-9]+[0-9]*$") == false
 				|| xxRated.getText().trim().matches("^[1-9]+[0-9]*$") == false)
 			return false;
-		if (filetypes.length < 1
-				|| columns.length < 1)
+		if (filetypes.length < 1 || columns.length < 1)
 			return false;
 		return check;
 	}
@@ -215,26 +247,31 @@ public class Settings extends JDialog implements ActionListener {
 			String[] tmUser = new String[tmUserSize];
 
 			for (int i = 0; i < ftUserSize; i++) {
-				ftUser[i] = (String) userFileTypesList.getModel().getElementAt(i);
+				ftUser[i] = (String) userFileTypesList.getModel().getElementAt(
+						i);
 			}
 
 			for (int i = 0; i < tmUserSize; i++) {
 				tmUser[i] = (String) userColumnsList.getModel().getElementAt(i);
 			}
-			
+
 			if (check(ftUser, tmUser)) {
-				ss.setUserFileTypes((String[])ftUser);
-				ss.setUserColumns((String[])tmUser);
+				ss.setUserFileTypes((String[]) ftUser);
+				ss.setUserColumns((String[]) tmUser);
 				ss.setTopXXPlayedCount(Integer.parseInt(xxPlayed.getText()));
 				ss.setTopXXRatedCount(Integer.parseInt(xxRated.getText()));
-				
+
 				logger.info("Settings(): completed saving");
 
 				dispose();
 			}
-			
+
 			else
-				new DynamicDialog("Check your inputs", "Filetypes and columns must be > 0 items; Int. Playlists sizes > 0");
+				JOptionPane
+						.showConfirmDialog(
+								null,
+								"Count of filetypes and columns must be > 0 items; Sizes of intelligent playlists > 0",
+								"Check your inputs!", JOptionPane.CLOSED_OPTION);
 		}
 
 		else if (e.getActionCommand().equals("cancel")) {
@@ -245,25 +282,12 @@ public class Settings extends JDialog implements ActionListener {
 		else if (e.getActionCommand().equals("addft")) {
 			logger.info("Settings(): Start filetype adding functionality");
 			Object[] selectedFtAll = allFileTypesList.getSelectedValues();
-			int ftUserSize = userFileTypesList.getModel().getSize();
-			Object[] ftUser = new Object[ftUserSize];
-			boolean temp = true;
 
 			if (selectedFtAll.length > 0) {
 
-				for (int i = 0; i < ftUserSize; i++) {
-					ftUser[i] = userFileTypesList.getModel().getElementAt(i);
-				}
-
 				for (Object x : selectedFtAll) {
-					for (Object y : ftUser) {
-						if (y.equals(x))
-							temp = false;
-					}
-
-					if (temp)
-						ftUserListModel.addElement(x);
-					temp = true;
+					ftUserListModel.addElement(x);
+					ftAllListModel.removeElement(x);
 				}
 			}
 		}
@@ -275,6 +299,7 @@ public class Settings extends JDialog implements ActionListener {
 			if (selectedFtUser.length > 0) {
 				for (Object x : selectedFtUser) {
 					ftUserListModel.removeElement(x);
+					ftAllListModel.addElement(x);
 				}
 			}
 		}
@@ -282,25 +307,11 @@ public class Settings extends JDialog implements ActionListener {
 		else if (e.getActionCommand().equals("addtm")) {
 			logger.info("Settings(): Start column adding functionality");
 			Object[] selectedTmAll = allColumnsList.getSelectedValues();
-			int tmUserSize = userColumnsList.getModel().getSize();
-			Object[] tmUser = new Object[tmUserSize];
-			boolean temp = true;
 
 			if (selectedTmAll.length > 0) {
-
-				for (int i = 0; i < tmUserSize; i++) {
-					tmUser[i] = userColumnsList.getModel().getElementAt(i);
-				}
-
 				for (Object x : selectedTmAll) {
-					for (Object y : tmUser) {
-						if (y.equals(x))
-							temp = false;
-					}
-
-					if (temp)
-						tmUserListModel.addElement(x);
-					temp = true;
+					tmAllListModel.removeElement(x);
+					tmUserListModel.addElement(x);
 				}
 			}
 		}
@@ -312,6 +323,7 @@ public class Settings extends JDialog implements ActionListener {
 			if (selectedTmUser.length > 0) {
 				for (Object x : selectedTmUser) {
 					tmUserListModel.removeElement(x);
+					tmAllListModel.addElement(x);
 				}
 			}
 		}
