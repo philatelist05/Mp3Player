@@ -7,7 +7,7 @@ public class MetaTags {
 	private int year;
 	private String genre;
 	private Album album;
-	
+
 	/**
 	 * @param artist
 	 * @param title
@@ -34,9 +34,12 @@ public class MetaTags {
 	}
 
 	/**
-	 * @param artist the artist to set
+	 * @param artist
+	 *            the artist to set
 	 */
-	public void setArtist(String artist) {
+	public void setArtist(String artist) throws IllegalArgumentException {
+		if (artist == null || artist.isEmpty())
+			throw new IllegalArgumentException("Artist must not be empty");
 		this.artist = artist;
 	}
 
@@ -48,9 +51,12 @@ public class MetaTags {
 	}
 
 	/**
-	 * @param title the title to set
+	 * @param title
+	 *            the title to set
 	 */
-	public void setTitle(String title) {
+	public void setTitle(String title) throws IllegalArgumentException {
+		if (title == null || title.isEmpty())
+			throw new IllegalArgumentException("Title must not be empty");
 		this.title = title;
 	}
 
@@ -62,9 +68,13 @@ public class MetaTags {
 	}
 
 	/**
-	 * @param duration the duration to set
+	 * @param duration
+	 *            the duration to set
 	 */
-	public void setDuration(int duration) {
+	public void setDuration(int duration) throws IllegalArgumentException {
+		if (duration < 0)
+			throw new IllegalArgumentException(
+					"Duration must be greater than 0");
 		this.duration = duration;
 	}
 
@@ -76,9 +86,12 @@ public class MetaTags {
 	}
 
 	/**
-	 * @param year the year to set
+	 * @param year
+	 *            the year to set
 	 */
-	public void setYear(int year) {
+	public void setYear(int year) throws IllegalArgumentException {
+		if (year < 0)
+			throw new IllegalArgumentException("Year must be above 0");
 		this.year = year;
 	}
 
@@ -90,7 +103,8 @@ public class MetaTags {
 	}
 
 	/**
-	 * @param genre the genre to set
+	 * @param genre
+	 *            the genre to set
 	 */
 	public void setGenre(String genre) {
 		this.genre = genre;
@@ -104,7 +118,8 @@ public class MetaTags {
 	}
 
 	/**
-	 * @param album the album to set
+	 * @param album
+	 *            the album to set
 	 */
 	public void setAlbum(Album album) {
 		this.album = album;
