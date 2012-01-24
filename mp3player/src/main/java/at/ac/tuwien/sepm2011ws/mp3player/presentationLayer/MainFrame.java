@@ -113,9 +113,9 @@ public class MainFrame extends JFrame implements ActionListener, Runnable,
 	private JCheckBox chckbxMute;
 	private JCheckBox chckbxRepeat;
 	private JCheckBox chckbxShuffle;
-	private JPopupMenu tablePopupMenu = new JPopupMenu();
+	// private JPopupMenu tablePopupMenu = new JPopupMenu();
 
-	private JPopupMenu treePopupMenu = new JPopupMenu();
+	// private JPopupMenu treePopupMenu = new JPopupMenu();
 
 	private Icon l1;
 	private Icon l2;
@@ -255,6 +255,7 @@ public class MainFrame extends JFrame implements ActionListener, Runnable,
 		setPlayIcons();
 		lblCurrentStateSong.setText("");
 
+
 		if (cis.hasPreviousSong()) {
 			progress.setEnabled(true);
 			lblPlayedTime.setText(getPlayedTimeInSeconds());
@@ -388,7 +389,6 @@ public class MainFrame extends JFrame implements ActionListener, Runnable,
 		btnPlayPause.setActionCommand("play");
 		setPlayIcons();
 		lblCurrentStateSong.setText("");
-	
 
 		if (cis.hasNextSong()) {
 			progress.setEnabled(true);
@@ -410,7 +410,6 @@ public class MainFrame extends JFrame implements ActionListener, Runnable,
 		}
 		
 		cis.playNext();
-		
 		// Song temp = cis.getCurrentSong();
 		// progress.setEnabled(true);
 		/*
@@ -625,7 +624,12 @@ public class MainFrame extends JFrame implements ActionListener, Runnable,
 					add(node_1);
 
 					node_1 = new PlaylistTreeNode("Intelligent Playlists");
-					node_1.add(new PlaylistTreeNode("TopRated"));
+					Playlist toprated = ps.getTopRated();
+					node_1.add(new PlaylistTreeNode(toprated.getTitle(), false,
+							toprated));
+					Playlist topplayed = ps.getTopPlayed();
+					node_1.add(new PlaylistTreeNode(topplayed.getTitle(),
+							false, topplayed));
 					/*
 					 * node_1.add(new PlaylistTreeNode(
 					 * ps.getTopRated().getTitle(), false, ps .getTopRated()));
@@ -849,17 +853,15 @@ public class MainFrame extends JFrame implements ActionListener, Runnable,
 		 * JTrees
 		 */
 		// pl_tree
-
-		JMenuItem treeentry1 = new JMenuItem("Delete Playlist");
-		treePopupMenu.add(treeentry1);
-		treeentry1.addActionListener(new TreeActionAdapter());
-		treeentry1.setActionCommand("deletePlaylist");
-
-		JMenuItem treeentry2 = new JMenuItem("Rename Playlist");
-		treePopupMenu.add(treeentry2);
-		treeentry2.addActionListener(new TreeActionAdapter());
-		treeentry2.setActionCommand("renamePlaylist");
-
+		/*
+		 * JMenuItem treeentry1 = new JMenuItem("Delete Playlist");
+		 * treePopupMenu.add(treeentry1); treeentry1.addActionListener(new
+		 * TreeActionAdapter()); treeentry1.setActionCommand("deletePlaylist");
+		 * 
+		 * JMenuItem treeentry2 = new JMenuItem("Rename Playlist");
+		 * treePopupMenu.add(treeentry2); treeentry2.addActionListener(new
+		 * TreeActionAdapter()); treeentry2.setActionCommand("renamePlaylist");
+		 */
 		buildPlTree();
 
 		/*
@@ -926,33 +928,30 @@ public class MainFrame extends JFrame implements ActionListener, Runnable,
 		 * menuItem.addActionListener(new InsertRowsActionAdapter(this));
 		 * tablePopupMenu.add(menuItem);
 		 */
-		JMenuItem entry = new JMenuItem("Delete Song");
-		tablePopupMenu.add(entry);
-		entry.addActionListener(new TableActionAdapter());
-		entry.setActionCommand("deleteSong");
 
-		Separator sep = new JPopupMenu.Separator();
-		tablePopupMenu.add(sep);
-
-		JMenuItem entry1 = new JMenuItem("Get Lyrics");
-		tablePopupMenu.add(entry1);
-		entry1.addActionListener(new TableActionAdapter());
-		entry1.setActionCommand("getLyrics");
-
-		JMenuItem entry2 = new JMenuItem("Edit Lyrics");
-		tablePopupMenu.add(entry2);
-		entry2.addActionListener(new TableActionAdapter());
-		entry2.setActionCommand("editLyrics");
-
-		JMenuItem entry3 = new JMenuItem("Get Meta-Tags");
-		tablePopupMenu.add(entry3);
-		entry3.addActionListener(new TableActionAdapter());
-		entry3.setActionCommand("getMetatags");
-
-		JMenuItem entry4 = new JMenuItem("Edit Meta-Tags");
-		tablePopupMenu.add(entry4);
-		entry4.addActionListener(new TableActionAdapter());
-		entry4.setActionCommand("editMetatags");
+		/*
+		 * JMenuItem entry = new JMenuItem("Delete Song");
+		 * tablePopupMenu.add(entry); entry.addActionListener(new
+		 * TableActionAdapter()); entry.setActionCommand("deleteSong");
+		 * 
+		 * Separator sep = new JPopupMenu.Separator(); tablePopupMenu.add(sep);
+		 * 
+		 * JMenuItem entry1 = new JMenuItem("Get Lyrics");
+		 * tablePopupMenu.add(entry1); entry1.addActionListener(new
+		 * TableActionAdapter()); entry1.setActionCommand("getLyrics");
+		 * 
+		 * JMenuItem entry2 = new JMenuItem("Edit Lyrics");
+		 * tablePopupMenu.add(entry2); entry2.addActionListener(new
+		 * TableActionAdapter()); entry2.setActionCommand("editLyrics");
+		 * 
+		 * JMenuItem entry3 = new JMenuItem("Get Meta-Tags");
+		 * tablePopupMenu.add(entry3); entry3.addActionListener(new
+		 * TableActionAdapter()); entry3.setActionCommand("getMetatags");
+		 * 
+		 * JMenuItem entry4 = new JMenuItem("Edit Meta-Tags");
+		 * tablePopupMenu.add(entry4); entry4.addActionListener(new
+		 * TableActionAdapter()); entry4.setActionCommand("editMetatags");
+		 */
 
 		songTable = new JTable(songmodel);
 		//songTable.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
@@ -966,6 +965,7 @@ public class MainFrame extends JFrame implements ActionListener, Runnable,
 				.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
 		songTable.setDragEnabled(true);
 		songTable.setTransferHandler(new JTableSongTransferHandler());
+
 		songTable.setSelectionBackground(new Color(255, 0, 0));
 		jsplit = new JSplitPane();
 		jsplit.setLeftComponent(pl_tree_sp);
@@ -1096,6 +1096,7 @@ public class MainFrame extends JFrame implements ActionListener, Runnable,
 					createThread();
 
 				}
+
 				// new MainFrame("reloadsongTable");
 
 				songTable.repaint();
@@ -1472,6 +1473,41 @@ public class MainFrame extends JFrame implements ActionListener, Runnable,
 		}
 
 		private void showPopup(MouseEvent e) {
+			JPopupMenu tablePopupMenu = new JPopupMenu();
+			JMenuItem entry = new JMenuItem("Delete Song");
+			tablePopupMenu.add(entry);
+			entry.addActionListener(new TableActionAdapter());
+			entry.setActionCommand("deleteSong");
+
+			if (currentPlaylistGUI.getTitle().equals("Library")
+					|| currentPlaylistGUI.getTitle().equals("TopRated")
+					|| currentPlaylistGUI.getTitle().equals("TopPlayed")
+					|| currentPlaylistGUI.getTitle().equals("Queue")) {
+				entry.setEnabled(false);
+			}
+
+			Separator sep = new JPopupMenu.Separator();
+			tablePopupMenu.add(sep);
+
+			JMenuItem entry1 = new JMenuItem("Get Lyrics");
+			tablePopupMenu.add(entry1);
+			entry1.addActionListener(new TableActionAdapter());
+			entry1.setActionCommand("getLyrics");
+
+			JMenuItem entry2 = new JMenuItem("Edit Lyrics");
+			tablePopupMenu.add(entry2);
+			entry2.addActionListener(new TableActionAdapter());
+			entry2.setActionCommand("editLyrics");
+
+			JMenuItem entry3 = new JMenuItem("Get Meta-Tags");
+			tablePopupMenu.add(entry3);
+			entry3.addActionListener(new TableActionAdapter());
+			entry3.setActionCommand("getMetatags");
+
+			JMenuItem entry4 = new JMenuItem("Edit Meta-Tags");
+			tablePopupMenu.add(entry4);
+			entry4.addActionListener(new TableActionAdapter());
+			entry4.setActionCommand("editMetatags");
 			if (e.isPopupTrigger()) {
 				tablePopupMenu.show(e.getComponent(), e.getX(), e.getY());
 			}
@@ -1489,7 +1525,60 @@ public class MainFrame extends JFrame implements ActionListener, Runnable,
 
 		private void showPopup(MouseEvent e) {
 			if (e.isPopupTrigger()) {
-				treePopupMenu.show(e.getComponent(), e.getX(), e.getY());
+				try {
+					JTree tree = null;
+					tree = (JTree) e.getComponent();
+					Playlist clickedPlaylist = null;
+					PlaylistTreeNode clickedNode = null;
+					if (tree != null) {
+						TreePath path = tree.getPathForLocation(e.getX(),
+								e.getY());
+
+						clickedNode = (PlaylistTreeNode) path
+								.getLastPathComponent();
+						if (!clickedNode.isLeaf()) {
+								throw new NullPointerException();
+						} else {
+							clickedPlaylist = clickedNode.getNodePlaylist();
+						}
+
+					}
+
+					JPopupMenu treePopupMenu = new JPopupMenu();
+					JMenuItem treeentry1 = new JMenuItem("Delete Playlist");
+					treePopupMenu.add(treeentry1);
+					treeentry1.addActionListener(new TreeActionAdapter());
+					treeentry1.setActionCommand("deletePlaylist");
+
+					if (clickedPlaylist != null) {
+						if (clickedPlaylist.getTitle().equals("Library")
+								|| clickedPlaylist.getTitle()
+										.equals("TopRated")
+								|| clickedPlaylist.getTitle().equals(
+										"TopPlayed")
+								|| clickedPlaylist.getTitle().equals("Queue")) {
+							treeentry1.setEnabled(false);
+						}
+					}
+
+					JMenuItem treeentry2 = new JMenuItem("Rename Playlist");
+					treePopupMenu.add(treeentry2);
+					treeentry2.addActionListener(new TreeActionAdapter());
+					treeentry2.setActionCommand("renamePlaylist");
+
+					if (clickedPlaylist != null) {
+						if (clickedPlaylist.getTitle().equals("Library")
+								|| clickedPlaylist.getTitle()
+										.equals("TopRated")
+								|| clickedPlaylist.getTitle().equals(
+										"TopPlayed")
+								|| clickedPlaylist.getTitle().equals("Queue")) {
+							treeentry2.setEnabled(false);
+						}
+					}
+					treePopupMenu.show(e.getComponent(), e.getX(), e.getY());
+				} catch (NullPointerException ex) {
+				}
 			}
 		}
 	}
