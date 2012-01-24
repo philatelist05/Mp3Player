@@ -1,0 +1,10 @@
+LastFM
+------
+
+API Key: b05fea7d70f41670bc5cdb05d9f584e5
+Secret: 3bb892d5387529bf02fc9fa0d02c8673
+
+
+LyricWiki.org
+-------------
+API Key: dc9a2f244a147a5f5f74afbbf3e9eca208f94ee2
