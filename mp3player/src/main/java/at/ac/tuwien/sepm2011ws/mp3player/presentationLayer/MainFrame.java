@@ -260,7 +260,6 @@ public class MainFrame extends JFrame implements ActionListener, Runnable,
 		setPlayIcons();
 		lblCurrentStateSong.setText("");
 
-
 		if (cis.hasPreviousSong()) {
 			progress.setEnabled(true);
 			lblPlayedTime.setText(getPlayedTimeInSeconds());
@@ -279,7 +278,7 @@ public class MainFrame extends JFrame implements ActionListener, Runnable,
 			lblDuration.setVisible(false);
 			songTable.repaint();
 		}
-		
+
 		cis.playPrevious();
 
 		// Song temp = cis.getCurrentSong();
@@ -413,7 +412,7 @@ public class MainFrame extends JFrame implements ActionListener, Runnable,
 			lblDuration.setVisible(false);
 			songTable.repaint();
 		}
-		
+
 		cis.playNext();
 		// Song temp = cis.getCurrentSong();
 		// progress.setEnabled(true);
@@ -594,19 +593,19 @@ public class MainFrame extends JFrame implements ActionListener, Runnable,
 
 	private void buildPlTree() {
 		logger.info("start buildPlTree...");
-		boolean expandPlaylists= false;
+		boolean expandPlaylists = false;
 		boolean expandIntPlaylists = false;
-		if(!(pathToPlaylists == null)) {
-			if(pl_tree.isExpanded(pathToPlaylists)) {
+		if (!(pathToPlaylists == null)) {
+			if (pl_tree.isExpanded(pathToPlaylists)) {
 				expandPlaylists = true;
-			}			
+			}
 		}
-		if(!(pathToIntPlaylists == null)) {
-			if(pl_tree.isExpanded(pathToIntPlaylists)) {
+		if (!(pathToIntPlaylists == null)) {
+			if (pl_tree.isExpanded(pathToIntPlaylists)) {
 				expandIntPlaylists = true;
-			}			
+			}
 		}
-		//pl_tree.
+		// pl_tree.
 		try {
 			playlists = ps.getAllPlaylists();
 		} catch (DataAccessException e1) {
@@ -620,8 +619,7 @@ public class MainFrame extends JFrame implements ActionListener, Runnable,
 				private static final long serialVersionUID = -7228695694680777407L;
 
 				{
-					
-					
+
 					PlaylistTreeNode node_1;
 					add(new PlaylistTreeNode(ps.getLibrary().toString(), false,
 							ps.getLibrary()));
@@ -642,9 +640,9 @@ public class MainFrame extends JFrame implements ActionListener, Runnable,
 								false, current));
 					}
 					add(node_2);
-					
-					
-					PlaylistTreeNode node_3 = new PlaylistTreeNode("Intelligent Playlists");
+
+					PlaylistTreeNode node_3 = new PlaylistTreeNode(
+							"Intelligent Playlists");
 					Playlist toprated = ps.getTopRated();
 					node_3.add(new PlaylistTreeNode(toprated.getTitle(), false,
 							toprated));
@@ -659,65 +657,54 @@ public class MainFrame extends JFrame implements ActionListener, Runnable,
 					 */
 
 					add(node_3);
-					
+
 					pathToPlaylists = getNodePath(node_2);
 					pathToIntPlaylists = getNodePath(node_3);
-				}				
+				}
 			}));
-			if(expandPlaylists) {
+			if (expandPlaylists) {
 				pl_tree.expandPath(pathToPlaylists);
 			}
-			if(expandIntPlaylists) {
+			if (expandIntPlaylists) {
 				pl_tree.expandPath(pathToIntPlaylists);
 			}
-			//expandAll(pl_tree, true);
+			// expandAll(pl_tree, true);
 		} catch (DataAccessException e) {
 			e.printStackTrace();
 		}
 	}
-	
+
 	// Returns a TreePath containing the specified node.
 	public TreePath getNodePath(PlaylistTreeNode node) {
-	    List list = new ArrayList();
+		List list = new ArrayList();
 
-	    // Add all nodes to list
-	    while (node != null) {
-	        list.add(node);
-	        node = (PlaylistTreeNode) node.getParent();
-	    }
-	    Collections.reverse(list);
+		// Add all nodes to list
+		while (node != null) {
+			list.add(node);
+			node = (PlaylistTreeNode) node.getParent();
+		}
+		Collections.reverse(list);
 
-	    // Convert array of nodes to TreePath
-	    return new TreePath(list.toArray());
+		// Convert array of nodes to TreePath
+		return new TreePath(list.toArray());
 	}
-	
-/*	
-	// If expand is true, expands all nodes in the tree.
-	// Otherwise, collapses all nodes in the tree.
-	public void expandAll(JTree tree, boolean expand) {
-	    PlaylistTreeNode root = (PlaylistTreeNode)tree.getModel().getRoot();
-	    // Traverse tree from root
-	    expandAll(tree, new TreePath(root), expand);
-	}
-	private void expandAll(JTree tree, TreePath parent, boolean expand) {
-	    // Traverse children
-		PlaylistTreeNode node = (PlaylistTreeNode)parent.getLastPathComponent();
-	    if (node.getChildCount() >= 0) {
-	        for (Enumeration e=node.children(); e.hasMoreElements(); ) {
-	        	PlaylistTreeNode n = (PlaylistTreeNode)e.nextElement();
-	            TreePath path = parent.pathByAddingChild(n);
-	            expandAll(tree, path, expand);
-	        }
-	    }
 
-	    // Expansion or collapse must be done bottom-up
-	    if (expand) {
-	        tree.expandPath(parent);
-	    } else {
-	        tree.collapsePath(parent);
-	    }
-	}
-*/	
+	/*
+	 * // If expand is true, expands all nodes in the tree. // Otherwise,
+	 * collapses all nodes in the tree. public void expandAll(JTree tree,
+	 * boolean expand) { PlaylistTreeNode root =
+	 * (PlaylistTreeNode)tree.getModel().getRoot(); // Traverse tree from root
+	 * expandAll(tree, new TreePath(root), expand); } private void
+	 * expandAll(JTree tree, TreePath parent, boolean expand) { // Traverse
+	 * children PlaylistTreeNode node =
+	 * (PlaylistTreeNode)parent.getLastPathComponent(); if (node.getChildCount()
+	 * >= 0) { for (Enumeration e=node.children(); e.hasMoreElements(); ) {
+	 * PlaylistTreeNode n = (PlaylistTreeNode)e.nextElement(); TreePath path =
+	 * parent.pathByAddingChild(n); expandAll(tree, path, expand); } }
+	 * 
+	 * // Expansion or collapse must be done bottom-up if (expand) {
+	 * tree.expandPath(parent); } else { tree.collapsePath(parent); } }
+	 */
 	public void setVisibleColumns() {
 		HashMap<String, Integer> Zuordnung = new HashMap<String, Integer>();
 		String[] columnsAll = new String[SettingsService.SongTableColumnsAll.length + 1];
@@ -834,7 +821,7 @@ public class MainFrame extends JFrame implements ActionListener, Runnable,
 		if (command == "reloadsongTable")
 			fillSongTable(currentPlaylistGUI);
 	}
-	
+
 	public MainFrame(Playlist list, String command) {
 		currentPlaylistGUI = list;
 		if (command == "reloadsongTable")
@@ -1032,7 +1019,7 @@ public class MainFrame extends JFrame implements ActionListener, Runnable,
 		 */
 
 		songTable = new JTable(songmodel);
-		//songTable.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
+		// songTable.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
 		JScrollPane songTable_sp = new JScrollPane(songTable);
 		songTable_sp
 				.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_AS_NEEDED);
@@ -1517,12 +1504,9 @@ public class MainFrame extends JFrame implements ActionListener, Runnable,
 
 		else if (e.getActionCommand().equals("about")) {
 			logger.info("About: Going to show About dialog");
-			JOptionPane
-			.showConfirmDialog(
-					null,
+			JOptionPane.showConfirmDialog(null,
 					"mp3@Player Beta Version by SEPM team VVV",
-					"About mp3@Player...",
-					JOptionPane.CLOSED_OPTION);
+					"About mp3@Player...", JOptionPane.CLOSED_OPTION);
 		}
 
 		else if (e.getActionCommand().equals("exit")) {
@@ -1619,7 +1603,7 @@ public class MainFrame extends JFrame implements ActionListener, Runnable,
 						clickedNode = (PlaylistTreeNode) path
 								.getLastPathComponent();
 						if (!clickedNode.isLeaf()) {
-								throw new NullPointerException();
+							throw new NullPointerException();
 						} else {
 							clickedPlaylist = clickedNode.getNodePlaylist();
 						}
@@ -1763,23 +1747,35 @@ public class MainFrame extends JFrame implements ActionListener, Runnable,
 			if (e.getActionCommand().equals("deletePlaylist")) {
 				PlaylistTreeNode selectedNode = (PlaylistTreeNode) pl_tree
 						.getLastSelectedPathComponent();
-				Playlist selectedPlaylist = selectedNode.getNodePlaylist();
-				try {
-					if (selectedPlaylist.getClass() == WritablePlaylist.class)
-						ps.deletePlaylist((WritablePlaylist) selectedPlaylist);
-				} catch (DataAccessException e1) {
+
+				if (selectedNode != null) {
+					Playlist selectedPlaylist = selectedNode.getNodePlaylist();
+					try {
+						if (selectedPlaylist.getClass() == WritablePlaylist.class)
+							ps.deletePlaylist((WritablePlaylist) selectedPlaylist);
+					} catch (DataAccessException e1) {
+					}
+				} else {
+					int response = JOptionPane.showConfirmDialog(null,
+							"No Playlist chosen!", "No Playlist chosen!",
+							JOptionPane.CLOSED_OPTION);
 				}
 				buildPlTree();
 
 			} else if (e.getActionCommand().equals("renamePlaylist")) {
 				PlaylistTreeNode selectedNode = (PlaylistTreeNode) pl_tree
 						.getLastSelectedPathComponent();
-				Playlist selectedPlaylist = selectedNode.getNodePlaylist();
-				playlistgui = new PlaylistGUI();
-				if (selectedPlaylist.getClass() == WritablePlaylist.class)
-					playlistgui
-							.renamePlaylistGUI((WritablePlaylist) selectedPlaylist);
-
+				if (selectedNode != null) {
+					Playlist selectedPlaylist = selectedNode.getNodePlaylist();
+					playlistgui = new PlaylistGUI();
+					if (selectedPlaylist.getClass() == WritablePlaylist.class)
+						playlistgui
+								.renamePlaylistGUI((WritablePlaylist) selectedPlaylist);
+				} else {
+					int response = JOptionPane.showConfirmDialog(null,
+							"No Playlist chosen!", "No Playlist chosen!",
+							JOptionPane.CLOSED_OPTION);
+				}
 				buildPlTree();
 			}
 		}
@@ -1788,19 +1784,19 @@ public class MainFrame extends JFrame implements ActionListener, Runnable,
 	@Override
 	public void tableChanged(TableModelEvent e) {
 
-		//logger.info("tableChanged");
+		// logger.info("tableChanged");
 		cis.setCurrentSongIndex(-1);
 	}
 
 	@Override
 	public void sorterChanged(RowSorterEvent e) {
-		//logger.info("sorterChanged");
+		// logger.info("sorterChanged");
 
 		if (cis.getCurrentSongIndex() > -1)
 			cis.setCurrentSongIndex(sorter.convertRowIndexToView(cis
 					.getCurrentSongIndex()));
 		// sorter
-		//currentPlaylistGUI = parseSongTable(currentPlaylistGUI);
+		// currentPlaylistGUI = parseSongTable(currentPlaylistGUI);
 		cis.setCurrentPlaylist(currentPlaylistGUI);
 		songTable.repaint();
 	}
