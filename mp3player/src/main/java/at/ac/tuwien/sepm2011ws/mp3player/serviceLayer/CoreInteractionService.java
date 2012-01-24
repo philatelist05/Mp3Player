@@ -187,6 +187,14 @@ public interface CoreInteractionService {
 	public int getCurrentSongIndex();
 
 	/**
+	 * Sets the index of the current song in the current playlist.
+	 * 
+	 * @param index
+	 *            The updated index
+	 */
+	public void setCurrentSongIndex(int index);
+
+	/**
 	 * Adds a listener to this service to be informed about player events.
 	 * 
 	 * @param pl

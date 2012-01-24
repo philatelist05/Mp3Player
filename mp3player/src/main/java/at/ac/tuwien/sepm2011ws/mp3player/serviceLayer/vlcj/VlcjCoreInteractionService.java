@@ -149,14 +149,12 @@ public class VlcjCoreInteractionService implements CoreInteractionService {
 
 	public void playNext() {
 		playDirection = PlayDirection.NEXT;
-		this.currentSongIndex = getNextSongIndex();
-		playFromBeginning(this.currentSongIndex);
+		playFromBeginning(getNextSongIndex());
 	}
 
 	public void playPrevious() {
 		playDirection = PlayDirection.PREVIOUS;
-		this.currentSongIndex = getPreviousSongIndex();
-		playFromBeginning(this.currentSongIndex);
+		playFromBeginning(getPreviousSongIndex());
 	}
 
 	public void stop() {
@@ -248,6 +246,10 @@ public class VlcjCoreInteractionService implements CoreInteractionService {
 
 	public int getCurrentSongIndex() {
 		return this.currentSongIndex;
+	}
+
+	public void setCurrentSongIndex(int index) {
+		this.currentSongIndex = index;
 	}
 
 	private int getNextSongIndex() {
