@@ -1787,13 +1787,14 @@ public class MainFrame extends JFrame implements ActionListener, Runnable,
 
 	@Override
 	public void tableChanged(TableModelEvent e) {
-		// TODO Auto-generated method stub
 
+		//logger.info("tableChanged");
+		cis.setCurrentSongIndex(-1);
 	}
 
 	@Override
 	public void sorterChanged(RowSorterEvent e) {
-		logger.info("sorterChanged");
+		//logger.info("sorterChanged");
 
 		if (cis.getCurrentSongIndex() > -1)
 			cis.setCurrentSongIndex(sorter.convertRowIndexToView(cis
