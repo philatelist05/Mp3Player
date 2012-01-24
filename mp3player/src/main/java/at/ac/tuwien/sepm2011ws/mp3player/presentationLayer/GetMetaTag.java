@@ -23,7 +23,6 @@ import javax.swing.JTextField;
 import net.miginfocom.swing.MigLayout;
 import org.apache.log4j.Logger;
 import at.ac.tuwien.sepm2011ws.mp3player.domainObjects.Song;
-import at.ac.tuwien.sepm2011ws.mp3player.domainObjects.SongWrapper;
 
 public class GetMetaTag extends JDialog implements ActionListener, ItemListener, Runnable {
 

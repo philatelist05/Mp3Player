@@ -1,6 +1,6 @@
-package at.ac.tuwien.sepm2011ws.mp3player.domainObjects;
+package at.ac.tuwien.sepm2011ws.mp3player.presentationLayer;
 
-import at.ac.tuwien.sepm2011ws.mp3player.presentationLayer.ComponentType;
+import at.ac.tuwien.sepm2011ws.mp3player.domainObjects.Song;
 
 public class SongWrapper {
 	 private Song song;
