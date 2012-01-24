@@ -107,6 +107,8 @@ public class VlcjCoreInteractionService implements CoreInteractionService {
 			File songFile = new File(song.getPath());
 
 			mediaPlayer.playMedia(songFile.getAbsolutePath());
+		} else if(isPlaying() || isPaused()) {
+			stop();
 		}
 	}
 
