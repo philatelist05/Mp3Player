@@ -583,7 +583,10 @@ public class MainFrame extends JFrame implements ActionListener, Runnable,
 					add(node_1);
 
 					node_1 = new PlaylistTreeNode("Intelligent Playlists");
-					node_1.add(new PlaylistTreeNode("TopRated"));
+					Playlist toprated = ps.getTopRated();
+					node_1.add(new PlaylistTreeNode(toprated.getTitle() , false, toprated));
+					Playlist topplayed = ps.getTopRated();
+					node_1.add(new PlaylistTreeNode(topplayed.getTitle(), false, topplayed));
 					/*
 					 * node_1.add(new PlaylistTreeNode(
 					 * ps.getTopRated().getTitle(), false, ps .getTopRated()));
