@@ -48,6 +48,7 @@ public abstract class SongTransferHandler extends TransferHandler {
 	}
 
 	public boolean canImport(JComponent c, DataFlavor[] flavors) {
+		//DataFlavor[] flavors = info.getDataFlavors();
 		for (int i = 0; i < flavors.length; i++) {
 			if (songFlavor.equals(flavors[i])) {
 				return true;
