@@ -250,28 +250,30 @@ public class GetLyric extends JDialog implements ActionListener, ItemListener,
 	public void run() {
 		logger.info("GetMetaTag(): Got into thread");
 
-		try {
-			int i = 1;
+		// try {
+		int i = 1;
 
-			List<Lyric> lyricList = sis.downloadLyrics(song);
+		List<Lyric> lyricList = sis.downloadLyrics(song);
 
-			if (lyricList != null) {
-				if (lyricList.size() > 0) {
-					for (Lyric x : lyricList) {
-						lyricBox.addItem(createMetaTagsWrapFromLyric(x,
-								"LastFM: #" + i));
-						i++;
-					}
+		if (lyricList != null) {
+			if (lyricList.size() > 0) {
+				for (Lyric x : lyricList) {
+					lyricBox.addItem(createMetaTagsWrapFromLyric(x,
+							"chartLyric: #" + i));
+					i++;
 				}
 			}
-
-			Thread.sleep(2000);
-		} catch (InterruptedException e) {
-			e.printStackTrace();
 		}
-		checkDialog.dispose();
-		fred.stop();
 
+		else
+			JOptionPane.showConfirmDialog(null, "No Lyrics found!",
+					"Chartlyric...", JOptionPane.CLOSED_OPTION);
+
+		// Thread.sleep(2000);
+
+		// } catch (InterruptedException e) {
+		// e.printStackTrace();
+		// }
 	}
 
 	@Override

@@ -213,6 +213,7 @@ public class SimilarArtist extends JDialog implements ActionListener, Runnable {
 
 		logger.info("SimilarArtist(): Got into thread");
 		logger.info("SimilarArtist(): get List of playlists (similar artists and the best rated/most playled songs in the library)");
+		
 		similarArtists = lfms.getSimilarArtistsWithSongs(song);
 
 		if (similarArtists != null) {
@@ -220,6 +221,11 @@ public class SimilarArtist extends JDialog implements ActionListener, Runnable {
 				artistModel.addElement(x);
 			}
 		}
+		
+		else		
+			JOptionPane.showConfirmDialog(null,
+					"No similar Artists found!", "LastFM...",
+					JOptionPane.CLOSED_OPTION);
 
 		/*
 		 * if (artistModel.getSize() > 0) artistList.setSelectedIndex(0);
