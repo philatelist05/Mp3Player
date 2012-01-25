@@ -805,12 +805,13 @@ public class MainFrame extends JFrame implements ActionListener, Runnable,
 
 		logger.info("Components successfully initialized");
 
-		// test for EditLyric
-		/*
-		 * ArrayList<Song> list = new ArrayList<Song>(); list.add((Song)
-		 * songTable.getValueAt(0, 0)); list.add((Song) songTable.getValueAt(15,
-		 * 0)); new EditLyric(list);
-		 */
+		// TODO for Johannes: test for SimilarArtist
+
+		//ArrayList<Song> list = new ArrayList<Song>();
+		//list.add((Song) songTable.getValueAt(0, 0));
+		//list.add((Song) songTable.getValueAt(15, 0));
+		//new SimilarArtist(list);
+
 	}
 
 	public MainFrame(Playlist list) {

@@ -13,7 +13,9 @@ import java.awt.event.ItemListener;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
 import java.util.ArrayList;
+import java.util.List;
 
+import javax.swing.DefaultListModel;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JDialog;
@@ -29,10 +31,13 @@ import net.miginfocom.swing.MigLayout;
 
 import org.apache.log4j.Logger;
 
+import at.ac.tuwien.sepm2011ws.mp3player.domainObjects.Playlist;
 import at.ac.tuwien.sepm2011ws.mp3player.domainObjects.Song;
+import at.ac.tuwien.sepm2011ws.mp3player.serviceLayer.LastFmService;
+import at.ac.tuwien.sepm2011ws.mp3player.serviceLayer.PlaylistService;
+import at.ac.tuwien.sepm2011ws.mp3player.serviceLayer.ServiceFactory;
 
-public class SimilarArtist extends JDialog implements ActionListener,
-		ItemListener, Runnable {
+public class SimilarArtist extends JDialog implements ActionListener, Runnable {
 
 	/**
 	 * 
@@ -57,18 +62,22 @@ public class SimilarArtist extends JDialog implements ActionListener,
 	private JLabel lblArtistValue = new JLabel("");
 	private JLabel lblSimilarArtist = new JLabel("Similar Artists:");
 	private JLabel lblSimilarSong = new JLabel("Similar Songs:");
-	private JList artistList = new JList();
+	private DefaultListModel artistModel = new DefaultListModel();
+	private JList artistList = new JList(artistModel);
 	private JScrollPane artistPane = new JScrollPane(artistList);
-	private SongTableModel songmodel = new SongTableModel(new String[] { "Status",
-			"Title", "Artist", "Album", "Year", "Genre", "Duration", "Rating",
-			"Playcount" }, 0);
+	private SongTableModel songmodel = new SongTableModel(new String[] {
+			"Status", "Title", "Artist", "Album", "Year", "Genre", "Duration",
+			"Rating", "Playcount" }, 0);
 	private JTable songTable = new JTable(songmodel);
 	private JScrollPane songPane = new JScrollPane(songTable);
 	private JButton btnOK = new JButton("OK");
+	private LastFmService lfms;
 
 	public SimilarArtist(ArrayList<Song> songlist) {
 		if (!songlist.isEmpty()) {
-			width = 400;
+			ServiceFactory sf = ServiceFactory.getInstance();
+			lfms = sf.getLastFmService();
+			width = 650;
 			height = 360;
 			positionX = (int) Math.round(dim.getWidth() / 2 - width / 2);
 			positionY = (int) Math.round(dim.getHeight() / 2 - height / 2);
@@ -86,15 +95,6 @@ public class SimilarArtist extends JDialog implements ActionListener,
 			if (temp.length() > 35)
 				temp = temp.substring(0, 30) + "...";
 			lblArtistValue.setText(temp);
-
-			/*
-			 * tags.add(new SongWrapper(song, ComponentType.ComboBox,
-			 * "stored Lyric"));
-			 * 
-			 * for (SongWrapper x : tags) lyricBox.addItem(x);
-			 * 
-			 * fillFields(tags.get(0));
-			 */
 
 			setVisible(true);
 		}
@@ -119,20 +119,15 @@ public class SimilarArtist extends JDialog implements ActionListener,
 		lblArtist.setFont(lblArtist.getFont().deriveFont(Font.BOLD));
 		lblArtistValue.setFont(lblArtistValue.getFont().deriveFont(Font.BOLD));
 
-		similarPanel.add(lblArtist, "cell 0 0 2 1");
-		similarPanel.add(lblArtistValue, "cell 0 0 2 1");
+		similarPanel.add(lblArtist, "cell 0 0 2 1, alignx left");
+		similarPanel.add(lblArtistValue, "cell 0 0 2 1, alignx left");
 		similarPanel.add(lblSimilarArtist, "cell 0 1");
 		similarPanel.add(lblSimilarSong, "cell 1 1");
 
-		//TODO: add Listener for itemselect events
-		//artistList.addItemListener(this); 
-		//getPanel.add(lyricBox, "cell 1 1");
-		 
-
-		similarPanel.add(artistPane, "cell 0 2");
+		similarPanel.add(artistPane, "cell 0 2, growy");
 
 		songPane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
-		similarPanel.add(songPane, "cell 1 2, growx, growy");
+		similarPanel.add(songPane, "cell 1 2, grow");
 
 		similarPanel.add(btnOK, "cell 1 3, alignx right, aligny center");
 		btnOK.addActionListener(this);
@@ -188,12 +183,12 @@ public class SimilarArtist extends JDialog implements ActionListener,
 		checkDialog = new JDialog();
 
 		checkPanel = new JPanel(new MigLayout("", "[grow]", "[]"));
-		checklabel = new JLabel("Searching for Lyrics...");
+		checklabel = new JLabel("Searching for similar Artists...");
 
 		checkDialog.getContentPane().add(checkPanel);
 		checkPanel.add(checklabel, "cell 0 0");
 
-		checkDialog.setTitle("Checking for similar Artists...");
+		checkDialog.setTitle("Searching for similar Artists...");
 
 		int width = 200, height = 100;
 		int positionX = (int) Math.round(dim.getWidth() / 2 - width / 2);
@@ -201,6 +196,7 @@ public class SimilarArtist extends JDialog implements ActionListener,
 
 		checkDialog.setBounds(positionX, positionY, width, height);
 		checkDialog.setDefaultCloseOperation(DO_NOTHING_ON_CLOSE);
+		checkDialog.setResizable(false);
 		checkDialog.setModal(true);
 
 		fred = new Thread(this);
@@ -208,16 +204,29 @@ public class SimilarArtist extends JDialog implements ActionListener,
 		logger.info("SimilarArtist(): Started Thread");
 
 		checkDialog.setVisible(true);
-		logger.info("SimilarArtist(): Made checkDialog visible");
+		logger.info("SimilarArtist(): Made checkSimilarArtistDialog visible");
 	}
 
 	@Override
 	public void run() {
-		// TODO: Get Artists from lastFM and write them into artistList; Get
-		// similar songs from lastFM, check if they are available in the
-		// filesystem, write into songTable
-		logger.info("GetMetaTag(): Got into thread");
+		List<Playlist> similarArtists;
+
+		logger.info("SimilarArtist(): Got into thread");
+		logger.info("SimilarArtist(): get List of playlists (similar artists and the best rated/most playled songs in the library)");
+		similarArtists = lfms.getSimilarArtistsWithSongs(song);
+
+		if (similarArtists != null) {
+			for (Playlist x : similarArtists) {
+				artistModel.addElement(x);
+			}
+		}
+
+		/*
+		 * if (artistModel.getSize() > 0) artistList.setSelectedIndex(0);
+		 */
+
 		try {
+			// Just for testing ;)
 			Thread.sleep(2000);
 		} catch (InterruptedException e) {
 			e.printStackTrace();
@@ -229,20 +238,16 @@ public class SimilarArtist extends JDialog implements ActionListener,
 	@Override
 	public void actionPerformed(ActionEvent e) {
 		if (e.getActionCommand().equals("ok")) {
-			//TODO: crete PlaylistWrapper and fill songList/songTable
-			/*SongWrapper test = (SongWrapper) artistList.getSelectedItem();
-			logger.info(test.getSong().getTitle());*/
 			dispose();
 		}
 
 	}
 
-	@Override
-	public void itemStateChanged(ItemEvent evt) {
-		if (evt.getStateChange() == ItemEvent.SELECTED) {
-			MetaTagsWrapper result = (MetaTagsWrapper) evt.getItem();
-			logger.info(result.getTags().getTitle());
-			//fillFields(result);
-		}
-	}
+	// TODO for Johannes: implement itemListener for selection change in
+	// songList (into initialize())
+	// TODO for Johannes: implement JSplitPane
+	// TODO for Johannes: implement Method for filling songTable with songs from
+	// playlist object in selected songList item
+	// TODO for Johannes: implement songTable (full)
+	// TODO for Johannes: implement play Song on double click
 }
