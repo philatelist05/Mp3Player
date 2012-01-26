@@ -105,6 +105,12 @@ public class VvvSongInformationService implements SongInformationService {
 
 	}
 
+	@Override
+	public void saveLyrics(Song song) {
+		// TODO Auto-generated method stub
+		
+	}
+
 	private static class LyricsThread extends Thread {
 		private String lyrics;
 		private String artist;

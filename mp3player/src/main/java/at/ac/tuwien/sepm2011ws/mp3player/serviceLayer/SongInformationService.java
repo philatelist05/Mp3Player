@@ -46,7 +46,7 @@ public interface SongInformationService {
 	 * @param song
 	 *            The song to search the lyrics for
 	 * @return the lyrics of the song
-	 * @throws DataAccessException 
+	 * @throws DataAccessException
 	 */
 	public List<Lyric> downloadLyrics(Song song) throws DataAccessException;
 
@@ -66,5 +66,13 @@ public interface SongInformationService {
 	 *            The rating to set
 	 */
 	public void setRating(Song song, int rating);
+
+	/**
+	 * Saves the lyrics of a song.
+	 * 
+	 * @param song
+	 *            The song with the lyrics
+	 */
+	public void saveLyrics(Song song);
 
 }
