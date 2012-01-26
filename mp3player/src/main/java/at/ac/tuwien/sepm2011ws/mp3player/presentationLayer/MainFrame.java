@@ -756,6 +756,7 @@ public class MainFrame extends JFrame implements ActionListener, Runnable,
 			if(Zuordnung.containsKey("Rating"))
 			{
 				cTableModel.getColumn(i).setCellEditor(new SongCellEditor());
+				
 			}
 		//	cTableModel.getColumnByModelIndex(7).
 			//songTable.setEditingColumn(i);
@@ -1821,21 +1822,28 @@ public class MainFrame extends JFrame implements ActionListener, Runnable,
 		int column = songTable.getSelectedColumn();
 		int row = songTable.getSelectedRow();
 		String Rating;
-		
+		logger.info("changed column: " +e.getColumn());
 		logger.info("tableChanged");
 		cis.setCurrentSongIndex(-1);
 		sorter.setSortKeys(null);
 		logger.info("Rating changed : " + row  );
 		logger.info(column);
 		
-		if(column > -1 && row > -1)
+		
+		
+		
+		if(e.getColumn() == 7)
 		{
 			
 			logger.info("new Rating " + songTable.getValueAt(row, column).toString());
 			Rating = songTable.getValueAt(row, column).toString();
 			
-			cis.getCurrentPlaylist().get(sorter.convertRowIndexToView(row)).setRating((int) Double.parseDouble(Rating));
-			logger.info("new Rating in Songobject: " + cis.getCurrentPlaylist().get(row).getRating());
+			
+			double rg = Double.parseDouble(Rating);
+			logger.info("Double Rating: " + rg);
+			cis.getCurrentPlaylist().get(sorter.convertRowIndexToView(row)).setRating(rg);
+			
+			 logger.info("new Rating in Songobject: " + cis.getCurrentPlaylist().get(row).getRating());
 		}
 		
 		
