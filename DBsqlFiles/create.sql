@@ -5,7 +5,7 @@ CREATE TABLE Song (
   ID		INTEGER		PRIMARY KEY DEFAULT nextval('song_sequence'),
   title		VARCHAR(255)	NOT NULL,
   duration	INTEGER		NOT NULL,
-  rating 	NUMERIC(2)	NOT NULL,
+  rating 	NUMERIC(2,1)	NOT NULL,
   playcount	INTEGER		NOT NULL,
   year		INTEGER		NOT NULL,
   path  	VARCHAR(512)	NOT NULL,

@@ -5,6 +5,7 @@ import java.util.List;
 import at.ac.tuwien.sepm2011ws.mp3player.domainObjects.Lyric;
 import at.ac.tuwien.sepm2011ws.mp3player.domainObjects.MetaTags;
 import at.ac.tuwien.sepm2011ws.mp3player.domainObjects.Song;
+import at.ac.tuwien.sepm2011ws.mp3player.persistanceLayer.DataAccessException;
 
 /**
  * @author klaus
@@ -45,8 +46,9 @@ public interface SongInformationService {
 	 * @param song
 	 *            The song to search the lyrics for
 	 * @return the lyrics of the song
+	 * @throws DataAccessException 
 	 */
-	public List<Lyric> downloadLyrics(Song song);
+	public List<Lyric> downloadLyrics(Song song) throws DataAccessException;
 
 	/**
 	 * Increments the playcount of the song.
