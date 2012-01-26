@@ -15,7 +15,6 @@ import at.ac.tuwien.sepm2011ws.mp3player.serviceLayer.ServiceFactory;
 
 import com.googlecode.starrating.*;
 
-
 public class SongCellEditor extends AbstractCellEditor implements
 		TableCellEditor, ActionListener {
 
@@ -23,17 +22,15 @@ public class SongCellEditor extends AbstractCellEditor implements
 
 	ServiceFactory sf;
 	CoreInteractionService cis;
-	
-	public SongCellEditor()
-	{
+
+	public SongCellEditor() {
 		sf = ServiceFactory.getInstance();
 		cis = sf.getCoreInteractionService();
-		
+
 		rating = new StarRating();
-		
+
 	}
-	
-	
+
 	@Override
 	public Object getCellEditorValue() {
 		// TODO Auto-generated method stub
@@ -49,17 +46,18 @@ public class SongCellEditor extends AbstractCellEditor implements
 	@Override
 	public Component getTableCellEditorComponent(JTable table, Object value,
 			boolean isSelected, int row, int column) {
-		
-		rating.setRate(cis.getCurrentPlaylist().get(table.getRowSorter().convertRowIndexToView(row)).getRating());
-		/*rating.addPropertyChangeListener(new PropertyChangeListener() {
 
-			@Override
-			public void propertyChange(PropertyChangeEvent arg0) {
-				System.out.println("changed");
-				fireTableChanged();
-			}
-			
-		});*/
+		rating.setRate(cis.getCurrentPlaylist()
+				.get(table.getRowSorter().convertRowIndexToView(row))
+				.getRating());
+		/*
+		 * rating.addPropertyChangeListener(new PropertyChangeListener() {
+		 * 
+		 * @Override public void propertyChange(PropertyChangeEvent arg0) {
+		 * System.out.println("changed"); fireTableChanged(); }
+		 * 
+		 * });
+		 */
 		return rating;
 	}
 

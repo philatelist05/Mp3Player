@@ -15,6 +15,7 @@ import javax.swing.JTable;
 import javax.swing.table.DefaultTableCellRenderer;
 
 import uk.co.caprica.vlcj.log.Logger;
+import at.ac.tuwien.sepm2011ws.mp3player.domainObjects.Playlist;
 import at.ac.tuwien.sepm2011ws.mp3player.serviceLayer.CoreInteractionService;
 import at.ac.tuwien.sepm2011ws.mp3player.serviceLayer.PlaylistService;
 import at.ac.tuwien.sepm2011ws.mp3player.serviceLayer.ServiceFactory;
@@ -26,7 +27,13 @@ public class SongTableRenderer extends DefaultTableCellRenderer {
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;
+	
+	private static Playlist curPlaylist;
 
+	public SongTableRenderer (Playlist currentPlaylist)
+	{
+		curPlaylist = currentPlaylist;
+	}
 	/*
 	 * public void setValue(Object value) {
 	 * 
@@ -50,43 +57,35 @@ public class SongTableRenderer extends DefaultTableCellRenderer {
 
 		// table.set
 		// table.setSelectionBackground(Color.red);
-	/*	
-		
-		
-		
-			StarRating rating = new StarRating(5);
-			rating.addPropertyChangeListener(new PropertyChangeListener() {
-
-				@Override
-				public void propertyChange(PropertyChangeEvent arg0) {
-					// TODO Auto-generated method stub
-					System.out.println("Change");
-
-				}
-
-			});
-			
-			System.out.println(table.getColumnName(3));
-			
-			JComboBox combo = new JComboBox();
-			combo.addItem("Rating");
-			JButton button = new JButton("Button");
-			JPanel panel = new JPanel();
-			panel.add(new JLabel("test"));
-			panel.add(button);
-			panel.add(rating);
-			//table.getColumnModel().getColumn(3).setCellEditor(new DefaultCellEditor(combo));
-		//	table.setEditingColumn(3);
-		//	table.setEditingRow(2);
-			table.getColumnModel().getColumn(3).setCellEditor(new SongCellEditor());
-			DefaultTableCellRenderer render = new DefaultTableCellRenderer();
-			render.setToolTipText("Click for Ratin");
-			table.getColumnModel().getColumn(3).setCellRenderer(render);
-		//	return component;
-			//table.setValueAt(rating, row, 7);
-			//table.add(rating);
-		
-*/
+		/*
+		 * 
+		 * 
+		 * 
+		 * StarRating rating = new StarRating(5);
+		 * rating.addPropertyChangeListener(new PropertyChangeListener() {
+		 * 
+		 * @Override public void propertyChange(PropertyChangeEvent arg0) { //
+		 * TODO Auto-generated method stub System.out.println("Change");
+		 * 
+		 * }
+		 * 
+		 * });
+		 * 
+		 * System.out.println(table.getColumnName(3));
+		 * 
+		 * JComboBox combo = new JComboBox(); combo.addItem("Rating"); JButton
+		 * button = new JButton("Button"); JPanel panel = new JPanel();
+		 * panel.add(new JLabel("test")); panel.add(button); panel.add(rating);
+		 * //table.getColumnModel().getColumn(3).setCellEditor(new
+		 * DefaultCellEditor(combo)); // table.setEditingColumn(3); //
+		 * table.setEditingRow(2);
+		 * table.getColumnModel().getColumn(3).setCellEditor(new
+		 * SongCellEditor()); DefaultTableCellRenderer render = new
+		 * DefaultTableCellRenderer(); render.setToolTipText("Click for Ratin");
+		 * table.getColumnModel().getColumn(3).setCellRenderer(render); //
+		 * return component; //table.setValueAt(rating, row, 7);
+		 * //table.add(rating);
+		 */
 		if (row % 2 == 0) {
 
 			setBackground(Color.white);
@@ -96,20 +95,22 @@ public class SongTableRenderer extends DefaultTableCellRenderer {
 
 		}
 		table.setSelectionForeground(Color.red);
-		//table.setSelectionBackground(Color.red);
+		// table.setSelectionBackground(Color.red);
 		// if(cis.isPlaying())
 		// {
-
-		if (cis.getCurrentSongIndex() > -1) {
-			// if (table.getRowSorter().convertRowIndexToView(cis.getCurrentSongIndex()) == row
+		if(cis.getCurrentPlaylist().equals(curPlaylist))
+		//if (cis.getCurrentSongIndex() > -1) 
+		{
+			// if
+			// (table.getRowSorter().convertRowIndexToView(cis.getCurrentSongIndex())
+			// == row
 			// )
-			if (cis.getCurrentSongIndex() == row) 
-			{
+			if (cis.getCurrentSongIndex() == row) {
 				// System.out.println(table.getRowSorter().convertRowIndexToView(cis.getCurrentSongIndex()));
 				component.setFont(component.getFont().deriveFont(Font.BOLD));
 			}
 		}
-		
+
 		return component;
 	}
 }
