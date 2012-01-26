@@ -807,10 +807,10 @@ public class MainFrame extends JFrame implements ActionListener, Runnable,
 
 		// TODO for Johannes: test for SimilarArtist
 
-		//ArrayList<Song> list = new ArrayList<Song>();
-		//list.add((Song) songTable.getValueAt(0, 0));
-		//list.add((Song) songTable.getValueAt(15, 0));
-		//new SimilarArtist(list);
+		// ArrayList<Song> list = new ArrayList<Song>();
+		// list.add((Song) songTable.getValueAt(0, 0));
+		// list.add((Song) songTable.getValueAt(15, 0));
+		// new SimilarArtist(list);
 
 	}
 
@@ -1072,7 +1072,7 @@ public class MainFrame extends JFrame implements ActionListener, Runnable,
 		// add the listener specifically to the header
 		songTable.addMouseListener(popupListener);
 		songTable.getTableHeader().addMouseListener(popupListener);
-
+		songTable.addKeyListener(this);
 		/**
 		 * JButtons
 		 */
@@ -1517,8 +1517,14 @@ public class MainFrame extends JFrame implements ActionListener, Runnable,
 	}
 
 	public void keyPressed(KeyEvent e) {
-		if (e.getKeyCode() == KeyEvent.VK_ENTER)
-			logger.info("MainFrame(): Pressed Enter");
+		if (e.getKeyCode() == KeyEvent.VK_ENTER) {
+			//logger.info("MainFrame(): Pressed Enter");
+			int row = this.songTable.getSelectedRow();
+
+			if (row > -1) {
+				play(row);
+			}
+		}
 
 	}
 
