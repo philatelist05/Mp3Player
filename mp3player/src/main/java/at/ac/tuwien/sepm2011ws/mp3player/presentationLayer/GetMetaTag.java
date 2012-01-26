@@ -269,8 +269,7 @@ public class GetMetaTag extends JDialog implements ActionListener,
 		}
 
 		else if (e.getActionCommand().equals("cancel")) {
-			MetaTagsWrapper test = (MetaTagsWrapper) songBox.getSelectedItem();
-			logger.info(test.getTags().getTitle());
+			logger.info("GetMetaTag(): Cancelled");
 			dispose();
 		}
 	}
@@ -303,10 +302,10 @@ public class GetMetaTag extends JDialog implements ActionListener,
 		logger.info("GetMetaTag(): Made checkDialog visible");
 	}
 
-	private void fillFields(MetaTagsWrapper sw) {
-		if (sw != null) {
-			if (sw.getTags() != null) {
-				MetaTags temp = sw.getTags();
+	private void fillFields(MetaTagsWrapper mtw) {
+		if (mtw != null) {
+			if (mtw.getTags() != null) {
+				MetaTags temp = mtw.getTags();
 				textArtist.setText(temp.getArtist());
 				textTitle.setText(temp.getTitle());
 				if (temp.getAlbum() != null)
@@ -353,9 +352,8 @@ public class GetMetaTag extends JDialog implements ActionListener,
 	@Override
 	public void itemStateChanged(ItemEvent evt) {
 		if (evt.getStateChange() == ItemEvent.SELECTED) {
-			MetaTagsWrapper result = (MetaTagsWrapper) evt.getItem();
-			logger.info(result.getTags().getTitle());
-			fillFields(result);
+			logger.info("GetMetaTag(): Clicked on songBox item");
+			fillFields((MetaTagsWrapper) evt.getItem());
 		}
 	}
 }

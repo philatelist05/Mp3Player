@@ -240,10 +240,8 @@ public class GetLyric extends JDialog implements ActionListener, ItemListener,
 
 	private void fillFields(MetaTagsWrapper mtw) {
 		if (mtw != null) {
-			if (mtw.getTags() != null) {
-				if (mtw.getLyric() != null)
-					lyricEditorPane.setText(mtw.getLyric().getText());
-			}
+			if (mtw.getLyric() != null)
+				lyricEditorPane.setText(mtw.getLyric().getText());
 		}
 	}
 
@@ -258,8 +256,8 @@ public class GetLyric extends JDialog implements ActionListener, ItemListener,
 		try {
 			lyricList = sis.downloadLyrics(song);
 		} catch (DataAccessException e) {
-			JOptionPane.showConfirmDialog(null, e.getMessage(),
-					"Error", JOptionPane.CLOSED_OPTION);
+			JOptionPane.showConfirmDialog(null, e.getMessage(), "Error",
+					JOptionPane.CLOSED_OPTION);
 		}
 
 		if (lyricList != null) {
@@ -270,10 +268,10 @@ public class GetLyric extends JDialog implements ActionListener, ItemListener,
 					i++;
 				}
 			}
-			
+
 			else
 				JOptionPane.showConfirmDialog(null, "No Lyrics found!",
-							"Chartlyric...", JOptionPane.CLOSED_OPTION);
+						"Chartlyric...", JOptionPane.CLOSED_OPTION);
 		}
 
 		else
@@ -281,8 +279,8 @@ public class GetLyric extends JDialog implements ActionListener, ItemListener,
 					"Chartlyric...", JOptionPane.CLOSED_OPTION);
 
 		checkDialog.dispose();
-		//fred.stop();
-		
+		// fred.stop();
+
 		// Thread.sleep(2000);
 
 		// } catch (InterruptedException e) {
@@ -298,13 +296,12 @@ public class GetLyric extends JDialog implements ActionListener, ItemListener,
 			if (song.getLyric() != null)
 				song.setLyric(new Lyric(lyricEditorPane.getText()));
 
-			sis.setMetaTags(song);
+			sis.saveLyrics(song);
 			dispose();
 		}
 
 		else if (e.getActionCommand().equals("cancel")) {
-			MetaTagsWrapper test = (MetaTagsWrapper) lyricBox.getSelectedItem();
-			logger.info(test.getTags().getTitle());
+			logger.info("GetLyric(): Cancelled");
 			dispose();
 		}
 	}
@@ -312,9 +309,8 @@ public class GetLyric extends JDialog implements ActionListener, ItemListener,
 	@Override
 	public void itemStateChanged(ItemEvent evt) {
 		if (evt.getStateChange() == ItemEvent.SELECTED) {
-			MetaTagsWrapper result = (MetaTagsWrapper) evt.getItem();
-			logger.info(result.getTags().getTitle());
-			fillFields(result);
+			logger.info("itemEvent(): Clicked on songBox item");
+			fillFields((MetaTagsWrapper) evt.getItem());
 		}
 	}
 }
