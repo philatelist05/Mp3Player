@@ -64,12 +64,11 @@ public class checkSongPathGUI extends JDialog implements ActionListener, Runnabl
 			
 			JOptionPane.showConfirmDialog(null, "Successfully checked songpaths!",
 					"Checking songspath...", JOptionPane.CLOSED_OPTION);
-			
-			fred.stop();
+			dispose();
 		} catch (DataAccessException e) {
-			JOptionPane.showMessageDialog(null,
-					"Songpath check: " + e);
-			e.printStackTrace();
+			JOptionPane.showConfirmDialog(null, e.getMessage(),
+					"Error", JOptionPane.CLOSED_OPTION);
+			dispose();
 		}
 	}
 	

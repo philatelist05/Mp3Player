@@ -66,13 +66,9 @@ public class GlobalSearch extends JDialog implements ActionListener {
 		if (playlistName.getText().trim().length() > 0) {
     		try {
 				result = ps.globalSearch(playlistName.getText());
-			} catch (DataAccessException e1) {
-				JOptionPane
-				.showConfirmDialog(
-						null,
-						"Error...",
-						"Error: " + e1,
-						JOptionPane.CLOSED_OPTION);
+			} catch (DataAccessException e) {
+				JOptionPane.showConfirmDialog(null, e.getMessage(),
+						"Error", JOptionPane.CLOSED_OPTION);
 			}
     		new MainFrame(result, "reloadsongtable");
     		dispose();
@@ -126,6 +122,5 @@ public class GlobalSearch extends JDialog implements ActionListener {
 		else if (e.getActionCommand().equals("ok")) {
 			search();
 		}
-		
 	}
 }

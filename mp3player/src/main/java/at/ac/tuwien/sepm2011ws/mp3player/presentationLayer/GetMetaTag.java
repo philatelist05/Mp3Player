@@ -25,7 +25,6 @@ import javax.swing.JTextField;
 import net.miginfocom.swing.MigLayout;
 import org.apache.log4j.Logger;
 
-import at.ac.tuwien.sepm2011ws.mp3player.domainObjects.Lyric;
 import at.ac.tuwien.sepm2011ws.mp3player.domainObjects.MetaTags;
 import at.ac.tuwien.sepm2011ws.mp3player.domainObjects.Song;
 import at.ac.tuwien.sepm2011ws.mp3player.serviceLayer.ServiceFactory;
@@ -270,8 +269,7 @@ public class GetMetaTag extends JDialog implements ActionListener,
 		}
 
 		else if (e.getActionCommand().equals("cancel")) {
-			MetaTagsWrapper test = (MetaTagsWrapper) songBox.getSelectedItem();
-			logger.info(test.getTags().getTitle());
+			logger.info("GetMetaTag(): Cancelled");
 			dispose();
 		}
 	}
@@ -304,10 +302,10 @@ public class GetMetaTag extends JDialog implements ActionListener,
 		logger.info("GetMetaTag(): Made checkDialog visible");
 	}
 
-	private void fillFields(MetaTagsWrapper sw) {
-		if (sw != null) {
-			if (sw.getTags() != null) {
-				MetaTags temp = sw.getTags();
+	private void fillFields(MetaTagsWrapper mtw) {
+		if (mtw != null) {
+			if (mtw.getTags() != null) {
+				MetaTags temp = mtw.getTags();
 				textArtist.setText(temp.getArtist());
 				textTitle.setText(temp.getTitle());
 				if (temp.getAlbum() != null)
@@ -333,6 +331,10 @@ public class GetMetaTag extends JDialog implements ActionListener,
 					i++;
 				}
 			}
+
+			else
+				JOptionPane.showConfirmDialog(null, "No Metatags found!",
+						"LastFM...", JOptionPane.CLOSED_OPTION);
 		}
 
 		else
@@ -341,7 +343,7 @@ public class GetMetaTag extends JDialog implements ActionListener,
 
 		// Thread.sleep(2000);
 		checkDialog.dispose();
-		fred.stop();
+		// fred.stop();
 		// } catch (InterruptedException e) {
 		// e.printStackTrace();
 		// }
@@ -350,9 +352,8 @@ public class GetMetaTag extends JDialog implements ActionListener,
 	@Override
 	public void itemStateChanged(ItemEvent evt) {
 		if (evt.getStateChange() == ItemEvent.SELECTED) {
-			MetaTagsWrapper result = (MetaTagsWrapper) evt.getItem();
-			logger.info(result.getTags().getTitle());
-			fillFields(result);
+			logger.info("GetMetaTag(): Clicked on songBox item");
+			fillFields((MetaTagsWrapper) evt.getItem());
 		}
 	}
 }
