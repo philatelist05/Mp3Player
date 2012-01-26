@@ -26,6 +26,7 @@ import org.apache.log4j.Logger;
 import at.ac.tuwien.sepm2011ws.mp3player.domainObjects.Lyric;
 import at.ac.tuwien.sepm2011ws.mp3player.domainObjects.MetaTags;
 import at.ac.tuwien.sepm2011ws.mp3player.domainObjects.Song;
+import at.ac.tuwien.sepm2011ws.mp3player.persistanceLayer.DataAccessException;
 import at.ac.tuwien.sepm2011ws.mp3player.serviceLayer.ServiceFactory;
 import at.ac.tuwien.sepm2011ws.mp3player.serviceLayer.SongInformationService;
 
@@ -253,7 +254,12 @@ public class GetLyric extends JDialog implements ActionListener, ItemListener,
 		// try {
 		int i = 1;
 
-		List<Lyric> lyricList = sis.downloadLyrics(song);
+		List<Lyric> lyricList = null;
+		try {
+			lyricList = sis.downloadLyrics(song);
+		} catch (DataAccessException e) {
+			// TODO Auto-generated catch block
+		}
 
 		if (lyricList != null) {
 			if (lyricList.size() > 0) {
