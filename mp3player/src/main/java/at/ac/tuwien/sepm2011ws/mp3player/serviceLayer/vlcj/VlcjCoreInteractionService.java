@@ -446,6 +446,7 @@ public class VlcjCoreInteractionService implements CoreInteractionService {
 
 		@Override
 		public void playing(MediaPlayer arg0) {
+			currentSong.setPlaycount(currentSong.getPlaycount() + 1);
 			currentSong.setPathOk(true);
 			DaoFactory df = DaoFactory.getInstance();
 			SongDao sd = df.getSongDao();
