@@ -42,7 +42,7 @@ public class Song {
 	 * @param album
 	 * @param lyric
 	 */
-	public Song(int id, String title, int duration, int playcount, int rating,
+	public Song(int id, String title, int duration, int playcount, double rating,
 			String path, int year, String artist, String genre, boolean pathOK,
 			Album album, Lyric lyric) throws IllegalArgumentException {
 		this.setId(id);
