@@ -87,16 +87,21 @@ public class VvvSongInformationService implements SongInformationService {
 			} while (!lf.gotNoConnection() && failed && failCount < retryCount);
 
 			if (lf.gotNoConnection()) {
-				throw new DataAccessException("Couln't load lyrics");
+				throw new DataAccessException(
+						"Couldn't connect to the lyrics service. Do you have an active internet connection?");
 			}
 		} catch (InterruptedException e) {
-			throw new DataAccessException("Couln't load lyrics");
+			throw new DataAccessException("Couldn't load lyrics");
 		}
 
+		// There are only one or no lyrics for a song of course but the interface is written to
+		// be able to return multiple lyrics for a song, so we have to generate
+		// a list
 		List<Lyric> retList = new ArrayList<Lyric>();
 		if (lyrics != null && !lyrics.isEmpty()) {
 			retList.add(new Lyric(lyrics));
 		}
+		
 		return retList;
 	}
 
@@ -107,9 +112,8 @@ public class VvvSongInformationService implements SongInformationService {
 	}
 
 	@Override
-	public void saveLyrics(Song song) {
-		// TODO Auto-generated method stub
-
+	public void saveLyrics(Song song) throws DataAccessException {
+		sd.update(song);
 	}
 
 	private static class LyricsThread extends Thread {

@@ -66,7 +66,8 @@ public interface SongInformationService {
 	 * 
 	 * @param song
 	 *            The song with the lyrics
+	 * @throws DataAccessException 
 	 */
-	public void saveLyrics(Song song);
+	public void saveLyrics(Song song) throws DataAccessException;
 
 }
