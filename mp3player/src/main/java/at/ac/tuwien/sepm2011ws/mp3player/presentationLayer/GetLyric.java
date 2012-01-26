@@ -240,9 +240,14 @@ public class GetLyric extends JDialog implements ActionListener, ItemListener,
 
 	private void fillFields(MetaTagsWrapper mtw) {
 		if (mtw != null) {
-			if (mtw.getLyric() != null)
+			if (mtw.getLyric() != null) {
 				lyricEditorPane.setText(mtw.getLyric().getText());
+			}
+			else
+				lyricEditorPane.setText("");
 		}
+		else
+			lyricEditorPane.setText("");
 	}
 
 	@Override

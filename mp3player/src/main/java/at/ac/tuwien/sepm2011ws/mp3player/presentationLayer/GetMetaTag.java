@@ -301,6 +301,14 @@ public class GetMetaTag extends JDialog implements ActionListener,
 		checkDialog.setVisible(true);
 		logger.info("GetMetaTag(): Made checkDialog visible");
 	}
+	
+	private void setBlank() {
+		textArtist.setText("");
+		textTitle.setText("");
+		textAlbum.setText("");
+		textYear.setText("0");
+		textGenre.setText("");
+	}
 
 	private void fillFields(MetaTagsWrapper mtw) {
 		if (mtw != null) {
@@ -313,7 +321,11 @@ public class GetMetaTag extends JDialog implements ActionListener,
 				textYear.setText(Integer.toString(temp.getYear()));
 				textGenre.setText(song.getGenre());
 			}
+			else
+				setBlank();
 		}
+		else
+			setBlank();
 	}
 
 	@Override
