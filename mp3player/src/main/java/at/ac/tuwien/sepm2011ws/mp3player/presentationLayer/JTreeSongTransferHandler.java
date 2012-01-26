@@ -1,15 +1,11 @@
 package at.ac.tuwien.sepm2011ws.mp3player.presentationLayer;
 
 import java.awt.datatransfer.DataFlavor;
-
-import javax.swing.DefaultListModel;
 import javax.swing.JComponent;
-import javax.swing.JList;
 import javax.swing.JTree;
 import javax.swing.TransferHandler;
 import javax.swing.tree.DefaultTreeModel;
 import javax.swing.tree.TreePath;
-
 import at.ac.tuwien.sepm2011ws.mp3player.domainObjects.WritablePlaylist;
 import at.ac.tuwien.sepm2011ws.mp3player.domainObjects.Playlist;
 import at.ac.tuwien.sepm2011ws.mp3player.domainObjects.Song;

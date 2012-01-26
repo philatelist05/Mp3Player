@@ -1126,8 +1126,8 @@ public class MainFrame extends JFrame implements ActionListener, Runnable,
 		/*
 		 * progress.addChangeListener(new ChangeListener() {
 		 * 
-		 * @Override public void stateChanged(ChangeEvent ce) { // TODO
-		 * Auto-generated method stub JSlider source = (JSlider) ce.getSource();
+		 * @Override public void stateChanged(ChangeEvent ce) {
+		 * JSlider source = (JSlider) ce.getSource();
 		 * setMediaTime(source.getValue());
 		 * 
 		 * }
@@ -1410,8 +1410,8 @@ public class MainFrame extends JFrame implements ActionListener, Runnable,
 				fillSongTable(list);
 				currentPlaylistGUI = list;
 			} catch (DataAccessException e1) {
-				// TODO Auto-generated catch block
-				e1.printStackTrace();
+				JOptionPane.showConfirmDialog(null, e1.getMessage(),
+						"Error", JOptionPane.CLOSED_OPTION);
 			}
 		}
 
@@ -1424,8 +1424,8 @@ public class MainFrame extends JFrame implements ActionListener, Runnable,
 				fillSongTable(list);
 				currentPlaylistGUI = list;
 			} catch (DataAccessException e1) {
-				// TODO Auto-generated catch block
-				e1.printStackTrace();
+				JOptionPane.showConfirmDialog(null, e1.getMessage(),
+						"Error", JOptionPane.CLOSED_OPTION);
 			}
 		}
 
@@ -1438,8 +1438,8 @@ public class MainFrame extends JFrame implements ActionListener, Runnable,
 				fillSongTable(list);
 				currentPlaylistGUI = list;
 			} catch (DataAccessException e1) {
-				// TODO Auto-generated catch block
-				e1.printStackTrace();
+				JOptionPane.showConfirmDialog(null, e1.getMessage(),
+						"Error", JOptionPane.CLOSED_OPTION);
 			}
 
 		}
@@ -1468,8 +1468,8 @@ public class MainFrame extends JFrame implements ActionListener, Runnable,
 				fillSongTable(list);
 				currentPlaylistGUI = list;
 			} catch (DataAccessException e1) {
-				// TODO Auto-generated catch block
-				e1.printStackTrace();
+				JOptionPane.showConfirmDialog(null, e1.getMessage(),
+						"Error", JOptionPane.CLOSED_OPTION);
 			}
 		}
 

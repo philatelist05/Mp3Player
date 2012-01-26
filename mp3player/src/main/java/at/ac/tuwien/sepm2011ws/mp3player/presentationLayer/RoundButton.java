@@ -1,5 +1,4 @@
 package at.ac.tuwien.sepm2011ws.mp3player.presentationLayer;
-import java.awt.Color;
 import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.Graphics;
@@ -7,7 +6,6 @@ import java.awt.Graphics2D;
 import java.awt.RenderingHints;
 import java.awt.Shape;
 import java.awt.geom.Ellipse2D;
-import javax.swing.BorderFactory;
 import javax.swing.Icon;
 import javax.swing.JButton;
 
@@ -54,7 +52,7 @@ public class RoundButton extends JButton
         this.setPressedIcon(pressedIcon);
         
         int iw = Math.max(standardIcon.getIconWidth(), standardIcon.getIconHeight());
-        int sw = 1;
+        //int sw = 1;
         // create a one pixel wide border around the button
         //setBorder(BorderFactory.createEmptyBorder(sw, sw, sw, sw));
         // the dimension is the image size plus a one pixel border

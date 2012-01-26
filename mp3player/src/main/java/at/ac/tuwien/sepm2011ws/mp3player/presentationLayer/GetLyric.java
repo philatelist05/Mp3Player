@@ -258,7 +258,8 @@ public class GetLyric extends JDialog implements ActionListener, ItemListener,
 		try {
 			lyricList = sis.downloadLyrics(song);
 		} catch (DataAccessException e) {
-			// TODO Auto-generated catch block
+			JOptionPane.showConfirmDialog(null, e.getMessage(),
+					"Error", JOptionPane.CLOSED_OPTION);
 		}
 
 		if (lyricList != null) {
@@ -269,12 +270,19 @@ public class GetLyric extends JDialog implements ActionListener, ItemListener,
 					i++;
 				}
 			}
+			
+			else
+				JOptionPane.showConfirmDialog(null, "No Lyrics found!",
+							"Chartlyric...", JOptionPane.CLOSED_OPTION);
 		}
 
 		else
 			JOptionPane.showConfirmDialog(null, "No Lyrics found!",
 					"Chartlyric...", JOptionPane.CLOSED_OPTION);
 
+		checkDialog.dispose();
+		//fred.stop();
+		
 		// Thread.sleep(2000);
 
 		// } catch (InterruptedException e) {

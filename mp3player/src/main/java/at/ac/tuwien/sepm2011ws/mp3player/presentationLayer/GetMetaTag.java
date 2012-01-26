@@ -25,7 +25,6 @@ import javax.swing.JTextField;
 import net.miginfocom.swing.MigLayout;
 import org.apache.log4j.Logger;
 
-import at.ac.tuwien.sepm2011ws.mp3player.domainObjects.Lyric;
 import at.ac.tuwien.sepm2011ws.mp3player.domainObjects.MetaTags;
 import at.ac.tuwien.sepm2011ws.mp3player.domainObjects.Song;
 import at.ac.tuwien.sepm2011ws.mp3player.serviceLayer.ServiceFactory;
@@ -333,6 +332,10 @@ public class GetMetaTag extends JDialog implements ActionListener,
 					i++;
 				}
 			}
+
+			else
+				JOptionPane.showConfirmDialog(null, "No Metatags found!",
+						"LastFM...", JOptionPane.CLOSED_OPTION);
 		}
 
 		else
@@ -341,7 +344,7 @@ public class GetMetaTag extends JDialog implements ActionListener,
 
 		// Thread.sleep(2000);
 		checkDialog.dispose();
-		fred.stop();
+		// fred.stop();
 		// } catch (InterruptedException e) {
 		// e.printStackTrace();
 		// }

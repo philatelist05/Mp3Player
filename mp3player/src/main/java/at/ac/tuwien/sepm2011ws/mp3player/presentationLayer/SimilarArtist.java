@@ -8,8 +8,6 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
-import java.awt.event.ItemEvent;
-import java.awt.event.ItemListener;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
 import java.util.ArrayList;
@@ -17,9 +15,7 @@ import java.util.List;
 
 import javax.swing.DefaultListModel;
 import javax.swing.JButton;
-import javax.swing.JComboBox;
 import javax.swing.JDialog;
-import javax.swing.JEditorPane;
 import javax.swing.JLabel;
 import javax.swing.JList;
 import javax.swing.JOptionPane;
@@ -34,7 +30,6 @@ import org.apache.log4j.Logger;
 import at.ac.tuwien.sepm2011ws.mp3player.domainObjects.Playlist;
 import at.ac.tuwien.sepm2011ws.mp3player.domainObjects.Song;
 import at.ac.tuwien.sepm2011ws.mp3player.serviceLayer.LastFmService;
-import at.ac.tuwien.sepm2011ws.mp3player.serviceLayer.PlaylistService;
 import at.ac.tuwien.sepm2011ws.mp3player.serviceLayer.ServiceFactory;
 
 public class SimilarArtist extends JDialog implements ActionListener, Runnable {
@@ -213,19 +208,25 @@ public class SimilarArtist extends JDialog implements ActionListener, Runnable {
 
 		logger.info("SimilarArtist(): Got into thread");
 		logger.info("SimilarArtist(): get List of playlists (similar artists and the best rated/most playled songs in the library)");
-		
+
 		similarArtists = lfms.getSimilarArtistsWithSongs(song);
 
 		if (similarArtists != null) {
-			for (Playlist x : similarArtists) {
-				artistModel.addElement(x);
+			if (similarArtists.size() > 0) {
+				for (Playlist x : similarArtists) {
+					artistModel.addElement(x);
+				}
 			}
+
+			else
+				JOptionPane.showConfirmDialog(null,
+						"No similar Artists found!", "LastFM...",
+						JOptionPane.CLOSED_OPTION);
 		}
-		
-		else		
-			JOptionPane.showConfirmDialog(null,
-					"No similar Artists found!", "LastFM...",
-					JOptionPane.CLOSED_OPTION);
+
+		else
+			JOptionPane.showConfirmDialog(null, "No similar Artists found!",
+					"LastFM...", JOptionPane.CLOSED_OPTION);
 
 		/*
 		 * if (artistModel.getSize() > 0) artistList.setSelectedIndex(0);
@@ -235,10 +236,10 @@ public class SimilarArtist extends JDialog implements ActionListener, Runnable {
 			// Just for testing ;)
 			Thread.sleep(2000);
 		} catch (InterruptedException e) {
-			e.printStackTrace();
+			JOptionPane.showConfirmDialog(null, e.getMessage(),
+					"Error", JOptionPane.CLOSED_OPTION);
 		}
 		checkDialog.dispose();
-		fred.stop();
 	}
 
 	@Override
@@ -246,7 +247,6 @@ public class SimilarArtist extends JDialog implements ActionListener, Runnable {
 		if (e.getActionCommand().equals("ok")) {
 			dispose();
 		}
-
 	}
 
 	// TODO for Johannes: implement itemListener for selection change in

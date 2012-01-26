@@ -17,6 +17,11 @@ import com.googlecode.starrating.*;
 public class SongCellEditor extends AbstractCellEditor implements
 		TableCellEditor, ActionListener {
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 8738179072889259618L;
+
 	StarRating rating;
 
 	ServiceFactory sf;
@@ -34,13 +39,11 @@ public class SongCellEditor extends AbstractCellEditor implements
 	
 	@Override
 	public Object getCellEditorValue() {
-		// TODO Auto-generated method stub
 		return rating.getRate();
 	}
 
 	@Override
 	public void actionPerformed(ActionEvent arg0) {
-		// TODO Auto-generated method stub
 
 	}
 
