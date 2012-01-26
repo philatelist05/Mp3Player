@@ -3,20 +3,20 @@ package at.ac.tuwien.sepm2011ws.mp3player.presentationLayer;
 import java.awt.Component;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.beans.PropertyChangeEvent;
-import java.beans.PropertyChangeListener;
-
 import javax.swing.AbstractCellEditor;
 import javax.swing.JTable;
 import javax.swing.table.TableCellEditor;
-
 import at.ac.tuwien.sepm2011ws.mp3player.serviceLayer.CoreInteractionService;
 import at.ac.tuwien.sepm2011ws.mp3player.serviceLayer.ServiceFactory;
-
 import com.googlecode.starrating.*;
 
 public class SongCellEditor extends AbstractCellEditor implements
 		TableCellEditor, ActionListener {
+
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 8738179072889259618L;
 
 	StarRating rating;
 
@@ -33,13 +33,11 @@ public class SongCellEditor extends AbstractCellEditor implements
 
 	@Override
 	public Object getCellEditorValue() {
-		// TODO Auto-generated method stub
 		return rating.getRate();
 	}
 
 	@Override
 	public void actionPerformed(ActionEvent arg0) {
-		// TODO Auto-generated method stub
 
 	}
 

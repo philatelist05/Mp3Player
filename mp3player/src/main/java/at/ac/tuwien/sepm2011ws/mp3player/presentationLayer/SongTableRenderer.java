@@ -3,23 +3,15 @@ package at.ac.tuwien.sepm2011ws.mp3player.presentationLayer;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Font;
-import java.beans.PropertyChangeEvent;
-import java.beans.PropertyChangeListener;
 
-import javax.swing.DefaultCellEditor;
-import javax.swing.JButton;
-import javax.swing.JComboBox;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
 import javax.swing.JTable;
 import javax.swing.table.DefaultTableCellRenderer;
 
-import uk.co.caprica.vlcj.log.Logger;
+
 import at.ac.tuwien.sepm2011ws.mp3player.domainObjects.Playlist;
+
 import at.ac.tuwien.sepm2011ws.mp3player.serviceLayer.CoreInteractionService;
-import at.ac.tuwien.sepm2011ws.mp3player.serviceLayer.PlaylistService;
 import at.ac.tuwien.sepm2011ws.mp3player.serviceLayer.ServiceFactory;
-import com.googlecode.starrating.*;
 
 public class SongTableRenderer extends DefaultTableCellRenderer {
 
@@ -57,6 +49,7 @@ public class SongTableRenderer extends DefaultTableCellRenderer {
 
 		// table.set
 		// table.setSelectionBackground(Color.red);
+
 		/*
 		 * 
 		 * 

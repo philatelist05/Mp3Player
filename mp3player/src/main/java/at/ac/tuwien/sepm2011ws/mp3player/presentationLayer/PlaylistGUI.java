@@ -20,14 +20,12 @@ import net.miginfocom.swing.MigLayout;
 
 import org.apache.log4j.Logger;
 
-import at.ac.tuwien.sepm2011ws.mp3player.domainObjects.MetaTags;
 import at.ac.tuwien.sepm2011ws.mp3player.domainObjects.WritablePlaylist;
 import at.ac.tuwien.sepm2011ws.mp3player.domainObjects.Playlist;
 import at.ac.tuwien.sepm2011ws.mp3player.persistanceLayer.DataAccessException;
 import at.ac.tuwien.sepm2011ws.mp3player.serviceLayer.PlaylistService;
 import at.ac.tuwien.sepm2011ws.mp3player.serviceLayer.ServiceFactory;
 import java.lang.String;
-import java.util.List;
 
 public class PlaylistGUI extends JDialog implements ActionListener, Runnable {
 
@@ -346,10 +344,9 @@ public class PlaylistGUI extends JDialog implements ActionListener, Runnable {
 						JOptionPane.CLOSED_OPTION);
 
 			checkDialog.dispose();
-			fred.stop();
 		} catch (DataAccessException e) {
-			JOptionPane.showMessageDialog(null, e);
-			e.printStackTrace();
+			JOptionPane.showConfirmDialog(null, e.getMessage(),
+					"Error", JOptionPane.CLOSED_OPTION);
 		}
 	}
 }
