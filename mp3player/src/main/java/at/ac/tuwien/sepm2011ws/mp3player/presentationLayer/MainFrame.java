@@ -1822,12 +1822,12 @@ public class MainFrame extends JFrame implements ActionListener, Runnable,
 		int column = songTable.getSelectedColumn();
 		int row = songTable.getSelectedRow();
 		String Rating;
-		logger.info("changed column: " +e.getColumn());
-		logger.info("tableChanged");
-		cis.setCurrentSongIndex(-1);
+	//	logger.info("changed column: " +e.getColumn());
+	//	logger.info("tableChanged");
+		//cis.setCurrentSongIndex(-1);
 		sorter.setSortKeys(null);
-		logger.info("Rating changed : " + row  );
-		logger.info(column);
+	//	logger.info("Rating changed : " + row  );
+	//	logger.info(column);
 		
 		
 		
@@ -1835,15 +1835,15 @@ public class MainFrame extends JFrame implements ActionListener, Runnable,
 		if(e.getColumn() == 7)
 		{
 			
-			logger.info("new Rating " + songTable.getValueAt(row, column).toString());
+	//		logger.info("new Rating " + songTable.getValueAt(row, column).toString());
 			Rating = songTable.getValueAt(row, column).toString();
 			
 			
 			double rg = Double.parseDouble(Rating);
-			logger.info("Double Rating: " + rg);
+	//		logger.info("Double Rating: " + rg);
 			cis.getCurrentPlaylist().get(sorter.convertRowIndexToView(row)).setRating(rg);
 			
-			 logger.info("new Rating in Songobject: " + cis.getCurrentPlaylist().get(row).getRating());
+	//		 logger.info("new Rating in Songobject: " + cis.getCurrentPlaylist().get(row).getRating());
 		}
 		
 		
@@ -1851,7 +1851,7 @@ public class MainFrame extends JFrame implements ActionListener, Runnable,
 
 	@Override
 	public void sorterChanged(RowSorterEvent e) {
-		 logger.info("sorterChanged");
+		// logger.info("sorterChanged");
 		// cis.getCurrentPlaylist().get(0).setRating(5);
 		if (cis.getCurrentSongIndex() > -1)
 			cis.setCurrentSongIndex(sorter.convertRowIndexToView(cis
