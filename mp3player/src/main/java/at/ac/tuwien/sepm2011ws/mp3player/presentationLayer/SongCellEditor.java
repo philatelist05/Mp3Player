@@ -3,6 +3,8 @@ package at.ac.tuwien.sepm2011ws.mp3player.presentationLayer;
 import java.awt.Component;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
 
 import javax.swing.AbstractCellEditor;
 import javax.swing.JTable;
@@ -52,6 +54,15 @@ public class SongCellEditor extends AbstractCellEditor implements
 			boolean isSelected, int row, int column) {
 		
 		rating.setRate(cis.getCurrentPlaylist().get(table.getRowSorter().convertRowIndexToView(row)).getRating());
+		/*rating.addPropertyChangeListener(new PropertyChangeListener() {
+
+			@Override
+			public void propertyChange(PropertyChangeEvent arg0) {
+				System.out.println("changed");
+				fireTableChanged();
+			}
+			
+		});*/
 		return rating;
 	}
 

@@ -232,7 +232,7 @@ class DbSongDao implements SongDao {
 			s.setId(id);
 			s.setYear(result.getInt("year"));
 			s.setPlaycount(result.getInt("playcount"));
-			s.setRating(result.getInt("rating"));
+			s.setRating(result.getDouble("rating"));
 			s.setGenre(result.getString("genre"));
 			s.setPathOk(result.getBoolean("pathOk"));
 
@@ -290,7 +290,7 @@ class DbSongDao implements SongDao {
 				s.setId(result.getInt("id"));
 				s.setYear(result.getInt("year"));
 				s.setPlaycount(result.getInt("playcount"));
-				s.setRating(result.getInt("rating"));
+				s.setRating(result.getDouble("rating"));
 				s.setGenre(result.getString("genre"));
 				s.setPathOk(result.getBoolean("pathOk"));
 

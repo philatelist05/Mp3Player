@@ -12,6 +12,7 @@ import at.ac.tuwien.sepm2011ws.mp3player.domainObjects.Lyric;
 import at.ac.tuwien.sepm2011ws.mp3player.domainObjects.MetaTags;
 import at.ac.tuwien.sepm2011ws.mp3player.domainObjects.Song;
 import at.ac.tuwien.sepm2011ws.mp3player.persistanceLayer.DataAccessException;
+import at.ac.tuwien.sepm2011ws.mp3player.persistanceLayer.SongDao;
 import at.ac.tuwien.sepm2011ws.mp3player.serviceLayer.SongInformationService;
 
 import com.chartlyrics.ChartLyricsLocator;
@@ -19,6 +20,12 @@ import com.chartlyrics.ChartLyricsSoap;
 import com.chartlyrics.GetLyricResult;
 
 public class VvvSongInformationService implements SongInformationService {
+
+	private final SongDao sd;
+
+	VvvSongInformationService(SongDao sd) {
+		this.sd = sd;
+	}
 
 	@Override
 	public void getMetaTags(Song song) {
@@ -94,13 +101,13 @@ public class VvvSongInformationService implements SongInformationService {
 	}
 
 	@Override
-	public void incrementPlaycount(Song song) {
-		// TODO Auto-generated method stub
-
+	public void setRating(Song song, double rating) throws DataAccessException {
+		song.setRating(rating);
+		sd.update(song);
 	}
 
 	@Override
-	public void setRating(Song song, int rating) {
+	public void saveLyrics(Song song) {
 		// TODO Auto-generated method stub
 
 	}

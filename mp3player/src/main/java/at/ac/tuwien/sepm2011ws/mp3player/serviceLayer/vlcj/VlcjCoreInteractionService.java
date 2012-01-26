@@ -107,7 +107,7 @@ public class VlcjCoreInteractionService implements CoreInteractionService {
 			File songFile = new File(song.getPath());
 
 			mediaPlayer.playMedia(songFile.getAbsolutePath());
-		} else if(isPlaying() || isPaused()) {
+		} else if (isPlaying() || isPaused()) {
 			stop();
 		}
 	}
@@ -249,18 +249,22 @@ public class VlcjCoreInteractionService implements CoreInteractionService {
 	}
 
 	public void setCurrentSongIndex(int index) {
+		if (index < 0 || index >= this.currentPlaylist.size()) {
+			throw new IllegalArgumentException(
+					"Index of current song must be in the playlist");
+		}
 		this.currentSongIndex = index;
 	}
-	
+
 	public boolean hasNextSong() {
-		if(getNextSongIndex() >= 0) {
+		if (getNextSongIndex() >= 0) {
 			return true;
 		}
 		return false;
 	}
-	
+
 	public boolean hasPreviousSong() {
-		if(getPreviousSongIndex() >= 0) {
+		if (getPreviousSongIndex() >= 0) {
 			return true;
 		}
 		return false;
@@ -442,6 +446,7 @@ public class VlcjCoreInteractionService implements CoreInteractionService {
 
 		@Override
 		public void playing(MediaPlayer arg0) {
+			currentSong.setPlaycount(currentSong.getPlaycount() + 1);
 			currentSong.setPathOk(true);
 			DaoFactory df = DaoFactory.getInstance();
 			SongDao sd = df.getSongDao();

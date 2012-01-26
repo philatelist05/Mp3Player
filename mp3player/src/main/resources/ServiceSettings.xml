@@ -1,32 +1,39 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <beans xmlns="http://www.springframework.org/schema/beans"
-xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-xsi:schemaLocation="http://www.springframework.org/schema/beans
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans
 http://www.springframework.org/schema/beans/spring-beans-3.0.xsd">
 
-<import resource="DaoSettings.xml" />
+	<import resource="DaoSettings.xml" />
 
-<bean id="PlaylistService" class="at.ac.tuwien.sepm2011ws.mp3player.serviceLayer.vvv.VvvPlaylistService"
-	depends-on="SongDao,PlaylistDao,SettingsService">
+	<bean id="PlaylistService"
+		class="at.ac.tuwien.sepm2011ws.mp3player.serviceLayer.vvv.VvvPlaylistService"
+		depends-on="SongDao,PlaylistDao,SettingsService">
 		<constructor-arg ref="SongDao" />
 		<constructor-arg ref="PlaylistDao" />
 		<constructor-arg ref="SettingsService" />
-</bean>
+	</bean>
 
-<bean id="CoreInteractionService" class="at.ac.tuwien.sepm2011ws.mp3player.serviceLayer.vlcj.VlcjCoreInteractionService">
-</bean>
-
-
-<bean id="SettingsService" class="at.ac.tuwien.sepm2011ws.mp3player.serviceLayer.vvv.VvvSettingsService">
-</bean>
+	<bean id="CoreInteractionService"
+		class="at.ac.tuwien.sepm2011ws.mp3player.serviceLayer.vlcj.VlcjCoreInteractionService">
+	</bean>
 
 
-<bean id="SongInformationService" class="at.ac.tuwien.sepm2011ws.mp3player.serviceLayer.vvv.VvvSongInformationService">
-</bean>
+	<bean id="SettingsService"
+		class="at.ac.tuwien.sepm2011ws.mp3player.serviceLayer.vvv.VvvSettingsService">
+	</bean>
 
 
-<bean id="LastFmService" class="at.ac.tuwien.sepm2011ws.mp3player.serviceLayer.vvv.VvvLastFmService">
-</bean>
+	<bean id="SongInformationService"
+		class="at.ac.tuwien.sepm2011ws.mp3player.serviceLayer.vvv.VvvSongInformationService"
+		depends-on="SongDao">
+		<constructor-arg ref="SongDao" />
+	</bean>
+
+
+	<bean id="LastFmService"
+		class="at.ac.tuwien.sepm2011ws.mp3player.serviceLayer.vvv.VvvLastFmService">
+	</bean>
 
 
 
