@@ -64,6 +64,8 @@ import javax.swing.tree.TreePath;
 
 import net.miginfocom.swing.MigLayout;
 
+import com.googlecode.starrating.*;
+
 import org.apache.log4j.Logger;
 import org.springframework.core.io.ClassPathResource;
 
@@ -221,12 +223,15 @@ public class MainFrame extends JFrame implements ActionListener, Runnable,
 	protected void fillSongTable(Playlist list) {
 		String album = null;
 		songmodel.setRowCount(0);
+		
 		for (Song x : list) {
+			
 			if (x.getAlbum() != null)
 				album = x.getAlbum().getTitle();
 			else
 				album = "";
-			songmodel.addRow(new Object[] { x, x.getTitle(), x.getArtist(),
+			
+			songmodel.addRow(new Object[] { x ,	x.getTitle(), x.getArtist(),
 					album, x.getYear(), x.getGenre(), x.getDuration(),
 					x.getRating(), x.getPlaycount() });
 		}
@@ -748,6 +753,13 @@ public class MainFrame extends JFrame implements ActionListener, Runnable,
 
 		for (int i = 0; i < songTableCols.length; i++) {
 			cTableModel.getColumn(i).setCellRenderer(new SongTableRenderer());
+			if(Zuordnung.containsKey("Rating"))
+			{
+				cTableModel.getColumn(i).setCellEditor(new SongCellEditor());
+			}
+		//	cTableModel.getColumnByModelIndex(7).
+			//songTable.setEditingColumn(i);
+			//cTableModel.getColumn(i).set
 			/*
 			 * if (color)
 			 * 
@@ -1042,14 +1054,14 @@ public class MainFrame extends JFrame implements ActionListener, Runnable,
 		// songTable.setAutoCreateRowSorter(true);
 		songTable.getModel().addTableModelListener(this);
 		cTableModel = new HidableTableColumnModel(songTable.getColumnModel());
-
+	
 		sorter = new TableRowSorter<TableModel>();
 		songTable.setRowSorter(sorter);
 		sorter.setModel(songmodel);
-
+		songTable.setRowHeight(30);
 		sorter.addRowSorterListener(this);
 
-		// htcm.setColumnVisible(0, false);
+	
 		/*
 		 * JPopupMenu popup = new JPopupMenu("Hide Menu"); Action[] actions =
 		 * cTableModel.createColumnActions(); for (Action act : actions) {
@@ -1073,6 +1085,8 @@ public class MainFrame extends JFrame implements ActionListener, Runnable,
 		songTable.addMouseListener(popupListener);
 		songTable.getTableHeader().addMouseListener(popupListener);
 		songTable.addKeyListener(this);
+
+		
 		/**
 		 * JButtons
 		 */
@@ -1804,19 +1818,38 @@ public class MainFrame extends JFrame implements ActionListener, Runnable,
 	@Override
 	public void tableChanged(TableModelEvent e) {
 
-		// logger.info("tableChanged");
+		int column = songTable.getSelectedColumn();
+		int row = songTable.getSelectedRow();
+		String Rating;
+		
+		logger.info("tableChanged");
 		cis.setCurrentSongIndex(-1);
+		sorter.setSortKeys(null);
+		logger.info("Rating changed : " + row  );
+		logger.info(column);
+		
+		if(column > -1 && row > -1)
+		{
+			
+			logger.info("new Rating " + songTable.getValueAt(row, column).toString());
+			Rating = songTable.getValueAt(row, column).toString();
+			
+			cis.getCurrentPlaylist().get(sorter.convertRowIndexToView(row)).setRating((int) Double.parseDouble(Rating));
+			logger.info("new Rating in Songobject: " + cis.getCurrentPlaylist().get(row).getRating());
+		}
+		
+		
 	}
 
 	@Override
 	public void sorterChanged(RowSorterEvent e) {
-		// logger.info("sorterChanged");
-
+		 logger.info("sorterChanged");
+		// cis.getCurrentPlaylist().get(0).setRating(5);
 		if (cis.getCurrentSongIndex() > -1)
 			cis.setCurrentSongIndex(sorter.convertRowIndexToView(cis
 					.getCurrentSongIndex()));
-		// sorter
-		// currentPlaylistGUI = parseSongTable(currentPlaylistGUI);
+		
+		currentPlaylistGUI = parseSongTable(currentPlaylistGUI);
 		cis.setCurrentPlaylist(currentPlaylistGUI);
 		songTable.repaint();
 	}

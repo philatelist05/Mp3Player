@@ -284,7 +284,7 @@ public class Song {
 	public String toString() {
 		if (isPathOk())
 			return "";
-		return "!";
+		return " ! Datei nicht gefunden !";
 	}
 
 	@Override
