@@ -178,11 +178,32 @@ class DbSongDao implements SongDao {
 
 			updateStmt.setInt(11, s.getId());
 
-			if (s.getAlbum() != null) {
-				ad.update(s.getAlbum());
-			}
-
 			updateStmt.executeUpdate();
+
+			if (s.getAlbum() != null) {
+				ResultSet result = null;
+				try {
+					// Read albums id if any exists
+					readIsOnStmt.setInt(1, s.getId());
+					result = readIsOnStmt.executeQuery();
+
+					if (result.next()) {
+						// Album exists
+						ad.update(s.getAlbum());
+					} else {
+						// Album doesn't exist, so create it
+						ad.create(s.getAlbum());
+
+						// Create album song association
+						createIsOnStmt.setInt(1, s.getId());
+						createIsOnStmt.setInt(2, s.getAlbum().getId());
+
+						createIsOnStmt.executeUpdate();
+					}
+				} finally {
+					result.close();
+				}
+			}
 
 		} catch (SQLException e) {
 			throw new DataAccessException("Error updating song in database");

@@ -23,6 +23,7 @@ import org.apache.log4j.Logger;
 
 import at.ac.tuwien.sepm2011ws.mp3player.domainObjects.Album;
 import at.ac.tuwien.sepm2011ws.mp3player.domainObjects.Song;
+import at.ac.tuwien.sepm2011ws.mp3player.persistanceLayer.DataAccessException;
 import at.ac.tuwien.sepm2011ws.mp3player.serviceLayer.ServiceFactory;
 import at.ac.tuwien.sepm2011ws.mp3player.serviceLayer.SongInformationService;
 
@@ -186,7 +187,12 @@ public class EditMetaTag extends JDialog implements ActionListener {
 				song.setYear(Integer.parseInt(textYear.getText().trim()));
 				song.setGenre(textGenre.getText().trim());
 
-				sis.setMetaTags(song);
+				try {
+					sis.setMetaTags(song);
+				} catch (DataAccessException e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				}
 
 				dispose();
 			}

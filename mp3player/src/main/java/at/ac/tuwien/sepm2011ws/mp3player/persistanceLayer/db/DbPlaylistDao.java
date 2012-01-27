@@ -145,9 +145,6 @@ class DbPlaylistDao implements PlaylistDao {
 
 			deleteStmt.setInt(1, id);
 			deleteStmt.executeUpdate();
-
-			// TODO: Delete all songs from library which were only on this
-			// playlist (maybe with a database trigger)
 		} catch (SQLException e) {
 			throw new DataAccessException("Error deleting playlist in database");
 		}

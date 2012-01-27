@@ -17,9 +17,10 @@ import at.ac.tuwien.sepm2011ws.mp3player.domainObjects.Playlist;
 import at.ac.tuwien.sepm2011ws.mp3player.domainObjects.Song;
 import at.ac.tuwien.sepm2011ws.mp3player.persistanceLayer.DataAccessException;
 import at.ac.tuwien.sepm2011ws.mp3player.persistanceLayer.SongDao;
-import at.ac.tuwien.sepm2011ws.mp3player.persistanceLayer.db.DaoFactory;
 import at.ac.tuwien.sepm2011ws.mp3player.serviceLayer.CoreInteractionService;
 import at.ac.tuwien.sepm2011ws.mp3player.serviceLayer.PlayerListener;
+import at.ac.tuwien.sepm2011ws.mp3player.serviceLayer.ServiceFactory;
+import at.ac.tuwien.sepm2011ws.mp3player.serviceLayer.SongInformationService;
 
 import com.sun.jna.Platform;
 
@@ -27,6 +28,7 @@ public class VlcjCoreInteractionService implements CoreInteractionService {
 
 	private static final Logger logger = Logger
 			.getLogger(VlcjCoreInteractionService.class);
+	private SongDao sd;
 	private final MediaPlayer mediaPlayer;
 	private PlayMode playMode;
 	private Playlist currentPlaylist;
@@ -36,7 +38,8 @@ public class VlcjCoreInteractionService implements CoreInteractionService {
 	private PlayDirection playDirection;
 	private int currentSongIndex;
 
-	public VlcjCoreInteractionService() {
+	public VlcjCoreInteractionService(SongDao sd) {
+		this.sd = sd;
 
 		String libPath = getLibPath();
 		String pluginPath = getPluginPath();
@@ -187,7 +190,7 @@ public class VlcjCoreInteractionService implements CoreInteractionService {
 
 	public void seek(double percent) {
 		if (this.mediaPlayer.isSeekable())
-			this.mediaPlayer.setTime((long) getDurationAt(percent) * 1000);
+			this.mediaPlayer.setTime((long) (getDurationAt(percent) * 1000));
 
 	}
 
@@ -210,7 +213,7 @@ public class VlcjCoreInteractionService implements CoreInteractionService {
 			throw new IllegalArgumentException(
 					"Duration percentage out of range");
 
-		return (this.mediaPlayer.getLength() / 1000) * (percent / 100);
+		return ((double) this.mediaPlayer.getLength() / 1000) * (percent / 100);
 	}
 
 	public double getPlayTime() {
@@ -249,9 +252,12 @@ public class VlcjCoreInteractionService implements CoreInteractionService {
 	}
 
 	public void setCurrentSongIndex(int index) {
-		if (index < 0 || index >= this.currentPlaylist.size()) {
+		if(currentSong == null)
+			throw new IllegalAccessError("Cannot set the current song index, current song is null");
+		if (index < 0 || index >= this.currentPlaylist.size()
+				|| !currentSong.equals(currentPlaylist.get(index))) {
 			throw new IllegalArgumentException(
-					"Index of current song must be in the playlist");
+					"The song in the playlist at the specified index has to be the current song");
 		}
 		this.currentSongIndex = index;
 	}
@@ -385,8 +391,6 @@ public class VlcjCoreInteractionService implements CoreInteractionService {
 		@Override
 		public void error(MediaPlayer arg0) {
 			currentSong.setPathOk(false);
-			DaoFactory df = DaoFactory.getInstance();
-			SongDao sd = df.getSongDao();
 			try {
 				sd.update(currentSong);
 			} catch (DataAccessException e) {
@@ -448,10 +452,12 @@ public class VlcjCoreInteractionService implements CoreInteractionService {
 		public void playing(MediaPlayer arg0) {
 			currentSong.setPlaycount(currentSong.getPlaycount() + 1);
 			currentSong.setPathOk(true);
-			DaoFactory df = DaoFactory.getInstance();
-			SongDao sd = df.getSongDao();
 			try {
 				sd.update(currentSong);
+				
+				// ServiceFactory sf = ServiceFactory.getInstance();
+				// SongInformationService sis = sf.getSongInformationService();
+				// sis.getMetaTags(currentSong);
 			} catch (DataAccessException e) {
 				logger.error(e.getMessage());
 			}
@@ -473,6 +479,8 @@ public class VlcjCoreInteractionService implements CoreInteractionService {
 
 		@Override
 		public void stopped(MediaPlayer arg0) {
+			if (playerListener != null)
+				playerListener.songEndEvent();
 		}
 
 		@Override

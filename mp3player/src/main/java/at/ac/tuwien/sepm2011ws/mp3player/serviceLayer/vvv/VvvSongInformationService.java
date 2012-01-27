@@ -1,13 +1,16 @@
 package at.ac.tuwien.sepm2011ws.mp3player.serviceLayer.vvv;
 
+import java.io.File;
 import java.net.SocketException;
 import java.net.UnknownHostException;
 import java.rmi.RemoteException;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 import javax.xml.rpc.ServiceException;
 
+import at.ac.tuwien.sepm2011ws.mp3player.domainObjects.Album;
 import at.ac.tuwien.sepm2011ws.mp3player.domainObjects.Lyric;
 import at.ac.tuwien.sepm2011ws.mp3player.domainObjects.MetaTags;
 import at.ac.tuwien.sepm2011ws.mp3player.domainObjects.Song;
@@ -19,6 +22,12 @@ import com.chartlyrics.ChartLyricsLocator;
 import com.chartlyrics.ChartLyricsSoap;
 import com.chartlyrics.GetLyricResult;
 
+import entagged.audioformats.AudioFile;
+import entagged.audioformats.AudioFileIO;
+import entagged.audioformats.Tag;
+import entagged.audioformats.exceptions.CannotReadException;
+import entagged.audioformats.exceptions.CannotWriteException;
+
 public class VvvSongInformationService implements SongInformationService {
 
 	private final SongDao sd;
@@ -28,15 +37,94 @@ public class VvvSongInformationService implements SongInformationService {
 	}
 
 	@Override
-	public void getMetaTags(Song song) {
-		// TODO Auto-generated method stub
+	public void getMetaTags(Song song) throws DataAccessException {
+		if (song == null || song.getPath() == null)
+			throw new IllegalArgumentException(
+					"The song object and its path field must not be null");
 
+		try {
+			AudioFile file = AudioFileIO.read(new File(song.getPath()));
+			Tag tags = file.getTag();
+
+			String temp;
+			temp = getStringFromTagList(tags.getArtist());
+			song.setArtist((temp != null) ? temp : "Unknown Artist");
+			temp = getStringFromTagList(tags.getTitle());
+			song.setTitle((temp != null) ? temp : "Unknown Title");
+			song.setGenre(getStringFromTagList(tags.getGenre()));
+			song.setDuration(file.getLength());
+
+			temp = getStringFromTagList(tags.getAlbum());
+			temp = (temp != null) ? temp : "Unknown Album";
+			if (song.getAlbum() != null) {
+				song.getAlbum().setTitle(temp);
+			} else {
+				song.setAlbum(new Album(temp));
+			}
+
+			List<?> years = tags.getYear();
+			if (!years.isEmpty()) {
+				try {
+					song.setYear(Integer.parseInt(years.get(0).toString()));
+				} catch (NumberFormatException e) {
+					// If the year is not a valid integer, just do nothing
+				}
+			} else {
+				song.setYear(0);
+			}
+
+			sd.update(song);
+
+		} catch (CannotReadException e) {
+			// throw new DataAccessException("Couldn't read ID3 tags of file \""
+			// + song.getPath() + "\"");
+		}
+	}
+
+	private String getStringFromTagList(List<?> tagList) {
+		if (tagList == null || tagList.isEmpty()) {
+			return null;
+		}
+		Iterator<?> iterator = tagList.iterator();
+		String out = iterator.next().toString();
+		while (iterator.hasNext()) {
+			out += "," + iterator.next().toString();
+		}
+
+		return out;
 	}
 
 	@Override
-	public void setMetaTags(Song song) {
-		// TODO Auto-generated method stub
+	public void setMetaTags(Song song) throws DataAccessException {
+		if (song == null || song.getPath() == null)
+			throw new IllegalArgumentException(
+					"The song object and its path field must not be null");
 
+		try {
+			AudioFile file = AudioFileIO.read(new File(song.getPath()));
+			Tag tags = file.getTag();
+
+			if (song.getArtist() != null)
+				tags.setArtist(song.getArtist());
+			if (song.getTitle() != null)
+				tags.setTitle(song.getTitle());
+			if (song.getAlbum() != null)
+				if (song.getAlbum().getTitle() != null)
+					tags.setAlbum(song.getAlbum().getTitle());
+			if (song.getGenre() != null)
+				tags.setGenre(song.getGenre());
+			tags.setYear(String.valueOf(song.getYear()));
+
+			AudioFileIO.write(file);
+			sd.update(song);
+
+		} catch (CannotReadException e) {
+			throw new DataAccessException("Couldn't write ID3 tags to file \""
+					+ song.getPath() + "\"");
+		} catch (CannotWriteException e) {
+			throw new DataAccessException("Couldn't write ID3 tags to file \""
+					+ song.getPath() + "\"");
+		}
 	}
 
 	@Override
@@ -94,14 +182,15 @@ public class VvvSongInformationService implements SongInformationService {
 			throw new DataAccessException("Couldn't load lyrics");
 		}
 
-		// There are only one or no lyrics for a song of course but the interface is written to
+		// There are only one or no lyrics for a song of course but the
+		// interface is written to
 		// be able to return multiple lyrics for a song, so we have to generate
 		// a list
 		List<Lyric> retList = new ArrayList<Lyric>();
 		if (lyrics != null && !lyrics.isEmpty()) {
 			retList.add(new Lyric(lyrics));
 		}
-		
+
 		return retList;
 	}
 
@@ -151,20 +240,6 @@ public class VvvSongInformationService implements SongInformationService {
 			} catch (ServiceException e) {
 				lyrics = null;
 			}
-		}
-
-		/**
-		 * @return the artist
-		 */
-		public String getArtist() {
-			return this.artist;
-		}
-
-		/**
-		 * @return the title
-		 */
-		public String getTitle() {
-			return this.title;
 		}
 
 		/**

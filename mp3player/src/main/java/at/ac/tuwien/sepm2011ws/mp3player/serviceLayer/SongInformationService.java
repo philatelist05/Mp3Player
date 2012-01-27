@@ -19,16 +19,18 @@ public interface SongInformationService {
 	 * 
 	 * @param song
 	 *            The song whichs tags should be updated from its song file
+	 * @throws DataAccessException 
 	 */
-	public void getMetaTags(Song song);
+	public void getMetaTags(Song song) throws DataAccessException;
 
 	/**
 	 * Sets the ID3 tags of the song persistently.
 	 * 
 	 * @param song
 	 *            The song with the updated tags
+	 * @throws DataAccessException 
 	 */
-	public void setMetaTags(Song song);
+	public void setMetaTags(Song song) throws DataAccessException;
 
 	/**
 	 * Downloads a list of similar and/or corrected meta tags for the specified
