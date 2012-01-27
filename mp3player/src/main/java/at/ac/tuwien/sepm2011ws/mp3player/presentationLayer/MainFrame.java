@@ -592,10 +592,9 @@ public class MainFrame extends JFrame implements ActionListener, Runnable,
 				} catch (DataAccessException e) {
 					// TODO: Show error dialog
 				}
-				logger.info("clicked playlist: "
-						+ clicked.getNodePlaylist().getTitle());
+
 				currentPlaylistGUI = clicked.getNodePlaylist();
-				logger.info(currentPlaylistGUI.getTitle());
+				
 				fillSongTable(clicked.getNodePlaylist());
 			} else {
 			}
@@ -1180,7 +1179,7 @@ public class MainFrame extends JFrame implements ActionListener, Runnable,
 		cis.setPlayerListener(new PlayerListener() {
 
 			public void songBeginnEvent() {
-				logger.info("Beginn");
+				//logger.info("Beginn");
 
 				if (fred == null || fred.isAlive() == false) {
 					createThread();
@@ -1848,7 +1847,7 @@ public class MainFrame extends JFrame implements ActionListener, Runnable,
 
 			double rg = Double.parseDouble(Rating);
 			// logger.info("Double Rating: " + rg);
-			logger.info("song: " + cis.getCurrentPlaylist().get(row).getTitle());
+			//logger.info("song: " + cis.getCurrentPlaylist().get(row).getTitle());
 			try {
 				sis.setRating(cis.getCurrentPlaylist().get(row), rg);
 			} catch (DataAccessException e1) {
