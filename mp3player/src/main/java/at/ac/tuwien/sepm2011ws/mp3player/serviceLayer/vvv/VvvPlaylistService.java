@@ -4,6 +4,7 @@ import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -81,6 +82,11 @@ class VvvPlaylistService implements PlaylistService {
 			throws DataAccessException {
 		WritablePlaylist playlist;
 
+		if (file == null || !file.isFile()) {
+			throw new IllegalArgumentException(
+					"The playlist to import is no valid file");
+		}
+
 		// Initialize playlist
 		playlist = createPlaylist(getBasename(file.getName()));
 
@@ -91,11 +97,14 @@ class VvvPlaylistService implements PlaylistService {
 			Sequence plSeq = specificPlaylist.toPlaylist().getRootSequence();
 
 			Media m;
+			File f;
+			String folder;
 			for (AbstractPlaylistComponent apc : plSeq.getComponents()) {
 				m = (Media) apc;
-				addSongsToPlaylist(
-						new File[] { new File(m.getSource().getURI()) },
-						playlist);
+				folder = file.getParent();
+				f = new File(m.getSource().getURI());
+				f = new File(folder + File.separator + f.getName());
+				addSongsToPlaylist(new File[] { f }, playlist);
 			}
 
 		} catch (IOException e) {
@@ -191,10 +200,11 @@ class VvvPlaylistService implements PlaylistService {
 
 		for (File file : files) {
 			if (checkFileExtensionAccepted(file.getName(), userFileTypes)) {
-				s = new Song("Unknown", "Unknown", 0, file.getAbsolutePath());
+				s = new Song("Unknown Artist", "Unknown Title", 0,
+						file.getAbsolutePath());
 				sd.create(s);
 				sis.getMetaTags(s);
-				
+
 				songs.add(s);
 			}
 		}

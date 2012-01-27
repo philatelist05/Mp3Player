@@ -145,14 +145,14 @@
 			<version>1.0</version>
 		</dependency>
 		<dependency>
-			<groupId>net.sf.javamusictag</groupId>
-			<artifactId>jid3lib</artifactId>
-			<version>0.5.4</version>
-		</dependency>
-		<dependency>
 			<groupId>net.sourceforge</groupId>
 			<artifactId>entagged</artifactId>
 			<version>0.15</version>
+		</dependency>
+		<dependency>
+			<groupId>org.codehaus.castor</groupId>
+			<artifactId>castor</artifactId>
+			<version>1.2</version>
 		</dependency>
 	</dependencies>
 	<build>
