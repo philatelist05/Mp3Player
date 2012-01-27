@@ -42,6 +42,7 @@ public class VlcjCoreInteractionService implements CoreInteractionService {
 		String libPath = getLibPath();
 		String pluginPath = getPluginPath();
 		System.setProperty("jna.library.path", libPath);
+		System.setProperty("jna.nosys", "true");
 
 		this.isPaused = false;
 		this.playMode = PlayMode.NORMAL;

@@ -19,11 +19,6 @@ import at.ac.tuwien.sepm2011ws.mp3player.persistanceLayer.DataAccessException;
  */
 public class PlaylistServiceTest {
 	private PlaylistService ps;
-
-	@BeforeClass
-	public static void setUpBeforeClass() throws Exception {
-		System.setProperty("jna.nosys", "true");
-	}
 	
 	@Before
 	public void setUp() throws Exception {

@@ -25,11 +25,6 @@ import at.ac.tuwien.sepm2011ws.mp3player.domainObjects.Song;
 public class CoreInteractionServiceTest {
 	private CoreInteractionService cs;
 
-	@BeforeClass
-	public static void setUpBeforeClass() throws Exception {
-		System.setProperty("jna.nosys", "true");
-	}
-
 	@Before
 	public void setUp() throws Exception {
 		ServiceFactory sf = ServiceFactory.getInstance();

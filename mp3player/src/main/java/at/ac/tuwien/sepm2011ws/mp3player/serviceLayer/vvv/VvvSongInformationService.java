@@ -116,7 +116,6 @@ public class VvvSongInformationService implements SongInformationService {
 			tags.setYear(String.valueOf(song.getYear()));
 
 			AudioFileIO.write(file);
-			sd.update(song);
 
 		} catch (CannotReadException e) {
 			throw new DataAccessException("Couldn't write ID3 tags to file \""
@@ -124,6 +123,8 @@ public class VvvSongInformationService implements SongInformationService {
 		} catch (CannotWriteException e) {
 			throw new DataAccessException("Couldn't write ID3 tags to file \""
 					+ song.getPath() + "\"");
+		} finally {
+			sd.update(song);
 		}
 	}
 

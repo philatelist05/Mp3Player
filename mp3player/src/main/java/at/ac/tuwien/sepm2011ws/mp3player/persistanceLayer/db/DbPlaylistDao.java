@@ -42,7 +42,7 @@ class DbPlaylistDao implements PlaylistDao {
 					.prepareStatement("SELECT name FROM playlist WHERE id=?;");
 			readContainsStmt = con
 					.prepareStatement("SELECT song FROM contains WHERE playlist=? ORDER BY position;");
-			readAllStmt = con.prepareStatement("SELECT id FROM playlist ORDER BY name;");
+			readAllStmt = con.prepareStatement("SELECT id FROM playlist ORDER BY id;");
 			updateStmt = con.prepareStatement("UPDATE playlist SET "
 					+ "name=? WHERE id = ?;");
 			deleteContainsStmt = con
@@ -106,9 +106,9 @@ class DbPlaylistDao implements PlaylistDao {
 		}
 		
 		try {
-			updateStmt.setString(1, playlist.getTitle());
-			updateStmt.setInt(2, playlist.getId());
-			updateStmt.executeUpdate();
+			// updateStmt.setString(1, playlist.getTitle());
+			// updateStmt.setInt(2, playlist.getId());
+			// updateStmt.executeUpdate();
 			
 			deleteContainsStmt.setInt(1, playlist.getId());
 			deleteContainsStmt.executeUpdate();
