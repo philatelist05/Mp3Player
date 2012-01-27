@@ -39,6 +39,32 @@ public class AlbumDaoTest {
 		assertEquals(expected, actual);
 	}
 
+	@Test(expected = IllegalArgumentException.class)
+	public void testCreate_ShouldThrowIllegalArgumentException()
+			throws IllegalArgumentException, DataAccessException {
+		ad.create(null);
+	}
+
+	@Test
+	public void testCreate_ShouldInsertAlreadyExistingAlbum()
+			throws DataAccessException {
+		Album existingAlbum = new Album("Test1");
+		existingAlbum.setTitle("Test");
+		existingAlbum.setYear(2001);
+		ad.create(existingAlbum);
+
+		Album newAlbum = new Album("Test1");
+		newAlbum.setTitle("Test");
+		newAlbum.setYear(2001);
+		ad.create(newAlbum);
+	}
+
+	@Test(expected = IllegalArgumentException.class)
+	public void testRead_InvalidId() throws IllegalArgumentException,
+			DataAccessException {
+		ad.read(-10);
+	}
+
 	@Test
 	public void testRead_ReadsExistingComplexAlbum() throws DataAccessException {
 		Album expected = new Album("Test1");
