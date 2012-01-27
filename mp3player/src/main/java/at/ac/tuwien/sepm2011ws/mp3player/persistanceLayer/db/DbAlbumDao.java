@@ -37,7 +37,7 @@ class DbAlbumDao implements AlbumDao {
 			deleteStmt = con.prepareStatement("DELETE FROM album "
 					+ "WHERE id = ?;");
 			sameStmt = con.prepareStatement("SELECT id FROM album WHERE "
-					+ "title=? AND year=? AND albumart_path=?;");
+					+ "title=? AND year=?;");
 
 		} catch (SQLException e) {
 			throw new DataAccessException(
@@ -54,7 +54,6 @@ class DbAlbumDao implements AlbumDao {
 		try {
 			sameStmt.setString(1, a.getTitle());
 			sameStmt.setInt(2, a.getYear());
-			sameStmt.setString(3, a.getAlbumartPath());
 			result = sameStmt.executeQuery();
 
 			if (result.next()) {

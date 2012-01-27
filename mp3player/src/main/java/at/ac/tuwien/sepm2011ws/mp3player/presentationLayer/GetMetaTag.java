@@ -25,9 +25,10 @@ import javax.swing.JTextField;
 import net.miginfocom.swing.MigLayout;
 import org.apache.log4j.Logger;
 
-import at.ac.tuwien.sepm2011ws.mp3player.domainObjects.Lyric;
+import at.ac.tuwien.sepm2011ws.mp3player.domainObjects.Album;
 import at.ac.tuwien.sepm2011ws.mp3player.domainObjects.MetaTags;
 import at.ac.tuwien.sepm2011ws.mp3player.domainObjects.Song;
+import at.ac.tuwien.sepm2011ws.mp3player.persistanceLayer.DataAccessException;
 import at.ac.tuwien.sepm2011ws.mp3player.serviceLayer.ServiceFactory;
 import at.ac.tuwien.sepm2011ws.mp3player.serviceLayer.SongInformationService;
 
@@ -238,23 +239,35 @@ public class GetMetaTag extends JDialog implements ActionListener,
 			if (textYear.getText().trim().matches("^[0-9]+$")) {
 				song.setArtist("untitled");
 				song.setTitle("untitled");
+				if (song.getAlbum() != null) {
+					if (textAlbum.getText().trim().length() > 0)
+						song.getAlbum().setTitle(textAlbum.getText().trim());
+					else
+						song.getAlbum().setTitle("untitled");
+				}
+				
+				else {
+					if (textAlbum.getText().trim().length() > 0)
+						song.setAlbum(new Album(textAlbum.getText().trim()));
+					else
+						song.setAlbum(new Album(""));
+				}
 
 				if (textArtist.getText().trim().length() > 0)
 					song.setArtist(textArtist.getText().trim());
+				
 				if (textTitle.getText().trim().length() > 0)
 					song.setTitle(textTitle.getText().trim());
-
-				if (song.getAlbum() != null) {
-					song.getAlbum().setTitle("untitled");
-
-					if (textAlbum.getText().trim().length() > 0)
-						song.getAlbum().setTitle(textAlbum.getText().trim());
-				}
 
 				song.setYear(Integer.parseInt(textYear.getText().trim()));
 				song.setGenre(textGenre.getText().trim());
 
-				sis.setMetaTags(song);
+				try {
+					sis.setMetaTags(song);
+				} catch (DataAccessException e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				}
 
 				dispose();
 			}
@@ -270,8 +283,7 @@ public class GetMetaTag extends JDialog implements ActionListener,
 		}
 
 		else if (e.getActionCommand().equals("cancel")) {
-			MetaTagsWrapper test = (MetaTagsWrapper) songBox.getSelectedItem();
-			logger.info(test.getTags().getTitle());
+			logger.info("GetMetaTag(): Cancelled");
 			dispose();
 		}
 	}
@@ -304,18 +316,28 @@ public class GetMetaTag extends JDialog implements ActionListener,
 		logger.info("GetMetaTag(): Made checkDialog visible");
 	}
 
-	private void fillFields(MetaTagsWrapper sw) {
-		if (sw != null) {
-			if (sw.getTags() != null) {
-				MetaTags temp = sw.getTags();
+	private void setBlank() {
+		textArtist.setText("");
+		textTitle.setText("");
+		textAlbum.setText("");
+		textYear.setText("0");
+		textGenre.setText("");
+	}
+
+	private void fillFields(MetaTagsWrapper mtw) {
+		if (mtw != null) {
+			if (mtw.getTags() != null) {
+				MetaTags temp = mtw.getTags();
 				textArtist.setText(temp.getArtist());
 				textTitle.setText(temp.getTitle());
 				if (temp.getAlbum() != null)
 					textAlbum.setText(temp.getAlbum().getTitle());
 				textYear.setText(Integer.toString(temp.getYear()));
 				textGenre.setText(song.getGenre());
-			}
-		}
+			} else
+				setBlank();
+		} else
+			setBlank();
 	}
 
 	@Override
@@ -333,6 +355,10 @@ public class GetMetaTag extends JDialog implements ActionListener,
 					i++;
 				}
 			}
+
+			else
+				JOptionPane.showConfirmDialog(null, "No Metatags found!",
+						"LastFM...", JOptionPane.CLOSED_OPTION);
 		}
 
 		else
@@ -341,7 +367,7 @@ public class GetMetaTag extends JDialog implements ActionListener,
 
 		// Thread.sleep(2000);
 		checkDialog.dispose();
-		fred.stop();
+		// fred.stop();
 		// } catch (InterruptedException e) {
 		// e.printStackTrace();
 		// }
@@ -350,9 +376,8 @@ public class GetMetaTag extends JDialog implements ActionListener,
 	@Override
 	public void itemStateChanged(ItemEvent evt) {
 		if (evt.getStateChange() == ItemEvent.SELECTED) {
-			MetaTagsWrapper result = (MetaTagsWrapper) evt.getItem();
-			logger.info(result.getTags().getTitle());
-			fillFields(result);
+			logger.info("GetMetaTag(): Clicked on songBox item");
+			fillFields((MetaTagsWrapper) evt.getItem());
 		}
 	}
 }

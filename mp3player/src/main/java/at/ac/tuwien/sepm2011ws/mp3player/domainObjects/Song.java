@@ -5,7 +5,7 @@ public class Song {
 	private String title;
 	private int duration; // in seconds
 	private int playcount;
-	private int rating;
+	private double rating;
 	private String path;
 	private int year;
 	private String artist;
@@ -42,7 +42,7 @@ public class Song {
 	 * @param album
 	 * @param lyric
 	 */
-	public Song(int id, String title, int duration, int playcount, int rating,
+	public Song(int id, String title, int duration, int playcount, double rating,
 			String path, int year, String artist, String genre, boolean pathOK,
 			Album album, Lyric lyric) throws IllegalArgumentException {
 		this.setId(id);
@@ -132,18 +132,18 @@ public class Song {
 	/**
 	 * @return the rating
 	 */
-	public int getRating() {
+	public double getRating() {
 		return rating;
 	}
 
 	/**
-	 * @param rating
+	 * @param d
 	 *            the rating to set
 	 */
-	public void setRating(int rating) throws IllegalArgumentException {
-		if (rating < 0 || rating > 5)
+	public void setRating(double d) throws IllegalArgumentException {
+		if (d < 0 || d > 5)
 			throw new IllegalArgumentException("Rating must be between 0 and 5");
-		this.rating = rating;
+		this.rating = d;
 	}
 
 	/**
@@ -284,7 +284,7 @@ public class Song {
 	public String toString() {
 		if (isPathOk())
 			return "";
-		return "!";
+		return " ! Datei nicht gefunden !";
 	}
 
 	@Override
@@ -294,7 +294,7 @@ public class Song {
 		result = 31 * result ^ (title == null ? 0 : title.hashCode());
 		result = 31 * result ^ duration;
 		result = 31 * result ^ playcount;
-		result = 31 * result ^ rating;
+		result = 31 * result ^ (int) rating;
 		result = 31 * result ^ (path == null ? 0 : path.hashCode());
 		result = 31 * result ^ year;
 		result = 31 * result ^ (artist == null ? 0 : artist.hashCode());

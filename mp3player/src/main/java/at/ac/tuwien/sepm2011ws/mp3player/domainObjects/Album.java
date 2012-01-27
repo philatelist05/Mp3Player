@@ -114,6 +114,11 @@ public class Album {
 	}
 
 	@Override
+	public String toString() {
+		return (title != null) ? title : "";
+	}
+
+	@Override
 	public boolean equals(Object obj) {
 		if (obj != null && this.getClass() == obj.getClass()) {
 			Album other = (Album) obj;

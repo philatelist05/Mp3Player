@@ -10,6 +10,7 @@ public class SongTableModel extends DefaultTableModel {
 	/**
 	 * 
 	 */
+	
 	private static final long serialVersionUID = 700061947762224827L;
 	
 	public SongTableModel() {
@@ -44,7 +45,8 @@ public class SongTableModel extends DefaultTableModel {
 	 * @param columnNames
 	 * @param rowCount
 	 */
-	public SongTableModel(Vector columnNames, int rowCount) {
+	public SongTableModel(Vector<?> columnNames, int rowCount) {
+		
 		super(columnNames, rowCount);
 	}
 
@@ -52,7 +54,7 @@ public class SongTableModel extends DefaultTableModel {
 	 * @param data
 	 * @param columnNames
 	 */
-	public SongTableModel(Vector data, Vector columnNames) {
+	public SongTableModel(Vector<?> data, Vector<?> columnNames) {
 		super(data, columnNames);
 	}
 	
@@ -61,6 +63,8 @@ public class SongTableModel extends DefaultTableModel {
 	 */
 	@Override
 	public boolean isCellEditable(int row, int column) {
+		if(column == 7)
+			return true;
 		return false;
 	}
 

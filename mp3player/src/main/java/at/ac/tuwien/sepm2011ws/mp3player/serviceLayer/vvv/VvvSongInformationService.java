@@ -1,24 +1,130 @@
 package at.ac.tuwien.sepm2011ws.mp3player.serviceLayer.vvv;
 
+import java.io.File;
+import java.net.SocketException;
+import java.net.UnknownHostException;
+import java.rmi.RemoteException;
+import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
+import javax.xml.rpc.ServiceException;
+
+import at.ac.tuwien.sepm2011ws.mp3player.domainObjects.Album;
 import at.ac.tuwien.sepm2011ws.mp3player.domainObjects.Lyric;
 import at.ac.tuwien.sepm2011ws.mp3player.domainObjects.MetaTags;
 import at.ac.tuwien.sepm2011ws.mp3player.domainObjects.Song;
+import at.ac.tuwien.sepm2011ws.mp3player.persistanceLayer.DataAccessException;
+import at.ac.tuwien.sepm2011ws.mp3player.persistanceLayer.SongDao;
 import at.ac.tuwien.sepm2011ws.mp3player.serviceLayer.SongInformationService;
+
+import com.chartlyrics.ChartLyricsLocator;
+import com.chartlyrics.ChartLyricsSoap;
+import com.chartlyrics.GetLyricResult;
+
+import entagged.audioformats.AudioFile;
+import entagged.audioformats.AudioFileIO;
+import entagged.audioformats.Tag;
+import entagged.audioformats.exceptions.CannotReadException;
+import entagged.audioformats.exceptions.CannotWriteException;
 
 public class VvvSongInformationService implements SongInformationService {
 
-	@Override
-	public void getMetaTags(Song song) {
-		// TODO Auto-generated method stub
+	private final SongDao sd;
 
+	VvvSongInformationService(SongDao sd) {
+		this.sd = sd;
 	}
 
 	@Override
-	public void setMetaTags(Song song) {
-		// TODO Auto-generated method stub
+	public void getMetaTags(Song song) throws DataAccessException {
+		if (song == null || song.getPath() == null)
+			throw new IllegalArgumentException(
+					"The song object and its path field must not be null");
 
+		try {
+			AudioFile file = AudioFileIO.read(new File(song.getPath()));
+			Tag tags = file.getTag();
+
+			String temp;
+			temp = getStringFromTagList(tags.getArtist());
+			song.setArtist((temp != null) ? temp : "Unknown Artist");
+			temp = getStringFromTagList(tags.getTitle());
+			song.setTitle((temp != null) ? temp : "Unknown Title");
+			song.setGenre(getStringFromTagList(tags.getGenre()));
+			song.setDuration(file.getLength());
+
+			temp = getStringFromTagList(tags.getAlbum());
+			temp = (temp != null) ? temp : "Unknown Album";
+			if (song.getAlbum() != null) {
+				song.getAlbum().setTitle(temp);
+			} else {
+				song.setAlbum(new Album(temp));
+			}
+
+			List<?> years = tags.getYear();
+			if (!years.isEmpty()) {
+				try {
+					song.setYear(Integer.parseInt(years.get(0).toString()));
+				} catch (NumberFormatException e) {
+					// If the year is not a valid integer, just do nothing
+				}
+			} else {
+				song.setYear(0);
+			}
+
+			sd.update(song);
+
+		} catch (CannotReadException e) {
+			// throw new DataAccessException("Couldn't read ID3 tags of file \""
+			// + song.getPath() + "\"");
+		}
+	}
+
+	private String getStringFromTagList(List<?> tagList) {
+		if (tagList == null || tagList.isEmpty()) {
+			return null;
+		}
+		Iterator<?> iterator = tagList.iterator();
+		String out = iterator.next().toString();
+		while (iterator.hasNext()) {
+			out += "," + iterator.next().toString();
+		}
+
+		return out;
+	}
+
+	@Override
+	public void setMetaTags(Song song) throws DataAccessException {
+		if (song == null || song.getPath() == null)
+			throw new IllegalArgumentException(
+					"The song object and its path field must not be null");
+
+		try {
+			AudioFile file = AudioFileIO.read(new File(song.getPath()));
+			Tag tags = file.getTag();
+
+			if (song.getArtist() != null)
+				tags.setArtist(song.getArtist());
+			if (song.getTitle() != null)
+				tags.setTitle(song.getTitle());
+			if (song.getAlbum() != null)
+				if (song.getAlbum().getTitle() != null)
+					tags.setAlbum(song.getAlbum().getTitle());
+			if (song.getGenre() != null)
+				tags.setGenre(song.getGenre());
+			tags.setYear(String.valueOf(song.getYear()));
+
+			AudioFileIO.write(file);
+			sd.update(song);
+
+		} catch (CannotReadException e) {
+			throw new DataAccessException("Couldn't write ID3 tags to file \""
+					+ song.getPath() + "\"");
+		} catch (CannotWriteException e) {
+			throw new DataAccessException("Couldn't write ID3 tags to file \""
+					+ song.getPath() + "\"");
+		}
 	}
 
 	@Override
@@ -27,22 +133,128 @@ public class VvvSongInformationService implements SongInformationService {
 		return null;
 	}
 
+	@SuppressWarnings("deprecation")
 	@Override
-	public List<Lyric> downloadLyrics(Song song) {
-		// TODO Auto-generated method stub
-		return null;
+	public List<Lyric> downloadLyrics(Song song) throws DataAccessException {
+		String artist = song.getArtist();
+		String title = song.getTitle();
+
+		String lyrics = null;
+		final int hangupWaitTime = 5000; // in milliseconds
+		final int retryDelay = 20000; // in milliseconds
+		final int retryCount = 10;
+
+		if (artist == null || title == null || artist.length() < 2
+				|| title.length() < 2) {
+			throw new IllegalArgumentException(
+					"The artist and song name must be at least 2 characters long.");
+		}
+
+		try {
+			boolean failed;
+			int failCount = 0;
+			LyricsThread lf;
+
+			do {
+				failed = false;
+				lf = new LyricsThread(artist, title);
+				lf.start();
+				lf.join(hangupWaitTime);
+				if (lf.isAlive()) {
+					lf.stop();
+				}
+
+				lyrics = lf.getLyrics();
+
+				failed = lyrics == null;
+
+				if (failed) {
+					failCount++;
+					Thread.sleep(retryDelay);
+				}
+			} while (!lf.gotNoConnection() && failed && failCount < retryCount);
+
+			if (lf.gotNoConnection()) {
+				throw new DataAccessException(
+						"Couldn't connect to the lyrics service. Do you have an active internet connection?");
+			}
+		} catch (InterruptedException e) {
+			throw new DataAccessException("Couldn't load lyrics");
+		}
+
+		// There are only one or no lyrics for a song of course but the
+		// interface is written to
+		// be able to return multiple lyrics for a song, so we have to generate
+		// a list
+		List<Lyric> retList = new ArrayList<Lyric>();
+		if (lyrics != null && !lyrics.isEmpty()) {
+			retList.add(new Lyric(lyrics));
+		}
+
+		return retList;
 	}
 
 	@Override
-	public void incrementPlaycount(Song song) {
-		// TODO Auto-generated method stub
-
+	public void setRating(Song song, double rating) throws DataAccessException {
+		song.setRating(rating);
+		sd.update(song);
 	}
 
 	@Override
-	public void setRating(Song song, int rating) {
-		// TODO Auto-generated method stub
+	public void saveLyrics(Song song) throws DataAccessException {
+		sd.update(song);
+	}
 
+	private static class LyricsThread extends Thread {
+		private String lyrics;
+		private String artist;
+		private String title;
+		private boolean noConnection;
+
+		public LyricsThread(String artist, String title) {
+			super();
+			this.artist = artist;
+			this.title = title;
+		}
+
+		public void run() {
+			lyrics = null;
+			noConnection = false;
+
+			try {
+				ChartLyricsLocator service = new ChartLyricsLocator();
+				ChartLyricsSoap soap = service.getapiv1Soap12();
+				GetLyricResult lyricsResult = soap.searchLyricDirect(
+						this.artist, this.title);
+				lyrics = lyricsResult.getLyric();
+			} catch (RemoteException e) {
+				Throwable cause = e.getCause();
+				if (cause.getClass() == SocketException.class
+						&& cause.getMessage().equals("Connection reset")) {
+					lyrics = null;
+				} else if (cause.getClass() == UnknownHostException.class) {
+					noConnection = true;
+				} else {
+					lyrics = null;
+				}
+			} catch (ServiceException e) {
+				lyrics = null;
+			}
+		}
+
+		/**
+		 * @return the lyrics
+		 */
+		public String getLyrics() {
+			return this.lyrics;
+		}
+
+		/**
+		 * @return if the thread got a connection to the lyrics server
+		 */
+		public boolean gotNoConnection() {
+			return this.noConnection;
+		}
 	}
 
 }

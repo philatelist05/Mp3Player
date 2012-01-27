@@ -26,6 +26,7 @@ import org.apache.log4j.Logger;
 import at.ac.tuwien.sepm2011ws.mp3player.domainObjects.Lyric;
 import at.ac.tuwien.sepm2011ws.mp3player.domainObjects.MetaTags;
 import at.ac.tuwien.sepm2011ws.mp3player.domainObjects.Song;
+import at.ac.tuwien.sepm2011ws.mp3player.persistanceLayer.DataAccessException;
 import at.ac.tuwien.sepm2011ws.mp3player.serviceLayer.ServiceFactory;
 import at.ac.tuwien.sepm2011ws.mp3player.serviceLayer.SongInformationService;
 
@@ -239,11 +240,12 @@ public class GetLyric extends JDialog implements ActionListener, ItemListener,
 
 	private void fillFields(MetaTagsWrapper mtw) {
 		if (mtw != null) {
-			if (mtw.getTags() != null) {
-				if (mtw.getLyric() != null)
-					lyricEditorPane.setText(mtw.getLyric().getText());
-			}
-		}
+			if (mtw.getLyric() != null) {
+				lyricEditorPane.setText(mtw.getLyric().getText());
+			} else
+				lyricEditorPane.setText("");
+		} else
+			lyricEditorPane.setText("");
 	}
 
 	@Override
@@ -253,7 +255,13 @@ public class GetLyric extends JDialog implements ActionListener, ItemListener,
 		// try {
 		int i = 1;
 
-		List<Lyric> lyricList = sis.downloadLyrics(song);
+		List<Lyric> lyricList = null;
+		try {
+			lyricList = sis.downloadLyrics(song);
+		} catch (DataAccessException e) {
+			JOptionPane.showConfirmDialog(null, e.getMessage(), "Error",
+					JOptionPane.CLOSED_OPTION);
+		}
 
 		if (lyricList != null) {
 			if (lyricList.size() > 0) {
@@ -263,11 +271,18 @@ public class GetLyric extends JDialog implements ActionListener, ItemListener,
 					i++;
 				}
 			}
+
+			else
+				JOptionPane.showConfirmDialog(null, "No Lyrics found!",
+						"Chartlyric...", JOptionPane.CLOSED_OPTION);
 		}
 
 		else
 			JOptionPane.showConfirmDialog(null, "No Lyrics found!",
 					"Chartlyric...", JOptionPane.CLOSED_OPTION);
+
+		checkDialog.dispose();
+		// fred.stop();
 
 		// Thread.sleep(2000);
 
@@ -281,16 +296,19 @@ public class GetLyric extends JDialog implements ActionListener, ItemListener,
 		if (e.getActionCommand().equals("save")) {
 			logger.info("GetLyric(): Started saving of Lyric");
 
-			if (song.getLyric() != null)
-				song.setLyric(new Lyric(lyricEditorPane.getText()));
+			song.setLyric(new Lyric(lyricEditorPane.getText()));
 
-			sis.setMetaTags(song);
+			try {
+				sis.saveLyrics(song);
+			} catch (DataAccessException e1) {
+				JOptionPane.showConfirmDialog(null, e1.getMessage(), "Error",
+						JOptionPane.CLOSED_OPTION);
+			}
 			dispose();
 		}
 
 		else if (e.getActionCommand().equals("cancel")) {
-			MetaTagsWrapper test = (MetaTagsWrapper) lyricBox.getSelectedItem();
-			logger.info(test.getTags().getTitle());
+			logger.info("GetLyric(): Cancelled");
 			dispose();
 		}
 	}
@@ -298,9 +316,8 @@ public class GetLyric extends JDialog implements ActionListener, ItemListener,
 	@Override
 	public void itemStateChanged(ItemEvent evt) {
 		if (evt.getStateChange() == ItemEvent.SELECTED) {
-			MetaTagsWrapper result = (MetaTagsWrapper) evt.getItem();
-			logger.info(result.getTags().getTitle());
-			fillFields(result);
+			logger.info("itemEvent(): Clicked on songBox item");
+			fillFields((MetaTagsWrapper) evt.getItem());
 		}
 	}
 }

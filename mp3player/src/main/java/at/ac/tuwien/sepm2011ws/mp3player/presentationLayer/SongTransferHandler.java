@@ -1,7 +1,6 @@
 package at.ac.tuwien.sepm2011ws.mp3player.presentationLayer;
 
 import java.awt.datatransfer.DataFlavor;
-import java.awt.datatransfer.StringSelection;
 import java.awt.datatransfer.Transferable;
 import java.awt.datatransfer.UnsupportedFlavorException;
 import java.io.IOException;
@@ -12,6 +11,10 @@ import javax.swing.TransferHandler;
 import at.ac.tuwien.sepm2011ws.mp3player.domainObjects.Song;
 
 public abstract class SongTransferHandler extends TransferHandler {
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 2219295036479443447L;
 	protected static DataFlavor songFlavor = new DataFlavor(Song.class,	"A Song Object");
 
 	protected abstract Song[] exportSong(JComponent c);

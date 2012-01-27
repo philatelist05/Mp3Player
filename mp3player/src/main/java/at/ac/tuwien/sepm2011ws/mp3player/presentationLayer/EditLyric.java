@@ -24,6 +24,7 @@ import org.apache.log4j.Logger;
 
 import at.ac.tuwien.sepm2011ws.mp3player.domainObjects.Lyric;
 import at.ac.tuwien.sepm2011ws.mp3player.domainObjects.Song;
+import at.ac.tuwien.sepm2011ws.mp3player.persistanceLayer.DataAccessException;
 import at.ac.tuwien.sepm2011ws.mp3player.serviceLayer.ServiceFactory;
 import at.ac.tuwien.sepm2011ws.mp3player.serviceLayer.SongInformationService;
 
@@ -53,7 +54,7 @@ public class EditLyric extends JDialog implements ActionListener {
 	public Song getSong() {
 		return song;
 	}
-	
+
 	public EditLyric(ArrayList<Song> songlist) {
 		if (!songlist.isEmpty()) {
 			ServiceFactory sf = ServiceFactory.getInstance();
@@ -76,7 +77,7 @@ public class EditLyric extends JDialog implements ActionListener {
 				temp = temp.substring(0, 30) + "...";
 			lblArtistTitle.setText(temp);
 			fillFields(song);
-			
+
 			setVisible(true);
 		}
 
@@ -93,14 +94,17 @@ public class EditLyric extends JDialog implements ActionListener {
 			}
 		}
 	}
-	
+
 	private void fillFields(Song s) {
 		if (s != null) {
 			if (s.getLyric() != null)
 				lyricEditorPane.setText(s.getLyric().getText());
-		}
+			else
+				lyricEditorPane.setText("");
+		} else
+			lyricEditorPane.setText("");
 	}
-	
+
 	private void initialize() {
 		getContentPane().add(getPanel);
 
@@ -110,8 +114,9 @@ public class EditLyric extends JDialog implements ActionListener {
 		getPanel.add(lblSong, "cell 0 0");
 		getPanel.add(lblArtistTitle, "cell 1 0");
 		getPanel.add(lblLyric, "cell 0 1");
-		
-		lyricPane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
+
+		lyricPane
+				.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
 		getPanel.add(lyricPane, "cell 0 2 2 1, growx, growy");
 
 		getPanel.add(btnCancel, "cell 1 3, alignx right, aligny center");
@@ -137,15 +142,18 @@ public class EditLyric extends JDialog implements ActionListener {
 		});
 	}
 
-	
 	@Override
 	public void actionPerformed(ActionEvent e) {
 		if (e.getActionCommand().equals("save")) {
 			logger.info("EditLyric(): Started saving of Lyric");
-			if (song.getLyric() != null)
-				song.setLyric(new Lyric(lyricEditorPane.getText()));
+			song.setLyric(new Lyric(lyricEditorPane.getText()));
 
-			sis.setMetaTags(song);
+			try {
+				sis.saveLyrics(song);
+			} catch (DataAccessException e1) {
+				JOptionPane.showConfirmDialog(null, e1.getMessage(), "Error",
+						JOptionPane.CLOSED_OPTION);
+			}
 			dispose();
 		}
 

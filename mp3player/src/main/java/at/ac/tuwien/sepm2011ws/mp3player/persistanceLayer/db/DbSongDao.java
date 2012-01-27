@@ -112,7 +112,7 @@ class DbSongDao implements SongDao {
 				createStmt.setInt(4, s.getYear());
 				createStmt.setInt(5, s.getDuration());
 				createStmt.setInt(6, s.getPlaycount());
-				createStmt.setInt(7, s.getRating());
+				createStmt.setDouble(7, s.getRating());
 				createStmt.setString(8, s.getGenre());
 				createStmt.setBoolean(9, s.isPathOk());
 
@@ -167,7 +167,7 @@ class DbSongDao implements SongDao {
 			updateStmt.setInt(4, s.getYear());
 			updateStmt.setInt(5, s.getDuration());
 			updateStmt.setInt(6, s.getPlaycount());
-			updateStmt.setInt(7, s.getRating());
+			updateStmt.setDouble(7, s.getRating());
 			updateStmt.setString(8, s.getGenre());
 			updateStmt.setBoolean(9, s.isPathOk());
 
@@ -178,11 +178,32 @@ class DbSongDao implements SongDao {
 
 			updateStmt.setInt(11, s.getId());
 
-			if (s.getAlbum() != null) {
-				ad.update(s.getAlbum());
-			}
-
 			updateStmt.executeUpdate();
+
+			if (s.getAlbum() != null) {
+				ResultSet result = null;
+				try {
+					// Read albums id if any exists
+					readIsOnStmt.setInt(1, s.getId());
+					result = readIsOnStmt.executeQuery();
+
+					if (result.next()) {
+						// Album exists
+						ad.update(s.getAlbum());
+					} else {
+						// Album doesn't exist, so create it
+						ad.create(s.getAlbum());
+
+						// Create album song association
+						createIsOnStmt.setInt(1, s.getId());
+						createIsOnStmt.setInt(2, s.getAlbum().getId());
+
+						createIsOnStmt.executeUpdate();
+					}
+				} finally {
+					result.close();
+				}
+			}
 
 		} catch (SQLException e) {
 			throw new DataAccessException("Error updating song in database");
@@ -232,7 +253,7 @@ class DbSongDao implements SongDao {
 			s.setId(id);
 			s.setYear(result.getInt("year"));
 			s.setPlaycount(result.getInt("playcount"));
-			s.setRating(result.getInt("rating"));
+			s.setRating(result.getDouble("rating"));
 			s.setGenre(result.getString("genre"));
 			s.setPathOk(result.getBoolean("pathOk"));
 
@@ -290,7 +311,7 @@ class DbSongDao implements SongDao {
 				s.setId(result.getInt("id"));
 				s.setYear(result.getInt("year"));
 				s.setPlaycount(result.getInt("playcount"));
-				s.setRating(result.getInt("rating"));
+				s.setRating(result.getDouble("rating"));
 				s.setGenre(result.getString("genre"));
 				s.setPathOk(result.getBoolean("pathOk"));
 

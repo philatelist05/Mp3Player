@@ -4,8 +4,6 @@ import java.awt.Dimension;
 import java.awt.Toolkit;
 import java.io.File;
 
-import javax.sql.rowset.JdbcRowSet;
-import javax.swing.JButton;
 import javax.swing.JDialog;
 import javax.swing.JFileChooser;
 import javax.swing.JLabel;
@@ -109,11 +107,10 @@ public class LibraryGUI extends JDialog implements Runnable {
 						"Kind of adding not chosen!", JOptionPane.CLOSED_OPTION);
 			
 			this.dispose();
-			fred.stop();
 			
 		} catch (DataAccessException e) {
-			JOptionPane.showMessageDialog(null, "Folder: " + e);
-			e.printStackTrace();
+			JOptionPane.showConfirmDialog(null, e.getMessage(),
+					"Error", JOptionPane.CLOSED_OPTION);
 		}
 	}
 

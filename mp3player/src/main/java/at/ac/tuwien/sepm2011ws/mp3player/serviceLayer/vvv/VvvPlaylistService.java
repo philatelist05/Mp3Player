@@ -4,6 +4,7 @@ import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -17,6 +18,7 @@ import at.ac.tuwien.sepm2011ws.mp3player.persistanceLayer.PlaylistDao;
 import at.ac.tuwien.sepm2011ws.mp3player.persistanceLayer.SongDao;
 import at.ac.tuwien.sepm2011ws.mp3player.serviceLayer.PlaylistService;
 import at.ac.tuwien.sepm2011ws.mp3player.serviceLayer.SettingsService;
+import at.ac.tuwien.sepm2011ws.mp3player.serviceLayer.SongInformationService;
 import christophedelory.playlist.AbstractPlaylistComponent;
 import christophedelory.playlist.Media;
 import christophedelory.playlist.Sequence;
@@ -28,11 +30,14 @@ class VvvPlaylistService implements PlaylistService {
 	private final PlaylistDao pd;
 	private final SongDao sd;
 	private final SettingsService ss;
+	private final SongInformationService sis;
 
-	VvvPlaylistService(SongDao sd, PlaylistDao pd, SettingsService ss) {
+	VvvPlaylistService(SongDao sd, PlaylistDao pd, SettingsService ss,
+			SongInformationService sis) {
 		this.pd = pd;
 		this.sd = sd;
 		this.ss = ss;
+		this.sis = sis;
 	}
 
 	@Override
@@ -73,8 +78,14 @@ class VvvPlaylistService implements PlaylistService {
 		return fileName.substring(0, dotIndex);
 	}
 
-	private WritablePlaylist importPlaylist(File file) throws DataAccessException {
+	private WritablePlaylist importPlaylist(File file)
+			throws DataAccessException {
 		WritablePlaylist playlist;
+
+		if (file == null || !file.isFile()) {
+			throw new IllegalArgumentException(
+					"The playlist to import is no valid file");
+		}
 
 		// Initialize playlist
 		playlist = createPlaylist(getBasename(file.getName()));
@@ -86,11 +97,14 @@ class VvvPlaylistService implements PlaylistService {
 			Sequence plSeq = specificPlaylist.toPlaylist().getRootSequence();
 
 			Media m;
+			File f;
+			String folder;
 			for (AbstractPlaylistComponent apc : plSeq.getComponents()) {
 				m = (Media) apc;
-				addSongsToPlaylist(
-						new File[] { new File(m.getSource().getURI()) },
-						playlist);
+				folder = file.getParent();
+				f = new File(m.getSource().getURI());
+				f = new File(folder + File.separator + f.getName());
+				addSongsToPlaylist(new File[] { f }, playlist);
 			}
 
 		} catch (IOException e) {
@@ -131,7 +145,8 @@ class VvvPlaylistService implements PlaylistService {
 	}
 
 	@Override
-	public List<? extends Playlist> getAllPlaylists() throws DataAccessException {
+	public List<? extends Playlist> getAllPlaylists()
+			throws DataAccessException {
 		return this.pd.readAll();
 	}
 
@@ -185,11 +200,11 @@ class VvvPlaylistService implements PlaylistService {
 
 		for (File file : files) {
 			if (checkFileExtensionAccepted(file.getName(), userFileTypes)) {
-				// TODO: Read metadata from song with SongInformationService
-				s = new Song("Dummy Artist", file.getName(), 0,
+				s = new Song("Unknown Artist", "Unknown Title", 0,
 						file.getAbsolutePath());
-
 				sd.create(s);
+				sis.getMetaTags(s);
+
 				songs.add(s);
 			}
 		}
@@ -217,26 +232,29 @@ class VvvPlaylistService implements PlaylistService {
 	}
 
 	@Override
-	public WritablePlaylist createPlaylist(String name) throws DataAccessException {
+	public WritablePlaylist createPlaylist(String name)
+			throws DataAccessException {
 		WritablePlaylist playlist = new WritablePlaylist(name);
 		this.pd.create(playlist);
 		return playlist;
 	}
 
 	@Override
-	public void deletePlaylist(WritablePlaylist playlist) throws DataAccessException {
-			this.pd.delete(playlist.getId());
+	public void deletePlaylist(WritablePlaylist playlist)
+			throws DataAccessException {
+		this.pd.delete(playlist.getId());
 	}
 
 	@Override
-	public void updatePlaylist(WritablePlaylist playlist) throws DataAccessException {
-			this.pd.update(playlist);
+	public void updatePlaylist(WritablePlaylist playlist)
+			throws DataAccessException {
+		this.pd.update(playlist);
 	}
 
 	@Override
 	public void renamePlaylist(WritablePlaylist playlist, String name)
 			throws DataAccessException {
-			pd.rename(playlist, name);
+		pd.rename(playlist, name);
 	}
 
 	@Override
@@ -250,7 +268,7 @@ class VvvPlaylistService implements PlaylistService {
 	@Override
 	public Playlist getTopPlayed() throws DataAccessException {
 		Playlist playlist = new Playlist("TopPlayed");
-		playlist.addAll(sd.getTopRatedSongs(ss.getTopXXPlayedCount()));
+		playlist.addAll(sd.getTopPlayedSongs(ss.getTopXXPlayedCount()));
 
 		return playlist;
 	}
