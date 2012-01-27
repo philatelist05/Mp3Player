@@ -10,6 +10,7 @@ import java.io.File;
 
 import org.junit.After;
 import org.junit.Before;
+import org.junit.BeforeClass;
 import org.junit.Test;
 
 import at.ac.tuwien.sepm2011ws.mp3player.domainObjects.PlayMode;
@@ -24,6 +25,11 @@ import at.ac.tuwien.sepm2011ws.mp3player.domainObjects.Song;
 public class CoreInteractionServiceTest {
 	private CoreInteractionService cs;
 
+	@BeforeClass
+	public static void setUpBeforeClass() throws Exception {
+		System.setProperty("jna.nosys", "true");
+	}
+
 	@Before
 	public void setUp() throws Exception {
 		ServiceFactory sf = ServiceFactory.getInstance();
@@ -32,11 +38,11 @@ public class CoreInteractionServiceTest {
 
 	@After
 	public void tearDown() throws Exception {
-	    	cs.stop();
+		cs.stop();
 		cs.setCurrentPlaylist(null);
 		cs.setPlayMode(PlayMode.NORMAL);
 	}
-	
+
 	@Test
 	public void testEndOfMedia_ShouldPlayNext() throws InterruptedException {
 		WritablePlaylist temp = new WritablePlaylist("Temp");
@@ -47,18 +53,18 @@ public class CoreInteractionServiceTest {
 		temp.add(new Song("dummy2", "dummy2", 300, sPath.getAbsolutePath()));
 
 		cs.setCurrentPlaylist(temp);
-		
-		//now start playing
+
+		// now start playing
 		cs.playPause();
 		Thread.sleep(500);
-		assertEquals(cs.getCurrentSong(),temp.get(0));
+		assertEquals(cs.getCurrentSong(), temp.get(0));
 		// Here the endOfMediaEvent should be fired
 		Thread.sleep(3500); // The player needs a bit time to realize that the
 							// song is at the end... -,-
 		Song actual = cs.getCurrentSong();
 		Song expected = temp.get(1);
-		
-		assertEquals(actual,expected);
+
+		assertEquals(actual, expected);
 	}
 
 	@Test

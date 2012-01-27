@@ -7,6 +7,7 @@ import static org.junit.Assert.assertTrue;
 
 import org.junit.After;
 import org.junit.Before;
+import org.junit.BeforeClass;
 import org.junit.Test;
 
 import at.ac.tuwien.sepm2011ws.mp3player.domainObjects.Playlist;
@@ -19,18 +20,17 @@ import at.ac.tuwien.sepm2011ws.mp3player.persistanceLayer.DataAccessException;
 public class PlaylistServiceTest {
 	private PlaylistService ps;
 
-	/**
-	 * @throws java.lang.Exception
-	 */
+	@BeforeClass
+	public static void setUpBeforeClass() throws Exception {
+		System.setProperty("jna.nosys", "true");
+	}
+	
 	@Before
 	public void setUp() throws Exception {
 		ServiceFactory sf = ServiceFactory.getInstance();
 		ps = sf.getPlaylistService();
 	}
 
-	/**
-	 * @throws java.lang.Exception
-	 */
 	@After
 	public void tearDown() throws Exception {
 	}
