@@ -7,7 +7,6 @@ import java.awt.Font;
 import javax.swing.JTable;
 import javax.swing.table.DefaultTableCellRenderer;
 
-
 import at.ac.tuwien.sepm2011ws.mp3player.domainObjects.Playlist;
 
 import at.ac.tuwien.sepm2011ws.mp3player.serviceLayer.CoreInteractionService;
@@ -19,13 +18,17 @@ public class SongTableRenderer extends DefaultTableCellRenderer {
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;
-	
+
 	private static Playlist curPlaylist;
 
-	public SongTableRenderer (Playlist currentPlaylist)
-	{
+	public SongTableRenderer(Playlist currentPlaylist) {
 		curPlaylist = currentPlaylist;
 	}
+
+	public void setPlaylist(Playlist list) {
+		curPlaylist = list;
+	}
+
 	/*
 	 * public void setValue(Object value) {
 	 * 
@@ -89,10 +92,10 @@ public class SongTableRenderer extends DefaultTableCellRenderer {
 		}
 		table.setSelectionForeground(Color.red);
 		// table.setSelectionBackground(Color.red);
-		// if(cis.isPlaying())
-		// {
-		if(cis.getCurrentPlaylist().equals(curPlaylist))
-		//if (cis.getCurrentSongIndex() > -1) 
+
+		if (cis.getCurrentPlaylist().getTitle().equals(curPlaylist.getTitle()))
+		// if(cis.getCurrentPlaylist().equals(curPlaylist))
+		// if (cis.getCurrentSongIndex() > -1)
 		{
 			// if
 			// (table.getRowSorter().convertRowIndexToView(cis.getCurrentSongIndex())

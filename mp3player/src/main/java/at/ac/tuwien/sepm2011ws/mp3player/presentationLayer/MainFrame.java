@@ -93,6 +93,7 @@ public class MainFrame extends JFrame implements ActionListener, Runnable,
 	private JTree pl_tree = new JTree();
 	private TreePath pathToPlaylists = null;
 	private TreePath pathToIntPlaylists = null;
+	private SongTableRenderer songrendi;
 
 	private PlaylistGUI playlistgui;
 	private LibraryGUI librarygui;
@@ -183,7 +184,7 @@ public class MainFrame extends JFrame implements ActionListener, Runnable,
 	public Playlist parseSongTable(Playlist list) {
 		ArrayList<Song> temp = new ArrayList<Song>();
 		Song song;
-
+		// logger.info("parse song play list: " + list.getTitle());
 		int row = songmodel.getRowCount();
 		list.clear();
 		for (int i = 0; i < row; i++) {
@@ -591,7 +592,9 @@ public class MainFrame extends JFrame implements ActionListener, Runnable,
 				} catch (DataAccessException e) {
 					// TODO: Show error dialog
 				}
+
 				currentPlaylistGUI = clicked.getNodePlaylist();
+
 				fillSongTable(clicked.getNodePlaylist());
 			} else {
 			}
@@ -754,7 +757,11 @@ public class MainFrame extends JFrame implements ActionListener, Runnable,
 		}
 
 		for (int i = 0; i < songTableCols.length; i++) {
-			cTableModel.getColumn(i).setCellRenderer(new SongTableRenderer(currentPlaylistGUI));
+			logger.info("TableRenderer: " + currentPlaylistGUI.getTitle());
+
+			cTableModel.getColumn(i).setCellRenderer(songrendi);
+			// cTableModel.getColumn(i).setCellRenderer(new
+			// SongTableRenderer(currentPlaylistGUI));
 			if (Zuordnung.containsKey("Rating")) {
 				cTableModel.getColumn(i).setCellEditor(new SongCellEditor());
 
@@ -783,7 +790,7 @@ public class MainFrame extends JFrame implements ActionListener, Runnable,
 		ps = sf.getPlaylistService();
 		ss = sf.getSettingsService();
 		sis = sf.getSongInformationService();
-
+		songrendi = new SongTableRenderer(currentPlaylistGUI);
 		Toolkit toolkit = Toolkit.getDefaultToolkit();
 		Dimension dim = toolkit.getScreenSize();
 
@@ -1128,9 +1135,8 @@ public class MainFrame extends JFrame implements ActionListener, Runnable,
 		/*
 		 * progress.addChangeListener(new ChangeListener() {
 		 * 
-		 * @Override public void stateChanged(ChangeEvent ce) {
-		 * JSlider source = (JSlider) ce.getSource();
-		 * setMediaTime(source.getValue());
+		 * @Override public void stateChanged(ChangeEvent ce) { JSlider source =
+		 * (JSlider) ce.getSource(); setMediaTime(source.getValue());
 		 * 
 		 * }
 		 * 
@@ -1180,7 +1186,9 @@ public class MainFrame extends JFrame implements ActionListener, Runnable,
 				}
 
 				// new MainFrame("reloadsongTable");
+
 				fillSongTable(currentPlaylistGUI);
+
 				songTable.repaint();
 				if (cis.isPlaying()) {
 					lblCurrentStateSong.setText("Currently playing: "
@@ -1190,7 +1198,6 @@ public class MainFrame extends JFrame implements ActionListener, Runnable,
 					setPauseIcons();
 				}
 
-				 
 			}
 
 			public void songEndEvent() {
@@ -1412,8 +1419,8 @@ public class MainFrame extends JFrame implements ActionListener, Runnable,
 				fillSongTable(list);
 				currentPlaylistGUI = list;
 			} catch (DataAccessException e1) {
-				JOptionPane.showConfirmDialog(null, e1.getMessage(),
-						"Error", JOptionPane.CLOSED_OPTION);
+				JOptionPane.showConfirmDialog(null, e1.getMessage(), "Error",
+						JOptionPane.CLOSED_OPTION);
 			}
 		}
 
@@ -1426,8 +1433,8 @@ public class MainFrame extends JFrame implements ActionListener, Runnable,
 				fillSongTable(list);
 				currentPlaylistGUI = list;
 			} catch (DataAccessException e1) {
-				JOptionPane.showConfirmDialog(null, e1.getMessage(),
-						"Error", JOptionPane.CLOSED_OPTION);
+				JOptionPane.showConfirmDialog(null, e1.getMessage(), "Error",
+						JOptionPane.CLOSED_OPTION);
 			}
 		}
 
@@ -1440,8 +1447,8 @@ public class MainFrame extends JFrame implements ActionListener, Runnable,
 				fillSongTable(list);
 				currentPlaylistGUI = list;
 			} catch (DataAccessException e1) {
-				JOptionPane.showConfirmDialog(null, e1.getMessage(),
-						"Error", JOptionPane.CLOSED_OPTION);
+				JOptionPane.showConfirmDialog(null, e1.getMessage(), "Error",
+						JOptionPane.CLOSED_OPTION);
 			}
 
 		}
@@ -1470,8 +1477,8 @@ public class MainFrame extends JFrame implements ActionListener, Runnable,
 				fillSongTable(list);
 				currentPlaylistGUI = list;
 			} catch (DataAccessException e1) {
-				JOptionPane.showConfirmDialog(null, e1.getMessage(),
-						"Error", JOptionPane.CLOSED_OPTION);
+				JOptionPane.showConfirmDialog(null, e1.getMessage(), "Error",
+						JOptionPane.CLOSED_OPTION);
 			}
 		}
 
@@ -1826,7 +1833,7 @@ public class MainFrame extends JFrame implements ActionListener, Runnable,
 		// logger.info("changed column: " +e.getColumn());
 		// logger.info("tableChanged");
 		// cis.setCurrentSongIndex(-1);
-		
+
 		// logger.info("Rating changed : " + row );
 		// logger.info(column);
 
@@ -1838,25 +1845,23 @@ public class MainFrame extends JFrame implements ActionListener, Runnable,
 
 			double rg = Double.parseDouble(Rating);
 			// logger.info("Double Rating: " + rg);
-			logger.info("song: "
-					+ cis.getCurrentPlaylist()
-							.get(row).getTitle());
+			logger.info("song: " + cis.getCurrentPlaylist().get(row).getTitle());
 			try {
-				sis.setRating(
-						cis.getCurrentPlaylist().get(row), rg);
+				sis.setRating(cis.getCurrentPlaylist().get(row), rg);
 			} catch (DataAccessException e1) {
-				JOptionPane.showConfirmDialog(null,
-						"No Song fund!", "No Song fund!" + e1,
-						JOptionPane.CLOSED_OPTION);
-				
+				JOptionPane.showConfirmDialog(null, "No Song fund!",
+						"No Song fund!" + e1, JOptionPane.CLOSED_OPTION);
+
 			}
 			// cis.getCurrentPlaylist().get(sorter.convertRowIndexToView(row)).setRating(rg);
 
 			// logger.info("new Rating in Songobject: " +
 			// cis.getCurrentPlaylist().get(row).getRating());
-		}
-		else
+		} else {
+			if (currentPlaylistGUI != null)
+				songrendi.setPlaylist(currentPlaylistGUI);
 			sorter.setSortKeys(null);
+		}
 
 	}
 
