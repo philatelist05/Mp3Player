@@ -253,6 +253,10 @@ class VvvPlaylistService implements PlaylistService {
 	@Override
 	public void renamePlaylist(WritablePlaylist playlist, String name)
 			throws DataAccessException {
+		if (name == null || name.isEmpty())
+			throw new IllegalArgumentException(
+					"The new name of the playlist must not be null or empty");
+		playlist.setTitle(name);
 		pd.rename(playlist, name);
 	}
 
@@ -312,6 +316,7 @@ class VvvPlaylistService implements PlaylistService {
 	public void reloadPlaylist(WritablePlaylist p) throws DataAccessException {
 		Playlist np = pd.read(p.getId());
 		p.setTitle(np.getTitle());
+		p.clear();
 		p.addAll(np);
 	}
 }
