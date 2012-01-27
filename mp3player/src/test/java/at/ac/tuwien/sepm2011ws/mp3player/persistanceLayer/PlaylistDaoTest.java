@@ -35,6 +35,33 @@ public class PlaylistDaoTest {
 	}
 
 	@Test
+	public void testUpdate_ShouldRecreateSongAssociation()
+			throws DataAccessException {
+		WritablePlaylist expected = new WritablePlaylist("Test1");
+		plstdao.create(expected);
+
+		Song song1 = new Song("Song1", "Halo1", 3001, "C:\\music\\halo1");
+		Song song2 = new Song("Song2", "Halo2", 3002, "C:\\music\\halo2");
+
+		expected.add(song1);
+		expected.add(song2);
+		
+		sdao.create(song1);
+		sdao.create(song2);
+
+		plstdao.update(expected);
+
+		Playlist actual = plstdao.read(expected.getId());
+		assertEquals(expected, actual);
+	}
+
+	@Test(expected = IllegalArgumentException.class)
+	public void testRead_InvalidIdShouldThrowIllegalArgumentException()
+			throws IllegalArgumentException, DataAccessException {
+		plstdao.read(-1);
+	}
+
+	@Test
 	public void testReplstdao_ReplstdaosExistingSimplePlaylist()
 			throws DataAccessException {
 		WritablePlaylist expected = new WritablePlaylist("Test1");
@@ -119,4 +146,36 @@ public class PlaylistDaoTest {
 		plstdao.delete(-1);
 	}
 
+	@Test
+	public void testReadAll_ShouldReturnAllSongs() throws DataAccessException {
+		WritablePlaylist playlist1 = new WritablePlaylist("Test1");
+		plstdao.create(playlist1);
+		WritablePlaylist playlist2 = new WritablePlaylist("Test2");
+		plstdao.create(playlist2);
+		WritablePlaylist playlist3 = new WritablePlaylist("Test3");
+		plstdao.create(playlist3);
+
+		List<WritablePlaylist> playlists = plstdao.readAll();
+
+		assertTrue(playlists.contains(playlist1));
+		assertTrue(playlists.contains(playlist2));
+		assertTrue(playlists.contains(playlist3));
+	}
+
+	@Test
+	public void testRename_ShouldRenamePlaylist() throws DataAccessException {
+		WritablePlaylist expected = new WritablePlaylist("Test1");
+		plstdao.create(expected);
+		
+		plstdao.rename(expected, "Test2");
+		Playlist actual = plstdao.read(expected.getId());
+		expected.setTitle("Test2");
+		assertEquals(expected, actual);
+	}
+
+	@Test(expected = IllegalArgumentException.class)
+	public void testRename_ShouldThrowIllegalArgumentException()
+			throws IllegalArgumentException, DataAccessException {
+		plstdao.rename(null, null);
+	}
 }
