@@ -2,11 +2,13 @@ package at.ac.tuwien.sepm2011ws.mp3player;
 
 import java.awt.EventQueue;
 
+import javax.swing.JOptionPane;
 import javax.swing.UIManager;
 
 import org.apache.log4j.Logger;
 import org.apache.log4j.xml.DOMConfigurator;
 
+import at.ac.tuwien.sepm2011ws.mp3player.presentationLayer.GetMetaTag;
 import at.ac.tuwien.sepm2011ws.mp3player.presentationLayer.MainFrame;
 
 /**
@@ -14,8 +16,7 @@ import at.ac.tuwien.sepm2011ws.mp3player.presentationLayer.MainFrame;
  * 
  */
 public class Main {
-	private static Logger logger = Logger.getLogger(Main.class);
-
+	private static Logger logger = Logger.getLogger(GetMetaTag.class);
 	public static void main(String[] args) {
 		DOMConfigurator.configureAndWatch("src/main/resources/log4j-4.xml", 60 * 1000);
 		startMainFrame();

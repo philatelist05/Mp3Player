@@ -206,9 +206,9 @@ public class PlaylistGUI extends JDialog implements ActionListener, Runnable {
 					+ playlistName.getText() + ")");
 			try {
 				ps.createPlaylist(result);
-			} catch (DataAccessException e1) {
-				JOptionPane.showMessageDialog(null, "createPlaylist: " + e1);
-				e1.printStackTrace();
+			} catch (DataAccessException e) {
+				JOptionPane.showConfirmDialog(null, e.getMessage(),
+						"Error", JOptionPane.CLOSED_OPTION);
 			}
 			dispose();
 		} else {
@@ -229,12 +229,11 @@ public class PlaylistGUI extends JDialog implements ActionListener, Runnable {
 					+ ")");
 			try {
 				ps.renamePlaylist(tempPlaylist, result);
-			} catch (DataAccessException e1) {
-				JOptionPane.showMessageDialog(null, "renamePlaylist: " + e1);
-				e1.printStackTrace();
+			} catch (DataAccessException e) {
+				JOptionPane.showConfirmDialog(null, e.getMessage(),
+						"Error", JOptionPane.CLOSED_OPTION);
+				tempPlaylist = null;
 			}
-			tempPlaylist = null;
-			dispose();
 		} else {
 			logger.info("renamePlaylist(): Name of Playlist too short or blank");
 			JOptionPane
@@ -244,6 +243,7 @@ public class PlaylistGUI extends JDialog implements ActionListener, Runnable {
 							"Name of Playlist too short or blank",
 							JOptionPane.CLOSED_OPTION);
 		}
+		dispose();
 	}
 
 	private void initialize() {
@@ -347,6 +347,7 @@ public class PlaylistGUI extends JDialog implements ActionListener, Runnable {
 		} catch (DataAccessException e) {
 			JOptionPane.showConfirmDialog(null, e.getMessage(),
 					"Error", JOptionPane.CLOSED_OPTION);
+			checkDialog.dispose();
 		}
 	}
 }

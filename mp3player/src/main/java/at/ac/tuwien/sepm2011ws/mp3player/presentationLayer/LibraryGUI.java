@@ -111,6 +111,7 @@ public class LibraryGUI extends JDialog implements Runnable {
 		} catch (DataAccessException e) {
 			JOptionPane.showConfirmDialog(null, e.getMessage(),
 					"Error", JOptionPane.CLOSED_OPTION);
+			this.dispose();
 		}
 	}
 
