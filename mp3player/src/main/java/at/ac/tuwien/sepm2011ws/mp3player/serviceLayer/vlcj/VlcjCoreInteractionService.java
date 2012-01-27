@@ -19,8 +19,6 @@ import at.ac.tuwien.sepm2011ws.mp3player.persistanceLayer.DataAccessException;
 import at.ac.tuwien.sepm2011ws.mp3player.persistanceLayer.SongDao;
 import at.ac.tuwien.sepm2011ws.mp3player.serviceLayer.CoreInteractionService;
 import at.ac.tuwien.sepm2011ws.mp3player.serviceLayer.PlayerListener;
-import at.ac.tuwien.sepm2011ws.mp3player.serviceLayer.ServiceFactory;
-import at.ac.tuwien.sepm2011ws.mp3player.serviceLayer.SongInformationService;
 
 import com.sun.jna.Platform;
 
