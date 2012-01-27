@@ -3,6 +3,7 @@ package at.ac.tuwien.sepm2011ws.mp3player.presentationLayer;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Image;
+import java.awt.Point;
 import java.awt.Rectangle;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
@@ -47,6 +48,7 @@ import javax.swing.JSlider;
 import javax.swing.JSplitPane;
 import javax.swing.JTable;
 import javax.swing.JTree;
+import javax.swing.JViewport;
 import javax.swing.ListSelectionModel;
 import javax.swing.ScrollPaneConstants;
 import javax.swing.event.ChangeEvent;
@@ -94,6 +96,7 @@ public class MainFrame extends JFrame implements ActionListener, Runnable,
 	private PlaylistGUI playlistgui;
 	private LibraryGUI librarygui;
 	private JTable songTable;
+	private Point viewPos = null;
 	private HidableTableColumnModel cTableModel;
 	private TableRowSorter<TableModel> sorter;
 	private SongTableModel songmodel = new SongTableModel(new String[] {
@@ -134,6 +137,27 @@ public class MainFrame extends JFrame implements ActionListener, Runnable,
 	private Icon mp1;
 	private Icon mp2;
 	private Icon mp3;
+	private Icon nomute_icon;
+	private Icon nomuterollover_icon;
+	private Icon nomutepressed_icon;
+	private Icon mute_icon;
+	private Icon muterollover_icon;
+	private Icon noshuffle_icon;
+	private Icon noshufflerollover_icon;
+	private Icon noshufflepressed_icon;
+	private Icon shuffle_icon;
+	private Icon shufflerollover_icon;
+	private Icon norepeat_icon;
+	private Icon norepeatrollover_icon;
+	private Icon norepeatpressed_icon;
+	private Icon repeat_icon;
+	private Icon repeatrollover_icon;
+	private Icon bluePL;
+	private Icon bluePLS;
+	private Icon yellowPL;
+	private Icon yellowPLS;
+	private Icon library_icon;
+	private Icon v3;
 
 	private List<? extends Playlist> playlists = null;
 	private PlaylistService ps;
@@ -166,6 +190,50 @@ public class MainFrame extends JFrame implements ActionListener, Runnable,
 				new ClassPathResource("img/pause_orange.png").getURL());
 		mp3 = new ImageIcon(new ClassPathResource(
 				"img/pause_orange_pressed.png").getURL());
+
+		nomute_icon = new ImageIcon(
+				new ClassPathResource("img/nomuteblue.png").getURL());
+		nomuterollover_icon = new ImageIcon(new ClassPathResource(
+				"img/nomuteorange.png").getURL());
+		nomutepressed_icon = new ImageIcon(new ClassPathResource(
+				"img/nomuteorange_pressed.png").getURL());
+		mute_icon = new ImageIcon(
+				new ClassPathResource("img/muteblue.png").getURL());
+		muterollover_icon = new ImageIcon(new ClassPathResource(
+				"img/muteorange.png").getURL());
+
+		noshuffle_icon = new ImageIcon(new ClassPathResource(
+				"img/noshuffleblue.png").getURL());
+		noshufflerollover_icon = new ImageIcon(new ClassPathResource(
+				"img/noshuffleorange.png").getURL());
+		noshufflepressed_icon = new ImageIcon(new ClassPathResource(
+				"img/noshuffleorange_pressed.png").getURL());
+		shuffle_icon = new ImageIcon(new ClassPathResource(
+				"img/shuffleblue.png").getURL());
+		shufflerollover_icon = new ImageIcon(new ClassPathResource(
+				"img/shuffleorange.png").getURL());
+
+		norepeat_icon = new ImageIcon(new ClassPathResource(
+				"img/norepeatblue.png").getURL());
+		norepeatrollover_icon = new ImageIcon(new ClassPathResource(
+				"img/norepeatorange.png").getURL());
+		norepeatpressed_icon = new ImageIcon(new ClassPathResource(
+				"img/norepeatorange_pressed.png").getURL());
+		repeat_icon = new ImageIcon(
+				new ClassPathResource("img/repeatblue.png").getURL());
+		repeatrollover_icon = new ImageIcon(new ClassPathResource(
+				"img/repeatorange.png").getURL());
+
+		bluePL = new ImageIcon(new ClassPathResource("img/bluePL.png").getURL());
+		bluePLS = new ImageIcon(
+				new ClassPathResource("img/bluePLS.png").getURL());
+		yellowPL = new ImageIcon(
+				new ClassPathResource("img/yellowPL.png").getURL());
+		yellowPLS = new ImageIcon(
+				new ClassPathResource("img/yellowPLS.png").getURL());
+		library_icon = new ImageIcon(
+				new ClassPathResource("img/library.png").getURL());
+		v3 = new ImageIcon(new ClassPathResource("img/v3.png").getURL());
 	}
 
 	/**
@@ -230,6 +298,31 @@ public class MainFrame extends JFrame implements ActionListener, Runnable,
 					album, x.getYear(), x.getGenre(), x.getDuration(),
 					x.getRating(), x.getPlaycount() });
 		}
+		// songTable.setRowSelectionInterval(25, 26);
+		// restoreTableView(25, 0);
+
+	}
+
+	private void restoreTableView(int rowIndex, int vColIndex) {
+		if (!(songTable.getParent() instanceof JViewport)) {
+			return;
+		}
+		JViewport viewport = (JViewport) songTable.getParent();
+
+		// This rectangle is relative to the table where the
+		// northwest corner of cell (0,0) is always (0,0).
+		Rectangle rect = songTable.getCellRect(rowIndex, vColIndex, true);
+
+		// The location of the viewport relative to the table
+		viewPos = viewport.getViewPosition();
+
+		// Translate the cell location so that it is relative
+		// to the view, assuming the northwest corner of the
+		// view is (0,0)
+		// rect.setLocation(rect.x-pt.x, rect.y-pt.y);
+
+		// Scroll the area into view
+		viewport.scrollRectToVisible(rect);
 	}
 
 	/**
@@ -612,23 +705,21 @@ public class MainFrame extends JFrame implements ActionListener, Runnable,
 		}
 		try {
 			pl_tree.setModel(new DefaultTreeModel(new PlaylistTreeNode(
-					"mp3player") {
+					new TreeNodeObject("mp3player", v3)) {
 				/**
 				 * mp3@player
 				 */
 				private static final long serialVersionUID = -7228695694680777407L;
 
 				{
-
 					PlaylistTreeNode node_1;
-					add(new PlaylistTreeNode(ps.getLibrary().toString(), false,
-							ps.getLibrary()));
-					WritablePlaylist qu = new WritablePlaylist("Queue");
-					add(new PlaylistTreeNode("Queue", false, qu));
-
+					Playlist lib = ps.getLibrary();
+					add(new PlaylistTreeNode(new TreeNodeObject(lib.toString(),
+							library_icon), false, lib));
 					// node_1 = new PlaylistTreeNode(ps.getLibrary().toString(),
 					// false, ps.getLibrary());
-					PlaylistTreeNode node_2 = new PlaylistTreeNode("Playlists");
+					PlaylistTreeNode node_2 = new PlaylistTreeNode(
+							new TreeNodeObject("Playlists", yellowPLS));
 
 					Playlist current = null;
 					ListIterator<? extends Playlist> iter = playlists
@@ -636,19 +727,19 @@ public class MainFrame extends JFrame implements ActionListener, Runnable,
 
 					while (iter.hasNext()) {
 						current = iter.next();
-						node_2.add(new PlaylistTreeNode(current.getTitle(),
-								false, current));
+						node_2.add(new PlaylistTreeNode(new TreeNodeObject(
+								current.getTitle(), yellowPL), false, current));
 					}
 					add(node_2);
 
 					PlaylistTreeNode node_3 = new PlaylistTreeNode(
-							"Intelligent Playlists");
+							new TreeNodeObject("Intelligent Playlists", bluePLS));
 					Playlist toprated = ps.getTopRated();
-					node_3.add(new PlaylistTreeNode(toprated.getTitle(), false,
-							toprated));
+					node_3.add(new PlaylistTreeNode(new TreeNodeObject(toprated
+							.getTitle(), bluePL), false, toprated));
 					Playlist topplayed = ps.getTopPlayed();
-					node_3.add(new PlaylistTreeNode(topplayed.getTitle(),
-							false, topplayed));
+					node_3.add(new PlaylistTreeNode(new TreeNodeObject(
+							topplayed.getTitle(), bluePL), false, topplayed));
 					/*
 					 * node_1.add(new PlaylistTreeNode(
 					 * ps.getTopRated().getTitle(), false, ps .getTopRated()));
@@ -657,6 +748,9 @@ public class MainFrame extends JFrame implements ActionListener, Runnable,
 					 */
 
 					add(node_3);
+
+					PlaylistTreeCellRenderer pl_renderer = new PlaylistTreeCellRenderer();
+					pl_tree.setCellRenderer(pl_renderer);
 
 					pathToPlaylists = getNodePath(node_2);
 					pathToIntPlaylists = getNodePath(node_3);
@@ -807,10 +901,10 @@ public class MainFrame extends JFrame implements ActionListener, Runnable,
 
 		// TODO for Johannes: test for SimilarArtist
 
-		//ArrayList<Song> list = new ArrayList<Song>();
-		//list.add((Song) songTable.getValueAt(0, 0));
-		//list.add((Song) songTable.getValueAt(15, 0));
-		//new SimilarArtist(list);
+		// ArrayList<Song> list = new ArrayList<Song>();
+		// list.add((Song) songTable.getValueAt(0, 0));
+		// list.add((Song) songTable.getValueAt(15, 0));
+		// new SimilarArtist(list);
 
 	}
 
@@ -1031,6 +1125,7 @@ public class MainFrame extends JFrame implements ActionListener, Runnable,
 				.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
 		songTable.setDragEnabled(true);
 		songTable.setTransferHandler(new JTableSongTransferHandler());
+		songTable.setRowSelectionAllowed(true);
 
 		songTable.setSelectionBackground(new Color(255, 0, 0));
 		jsplit = new JSplitPane();
@@ -1233,13 +1328,17 @@ public class MainFrame extends JFrame implements ActionListener, Runnable,
 		 * JCheckboxes
 		 */
 		// Mute
-		chckbxMute = new JCheckBox("Mute");
+		chckbxMute = new JCheckBox("");
 		chckbxMute.setOpaque(false);
 		chckbxMute.setContentAreaFilled(false);
 		chckbxMute.setBorderPainted(false);
 		chckbxMute.setFocusPainted(false);
 		playerPanel.add(chckbxMute, "cell 3 3 1 2,alignx right,aligny center");
-
+		chckbxMute.setIcon(nomute_icon);
+		chckbxMute.setRolloverIcon(nomuterollover_icon);
+		chckbxMute.setPressedIcon(nomutepressed_icon);
+		chckbxMute.setSelectedIcon(mute_icon);
+		chckbxMute.setRolloverSelectedIcon(muterollover_icon);
 		chckbxMute.addItemListener(new ItemListener() {
 			public void itemStateChanged(ItemEvent e) {
 				setMute();
@@ -1247,11 +1346,16 @@ public class MainFrame extends JFrame implements ActionListener, Runnable,
 		});
 
 		// Repeat
-		chckbxRepeat = new JCheckBox("Repeat");
+		chckbxRepeat = new JCheckBox("");
 		chckbxRepeat.setOpaque(false);
 		chckbxRepeat.setContentAreaFilled(false);
 		chckbxRepeat.setBorderPainted(false);
 		chckbxRepeat.setFocusPainted(false);
+		chckbxRepeat.setIcon(norepeat_icon);
+		chckbxRepeat.setRolloverIcon(norepeatrollover_icon);
+		chckbxRepeat.setPressedIcon(norepeatpressed_icon);
+		chckbxRepeat.setSelectedIcon(repeat_icon);
+		chckbxRepeat.setRolloverSelectedIcon(repeatrollover_icon);
 		playerPanel
 				.add(chckbxRepeat, "cell 3 3 1 2,alignx right,aligny center");
 
@@ -1264,11 +1368,16 @@ public class MainFrame extends JFrame implements ActionListener, Runnable,
 		});
 
 		// Shuffle
-		chckbxShuffle = new JCheckBox("Shuffle");
+		chckbxShuffle = new JCheckBox("");
 		chckbxShuffle.setOpaque(false);
 		chckbxShuffle.setContentAreaFilled(false);
 		chckbxShuffle.setBorderPainted(false);
 		chckbxShuffle.setFocusPainted(false);
+		chckbxShuffle.setIcon(noshuffle_icon);
+		chckbxShuffle.setRolloverIcon(noshufflerollover_icon);
+		chckbxShuffle.setPressedIcon(noshufflepressed_icon);
+		chckbxShuffle.setSelectedIcon(shuffle_icon);
+		chckbxShuffle.setRolloverSelectedIcon(shufflerollover_icon);
 		playerPanel.add(chckbxShuffle,
 				"cell 3 3 1 2,alignx right,aligny center");
 
