@@ -592,9 +592,10 @@ public class MainFrame extends JFrame implements ActionListener, Runnable,
 				} catch (DataAccessException e) {
 					// TODO: Show error dialog
 				}
-
+				logger.info("clicked playlist: "
+						+ clicked.getNodePlaylist().getTitle());
 				currentPlaylistGUI = clicked.getNodePlaylist();
-
+				logger.info(currentPlaylistGUI.getTitle());
 				fillSongTable(clicked.getNodePlaylist());
 			} else {
 			}
@@ -757,7 +758,7 @@ public class MainFrame extends JFrame implements ActionListener, Runnable,
 		}
 
 		for (int i = 0; i < songTableCols.length; i++) {
-			logger.info("TableRenderer: " + currentPlaylistGUI.getTitle());
+			//logger.info("TableRenderer: " + currentPlaylistGUI.getTitle());
 
 			cTableModel.getColumn(i).setCellRenderer(songrendi);
 			// cTableModel.getColumn(i).setCellRenderer(new
@@ -790,7 +791,8 @@ public class MainFrame extends JFrame implements ActionListener, Runnable,
 		ps = sf.getPlaylistService();
 		ss = sf.getSettingsService();
 		sis = sf.getSongInformationService();
-		songrendi = new SongTableRenderer(currentPlaylistGUI);
+		songrendi = new SongTableRenderer(
+				currentPlaylistGUI);
 		Toolkit toolkit = Toolkit.getDefaultToolkit();
 		Dimension dim = toolkit.getScreenSize();
 
@@ -1184,12 +1186,12 @@ public class MainFrame extends JFrame implements ActionListener, Runnable,
 					createThread();
 
 				}
-
+				
 				// new MainFrame("reloadsongTable");
-
-				fillSongTable(currentPlaylistGUI);
-
+				fillSongTable(currentPlaylistGUI);			
 				songTable.repaint();
+			//	logger.info("Test: " + songTable.getValueAt(2, 7));
+				songTable.setRowSelectionInterval(cis.getCurrentSongIndex(), cis.getCurrentSongIndex());
 				if (cis.isPlaying()) {
 					lblCurrentStateSong.setText("Currently playing: "
 							+ cis.getCurrentSong().getArtist() + " - "
@@ -1207,6 +1209,7 @@ public class MainFrame extends JFrame implements ActionListener, Runnable,
 				}
 				fillSongTable(currentPlaylistGUI);
 				songTable.repaint();
+				songTable.setRowSelectionInterval(cis.getCurrentSongIndex(), cis.getCurrentSongIndex());
 				// new MainFrame("reloadsongTable");
 				// fillSongTable(currentPlaylistGUI);
 			}
@@ -1869,12 +1872,13 @@ public class MainFrame extends JFrame implements ActionListener, Runnable,
 	public void sorterChanged(RowSorterEvent e) {
 		// logger.info("sorterChanged");
 		// cis.getCurrentPlaylist().get(0).setRating(5);
+		currentPlaylistGUI = parseSongTable(currentPlaylistGUI);
+		cis.setCurrentPlaylist(currentPlaylistGUI);
 		if (cis.getCurrentSongIndex() > -1)
 			cis.setCurrentSongIndex(sorter.convertRowIndexToView(cis
 					.getCurrentSongIndex()));
 
-		currentPlaylistGUI = parseSongTable(currentPlaylistGUI);
-		cis.setCurrentPlaylist(currentPlaylistGUI);
+
 		songTable.repaint();
 	}
 }
