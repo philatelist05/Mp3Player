@@ -51,7 +51,7 @@ public interface PlaylistDao {
 	 * @return A list of all playlists from the DB.
 	 * @throws DataAccessException
 	 */
-	public List<? extends Playlist> readAll() throws DataAccessException;
+	public List<WritablePlaylist> readAll() throws DataAccessException;
 
 	/**
 	 * Only renames the playlist to the new name in opposition to

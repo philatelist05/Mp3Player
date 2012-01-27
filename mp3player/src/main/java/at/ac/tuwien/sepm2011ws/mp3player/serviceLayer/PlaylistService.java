@@ -38,7 +38,7 @@ public interface PlaylistService {
 	 * @return all playlists currently available
 	 * @throws DataAccessException 
 	 */
-	public List<? extends Playlist> getAllPlaylists() throws DataAccessException;
+	public List<WritablePlaylist> getAllPlaylists() throws DataAccessException;
 	
 	/**
 	 * Reloads and sets the specified playlist. 

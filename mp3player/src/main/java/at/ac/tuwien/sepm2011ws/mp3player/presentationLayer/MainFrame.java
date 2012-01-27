@@ -165,7 +165,7 @@ public class MainFrame extends JFrame implements ActionListener, Runnable,
 	private Icon library_icon;
 	private Icon v3;
 
-	private List<? extends Playlist> playlists = null;
+	private List<WritablePlaylist> playlists = null;
 	private PlaylistService ps;
 	private CoreInteractionService cis;
 	private SettingsService ss;
@@ -740,7 +740,7 @@ public class MainFrame extends JFrame implements ActionListener, Runnable,
 					PlaylistTreeNode node_2 = new PlaylistTreeNode(
 							new TreeNodeObject("Playlists", yellowPLS));
 					Playlist current = null;
-					ListIterator<? extends Playlist> iter = playlists
+					ListIterator<WritablePlaylist> iter = playlists
 							.listIterator();
 
 					while (iter.hasNext()) {
