@@ -21,6 +21,7 @@ import net.miginfocom.swing.MigLayout;
 
 import org.apache.log4j.Logger;
 
+import at.ac.tuwien.sepm2011ws.mp3player.domainObjects.Album;
 import at.ac.tuwien.sepm2011ws.mp3player.domainObjects.Song;
 import at.ac.tuwien.sepm2011ws.mp3player.serviceLayer.ServiceFactory;
 import at.ac.tuwien.sepm2011ws.mp3player.serviceLayer.SongInformationService;
@@ -162,24 +163,31 @@ public class EditMetaTag extends JDialog implements ActionListener {
 			if (textYear.getText().trim().matches("^[0-9]+$")) {
 				song.setArtist("untitled");
 				song.setTitle("untitled");
+				if (song.getAlbum() != null) {
+					if (textAlbum.getText().trim().length() > 0)
+						song.getAlbum().setTitle(textAlbum.getText().trim());
+					else
+						song.getAlbum().setTitle("untitled");
+				}
+				
+				else {
+					if (textAlbum.getText().trim().length() > 0)
+						song.setAlbum(new Album(textAlbum.getText().trim()));
+					else
+						song.setAlbum(new Album(""));
+				}
 
 				if (textArtist.getText().trim().length() > 0)
 					song.setArtist(textArtist.getText().trim());
+				
 				if (textTitle.getText().trim().length() > 0)
 					song.setTitle(textTitle.getText().trim());
-				
-				if (song.getAlbum() != null) {
-					song.getAlbum().setTitle("untitled");
-					
-					if (textAlbum.getText().trim().length() > 0)
-						song.getAlbum().setTitle(textAlbum.getText().trim());
-				}
-				
+
 				song.setYear(Integer.parseInt(textYear.getText().trim()));
 				song.setGenre(textGenre.getText().trim());
 
 				sis.setMetaTags(song);
-				
+
 				dispose();
 			}
 

@@ -242,11 +242,9 @@ public class GetLyric extends JDialog implements ActionListener, ItemListener,
 		if (mtw != null) {
 			if (mtw.getLyric() != null) {
 				lyricEditorPane.setText(mtw.getLyric().getText());
-			}
-			else
+			} else
 				lyricEditorPane.setText("");
-		}
-		else
+		} else
 			lyricEditorPane.setText("");
 	}
 
@@ -298,10 +296,14 @@ public class GetLyric extends JDialog implements ActionListener, ItemListener,
 		if (e.getActionCommand().equals("save")) {
 			logger.info("GetLyric(): Started saving of Lyric");
 
-			if (song.getLyric() != null)
-				song.setLyric(new Lyric(lyricEditorPane.getText()));
+			song.setLyric(new Lyric(lyricEditorPane.getText()));
 
-			sis.saveLyrics(song);
+			try {
+				sis.saveLyrics(song);
+			} catch (DataAccessException e1) {
+				JOptionPane.showConfirmDialog(null, e1.getMessage(), "Error",
+						JOptionPane.CLOSED_OPTION);
+			}
 			dispose();
 		}
 
