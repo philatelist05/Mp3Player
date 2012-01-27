@@ -34,7 +34,7 @@ public class CoreInteractionServiceTest {
 	@After
 	public void tearDown() throws Exception {
 		cs.stop();
-		cs.setCurrentPlaylist(null);
+		cs.setCurrentPlaylist(new Playlist(""));
 		cs.setPlayMode(PlayMode.NORMAL);
 	}
 
