@@ -97,8 +97,10 @@ public class EditLyric extends JDialog implements ActionListener {
 
 	private void fillFields(Song s) {
 		if (s != null) {
-			if (s.getLyric() != null)
+			if (s.getLyric() != null) {
 				lyricEditorPane.setText(s.getLyric().getText());
+				lyricEditorPane.setCaretPosition(0);
+			}
 			else
 				lyricEditorPane.setText("");
 		} else

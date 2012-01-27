@@ -781,7 +781,8 @@ public class MainFrame extends JFrame implements ActionListener, Runnable,
 			}
 			// expandAll(pl_tree, true);
 		} catch (DataAccessException e) {
-			e.printStackTrace();
+			JOptionPane.showConfirmDialog(null, e.getMessage(),
+					"Error", JOptionPane.CLOSED_OPTION);
 		}
 	}
 

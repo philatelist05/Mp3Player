@@ -242,6 +242,7 @@ public class GetLyric extends JDialog implements ActionListener, ItemListener,
 		if (mtw != null) {
 			if (mtw.getLyric() != null) {
 				lyricEditorPane.setText(mtw.getLyric().getText());
+				lyricEditorPane.setCaretPosition(0);
 			} else
 				lyricEditorPane.setText("");
 		} else
@@ -261,6 +262,7 @@ public class GetLyric extends JDialog implements ActionListener, ItemListener,
 		} catch (DataAccessException e) {
 			JOptionPane.showConfirmDialog(null, e.getMessage(), "Error",
 					JOptionPane.CLOSED_OPTION);
+			checkDialog.dispose();
 		}
 
 		if (lyricList != null) {

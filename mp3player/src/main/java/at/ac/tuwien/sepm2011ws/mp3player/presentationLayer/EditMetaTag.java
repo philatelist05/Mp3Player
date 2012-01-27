@@ -190,8 +190,8 @@ public class EditMetaTag extends JDialog implements ActionListener {
 				try {
 					sis.setMetaTags(song);
 				} catch (DataAccessException e1) {
-					// TODO Auto-generated catch block
-					e1.printStackTrace();
+					JOptionPane.showConfirmDialog(null, e1.getMessage(),
+							"Error", JOptionPane.CLOSED_OPTION);
 				}
 
 				dispose();
