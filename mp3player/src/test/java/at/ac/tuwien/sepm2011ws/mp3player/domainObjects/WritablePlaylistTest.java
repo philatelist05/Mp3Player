@@ -24,4 +24,10 @@ public class WritablePlaylistTest {
 		WritablePlaylist playlist = new WritablePlaylist("Title");
 		playlist.setTitle(null);
 	}
+	
+	@Test
+	public void testConstructur_ShouldSetTitle() {
+		WritablePlaylist playlist = new WritablePlaylist(100,"Title");
+		assertEquals("Title", playlist.getTitle());
+	}
 }

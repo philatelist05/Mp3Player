@@ -25,6 +25,14 @@ public class MetaTagsTest {
 		MetaTags MetaTags = new MetaTags("Artist", "Ttile", 3001, 2000, "Genre", album);
 		MetaTags.setTitle(null);
 	}
+	
+	@Test
+	public void testSetTitle_ShouldReturnTitle() {
+		Album album = new Album("title");
+		MetaTags MetaTags = new MetaTags("Artist", "Ttile", 3001, 2000, "Genre", album);
+		MetaTags.setTitle("Title1");
+		assertEquals("Title1", MetaTags.getTitle());
+	}
 
 	@Test(expected = IllegalArgumentException.class)
 	public void testSetDuration_ShouldThrowIllegalArgumentException() {
@@ -32,12 +40,43 @@ public class MetaTagsTest {
 		MetaTags MetaTags = new MetaTags("Artist", "Ttile", 3001, 2000, "Genre", album);
 		MetaTags.setDuration(-1);
 	}
+	
+	@Test
+	public void testSetDuration_ShouldReturnDuration() {
+		Album album = new Album("title");
+		MetaTags MetaTags = new MetaTags("Artist", "Ttile", 3001, 2000, "Genre", album);
+		MetaTags.setDuration(100);
+		assertEquals(100, MetaTags.getDuration());
+	}
 
 	@Test(expected = IllegalArgumentException.class)
 	public void testSetArtist_ShouldThrowIllegalArgumentException() {
 		Album album = new Album("title");
 		MetaTags MetaTags = new MetaTags("Artist", "Ttile", 3001, 2000, "Genre", album);
 		MetaTags.setArtist(null);
+	}
+	
+	@Test
+	public void testSetArtist_ShouldReturnArtist() {
+		Album album = new Album("title");
+		MetaTags MetaTags = new MetaTags("Artist", "Ttile", 3001, 2000, "Genre", album);
+		MetaTags.setArtist("Artist1");
+		assertEquals("Artist1", MetaTags.getArtist());
+	}
+	
+	@Test(expected = IllegalArgumentException.class)
+	public void testSetYear_ShouldThrowIllegalArgumentException() {
+		Album album = new Album("title");
+		MetaTags MetaTags = new MetaTags("Artist", "Ttile", 3001, 2000, "Genre", album);
+		MetaTags.setYear(-1);
+	}
+	
+	@Test
+	public void testSetYear_ShouldReturnYear() {
+		Album album = new Album("title");
+		MetaTags MetaTags = new MetaTags("Artist", "Ttile", 3001, 2000, "Genre", album);
+		MetaTags.setYear(2000);
+		assertEquals(2000, MetaTags.getYear());
 	}
 
 	@Test
