@@ -115,6 +115,9 @@ public class VlcjCoreInteractionService implements CoreInteractionService {
 	}
 
 	public void playPause() {
+		if (!songIndexValid(this.currentSongIndex))
+			this.currentSongIndex = 0;
+
 		playPause(this.currentSongIndex);
 	}
 
@@ -138,7 +141,7 @@ public class VlcjCoreInteractionService implements CoreInteractionService {
 	 * @return the song with specified index
 	 */
 	private Song getSong(int index) {
-		if (index < 0 || index >= this.currentPlaylist.size()) {
+		if (!songIndexValid(index)) {
 			return null;
 		}
 		return this.currentPlaylist.get(index);
@@ -223,7 +226,6 @@ public class VlcjCoreInteractionService implements CoreInteractionService {
 
 	public double getPlayTimeInSeconds() {
 		return this.mediaPlayer.getTime() / 1000;
-		// return getDurationAt(getPlayTime());
 	}
 
 	public Song getCurrentSong() {
@@ -239,6 +241,9 @@ public class VlcjCoreInteractionService implements CoreInteractionService {
 	}
 
 	public void setCurrentPlaylist(Playlist playlist) {
+		if (playlist == null)
+			throw new IllegalArgumentException("The playlist must not be null");
+
 		this.currentPlaylist = playlist;
 	}
 
@@ -251,14 +256,20 @@ public class VlcjCoreInteractionService implements CoreInteractionService {
 	}
 
 	public void setCurrentSongIndex(int index) {
-		if(currentSong == null)
-			throw new IllegalAccessError("Cannot set the current song index, current song is null");
-		if (index < 0 || index >= this.currentPlaylist.size()
+		if (!songIndexValid(index) || currentSong == null
 				|| !currentSong.equals(currentPlaylist.get(index))) {
 			throw new IllegalArgumentException(
 					"The song in the playlist at the specified index has to be the current song");
 		}
 		this.currentSongIndex = index;
+	}
+
+	private boolean songIndexValid(int index) {
+		if (currentPlaylist == null || index < 0
+				|| index >= this.currentPlaylist.size())
+			return false;
+
+		return true;
 	}
 
 	public boolean hasNextSong() {
@@ -453,7 +464,7 @@ public class VlcjCoreInteractionService implements CoreInteractionService {
 			currentSong.setPathOk(true);
 			try {
 				sd.update(currentSong);
-				
+
 				// ServiceFactory sf = ServiceFactory.getInstance();
 				// SongInformationService sis = sf.getSongInformationService();
 				// sis.getMetaTags(currentSong);
