@@ -2,6 +2,7 @@ package at.ac.tuwien.sepm2011ws.mp3player.presentationLayer;
 
 import java.awt.Color;
 import java.awt.Dimension;
+import java.awt.Font;
 import java.awt.Image;
 import java.awt.Point;
 import java.awt.Rectangle;
@@ -88,6 +89,7 @@ public class MainFrame extends JFrame implements ActionListener, Runnable,
 	/**
 	 * 
 	 */
+	private static MainFrame mainframe;
 	private static final long serialVersionUID = -959319978002415594L;
 	private static Logger logger = Logger.getLogger(MainFrame.class);
 	private static Playlist currentPlaylistGUI;
@@ -240,7 +242,11 @@ public class MainFrame extends JFrame implements ActionListener, Runnable,
 				new ClassPathResource("img/library.png").getURL());
 		v3 = new ImageIcon(new ClassPathResource("img/v3.png").getURL());
 	}
-
+	
+	public Playlist getCurrentPlaylistGUI() {
+		return currentPlaylistGUI;		
+	}
+	
 	/**
 	 * Parses and replaces the songs of the songTable into the specified
 	 * playlist
@@ -692,9 +698,12 @@ public class MainFrame extends JFrame implements ActionListener, Runnable,
 			} else {
 			}
 		}
+		//PlaylistTreeCellRenderer rendi = (PlaylistTreeCellRenderer) pl_tree.getCellRenderer();
+		//rendi.setCurrentFont(new Font("Algerian",Font.PLAIN,25));
 	}
 
 	private void buildPlTree() {
+		//mainframe=this;
 		logger.info("start buildPlTree...");
 		boolean expandPlaylists = false;
 		boolean expandIntPlaylists = false;
@@ -730,7 +739,6 @@ public class MainFrame extends JFrame implements ActionListener, Runnable,
 					// false, ps.getLibrary());
 					PlaylistTreeNode node_2 = new PlaylistTreeNode(
 							new TreeNodeObject("Playlists", yellowPLS));
-
 					Playlist current = null;
 					ListIterator<? extends Playlist> iter = playlists
 							.listIterator();
@@ -756,10 +764,9 @@ public class MainFrame extends JFrame implements ActionListener, Runnable,
 					 * node_1.add(new PlaylistTreeNode(ps.getTopPlayed()
 					 * .getTitle(), false, ps.getTopPlayed()));
 					 */
-
 					add(node_3);
-
-					PlaylistTreeCellRenderer pl_renderer = new PlaylistTreeCellRenderer();
+					pl_tree.setRowHeight(20);
+					PlaylistTreeCellRenderer pl_renderer = new PlaylistTreeCellRenderer(mainframe);
 					pl_tree.setCellRenderer(pl_renderer);
 
 					pathToPlaylists = getNodePath(node_2);
@@ -879,6 +886,7 @@ public class MainFrame extends JFrame implements ActionListener, Runnable,
 	 * Starts the MainFrame
 	 */
 	public MainFrame() {
+		mainframe=this;
 		ServiceFactory sf = ServiceFactory.getInstance();
 		cis = sf.getCoreInteractionService();
 		ps = sf.getPlaylistService();
@@ -1783,6 +1791,17 @@ public class MainFrame extends JFrame implements ActionListener, Runnable,
 							treeentry2.setEnabled(false);
 						}
 					}
+					
+					JMenuItem treeentry3 = new JMenuItem("Export Playlist");
+					treePopupMenu.add(treeentry3);
+					treeentry3.addActionListener(new TreeActionAdapter());
+					treeentry3.setActionCommand("exportPlaylist");
+
+					if (clickedPlaylist != null) {
+						if (clickedPlaylist.getTitle().equals("Library")) {
+							treeentry3.setEnabled(false);
+						}
+					}
 					treePopupMenu.show(e.getComponent(), e.getX(), e.getY());
 				} catch (NullPointerException ex) {
 				}
@@ -1924,6 +1943,28 @@ public class MainFrame extends JFrame implements ActionListener, Runnable,
 						if (selectedPlaylist.getClass() == WritablePlaylist.class)
 							playlistgui
 									.renamePlaylistGUI((WritablePlaylist) selectedPlaylist);
+					}
+				} else {
+					int response = JOptionPane.showConfirmDialog(null,
+							"No Playlists chosen!", "No Playlists chosen!",
+							JOptionPane.CLOSED_OPTION);
+				}
+				buildPlTree();
+			} else if (e.getActionCommand().equals("exportPlaylist")) {
+				// PlaylistTreeNode selectedNode = (PlaylistTreeNode) pl_tree
+				// .getLastSelectedPathComponent();
+				TreePath[] treePaths = pl_tree.getSelectionPaths();
+				if (treePaths.length != 0) {
+					for (int i = 0; i < treePaths.length; i++) {
+						TreePath currentPath = treePaths[i];
+						PlaylistTreeNode selectedNode = (PlaylistTreeNode) currentPath
+								.getLastPathComponent();
+						Playlist selectedPlaylist = selectedNode
+								.getNodePlaylist();
+						playlistgui = new PlaylistGUI();
+						//if (selectedPlaylist.getClass() == WritablePlaylist.class)
+						playlistgui.exportPlaylist(selectedPlaylist);
+						//renamePlaylistGUI((WritablePlaylist) selectedPlaylist);
 					}
 				} else {
 					int response = JOptionPane.showConfirmDialog(null,

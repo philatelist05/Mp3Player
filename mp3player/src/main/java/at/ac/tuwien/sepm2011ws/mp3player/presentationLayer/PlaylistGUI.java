@@ -180,7 +180,7 @@ public class PlaylistGUI extends JDialog implements ActionListener, Runnable {
 	/**
 	 * Prompts the user to rename the specified playlist
 	 * 
-	 * @param list
+	 * @param WritablePlaylist
 	 *            The specified Playlist object
 	 */
 	public void renamePlaylistGUI(WritablePlaylist list) {
