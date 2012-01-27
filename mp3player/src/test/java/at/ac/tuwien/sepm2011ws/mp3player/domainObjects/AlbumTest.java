@@ -11,11 +11,29 @@ public class AlbumTest {
 		Album album = new Album("test");
 		album.setYear(-1);
 	}
+	
+	@Test(expected = IllegalArgumentException.class)
+	public void testSetTitle_ShouldThrowIllegalArgumentException() {
+		Album album = new Album("test");
+		album.setTitle(null);
+	}
+	
+	public void testSetTitle_ShouldReturnTitle() {
+		Album album = new Album("test");
+		album.setTitle("Title");
+		assertEquals("Title", album.getTitle());
+	}
 
 	@Test(expected = IllegalArgumentException.class)
 	public void testSetId_ShouldThrowIllegalArgumentException() {
 		Album album = new Album("test");
 		album.setId(-1);
+	}
+	
+	public void testSetYear_ShouldReturnYear() {
+		Album album = new Album("test");
+		album.setYear(2000);
+		assertEquals(2000, album.getYear());
 	}
 
 	@Test

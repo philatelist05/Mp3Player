@@ -39,10 +39,10 @@ public class VlcjCoreInteractionService implements CoreInteractionService {
 	public VlcjCoreInteractionService(SongDao sd) {
 		this.sd = sd;
 
+		System.setProperty("jna.nosys", "true");
 		String libPath = getLibPath();
 		String pluginPath = getPluginPath();
 		System.setProperty("jna.library.path", libPath);
-		System.setProperty("jna.nosys", "true");
 
 		this.isPaused = false;
 		this.playMode = PlayMode.NORMAL;
