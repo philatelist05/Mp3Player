@@ -5,7 +5,6 @@ import java.net.SocketException;
 import java.net.UnknownHostException;
 import java.rmi.RemoteException;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 
@@ -17,15 +16,11 @@ import at.ac.tuwien.sepm2011ws.mp3player.domainObjects.MetaTags;
 import at.ac.tuwien.sepm2011ws.mp3player.domainObjects.Song;
 import at.ac.tuwien.sepm2011ws.mp3player.persistanceLayer.DataAccessException;
 import at.ac.tuwien.sepm2011ws.mp3player.persistanceLayer.SongDao;
-import at.ac.tuwien.sepm2011ws.mp3player.serviceLayer.LastFmService;
-import at.ac.tuwien.sepm2011ws.mp3player.serviceLayer.ServiceFactory;
 import at.ac.tuwien.sepm2011ws.mp3player.serviceLayer.SongInformationService;
 
 import com.chartlyrics.ChartLyricsLocator;
 import com.chartlyrics.ChartLyricsSoap;
 import com.chartlyrics.GetLyricResult;
-
-import de.umass.lastfm.Track;
 
 import entagged.audioformats.AudioFile;
 import entagged.audioformats.AudioFileIO;

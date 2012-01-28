@@ -1,21 +1,17 @@
 package at.ac.tuwien.sepm2011ws.mp3player.serviceLayer.vvv;
 
-import java.nio.channels.WritableByteChannel;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
-import de.umass.lastfm.Artist;
-import de.umass.lastfm.Track;
-
 import at.ac.tuwien.sepm2011ws.mp3player.domainObjects.Playlist;
 import at.ac.tuwien.sepm2011ws.mp3player.domainObjects.Song;
-import at.ac.tuwien.sepm2011ws.mp3player.domainObjects.WritablePlaylist;
 import at.ac.tuwien.sepm2011ws.mp3player.persistanceLayer.DataAccessException;
 import at.ac.tuwien.sepm2011ws.mp3player.serviceLayer.LastFmService;
 import at.ac.tuwien.sepm2011ws.mp3player.serviceLayer.PlaylistService;
+import de.umass.lastfm.Artist;
 
 public class VvvLastFmService implements LastFmService {
 
