@@ -116,7 +116,6 @@ public class VvvSongInformationService implements SongInformationService {
 			tags.setYear(String.valueOf(song.getYear()));
 
 			AudioFileIO.write(file);
-			sd.update(song);
 
 		} catch (CannotReadException e) {
 			throw new DataAccessException("Couldn't write ID3 tags to file \""
@@ -124,11 +123,29 @@ public class VvvSongInformationService implements SongInformationService {
 		} catch (CannotWriteException e) {
 			throw new DataAccessException("Couldn't write ID3 tags to file \""
 					+ song.getPath() + "\"");
+		} finally {
+			sd.update(song);
 		}
 	}
 
 	@Override
-	public List<MetaTags> downloadMetaTags(Song song) {
+	public List<MetaTags> downloadMetaTags(Song song)
+			throws DataAccessException {
+		if (song == null)
+			throw new IllegalArgumentException("Song must not be null");
+		if (song.getTitle() == null || song.getTitle().isEmpty())
+			throw new IllegalArgumentException(
+					"Song title must not be null or empty");
+		if (song.getArtist() == null || song.getArtist().isEmpty())
+			throw new IllegalArgumentException(
+					"Song artist must not be null or empty");
+
+		// Track correctedTrack = Track.getCorrection(song.getArtist(),
+		// song.getTitle(), LastFmService.LastFmApiKey);
+		// Collection<Track> tracks = Track.getSimilar(song.getArtist(),
+		// song.getTitle(), LastFmService.LastFmApiKey);
+		// Collection<Track> tracks2 = Track.search(song.getArtist(), song.getTitle(), 20, LastFmService.LastFmApiKey);
+
 		// TODO Auto-generated method stub
 		return null;
 	}
@@ -136,6 +153,9 @@ public class VvvSongInformationService implements SongInformationService {
 	@SuppressWarnings("deprecation")
 	@Override
 	public List<Lyric> downloadLyrics(Song song) throws DataAccessException {
+		if (song == null)
+			throw new IllegalArgumentException("Song must not be null");
+
 		String artist = song.getArtist();
 		String title = song.getTitle();
 
@@ -196,12 +216,18 @@ public class VvvSongInformationService implements SongInformationService {
 
 	@Override
 	public void setRating(Song song, double rating) throws DataAccessException {
+		if (song == null)
+			throw new IllegalArgumentException("Song must not be null");
+
 		song.setRating(rating);
 		sd.update(song);
 	}
 
 	@Override
 	public void saveLyrics(Song song) throws DataAccessException {
+		if (song == null)
+			throw new IllegalArgumentException("Song must not be null");
+
 		sd.update(song);
 	}
 

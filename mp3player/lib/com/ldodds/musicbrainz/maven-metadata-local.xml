@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<metadata>
+  <groupId>com.ldodds</groupId>
+  <artifactId>musicbrainz</artifactId>
+  <version>beta-2</version>
+  <versioning>
+    <versions>
+      <version>beta-2</version>
+    </versions>
+    <lastUpdated>20120128000752</lastUpdated>
+  </versioning>
+</metadata>

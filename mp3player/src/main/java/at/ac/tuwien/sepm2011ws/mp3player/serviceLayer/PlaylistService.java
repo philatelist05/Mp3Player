@@ -13,10 +13,10 @@ public interface PlaylistService {
 	public static final String[] PlaylistFileTypes = new String[] { "m3u" };
 
 	/**
-	 * Imports a playlist from a playlist file to the library.
+	 * Imports playlists from a playlist file to the library.
 	 * 
 	 * @param files
-	 *            Array of playlist files(m3u files)
+	 *            Array of playlist files (m3u files)
 	 * @return a playlist object corresponding to the parsed file
 	 * @throws DataAccessException 
 	 */
@@ -38,7 +38,7 @@ public interface PlaylistService {
 	 * @return all playlists currently available
 	 * @throws DataAccessException 
 	 */
-	public List<? extends Playlist> getAllPlaylists() throws DataAccessException;
+	public List<WritablePlaylist> getAllPlaylists() throws DataAccessException;
 	
 	/**
 	 * Reloads and sets the specified playlist. 
@@ -99,7 +99,7 @@ public interface PlaylistService {
 	 * @return the created playlist
 	 * @throws DataAccessException 
 	 */
-	public Playlist createPlaylist(String name) throws DataAccessException;
+	public WritablePlaylist createPlaylist(String name) throws DataAccessException;
 
 	/**
 	 * Deletes the specified playlist from the library.

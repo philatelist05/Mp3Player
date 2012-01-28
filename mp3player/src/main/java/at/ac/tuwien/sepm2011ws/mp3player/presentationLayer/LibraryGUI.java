@@ -3,7 +3,9 @@ package at.ac.tuwien.sepm2011ws.mp3player.presentationLayer;
 import java.awt.Dimension;
 import java.awt.Toolkit;
 import java.io.File;
+import java.io.IOException;
 
+import javax.swing.ImageIcon;
 import javax.swing.JDialog;
 import javax.swing.JFileChooser;
 import javax.swing.JLabel;
@@ -13,6 +15,7 @@ import net.miginfocom.swing.MigLayout;
 import javax.swing.JOptionPane;
 
 import org.apache.log4j.Logger;
+import org.springframework.core.io.ClassPathResource;
 
 import at.ac.tuwien.sepm2011ws.mp3player.persistanceLayer.DataAccessException;
 import at.ac.tuwien.sepm2011ws.mp3player.serviceLayer.PlaylistService;
@@ -37,20 +40,32 @@ public class LibraryGUI extends JDialog implements Runnable {
 	private Toolkit toolkit = Toolkit.getDefaultToolkit();
 	private Dimension dim = toolkit.getScreenSize();
 	private String command;
+	private ImageIcon loading;
+	private JLabel lblLoading = new JLabel();
 
 	private void add(String command) {
 		this.command = command;
 		new JDialog();
 
-		checkPanel = new JPanel(new MigLayout("", "[grow]", "[]"));
+		checkPanel = new JPanel(new MigLayout("", "[grow]", "[][]"));
 		checklabel = new JLabel("Adding files...");
 
 		getContentPane().add(checkPanel);
-		checkPanel.add(checklabel, "cell 0 0");
+		checkPanel.add(checklabel, "cell 0 0, align center");
+		
+		try {
+			loading = new ImageIcon(
+					new ClassPathResource("img/loading.gif").getURL());
+		} catch (IOException e) {
+			logger.error(e.getMessage());
+		}
+
+		lblLoading.setIcon(loading);
+		checkPanel.add(lblLoading, "cell 0 1, align center");
 
 		setTitle("Adding files...");
 
-		int width = 200, height = 100;
+		int width = 250, height = 80;
 		int positionX = (int) Math.round(dim.getWidth() / 2 - width / 2);
 		int positionY = (int) Math.round(dim.getHeight() / 2 - height / 2);
 
@@ -78,12 +93,16 @@ public class LibraryGUI extends JDialog implements Runnable {
 					new MainFrame("reloadsongTable");
 					logger.info("checkSongPathGUI(): Back from Mainframe");
 					
+					this.dispose();
+					
 					JOptionPane.showConfirmDialog(null, "Folder successfully added!",
 							"Add folder...",
 							JOptionPane.CLOSED_OPTION);
-				} else
+				} else {
+					this.dispose();
 					JOptionPane.showConfirmDialog(null, "No folder chosen!",
 							"No folder chosen!", JOptionPane.CLOSED_OPTION);
+				}
 			}
 
 			else if (command == "files") {
@@ -94,21 +113,25 @@ public class LibraryGUI extends JDialog implements Runnable {
 					new MainFrame("reloadsongTable");
 					logger.info("checkSongPathGUI(): Back from Mainframe");
 					
+					this.dispose();
+					
 					JOptionPane.showConfirmDialog(null, "Files(s) successfully added!",
 							"Add folder...",
 							JOptionPane.CLOSED_OPTION);
-				} else
+				} else {
+					this.dispose();
 					JOptionPane.showConfirmDialog(null, "No files chosen!",
 							"No files chosen!", JOptionPane.CLOSED_OPTION);
+				}
 			}
 			
-			else
+			else {
+				this.dispose();
 				JOptionPane.showConfirmDialog(null, "Kind of adding not chosen!",
 						"Kind of adding not chosen!", JOptionPane.CLOSED_OPTION);
-			
-			this.dispose();
-			
+			}
 		} catch (DataAccessException e) {
+			this.dispose();
 			JOptionPane.showConfirmDialog(null, e.getMessage(),
 					"Error", JOptionPane.CLOSED_OPTION);
 		}

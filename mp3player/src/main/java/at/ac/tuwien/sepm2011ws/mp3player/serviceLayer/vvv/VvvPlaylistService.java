@@ -4,8 +4,6 @@ import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.net.URI;
-import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -49,7 +47,12 @@ class VvvPlaylistService implements PlaylistService {
 
 	@Override
 	public void importPlaylist(File[] files) throws DataAccessException {
+		if (files == null)
+			throw new IllegalArgumentException("File array must not be null");
+
 		for (File file : files) {
+			if (file == null)
+				throw new IllegalArgumentException("File must not be null");
 			if (checkFileExtensionAccepted(file.getName(), PlaylistFileTypes)) {
 				importPlaylist(file);
 			}
@@ -58,6 +61,13 @@ class VvvPlaylistService implements PlaylistService {
 
 	private boolean checkFileExtensionAccepted(String fileName,
 			String[] acceptedExtensions) {
+		if (acceptedExtensions == null)
+			throw new IllegalArgumentException(
+					"The accepted extenstions must not be null");
+		if (fileName == null || fileName.isEmpty())
+			throw new IllegalArgumentException(
+					"The file name must not be null or empty");
+
 		for (int i = 0; i < acceptedExtensions.length; i++) {
 			if (acceptedExtensions[i].toLowerCase().equals(
 					getExtension(fileName).toLowerCase())) {
@@ -69,12 +79,26 @@ class VvvPlaylistService implements PlaylistService {
 	}
 
 	private String getExtension(String fileName) {
+		if (fileName == null || fileName.isEmpty())
+			throw new IllegalArgumentException(
+					"The file name must not be null or empty");
+
 		int dotIndex = fileName.lastIndexOf(".");
+		if (dotIndex == -1)
+			return "";
 		return fileName.substring(dotIndex + 1, fileName.length());
 	}
 
 	private String getBasename(String fileName) {
+		if (fileName == null || fileName.isEmpty())
+			throw new IllegalArgumentException(
+					"The file name must not be null or empty");
+
+		// TODO: Remove the leading path if there is one.
+		
 		int dotIndex = fileName.lastIndexOf(".");
+		if(dotIndex == -1)
+			return fileName;
 		return fileName.substring(0, dotIndex);
 	}
 
@@ -84,7 +108,7 @@ class VvvPlaylistService implements PlaylistService {
 
 		if (file == null || !file.isFile()) {
 			throw new IllegalArgumentException(
-					"The playlist to import is no valid file");
+					"The playlist to import is not a valid file");
 		}
 
 		// Initialize playlist
@@ -102,7 +126,7 @@ class VvvPlaylistService implements PlaylistService {
 			for (AbstractPlaylistComponent apc : plSeq.getComponents()) {
 				m = (Media) apc;
 				folder = file.getParent();
-				f = new File(m.getSource().getURI());
+				f = new File(m.getSource().getURL().getPath());
 				f = new File(folder + File.separator + f.getName());
 				addSongsToPlaylist(new File[] { f }, playlist);
 			}
@@ -110,9 +134,9 @@ class VvvPlaylistService implements PlaylistService {
 		} catch (IOException e) {
 			throw new DataAccessException("Error reading playlist "
 					+ file.getPath());
-		} catch (URISyntaxException e) {
-			throw new DataAccessException("Error reading playlist "
-					+ file.getPath());
+			// } catch (URISyntaxException e) {
+			// throw new DataAccessException("Error reading playlist "
+			// + file.getPath());
 		}
 
 		return playlist;
@@ -122,8 +146,18 @@ class VvvPlaylistService implements PlaylistService {
 	public void exportPlaylist(File file, Playlist playlist) {
 		FileWriter writer = null;
 		BufferedWriter bwriter = null;
+
+		if (file == null)
+			throw new IllegalArgumentException("The file must not be null");
+		if (playlist == null)
+			throw new IllegalArgumentException("The playlist must not be null");
+
 		try {
-			writer = new FileWriter(file.getAbsolutePath() + ".m3u");
+			String path = file.getAbsolutePath();
+			if(getExtension(path) != "m3u")
+				path += ".m3u";
+			
+			writer = new FileWriter(path);
 			bwriter = new BufferedWriter(writer);
 			for (Song song : playlist) {
 				bwriter.write(song.getPath());
@@ -145,17 +179,24 @@ class VvvPlaylistService implements PlaylistService {
 	}
 
 	@Override
-	public List<? extends Playlist> getAllPlaylists()
-			throws DataAccessException {
+	public List<WritablePlaylist> getAllPlaylists() throws DataAccessException {
 		return this.pd.readAll();
 	}
 
 	@Override
 	public void addFolder(File folder) throws DataAccessException {
+		if (folder == null || !folder.isDirectory())
+			throw new IllegalArgumentException(
+					"The folder is not a valid folder");
+
 		addSongs(traverseFolderRecursively(folder).toArray(new File[] {}));
 	}
 
 	private List<File> traverseFolderRecursively(File folder) {
+		if (folder == null || !folder.isDirectory())
+			throw new IllegalArgumentException(
+					"The folder is not a valid folder");
+
 		List<File> retFiles = new ArrayList<File>();
 
 		String[] all = folder.list();
@@ -177,12 +218,20 @@ class VvvPlaylistService implements PlaylistService {
 
 	@Override
 	public void addSongs(File[] files) throws DataAccessException {
+		if (files == null)
+			throw new IllegalArgumentException("Files must not be null");
+
 		createSongs(files);
 	}
 
 	@Override
 	public void addSongsToPlaylist(File[] files, WritablePlaylist playlist)
 			throws DataAccessException {
+		if (files == null)
+			throw new IllegalArgumentException("Files must not be null");
+		if (playlist == null)
+			throw new IllegalArgumentException("Playlist must not be null");
+
 		List<Song> list = createSongs(files);
 
 		for (Song s : list) {
@@ -193,6 +242,9 @@ class VvvPlaylistService implements PlaylistService {
 	}
 
 	private List<Song> createSongs(File[] files) throws DataAccessException {
+		if (files == null)
+			throw new IllegalArgumentException("Files must not be null");
+
 		List<Song> songs = new ArrayList<Song>();
 		Song s;
 
@@ -215,9 +267,10 @@ class VvvPlaylistService implements PlaylistService {
 	@Override
 	public void deleteSongs(List<Song> songs, WritablePlaylist playlist)
 			throws DataAccessException {
-		if (songs == null || playlist == null)
-			throw new IllegalArgumentException(
-					"Song list and playlist must not be null");
+		if (songs == null)
+			throw new IllegalArgumentException("The song list must not be null");
+		if (playlist == null)
+			throw new IllegalArgumentException("The playlist must not be null");
 
 		if (songs.size() > 0) {
 			for (Iterator<Song> iterator = playlist.iterator(); iterator
@@ -234,6 +287,10 @@ class VvvPlaylistService implements PlaylistService {
 	@Override
 	public WritablePlaylist createPlaylist(String name)
 			throws DataAccessException {
+		if (name == null || name.isEmpty())
+			throw new IllegalArgumentException(
+					"The name of the playlist must not be null or empty");
+
 		WritablePlaylist playlist = new WritablePlaylist(name);
 		this.pd.create(playlist);
 		return playlist;
@@ -242,18 +299,31 @@ class VvvPlaylistService implements PlaylistService {
 	@Override
 	public void deletePlaylist(WritablePlaylist playlist)
 			throws DataAccessException {
+		if (playlist == null)
+			throw new IllegalArgumentException("The playlist must not be null");
+
 		this.pd.delete(playlist.getId());
 	}
 
 	@Override
 	public void updatePlaylist(WritablePlaylist playlist)
 			throws DataAccessException {
+		if (playlist == null)
+			throw new IllegalArgumentException("The playlist must not be null");
+
 		this.pd.update(playlist);
 	}
 
 	@Override
 	public void renamePlaylist(WritablePlaylist playlist, String name)
 			throws DataAccessException {
+		if (name == null || name.isEmpty())
+			throw new IllegalArgumentException(
+					"The new name of the playlist must not be null or empty");
+		if (playlist == null)
+			throw new IllegalArgumentException("The playlist must not be null");
+
+		playlist.setTitle(name);
 		pd.rename(playlist, name);
 	}
 
@@ -275,6 +345,10 @@ class VvvPlaylistService implements PlaylistService {
 
 	@Override
 	public Playlist globalSearch(String pattern) throws DataAccessException {
+		if (pattern == null || pattern.isEmpty())
+			throw new IllegalArgumentException(
+					"The search pattern must not be null or empty");
+
 		Playlist plst = getLibrary();
 
 		for (Iterator<Song> iterator = plst.iterator(); iterator.hasNext();) {
@@ -311,8 +385,13 @@ class VvvPlaylistService implements PlaylistService {
 
 	@Override
 	public void reloadPlaylist(WritablePlaylist p) throws DataAccessException {
+		if (p == null)
+			throw new IllegalArgumentException("The playlist must not be null");
+
 		Playlist np = pd.read(p.getId());
+
 		p.setTitle(np.getTitle());
+		p.clear();
 		p.addAll(np);
 	}
 }

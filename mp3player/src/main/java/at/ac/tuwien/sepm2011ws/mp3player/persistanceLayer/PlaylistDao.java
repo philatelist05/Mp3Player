@@ -17,7 +17,7 @@ public interface PlaylistDao {
 	public void create(WritablePlaylist p) throws DataAccessException;
 
 	/**
-	 * Updates a playlist.
+	 * Updates a playlist but doesn't rename it.
 	 * 
 	 * @param p
 	 *            The playlist with the new values and the id of the old
@@ -51,7 +51,7 @@ public interface PlaylistDao {
 	 * @return A list of all playlists from the DB.
 	 * @throws DataAccessException
 	 */
-	public List<? extends Playlist> readAll() throws DataAccessException;
+	public List<WritablePlaylist> readAll() throws DataAccessException;
 
 	/**
 	 * Only renames the playlist to the new name in opposition to

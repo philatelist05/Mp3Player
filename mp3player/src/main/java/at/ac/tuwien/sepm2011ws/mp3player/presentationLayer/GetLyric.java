@@ -9,9 +9,11 @@ import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JDialog;
@@ -22,6 +24,7 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import net.miginfocom.swing.MigLayout;
 import org.apache.log4j.Logger;
+import org.springframework.core.io.ClassPathResource;
 
 import at.ac.tuwien.sepm2011ws.mp3player.domainObjects.Lyric;
 import at.ac.tuwien.sepm2011ws.mp3player.domainObjects.MetaTags;
@@ -61,6 +64,8 @@ public class GetLyric extends JDialog implements ActionListener, ItemListener,
 	private JScrollPane lyricPane = new JScrollPane(lyricEditorPane);
 	private JButton btnCancel = new JButton("Cancel");
 	private JButton btnSave = new JButton("Save");
+	private ImageIcon loading;
+	private JLabel lblLoading = new JLabel();
 
 	public Song getSong() {
 		return song;
@@ -155,7 +160,7 @@ public class GetLyric extends JDialog implements ActionListener, ItemListener,
 		getPanel.add(lblLyric, "cell 0 1");
 
 		lyricBox.addItemListener(this);
-		getPanel.add(lyricBox, "cell 1 1");
+		getPanel.add(lyricBox, "cell 1 1, growx");
 
 		lyricPane
 				.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
@@ -213,15 +218,25 @@ public class GetLyric extends JDialog implements ActionListener, ItemListener,
 	private void checkTags() {
 		checkDialog = new JDialog();
 
-		checkPanel = new JPanel(new MigLayout("", "[grow]", "[]"));
+		checkPanel = new JPanel(new MigLayout("", "[grow]", "[][]"));
 		checklabel = new JLabel("Searching for Lyrics...");
 
 		checkDialog.getContentPane().add(checkPanel);
-		checkPanel.add(checklabel, "cell 0 0");
+		checkPanel.add(checklabel, "cell 0 0, align center");
+
+		try {
+			loading = new ImageIcon(
+					new ClassPathResource("img/loading.gif").getURL());
+		} catch (IOException e) {
+			logger.error(e.getMessage());
+		}
+
+		lblLoading.setIcon(loading);
+		checkPanel.add(lblLoading, "cell 0 1, align center");
 
 		checkDialog.setTitle("Checking for Lyrics...");
 
-		int width = 200, height = 100;
+		int width = 250, height = 80;
 		int positionX = (int) Math.round(dim.getWidth() / 2 - width / 2);
 		int positionY = (int) Math.round(dim.getHeight() / 2 - height / 2);
 
@@ -242,6 +257,7 @@ public class GetLyric extends JDialog implements ActionListener, ItemListener,
 		if (mtw != null) {
 			if (mtw.getLyric() != null) {
 				lyricEditorPane.setText(mtw.getLyric().getText());
+				lyricEditorPane.setCaretPosition(0);
 			} else
 				lyricEditorPane.setText("");
 		} else
@@ -259,6 +275,7 @@ public class GetLyric extends JDialog implements ActionListener, ItemListener,
 		try {
 			lyricList = sis.downloadLyrics(song);
 		} catch (DataAccessException e) {
+			checkDialog.dispose();
 			JOptionPane.showConfirmDialog(null, e.getMessage(), "Error",
 					JOptionPane.CLOSED_OPTION);
 		}
@@ -270,18 +287,21 @@ public class GetLyric extends JDialog implements ActionListener, ItemListener,
 							"chartLyric: #" + i));
 					i++;
 				}
+				checkDialog.dispose();
 			}
 
-			else
+			else {
+				checkDialog.dispose();
 				JOptionPane.showConfirmDialog(null, "No Lyrics found!",
 						"Chartlyric...", JOptionPane.CLOSED_OPTION);
+			}
 		}
 
-		else
+		else {
+			checkDialog.dispose();
 			JOptionPane.showConfirmDialog(null, "No Lyrics found!",
 					"Chartlyric...", JOptionPane.CLOSED_OPTION);
-
-		checkDialog.dispose();
+		}
 		// fred.stop();
 
 		// Thread.sleep(2000);

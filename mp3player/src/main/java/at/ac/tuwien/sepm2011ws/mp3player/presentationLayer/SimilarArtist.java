@@ -10,10 +10,12 @@ import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
 import javax.swing.DefaultListModel;
+import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JDialog;
 import javax.swing.JLabel;
@@ -29,9 +31,11 @@ import javax.swing.event.ListSelectionListener;
 import net.miginfocom.swing.MigLayout;
 
 import org.apache.log4j.Logger;
+import org.springframework.core.io.ClassPathResource;
 
 import at.ac.tuwien.sepm2011ws.mp3player.domainObjects.Playlist;
 import at.ac.tuwien.sepm2011ws.mp3player.domainObjects.Song;
+import at.ac.tuwien.sepm2011ws.mp3player.persistanceLayer.DataAccessException;
 import at.ac.tuwien.sepm2011ws.mp3player.serviceLayer.LastFmService;
 import at.ac.tuwien.sepm2011ws.mp3player.serviceLayer.ServiceFactory;
 
@@ -68,12 +72,15 @@ public class SimilarArtist extends JDialog implements ActionListener, ListSelect
 			"Rating", "Playcount" }, 0);
 	private JTable songTable = new JTable(songmodel);
 	private JScrollPane songPane = new JScrollPane(songTable);
+
 	private JSplitPane jSongPaneSplit = new JSplitPane();
 	
-	
-	
 	private JButton btnOK = new JButton("OK");
+	private JButton btnCancel = new JButton("Cancel");
+
 	private LastFmService lfms;
+	private ImageIcon loading;
+	private JLabel lblLoading = new JLabel();
 
 	public SimilarArtist(ArrayList<Song> songlist) {
 		if (!songlist.isEmpty()) {
@@ -133,10 +140,17 @@ public class SimilarArtist extends JDialog implements ActionListener, ListSelect
 		
 		//similarPanel.add(songPane, "cell 1 2, grow");
 
+
 		similarPanel.add(btnOK, "cell 1 3, alignx right, aligny center");
 		btnOK.addActionListener(this);
 		btnOK.setActionCommand("ok");
 		artistList.addListSelectionListener(this);
+
+		similarPanel.add(btnCancel, "cell 1 3, alignx right, aligny center");
+		btnCancel.addActionListener(this);
+		btnCancel.setActionCommand("cancel");
+
+
 		logger.info("SimilarArtist(): successfully initialized components");
 
 		addComponentListener(new ComponentAdapter() {
@@ -190,11 +204,21 @@ public class SimilarArtist extends JDialog implements ActionListener, ListSelect
 		checklabel = new JLabel("Searching for similar Artists...");
 
 		checkDialog.getContentPane().add(checkPanel);
-		checkPanel.add(checklabel, "cell 0 0");
+		checkPanel.add(checklabel, "cell 0 0, align center");
+
+		try {
+			loading = new ImageIcon(
+					new ClassPathResource("img/loading.gif").getURL());
+		} catch (IOException e) {
+			logger.error(e.getMessage());
+		}
+
+		lblLoading.setIcon(loading);
+		checkPanel.add(lblLoading, "cell 0 1, align center");
 
 		checkDialog.setTitle("Searching for similar Artists...");
 
-		int width = 200, height = 100;
+		int width = 250, height = 80;
 		int positionX = (int) Math.round(dim.getWidth() / 2 - width / 2);
 		int positionY = (int) Math.round(dim.getHeight() / 2 - height / 2);
 
@@ -213,29 +237,41 @@ public class SimilarArtist extends JDialog implements ActionListener, ListSelect
 
 	@Override
 	public void run() {
-		List<Playlist> similarArtists;
+		List<Playlist> similarArtists = null;
 
 		logger.info("SimilarArtist(): Got into thread");
 		logger.info("SimilarArtist(): get List of playlists (similar artists and the best rated/most playled songs in the library)");
-	
-		similarArtists = lfms.getSimilarArtistsWithSongs(song);
+
+		try {
+			similarArtists = lfms.getSimilarArtistsWithSongs(song);
+		} catch (DataAccessException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
+
 
 		if (similarArtists != null) {
 			if (similarArtists.size() > 0) {
 				for (Playlist x : similarArtists) {
 					artistModel.addElement(x);
 				}
+				
+				checkDialog.dispose();
 			}
 
-			else
+			else {
+				checkDialog.dispose();
 				JOptionPane.showConfirmDialog(null,
 						"No similar Artists found!", "LastFM...",
 						JOptionPane.CLOSED_OPTION);
+			}
 		}
 
-		else
+		else {
+			checkDialog.dispose();
 			JOptionPane.showConfirmDialog(null, "No similar Artists found!",
 					"LastFM...", JOptionPane.CLOSED_OPTION);
+		}
 
 		/*
 		 * if (artistModel.getSize() > 0) artistList.setSelectedIndex(0);
@@ -245,15 +281,15 @@ public class SimilarArtist extends JDialog implements ActionListener, ListSelect
 			// Just for testing ;)
 			Thread.sleep(2000);
 		} catch (InterruptedException e) {
+			checkDialog.dispose();
 			JOptionPane.showConfirmDialog(null, e.getMessage(),
 					"Error", JOptionPane.CLOSED_OPTION);
 		}
-		checkDialog.dispose();
 	}
 
 	@Override
 	public void actionPerformed(ActionEvent e) {
-		if (e.getActionCommand().equals("ok")) {
+		if (e.getActionCommand().equals("cancel")) {
 			dispose();
 		}
 	}

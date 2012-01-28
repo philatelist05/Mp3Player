@@ -12,9 +12,11 @@ import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JDialog;
@@ -24,6 +26,7 @@ import javax.swing.JPanel;
 import javax.swing.JTextField;
 import net.miginfocom.swing.MigLayout;
 import org.apache.log4j.Logger;
+import org.springframework.core.io.ClassPathResource;
 
 import at.ac.tuwien.sepm2011ws.mp3player.domainObjects.Album;
 import at.ac.tuwien.sepm2011ws.mp3player.domainObjects.MetaTags;
@@ -72,6 +75,8 @@ public class GetMetaTag extends JDialog implements ActionListener,
 	private JLabel checklabel;
 	private Thread fred;
 	JDialog checkDialog;
+	private ImageIcon loading;
+	private JLabel lblLoading = new JLabel();
 
 	protected Song getSong() {
 		return song;
@@ -245,7 +250,7 @@ public class GetMetaTag extends JDialog implements ActionListener,
 					else
 						song.getAlbum().setTitle("untitled");
 				}
-				
+
 				else {
 					if (textAlbum.getText().trim().length() > 0)
 						song.setAlbum(new Album(textAlbum.getText().trim()));
@@ -255,7 +260,7 @@ public class GetMetaTag extends JDialog implements ActionListener,
 
 				if (textArtist.getText().trim().length() > 0)
 					song.setArtist(textArtist.getText().trim());
-				
+
 				if (textTitle.getText().trim().length() > 0)
 					song.setTitle(textTitle.getText().trim());
 
@@ -265,8 +270,8 @@ public class GetMetaTag extends JDialog implements ActionListener,
 				try {
 					sis.setMetaTags(song);
 				} catch (DataAccessException e1) {
-					// TODO Auto-generated catch block
-					e1.printStackTrace();
+					JOptionPane.showConfirmDialog(null, e1.getMessage(),
+							"Error", JOptionPane.CLOSED_OPTION);
 				}
 
 				dispose();
@@ -291,15 +296,25 @@ public class GetMetaTag extends JDialog implements ActionListener,
 	private void checkTags() {
 		checkDialog = new JDialog();
 
-		checkPanel = new JPanel(new MigLayout("", "[grow]", "[]"));
+		checkPanel = new JPanel(new MigLayout("", "[grow]", "[][]"));
 		checklabel = new JLabel("Searching for Meta-Tags...");
 
 		checkDialog.getContentPane().add(checkPanel);
-		checkPanel.add(checklabel, "cell 0 0");
+		checkPanel.add(checklabel, "cell 0 0, align center");
+
+		try {
+			loading = new ImageIcon(
+					new ClassPathResource("img/loading.gif").getURL());
+		} catch (IOException e) {
+			logger.error(e.getMessage());
+		}
+
+		lblLoading.setIcon(loading);
+		checkPanel.add(lblLoading, "cell 0 1, align center");
 
 		checkDialog.setTitle("Searching for Meta-Tags...");
 
-		int width = 200, height = 100;
+		int width = 250, height = 80;
 		int positionX = (int) Math.round(dim.getWidth() / 2 - width / 2);
 		int positionY = (int) Math.round(dim.getHeight() / 2 - height / 2);
 
@@ -345,7 +360,14 @@ public class GetMetaTag extends JDialog implements ActionListener,
 		logger.info("GetMetaTag(): Got into thread");
 		// try {
 		int i = 0;
-		List<MetaTags> tagList = sis.downloadMetaTags(song);
+		List<MetaTags> tagList = null;
+		try {
+			tagList = sis.downloadMetaTags(song);
+		} catch (DataAccessException e) {
+			checkDialog.dispose();
+			JOptionPane.showConfirmDialog(null, e.getMessage(), "Error",
+					JOptionPane.CLOSED_OPTION);
+		}
 
 		if (tagList != null) {
 			if (tagList.size() > 0) {
@@ -354,19 +376,23 @@ public class GetMetaTag extends JDialog implements ActionListener,
 							+ i));
 					i++;
 				}
+				checkDialog.dispose();
 			}
 
-			else
+			else {
+				checkDialog.dispose();
 				JOptionPane.showConfirmDialog(null, "No Metatags found!",
 						"LastFM...", JOptionPane.CLOSED_OPTION);
+			}
 		}
 
-		else
+		else {
+			checkDialog.dispose();
 			JOptionPane.showConfirmDialog(null, "No Metatags found!",
 					"LastFM...", JOptionPane.CLOSED_OPTION);
+		}
 
 		// Thread.sleep(2000);
-		checkDialog.dispose();
 		// fred.stop();
 		// } catch (InterruptedException e) {
 		// e.printStackTrace();

@@ -42,7 +42,8 @@ class DbPlaylistDao implements PlaylistDao {
 					.prepareStatement("SELECT name FROM playlist WHERE id=?;");
 			readContainsStmt = con
 					.prepareStatement("SELECT song FROM contains WHERE playlist=? ORDER BY position;");
-			readAllStmt = con.prepareStatement("SELECT id FROM playlist;");
+			readAllStmt = con
+					.prepareStatement("SELECT id FROM playlist ORDER BY id;");
 			updateStmt = con.prepareStatement("UPDATE playlist SET "
 					+ "name=? WHERE id = ?;");
 			deleteContainsStmt = con
@@ -61,7 +62,8 @@ class DbPlaylistDao implements PlaylistDao {
 		ResultSet result = null;
 
 		if (playlist.getTitle() == null)
-			throw new IllegalArgumentException("Title of Playlist must not be null");
+			throw new IllegalArgumentException(
+					"Title of Playlist must not be null");
 
 		try {
 			createStmt.setString(1, playlist.getTitle());
@@ -85,7 +87,8 @@ class DbPlaylistDao implements PlaylistDao {
 				}
 
 			} else {
-				throw new DataAccessException("Error creating playlist in database");
+				throw new DataAccessException(
+						"Error creating playlist in database");
 			}
 		} catch (SQLException e) {
 			throw new DataAccessException("Error creating playlist in database");
@@ -104,20 +107,20 @@ class DbPlaylistDao implements PlaylistDao {
 		if (playlist == null) {
 			throw new IllegalArgumentException("Playlist must not be null");
 		}
-		
+
 		try {
 			updateStmt.setString(1, playlist.getTitle());
 			updateStmt.setInt(2, playlist.getId());
 			updateStmt.executeUpdate();
-			
+
 			deleteContainsStmt.setInt(1, playlist.getId());
 			deleteContainsStmt.executeUpdate();
 			int i = 0;
-			
+
 			for (Song s : playlist) {
 				// Update song
 				// sd.update(s); Should not be necessary
-				
+
 				// Recreate playlist song association
 				createContainsStmt.setInt(1, i);
 				createContainsStmt.setInt(2, playlist.getId());
@@ -125,8 +128,6 @@ class DbPlaylistDao implements PlaylistDao {
 				createContainsStmt.executeUpdate();
 				i++;
 			}
-			
-			
 
 		} catch (SQLException e) {
 			throw new DataAccessException("Error updating playlist in database");
@@ -222,7 +223,8 @@ class DbPlaylistDao implements PlaylistDao {
 	}
 
 	@Override
-	public void rename(WritablePlaylist p, String name) throws DataAccessException {
+	public void rename(WritablePlaylist p, String name)
+			throws DataAccessException {
 
 		if (p == null || name == null || name.isEmpty()) {
 			throw new IllegalArgumentException(
