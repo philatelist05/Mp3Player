@@ -30,6 +30,8 @@ import javax.swing.JTable;
 import javax.swing.ListSelectionModel;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
+import javax.swing.event.TableModelEvent;
+import javax.swing.event.TableModelListener;
 import javax.swing.table.TableColumn;
 
 import net.miginfocom.swing.MigLayout;
@@ -47,7 +49,7 @@ import at.ac.tuwien.sepm2011ws.mp3player.serviceLayer.ServiceFactory;
 import at.ac.tuwien.sepm2011ws.mp3player.serviceLayer.SettingsService;
 import at.ac.tuwien.sepm2011ws.mp3player.serviceLayer.SongInformationService;
 
-public class SimilarArtist extends JDialog implements ActionListener, ListSelectionListener, Runnable {
+public class SimilarArtist extends JDialog implements ActionListener, ListSelectionListener, TableModelListener, Runnable {
 
 	/**
 	 * 
@@ -84,15 +86,14 @@ public class SimilarArtist extends JDialog implements ActionListener, ListSelect
 	private JSplitPane jSongPaneSplit = new JSplitPane();
 	
 	private JButton btnOK = new JButton("OK");
-	private JButton btnCancel = new JButton("Cancel");
+//	private JButton btnCancel = new JButton("Cancel");
 
 	private LastFmService lfms;
 	private ImageIcon loading;
 	private JLabel lblLoading = new JLabel();
 	
-	private PlaylistService ps;
 	private CoreInteractionService cis;
-	private SettingsService ss;
+
 	private SongInformationService sis;
 	private Playlist playlistMainFrame;
 	private SongTableRendererSimilarArtist songrenderer;
@@ -107,8 +108,6 @@ public class SimilarArtist extends JDialog implements ActionListener, ListSelect
 			ServiceFactory sf = ServiceFactory.getInstance();
 			lfms = sf.getLastFmService();
 			cis = sf.getCoreInteractionService();
-			ps = sf.getPlaylistService();
-			ss = sf.getSettingsService();
 			sis = sf.getSongInformationService();
 			playlistMainFrame = cis.getCurrentPlaylist();
 			
@@ -175,7 +174,7 @@ public class SimilarArtist extends JDialog implements ActionListener, ListSelect
 		TableColumn col = songTable.getColumnModel().getColumn(7);
 		int widthtable = 200;
 		col.setPreferredWidth(widthtable);
-		
+		songTable.getModel().addTableModelListener(this);
 		songTable.addMouseListener(new MouseAdapter() {
 			public void mouseClicked(MouseEvent e) {
 				if (e.getClickCount() == 2) {
@@ -196,9 +195,9 @@ public class SimilarArtist extends JDialog implements ActionListener, ListSelect
 		btnOK.setActionCommand("ok");
 		artistList.addListSelectionListener(this);
 
-		similarPanel.add(btnCancel, "cell 1 3, alignx right, aligny center");
+	/*	similarPanel.add(btnCancel, "cell 1 3, alignx right, aligny center");
 		btnCancel.addActionListener(this);
-		btnCancel.setActionCommand("cancel");
+		btnCancel.setActionCommand("cancel");*/
 
 
 		logger.info("SimilarArtist(): successfully initialized components");
@@ -295,6 +294,8 @@ public class SimilarArtist extends JDialog implements ActionListener, ListSelect
 
 		try {
 			similarArtists = lfms.getSimilarArtistsWithSongs(song);
+			logger.info(similarArtists.get(0).getTitle());
+			
 		} catch (DataAccessException e1) {
 			// TODO Auto-generated catch block
 			e1.printStackTrace();
@@ -306,7 +307,7 @@ public class SimilarArtist extends JDialog implements ActionListener, ListSelect
 				for (Playlist x : similarArtists) {
 					artistModel.addElement(x);
 				}
-				
+				artistList.repaint();
 				checkDialog.dispose();
 			}
 
@@ -340,7 +341,7 @@ public class SimilarArtist extends JDialog implements ActionListener, ListSelect
 
 	@Override
 	public void actionPerformed(ActionEvent e) {
-		if (e.getActionCommand().equals("cancel")) {
+		if (e.getActionCommand().equals("ok")) {
 			dispose();
 		}
 	}
@@ -348,8 +349,6 @@ public class SimilarArtist extends JDialog implements ActionListener, ListSelect
 	@Override
 	public void valueChanged(ListSelectionEvent e) {
 
-		
-		logger.info("valueChanged");
 		if ( e.getSource() instanceof JList)
 		{
 			JList jl = new JList();
@@ -386,12 +385,29 @@ public class SimilarArtist extends JDialog implements ActionListener, ListSelect
 		}
 	}
 
+	@Override
+	public void tableChanged(TableModelEvent e) {
+		
+		int column = songTable.getSelectedColumn();
+		int row = songTable.getSelectedRow();
+		String Rating;
+		
 
-	// TODO for Johannes: implement itemListener for selection change in
-	// songList (into initialize())
-	// TODO for Johannes: implement JSplitPane
-	// TODO for Johannes: implement Method for filling songTable with songs from
-	// playlist object in selected songList item
-	// TODO for Johannes: implement songTable (full)
-	// TODO for Johannes: implement play Song on double click
+		 
+		if (e.getColumn() == 7) {
+
+
+			Rating = songTable.getValueAt(row, column).toString();
+			double rg = Double.parseDouble(Rating);
+			try {
+				sis.setRating(cis.getCurrentPlaylist().get(row), rg);
+			} catch (DataAccessException e1) {
+				JOptionPane.showConfirmDialog(null, "No Song found!",
+						"No Song found!" + e1, JOptionPane.CLOSED_OPTION);
+
+			}
+
+		}
+	}
+
 }
