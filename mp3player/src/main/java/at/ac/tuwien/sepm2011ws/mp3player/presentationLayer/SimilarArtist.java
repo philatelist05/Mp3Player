@@ -21,7 +21,10 @@ import javax.swing.JList;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
+import javax.swing.JSplitPane;
 import javax.swing.JTable;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
 
 import net.miginfocom.swing.MigLayout;
 
@@ -32,7 +35,7 @@ import at.ac.tuwien.sepm2011ws.mp3player.domainObjects.Song;
 import at.ac.tuwien.sepm2011ws.mp3player.serviceLayer.LastFmService;
 import at.ac.tuwien.sepm2011ws.mp3player.serviceLayer.ServiceFactory;
 
-public class SimilarArtist extends JDialog implements ActionListener, Runnable {
+public class SimilarArtist extends JDialog implements ActionListener, ListSelectionListener, Runnable {
 
 	/**
 	 * 
@@ -65,6 +68,10 @@ public class SimilarArtist extends JDialog implements ActionListener, Runnable {
 			"Rating", "Playcount" }, 0);
 	private JTable songTable = new JTable(songmodel);
 	private JScrollPane songPane = new JScrollPane(songTable);
+	private JSplitPane jSongPaneSplit = new JSplitPane();
+	
+	
+	
 	private JButton btnOK = new JButton("OK");
 	private LastFmService lfms;
 
@@ -117,17 +124,19 @@ public class SimilarArtist extends JDialog implements ActionListener, Runnable {
 		similarPanel.add(lblArtist, "cell 0 0 2 1, alignx left");
 		similarPanel.add(lblArtistValue, "cell 0 0 2 1, alignx left");
 		similarPanel.add(lblSimilarArtist, "cell 0 1");
-		similarPanel.add(lblSimilarSong, "cell 1 1");
-
-		similarPanel.add(artistPane, "cell 0 2, growy");
-
+		similarPanel.add(lblSimilarSong, "cell 2 1");
 		songPane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
-		similarPanel.add(songPane, "cell 1 2, grow");
+		jSongPaneSplit.setLeftComponent(artistPane);
+		jSongPaneSplit.setDividerLocation(100);
+		jSongPaneSplit.setRightComponent(songPane);
+		similarPanel.add(jSongPaneSplit, "cell 0 2 3 0, grow");
+		
+		//similarPanel.add(songPane, "cell 1 2, grow");
 
 		similarPanel.add(btnOK, "cell 1 3, alignx right, aligny center");
 		btnOK.addActionListener(this);
 		btnOK.setActionCommand("ok");
-
+		artistList.addListSelectionListener(this);
 		logger.info("SimilarArtist(): successfully initialized components");
 
 		addComponentListener(new ComponentAdapter() {
@@ -208,7 +217,7 @@ public class SimilarArtist extends JDialog implements ActionListener, Runnable {
 
 		logger.info("SimilarArtist(): Got into thread");
 		logger.info("SimilarArtist(): get List of playlists (similar artists and the best rated/most playled songs in the library)");
-
+	
 		similarArtists = lfms.getSimilarArtistsWithSongs(song);
 
 		if (similarArtists != null) {
@@ -247,6 +256,12 @@ public class SimilarArtist extends JDialog implements ActionListener, Runnable {
 		if (e.getActionCommand().equals("ok")) {
 			dispose();
 		}
+	}
+
+	@Override
+	public void valueChanged(ListSelectionEvent arg0) {
+		// TODO Auto-generated method stub
+		
 	}
 
 	// TODO for Johannes: implement itemListener for selection change in

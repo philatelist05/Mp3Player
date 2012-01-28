@@ -3,9 +3,14 @@ package at.ac.tuwien.sepm2011ws.mp3player.presentationLayer;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Font;
+import java.io.IOException;
 
+import javax.swing.Icon;
+import javax.swing.ImageIcon;
 import javax.swing.JTable;
 import javax.swing.table.DefaultTableCellRenderer;
+
+import org.springframework.core.io.ClassPathResource;
 
 import at.ac.tuwien.sepm2011ws.mp3player.domainObjects.Playlist;
 
@@ -17,12 +22,21 @@ public class SongTableRenderer extends DefaultTableCellRenderer {
 	/**
 	 * 
 	 */
+	
+	private Icon nothing; 
+	
 	private static final long serialVersionUID = 1L;
 
 	private static Playlist curPlaylist;
 
 	public SongTableRenderer(Playlist currentPlaylist) {
 		curPlaylist = currentPlaylist;
+		try {
+			nothing = new ImageIcon(new ClassPathResource("img/noting_found.gif").getURL());
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 
 	public void setPlaylist(Playlist list) {
@@ -61,7 +75,6 @@ public class SongTableRenderer extends DefaultTableCellRenderer {
 		 * rating.addPropertyChangeListener(new PropertyChangeListener() {
 		 * 
 		 * @Override public void propertyChange(PropertyChangeEvent arg0) { //
-		 * TODO Auto-generated method stub System.out.println("Change");
 		 * 
 		 * }
 		 * 
@@ -82,6 +95,7 @@ public class SongTableRenderer extends DefaultTableCellRenderer {
 		 * return component; //table.setValueAt(rating, row, 7);
 		 * //table.add(rating);
 		 */
+		
 		if (row % 2 == 0) {
 
 			setBackground(Color.white);
@@ -97,11 +111,13 @@ public class SongTableRenderer extends DefaultTableCellRenderer {
 		// if(cis.getCurrentPlaylist().equals(curPlaylist))
 		// if (cis.getCurrentSongIndex() > -1)
 		{
-			// if
-			// (table.getRowSorter().convertRowIndexToView(cis.getCurrentSongIndex())
-			// == row
-			// )
-			if (cis.getCurrentSongIndex() == row) {
+			/*if (cis.getCurrentSongIndex() > -1)
+			if
+			 (table.getRowSorter().convertRowIndexToView(cis.getCurrentSongIndex())
+			 == row
+			 )*/
+			if (cis.getCurrentSongIndex() == row) 
+			{
 				// System.out.println(table.getRowSorter().convertRowIndexToView(cis.getCurrentSongIndex()));
 				component.setFont(component.getFont().deriveFont(Font.BOLD));
 			}
