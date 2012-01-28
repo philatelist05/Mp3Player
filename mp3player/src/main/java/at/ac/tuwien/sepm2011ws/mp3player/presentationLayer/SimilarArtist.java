@@ -111,8 +111,8 @@ public class SimilarArtist extends JDialog implements ActionListener, ListSelect
 			sis = sf.getSongInformationService();
 			playlistMainFrame = cis.getCurrentPlaylist();
 			
-			width = 650;
-			height = 360;
+			width = 850;
+			height = 560;
 			positionX = (int) Math.round(dim.getWidth() / 2 - width / 2);
 			positionY = (int) Math.round(dim.getHeight() / 2 - height / 2);
 			setBounds(positionX, positionY, width, height);
@@ -172,7 +172,7 @@ public class SimilarArtist extends JDialog implements ActionListener, ListSelect
 		songTable.setRowSelectionAllowed(true);
 		songTable.setRowHeight(25);
 		TableColumn col = songTable.getColumnModel().getColumn(7);
-		int widthtable = 200;
+		int widthtable = 110;
 		col.setPreferredWidth(widthtable);
 		songTable.getModel().addTableModelListener(this);
 		songTable.addMouseListener(new MouseAdapter() {
@@ -295,7 +295,7 @@ public class SimilarArtist extends JDialog implements ActionListener, ListSelect
 
 		try {
 			similarArtists = lfms.getSimilarArtistsWithSongs(song);
-			// logger.info(similarArtists.get(0).getTitle());
+		
 			
 		} catch (DataAccessException e1) {
 			// TODO Auto-generated catch block
@@ -308,9 +308,11 @@ public class SimilarArtist extends JDialog implements ActionListener, ListSelect
 				for (Playlist x : similarArtists) {
 					artistModel.addElement(x);
 					try {
-						Thread.sleep(100);
+						Thread.sleep(50);
 					} catch (InterruptedException e) {
-						e.printStackTrace();
+						checkDialog.dispose();
+						JOptionPane.showConfirmDialog(null, e.getMessage(),
+								"Error", JOptionPane.CLOSED_OPTION);
 					}
 				}
 				artistList.repaint();
@@ -335,14 +337,14 @@ public class SimilarArtist extends JDialog implements ActionListener, ListSelect
 		 * if (artistModel.getSize() > 0) artistList.setSelectedIndex(0);
 		 */
 
-		try {
+	/*	try {
 			// Just for testing ;)
 			Thread.sleep(2000);
 		} catch (InterruptedException e) {
 			checkDialog.dispose();
 			JOptionPane.showConfirmDialog(null, e.getMessage(),
 					"Error", JOptionPane.CLOSED_OPTION);
-		}
+		}*/
 	}
 
 	@Override
