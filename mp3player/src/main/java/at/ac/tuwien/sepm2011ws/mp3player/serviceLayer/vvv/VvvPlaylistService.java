@@ -94,7 +94,11 @@ class VvvPlaylistService implements PlaylistService {
 			throw new IllegalArgumentException(
 					"The file name must not be null or empty");
 
+		// TODO: Remove the leading path if there is one.
+		
 		int dotIndex = fileName.lastIndexOf(".");
+		if(dotIndex == -1)
+			return fileName;
 		return fileName.substring(0, dotIndex);
 	}
 
