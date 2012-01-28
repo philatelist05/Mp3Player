@@ -923,12 +923,6 @@ public class MainFrame extends JFrame implements ActionListener, Runnable,
 
 		logger.info("Components successfully initialized");
 
-		// TODO for Johannes: test for SimilarArtist
-
-	//	 ArrayList<Song> list = new ArrayList<Song>();
-		// list.add((Song) songTable.getValueAt(3, 0));
-	//	 list.add((Song) songTable.getValueAt(4, 0));
-	//	 new SimilarArtist(list);
 
 	}
 
@@ -1221,7 +1215,7 @@ public class MainFrame extends JFrame implements ActionListener, Runnable,
 		progress.setPaintTicks(true);
 		progress.setSnapToTicks(false);
 		progress.putClientProperty("JSlider.isFilled", Boolean.TRUE);
-
+		
 
 
 		progress.addMouseListener(new MouseAdapter() {

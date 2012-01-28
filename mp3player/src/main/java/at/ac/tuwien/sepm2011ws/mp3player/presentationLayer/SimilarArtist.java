@@ -280,7 +280,8 @@ public class SimilarArtist extends JDialog implements ActionListener, ListSelect
 		fred = new Thread(this);
 		fred.start();
 		logger.info("SimilarArtist(): Started Thread");
-
+		//artistList.revalidate();
+		
 		checkDialog.setVisible(true);
 		logger.info("SimilarArtist(): Made checkSimilarArtistDialog visible");
 	}
@@ -294,7 +295,7 @@ public class SimilarArtist extends JDialog implements ActionListener, ListSelect
 
 		try {
 			similarArtists = lfms.getSimilarArtistsWithSongs(song);
-			logger.info(similarArtists.get(0).getTitle());
+			// logger.info(similarArtists.get(0).getTitle());
 			
 		} catch (DataAccessException e1) {
 			// TODO Auto-generated catch block
@@ -306,6 +307,11 @@ public class SimilarArtist extends JDialog implements ActionListener, ListSelect
 			if (similarArtists.size() > 0) {
 				for (Playlist x : similarArtists) {
 					artistModel.addElement(x);
+					try {
+						Thread.sleep(100);
+					} catch (InterruptedException e) {
+						e.printStackTrace();
+					}
 				}
 				artistList.repaint();
 				checkDialog.dispose();
