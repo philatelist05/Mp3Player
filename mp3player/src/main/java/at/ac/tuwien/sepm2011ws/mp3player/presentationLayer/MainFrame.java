@@ -925,10 +925,10 @@ public class MainFrame extends JFrame implements ActionListener, Runnable,
 
 		// TODO for Johannes: test for SimilarArtist
 
-		 ArrayList<Song> list = new ArrayList<Song>();
-		 list.add((Song) songTable.getValueAt(3, 0));
-		 list.add((Song) songTable.getValueAt(4, 0));
-		 new SimilarArtist(list);
+	//	 ArrayList<Song> list = new ArrayList<Song>();
+		// list.add((Song) songTable.getValueAt(3, 0));
+	//	 list.add((Song) songTable.getValueAt(4, 0));
+	//	 new SimilarArtist(list);
 
 	}
 
@@ -1667,6 +1667,9 @@ public class MainFrame extends JFrame implements ActionListener, Runnable,
 			tablePopupMenu.add(entry2);
 			entry2.addActionListener(new TableActionAdapter());
 			entry2.setActionCommand("editLyrics");
+			
+			Separator sep3 = new JPopupMenu.Separator();
+			tablePopupMenu.add(sep3);
 
 			JMenuItem entry3 = new JMenuItem("Get Meta-Tags");
 			tablePopupMenu.add(entry3);
@@ -1677,6 +1680,15 @@ public class MainFrame extends JFrame implements ActionListener, Runnable,
 			tablePopupMenu.add(entry4);
 			entry4.addActionListener(new TableActionAdapter());
 			entry4.setActionCommand("editMetatags");
+			
+			Separator sep2 = new JPopupMenu.Separator();
+			tablePopupMenu.add(sep2);
+			
+			JMenuItem entry5 = new JMenuItem("Get Similar Artist");
+			tablePopupMenu.add(entry5);
+			entry5.addActionListener(new TableActionAdapter());
+			entry5.setActionCommand("similarArtist");
+			
 			if (e.isPopupTrigger()) {
 				tablePopupMenu.show(e.getComponent(), e.getX(), e.getY());
 			}
@@ -1848,6 +1860,21 @@ public class MainFrame extends JFrame implements ActionListener, Runnable,
 				new EditMetaTag(editMetaSongs);
 				fillSongTable(currentPlaylistGUI);
 			}
+			
+			else if (e.getActionCommand().equals("similarArtist")) {
+				int[] row = songTable.getSelectedRows();
+				Song x = null;
+				ArrayList<Song> selectedSongs = new ArrayList<Song>();
+				for (int i = 0; i < row.length; i++) {
+					int currentRow = row[i];
+					if (currentRow > -1) {
+						x = (Song) songTable.getValueAt(currentRow, 0);
+						selectedSongs.add(x);
+					}
+				}
+				new SimilarArtist(selectedSongs);
+				//fillSongTable(currentPlaylistGUI);
+			}
 
 		}
 	}
@@ -1947,8 +1974,8 @@ public class MainFrame extends JFrame implements ActionListener, Runnable,
 			try {
 				sis.setRating(cis.getCurrentPlaylist().get(row), rg);
 			} catch (DataAccessException e1) {
-				JOptionPane.showConfirmDialog(null, "No Song fund!",
-						"No Song fund!" + e1, JOptionPane.CLOSED_OPTION);
+				JOptionPane.showConfirmDialog(null, "No Song found!",
+						"No Song found!" + e1, JOptionPane.CLOSED_OPTION);
 
 			}
 
