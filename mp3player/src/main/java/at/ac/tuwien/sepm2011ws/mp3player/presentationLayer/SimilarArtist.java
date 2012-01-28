@@ -386,7 +386,7 @@ public class SimilarArtist extends JDialog implements ActionListener, ListSelect
 				album = "";
 
 			songmodel.addRow(new Object[] { x, x.getTitle(), x.getArtist(),
-					album, x.getYear(), x.getGenre(), x.getDuration(),
+					album, x.getYear(), x.getGenre(), getMediaTime(x.getDuration()),
 					x.getRating(), x.getPlaycount() });
 		}
 	}
@@ -414,6 +414,16 @@ public class SimilarArtist extends JDialog implements ActionListener, ListSelect
 			}
 
 		}
+	}
+	
+	public String getMediaTime(int sec) {
+
+		int timeAt = sec;
+		String timeStringAt = String.format("%02.0f:%02.0f:%02.0f",
+				Math.floor(timeAt / 3600), Math.floor((timeAt % 3600) / 60),
+				Math.floor(timeAt % 60));
+		return timeStringAt;
+
 	}
 
 }

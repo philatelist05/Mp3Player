@@ -313,7 +313,7 @@ public class MainFrame extends JFrame implements ActionListener, Runnable,
 				album = "";
 
 			songmodel.addRow(new Object[] { x, x.getTitle(), x.getArtist(),
-					album, x.getYear(), x.getGenre(), x.getDuration(),
+					album, x.getYear(), x.getGenre(), getMediaTime(x.getDuration()),
 					x.getRating(), x.getPlaycount() });
 		}
 		// songTable.setRowSelectionInterval(25, 26);
@@ -588,6 +588,15 @@ public class MainFrame extends JFrame implements ActionListener, Runnable,
 	public String getMediaTime() {
 
 		double timeAt = cis.getDuration();
+		String timeStringAt = String.format("%02.0f:%02.0f:%02.0f",
+				Math.floor(timeAt / 3600), Math.floor((timeAt % 3600) / 60),
+				Math.floor(timeAt % 60));
+		return timeStringAt;
+
+	}
+	public String getMediaTime(int sec) {
+
+		int timeAt = sec;
 		String timeStringAt = String.format("%02.0f:%02.0f:%02.0f",
 				Math.floor(timeAt / 3600), Math.floor((timeAt % 3600) / 60),
 				Math.floor(timeAt % 60));
@@ -1283,9 +1292,9 @@ public class MainFrame extends JFrame implements ActionListener, Runnable,
 				lblDurationSeperator.setVisible(true);
 				lblDuration.setVisible(true);
 				
-				//fillSongTable(currentPlaylistGUI);			
+				fillSongTable(currentPlaylistGUI);			
 				songTable.repaint();
-			//	songTable.setRowSelectionInterval(cis.getCurrentSongIndex(), cis.getCurrentSongIndex());
+				songTable.setRowSelectionInterval(cis.getCurrentSongIndex(), cis.getCurrentSongIndex());
 				if (cis.isPlaying()) {
 					currentplaying = new String ("Currently playing: "
 							+ cis.getCurrentSong().getArtist() + " - " + cis.getCurrentSong().getTitle() + "");
@@ -1314,7 +1323,7 @@ public class MainFrame extends JFrame implements ActionListener, Runnable,
 
 				songTable.repaint();
 				songTable.setRowSelectionInterval(cis.getCurrentSongIndex(), cis.getCurrentSongIndex());
-				// fillSongTable(currentPlaylistGUI);
+				 fillSongTable(currentPlaylistGUI);
 			}
 
 		});
@@ -1992,19 +2001,23 @@ public class MainFrame extends JFrame implements ActionListener, Runnable,
 				songrendi.setPlaylist(currentPlaylistGUI);
 			sorter.setSortKeys(null);
 		}
-
+//		fillSongTable(currentPlaylistGUI);
+		songTable.repaint();
 	}
 
 	@Override
 	public void sorterChanged(RowSorterEvent e) {
 		 logger.info("sorterChanged");
 		
+		 Song x = cis.getCurrentSong();
 		currentPlaylistGUI = parseSongTable(currentPlaylistGUI);
 		cis.setCurrentPlaylist(currentPlaylistGUI);
-
-		if (cis.getCurrentSongIndex() > -1)
-			cis.setCurrentSongIndex(sorter.convertRowIndexToView(cis
-					.getCurrentSongIndex()));
+		for(int i=0; i < currentPlaylistGUI.size(); i ++ )
+			if(currentPlaylistGUI.get(i).equals(x))
+				cis.setCurrentSongIndex(i);
+	//	if (cis.getCurrentSongIndex() > -1)
+	//		cis.setCurrentSongIndex(sorter.convertRowIndexToView(cis
+		//			.getCurrentSongIndex()));
 
 		//fillSongTable(currentPlaylistGUI);
 		songTable.repaint();

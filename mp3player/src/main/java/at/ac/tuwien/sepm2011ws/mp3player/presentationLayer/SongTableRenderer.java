@@ -107,7 +107,7 @@ public class SongTableRenderer extends DefaultTableCellRenderer {
 		table.setSelectionForeground(Color.red);
 		// table.setSelectionBackground(Color.red);
 
-		if (cis.getCurrentPlaylist().getTitle().equals(curPlaylist.getTitle()))
+		if (cis.getCurrentPlaylist().equals(curPlaylist))
 		// if(cis.getCurrentPlaylist().equals(curPlaylist))
 		// if (cis.getCurrentSongIndex() > -1)
 		{
