@@ -4,7 +4,6 @@ import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -49,9 +48,11 @@ class VvvPlaylistService implements PlaylistService {
 	@Override
 	public void importPlaylist(File[] files) throws DataAccessException {
 		if (files == null)
-			throw new IllegalArgumentException("Files must not be null");
+			throw new IllegalArgumentException("File array must not be null");
 
 		for (File file : files) {
+			if (file == null)
+				throw new IllegalArgumentException("File must not be null");
 			if (checkFileExtensionAccepted(file.getName(), PlaylistFileTypes)) {
 				importPlaylist(file);
 			}
@@ -83,6 +84,8 @@ class VvvPlaylistService implements PlaylistService {
 					"The file name must not be null or empty");
 
 		int dotIndex = fileName.lastIndexOf(".");
+		if (dotIndex == -1)
+			return "";
 		return fileName.substring(dotIndex + 1, fileName.length());
 	}
 
@@ -146,7 +149,11 @@ class VvvPlaylistService implements PlaylistService {
 			throw new IllegalArgumentException("The playlist must not be null");
 
 		try {
-			writer = new FileWriter(file.getAbsolutePath() + ".m3u");
+			String path = file.getAbsolutePath();
+			if(getExtension(path) != "m3u")
+				path += ".m3u";
+			
+			writer = new FileWriter(path);
 			bwriter = new BufferedWriter(writer);
 			for (Song song : playlist) {
 				bwriter.write(song.getPath());

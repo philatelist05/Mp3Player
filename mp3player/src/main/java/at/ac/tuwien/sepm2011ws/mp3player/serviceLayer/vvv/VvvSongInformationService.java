@@ -5,6 +5,7 @@ import java.net.SocketException;
 import java.net.UnknownHostException;
 import java.rmi.RemoteException;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 
@@ -16,11 +17,15 @@ import at.ac.tuwien.sepm2011ws.mp3player.domainObjects.MetaTags;
 import at.ac.tuwien.sepm2011ws.mp3player.domainObjects.Song;
 import at.ac.tuwien.sepm2011ws.mp3player.persistanceLayer.DataAccessException;
 import at.ac.tuwien.sepm2011ws.mp3player.persistanceLayer.SongDao;
+import at.ac.tuwien.sepm2011ws.mp3player.serviceLayer.LastFmService;
+import at.ac.tuwien.sepm2011ws.mp3player.serviceLayer.ServiceFactory;
 import at.ac.tuwien.sepm2011ws.mp3player.serviceLayer.SongInformationService;
 
 import com.chartlyrics.ChartLyricsLocator;
 import com.chartlyrics.ChartLyricsSoap;
 import com.chartlyrics.GetLyricResult;
+
+import de.umass.lastfm.Track;
 
 import entagged.audioformats.AudioFile;
 import entagged.audioformats.AudioFileIO;
@@ -129,7 +134,23 @@ public class VvvSongInformationService implements SongInformationService {
 	}
 
 	@Override
-	public List<MetaTags> downloadMetaTags(Song song) {
+	public List<MetaTags> downloadMetaTags(Song song)
+			throws DataAccessException {
+		if (song == null)
+			throw new IllegalArgumentException("Song must not be null");
+		if (song.getTitle() == null || song.getTitle().isEmpty())
+			throw new IllegalArgumentException(
+					"Song title must not be null or empty");
+		if (song.getArtist() == null || song.getArtist().isEmpty())
+			throw new IllegalArgumentException(
+					"Song artist must not be null or empty");
+
+		// Track correctedTrack = Track.getCorrection(song.getArtist(),
+		// song.getTitle(), LastFmService.LastFmApiKey);
+		// Collection<Track> tracks = Track.getSimilar(song.getArtist(),
+		// song.getTitle(), LastFmService.LastFmApiKey);
+		// Collection<Track> tracks2 = Track.search(song.getArtist(), song.getTitle(), 20, LastFmService.LastFmApiKey);
+
 		// TODO Auto-generated method stub
 		return null;
 	}
@@ -137,6 +158,9 @@ public class VvvSongInformationService implements SongInformationService {
 	@SuppressWarnings("deprecation")
 	@Override
 	public List<Lyric> downloadLyrics(Song song) throws DataAccessException {
+		if (song == null)
+			throw new IllegalArgumentException("Song must not be null");
+
 		String artist = song.getArtist();
 		String title = song.getTitle();
 
@@ -197,12 +221,18 @@ public class VvvSongInformationService implements SongInformationService {
 
 	@Override
 	public void setRating(Song song, double rating) throws DataAccessException {
+		if (song == null)
+			throw new IllegalArgumentException("Song must not be null");
+
 		song.setRating(rating);
 		sd.update(song);
 	}
 
 	@Override
 	public void saveLyrics(Song song) throws DataAccessException {
+		if (song == null)
+			throw new IllegalArgumentException("Song must not be null");
+
 		sd.update(song);
 	}
 

@@ -360,7 +360,14 @@ public class GetMetaTag extends JDialog implements ActionListener,
 		logger.info("GetMetaTag(): Got into thread");
 		// try {
 		int i = 0;
-		List<MetaTags> tagList = sis.downloadMetaTags(song);
+		List<MetaTags> tagList = null;
+		try {
+			tagList = sis.downloadMetaTags(song);
+		} catch (DataAccessException e) {
+			checkDialog.dispose();
+			JOptionPane.showConfirmDialog(null, e.getMessage(), "Error",
+					JOptionPane.CLOSED_OPTION);
+		}
 
 		if (tagList != null) {
 			if (tagList.size() > 0) {
