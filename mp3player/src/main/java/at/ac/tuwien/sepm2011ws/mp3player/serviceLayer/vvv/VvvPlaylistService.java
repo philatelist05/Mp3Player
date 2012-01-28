@@ -384,14 +384,11 @@ class VvvPlaylistService implements PlaylistService {
 	}
 
 	@Override
-	public void reloadPlaylist(WritablePlaylist p) throws DataAccessException {
+	public Playlist reloadPlaylist(Playlist p) throws DataAccessException {
 		if (p == null)
 			throw new IllegalArgumentException("The playlist must not be null");
 
 		Playlist np = pd.read(p.getId());
-
-		p.setTitle(np.getTitle());
-		p.clear();
-		p.addAll(np);
+		return np;
 	}
 }

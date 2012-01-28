@@ -27,14 +27,13 @@ import at.ac.tuwien.sepm2011ws.mp3player.persistanceLayer.db.DaoFactory;
  */
 public class SongDaoTest {
 	private SongDao sd;
-	private AlbumDao ad;
 	private Connection con;
 
 	@Before
 	public void setUp() throws Exception {
 		DaoFactory factory = DaoFactory.getInstance();
 		sd = factory.getSongDao();
-		ad = factory.getAlbumDao();
+		factory.getAlbumDao();
 		con = sd.getConnection();
 		con.setAutoCommit(false);
 		clearSongTable();
