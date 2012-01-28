@@ -37,7 +37,18 @@ public class PlaylistTreeCellRenderer extends DefaultTreeCellRenderer {
 				wLeaf, pRow, wFocus);
 		Object nodeObj = ((PlaylistTreeNode) value).getUserObject();
 		// tree.get
-
+		/*
+		TreeModel xx= tree.getModel();
+		PlaylistTreeCellRenderer curRend =(PlaylistTreeCellRenderer) tree.getCellRenderer();
+		System.out.println("----->");
+		System.out.println(curRend.getComponentCount());
+		for(int i=0; i<curRend.getComponentCount();i++) {
+			System.out.println("kkkkk");
+			Component curComp = curRend.getComponent(i);
+			System.out.println(curComp);
+			curComp.setFont(tree.getFont().deriveFont(Font.PLAIN));
+		}
+		*/
 		if (nodeObj instanceof TreeNodeObject) {
 			setIcon(((TreeNodeObject) nodeObj).getIcon());
 		}
@@ -62,12 +73,14 @@ public class PlaylistTreeCellRenderer extends DefaultTreeCellRenderer {
 	public void traverse(JTree tree) { 
 	    TreeModel model = tree.getModel();
 	    if (model != null) {
+	    	
 	        Object root = model.getRoot();
 	        System.out.println(root.toString());
 	        walk(model,root);    
 	        }
-	    else
-	       System.out.println("Tree is empty.");
+	    else {
+	       //System.out.println("Tree is empty.");
+	    }
 	    }
 	    
 	  protected void walk(TreeModel model, Object o){
@@ -75,10 +88,12 @@ public class PlaylistTreeCellRenderer extends DefaultTreeCellRenderer {
 	    cc = model.getChildCount(o);
 	    for( int i=0; i < cc; i++) {
 	      Object child = model.getChild(o, i );
-	      if (model.isLeaf(child))
-	        System.out.println(child.toString());
+	      if (model.isLeaf(child)) {
+	        //System.out.println(child.toString());
+	    	  
+	      }
 	      else {
-	        System.out.print(child.toString()+"--");
+	        //System.out.print(child.toString()+"--");
 	        walk(model,child ); 
 	        }
 	     }
