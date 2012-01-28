@@ -300,10 +300,12 @@ public class MainFrame extends JFrame implements ActionListener, Runnable,
 	 *            containing song items
 	 */
 	protected void fillSongTable(Playlist list) {
+		Playlist temp = new Playlist(list.getId(), list.getTitle());
+		temp.addAll(list);
 		String album = null;
 		songmodel.setRowCount(0);
 
-		for (Song x : list) {
+		for (Song x : temp) {
 
 			if (x.getAlbum() != null)
 				album = x.getAlbum().getTitle();
