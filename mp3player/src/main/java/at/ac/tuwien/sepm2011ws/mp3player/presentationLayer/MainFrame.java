@@ -1435,7 +1435,7 @@ public class MainFrame extends JFrame implements ActionListener, Runnable,
 		JMenu mnLibrary = new JMenu("Library");
 		mnFile.add(mnLibrary);
 
-		JMenuItem mntmAddFiles = new JMenuItem("Add File...");
+		JMenuItem mntmAddFiles = new JMenuItem("Add Files...");
 		mntmAddFiles.addActionListener(this);
 		mntmAddFiles.setActionCommand("addfile");
 		mnLibrary.add(mntmAddFiles);

@@ -4,7 +4,10 @@ import java.awt.Dimension;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.IOException;
 
+import javax.swing.AbstractButton;
+import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JDialog;
 import javax.swing.JLabel;
@@ -14,12 +17,14 @@ import javax.swing.JPanel;
 import net.miginfocom.swing.MigLayout;
 
 import org.apache.log4j.Logger;
+import org.springframework.core.io.ClassPathResource;
 
 import at.ac.tuwien.sepm2011ws.mp3player.persistanceLayer.DataAccessException;
 import at.ac.tuwien.sepm2011ws.mp3player.serviceLayer.PlaylistService;
 import at.ac.tuwien.sepm2011ws.mp3player.serviceLayer.ServiceFactory;
 
-public class checkSongPathGUI extends JDialog implements ActionListener, Runnable {
+public class checkSongPathGUI extends JDialog implements ActionListener,
+		Runnable {
 
 	/**
 	 * 
@@ -38,52 +43,44 @@ public class checkSongPathGUI extends JDialog implements ActionListener, Runnabl
 	private int height;
 	private int positionX;
 	private int positionY;
-
-	private void createThread() {
-		fred = new Thread(this);
-		fred.start();
-	}
+	private JDialog checkDialog;
+	private ImageIcon loading;
+	private JLabel lblLoading;
+	private JPanel checkPanel2;
+	private JLabel checklabel2;
 
 	public void run() {
 		try {
-			setDefaultCloseOperation(DO_NOTHING_ON_CLOSE);
-			btnCancel.setEnabled(false);
-			btnStart.setEnabled(false);
-			checklabel.setText("Working...");
-			
 			ps.checkSongPaths();
-			
+
 			logger.info("checkSongPathGUI(): Songpaths successfully checked");
 			new MainFrame("reloadsongTable");
 			logger.info("checkSongPathGUI(): Back from Mainframe");
+
+			checkDialog.dispose();
 			
-			checklabel.setText("Press start to check for missing songs:");
-			btnCancel.setEnabled(true);
-			btnStart.setEnabled(true);
-			setDefaultCloseOperation(DISPOSE_ON_CLOSE);
-			
-			JOptionPane.showConfirmDialog(null, "Successfully checked songpaths!",
-					"Checking songspath...", JOptionPane.CLOSED_OPTION);
-			dispose();
+			JOptionPane.showConfirmDialog(null,
+					"Successfully checked songpaths!", "Checking songspath...",
+					JOptionPane.CLOSED_OPTION);
 		} catch (DataAccessException e) {
-			JOptionPane.showConfirmDialog(null, e.getMessage(),
-					"Error", JOptionPane.CLOSED_OPTION);
-			dispose();
+			checkDialog.dispose();
+			JOptionPane.showConfirmDialog(null, e.getMessage(), "Error",
+					JOptionPane.CLOSED_OPTION);
 		}
 	}
-	
+
 	public checkSongPathGUI() {
 		logger.info("checkSongPathGUI(): Started constructor checkSongPathGUI()");
 		initialize();
 		logger.info("checkSongPathGUI(): Components successfully initialized");
-		
+
 		ServiceFactory sf = ServiceFactory.getInstance();
 		ps = sf.getPlaylistService();
-		
-		setTitle("Checking songpaths...");
-		
-		width = 450;
-		height = 100;
+
+		setTitle("Check songpaths...");
+
+		width = 210;
+		height = 80;
 		positionX = (int) Math.round(dim.getWidth() / 2 - width / 2);
 		positionY = (int) Math.round(dim.getHeight() / 2 - height / 2);
 
@@ -92,7 +89,7 @@ public class checkSongPathGUI extends JDialog implements ActionListener, Runnabl
 		setModal(true);
 		setVisible(true);
 	}
-	
+
 	private void initialize() {
 		checkPanel = new JPanel(new MigLayout("", "[grow]", "[][]"));
 		checklabel = new JLabel("Press start to check for missing songs:");
@@ -102,11 +99,50 @@ public class checkSongPathGUI extends JDialog implements ActionListener, Runnabl
 		btnStart = new JButton("Start");
 		btnStart.addActionListener(this);
 		btnStart.setActionCommand("start");
-		
+
 		getContentPane().add(checkPanel);
-		checkPanel.add(checklabel, "cell 0 0");
-		checkPanel.add(btnCancel, "cell 0 1,alignx right");
-		checkPanel.add(btnStart, "cell 0 1,alignx right");
+		checkPanel.add(checklabel, "cell 0 0, alignx center");
+		checkPanel.add(btnCancel, "cell 0 1, align center");
+		checkPanel.add(btnStart, "cell 0 1, align center");
+	}
+
+	private void checkSongs() {
+		checkDialog = new JDialog();
+		lblLoading = new JLabel();
+
+		checkPanel2 = new JPanel(new MigLayout("", "[grow]", "[][]"));
+		checklabel2 = new JLabel("Checking songpaths...");
+
+		checkDialog.getContentPane().add(checkPanel2);
+		checkPanel2.add(checklabel2, "cell 0 0, align center");
+
+		try {
+			loading = new ImageIcon(
+					new ClassPathResource("img/loading.gif").getURL());
+		} catch (IOException e) {
+			logger.error(e.getMessage());
+		}
+
+		lblLoading.setIcon(loading);
+		checkPanel2.add(lblLoading, "cell 0 1, align center");
+
+		checkDialog.setTitle("Checking for Lyrics...");
+
+		int width = 250, height = 80;
+		int positionX = (int) Math.round(dim.getWidth() / 2 - width / 2);
+		int positionY = (int) Math.round(dim.getHeight() / 2 - height / 2);
+
+		checkDialog.setBounds(positionX, positionY, width, height);
+		checkDialog.setDefaultCloseOperation(DO_NOTHING_ON_CLOSE);
+		checkDialog.setModal(true);
+		checkDialog.setResizable(false);
+
+		fred = new Thread(this);
+		fred.start();
+		logger.info("GetMetaTag(): Started Thread");
+
+		checkDialog.setVisible(true);
+		logger.info("GetMetaTag(): Made checkSongDialog visible");
 	}
 
 	public void actionPerformed(ActionEvent e) {
@@ -114,17 +150,10 @@ public class checkSongPathGUI extends JDialog implements ActionListener, Runnabl
 			logger.info("checkSongPathGUI(): Cancelled");
 			dispose();
 		}
-		
+
 		else if (e.getActionCommand().equals("start")) {
 			logger.info("checkSongPathGUI(): started Thread");
-			createThread();
+			checkSongs();
 		}
-		
-		/*else if (e.getActionCommand().equals("runcancel")) {
-			logger.info("checkSongPathGUI(): started Thread");
-			fred.interrupt();
-			btnCancel.setActionCommand("cancel");
-			dispose();
-		}*/
 	}
 }

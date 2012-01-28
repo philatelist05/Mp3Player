@@ -7,7 +7,9 @@ import java.awt.event.ActionListener;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.io.File;
+import java.io.IOException;
 
+import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JDialog;
 import javax.swing.JFileChooser;
@@ -19,6 +21,7 @@ import javax.swing.JTextField;
 import net.miginfocom.swing.MigLayout;
 
 import org.apache.log4j.Logger;
+import org.springframework.core.io.ClassPathResource;
 
 import at.ac.tuwien.sepm2011ws.mp3player.domainObjects.WritablePlaylist;
 import at.ac.tuwien.sepm2011ws.mp3player.domainObjects.Playlist;
@@ -58,21 +61,33 @@ public class PlaylistGUI extends JDialog implements ActionListener, Runnable {
 	private Playlist list;
 	private File[] playlists;
 	private String text;
+	private ImageIcon loading;
+	private JLabel lblLoading = new JLabel();
 
 	private void doWork(String command, String text) {
 		this.command = command;
 		this.text = text;
 		checkDialog = new JDialog();
 
-		checkPanel = new JPanel(new MigLayout("", "[grow]", "[]"));
+		checkPanel = new JPanel(new MigLayout("", "[grow]", "[][]"));
 		checkLabel = new JLabel(text);
 
 		checkDialog.getContentPane().add(checkPanel);
-		checkPanel.add(checkLabel, "cell 0 0");
+		checkPanel.add(checkLabel, "cell 0 0, align center");
+		
+		try {
+			loading = new ImageIcon(
+					new ClassPathResource("img/loading.gif").getURL());
+		} catch (IOException e) {
+			logger.error(e.getMessage());
+		}
+
+		lblLoading.setIcon(loading);
+		checkPanel.add(lblLoading, "cell 0 1, align center");
 
 		checkDialog.setTitle(text);
 
-		int width = 200, height = 100;
+		int width = 250, height = 80;
 		int positionX = (int) Math.round(dim.getWidth() / 2 - width / 2);
 		int positionY = (int) Math.round(dim.getHeight() / 2 - height / 2);
 
@@ -310,14 +325,18 @@ public class PlaylistGUI extends JDialog implements ActionListener, Runnable {
 
 					new MainFrame("reloadsongTable");
 					logger.info("checkSongPathGUI(): Back from Mainframe");
+					
+					checkDialog.dispose();
 
 					JOptionPane.showConfirmDialog(null,
 							"Playlist(s) successfully added!", text,
 							JOptionPane.CLOSED_OPTION);
-				} else
+				} else {
+					checkDialog.dispose();
 					JOptionPane.showConfirmDialog(null,
 							"No Playlist(s) chosen!", "No Playlist(s) chosen!",
 							JOptionPane.CLOSED_OPTION);
+				}
 			}
 
 			else if (command == "export") {
@@ -326,24 +345,28 @@ public class PlaylistGUI extends JDialog implements ActionListener, Runnable {
 
 					new MainFrame("reloadsongTable");
 					logger.info("checkSongPathGUI(): Back from Mainframe");
+					
+					checkDialog.dispose();
 
 					JOptionPane.showConfirmDialog(null,
 							"Playlist successfully exported!", text,
 							JOptionPane.CLOSED_OPTION);
-				} else
+				} else {
+					checkDialog.dispose();
 					JOptionPane.showConfirmDialog(null,
 							"No filepath or playlist chosen!",
 							"No filepath or playlist chosen!",
 							JOptionPane.CLOSED_OPTION);
+				}
 			}
 
-			else
+			else {
+				checkDialog.dispose();
 				JOptionPane.showConfirmDialog(null,
 						"Kind of playlist management not chosen!",
 						"Kind of playlist management not chosen!",
 						JOptionPane.CLOSED_OPTION);
-
-			checkDialog.dispose();
+			}
 		} catch (DataAccessException e) {
 			JOptionPane.showConfirmDialog(null, e.getMessage(),
 					"Error", JOptionPane.CLOSED_OPTION);
