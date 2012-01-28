@@ -164,6 +164,7 @@ public class MainFrame extends JFrame implements ActionListener, Runnable,
 	private Icon yellowPLS;
 	private Icon library_icon;
 	private Icon v3;
+	private Icon frameIcon;
 
 	private List<WritablePlaylist> playlists = null;
 	private PlaylistService ps;
@@ -906,6 +907,11 @@ public class MainFrame extends JFrame implements ActionListener, Runnable,
 		setBounds(positionX, positionY, width, height);
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setTitle("mp3@player");
+		try {
+			setIconImage(Toolkit.getDefaultToolkit().getImage(new ClassPathResource("img/icon.png").getURL()));
+		} catch (IOException e1) {
+			logger.error(e1.getMessage());
+		}
 
 		initialize();
 		addWindowListener(new WindowAdapter() {

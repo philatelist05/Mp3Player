@@ -160,7 +160,7 @@ public class GetLyric extends JDialog implements ActionListener, ItemListener,
 		getPanel.add(lblLyric, "cell 0 1");
 
 		lyricBox.addItemListener(this);
-		getPanel.add(lyricBox, "cell 1 1");
+		getPanel.add(lyricBox, "cell 1 1, growx");
 
 		lyricPane
 				.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
