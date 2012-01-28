@@ -45,7 +45,7 @@ public class PlaylistDaoTest {
 
 		expected.add(song1);
 		expected.add(song2);
-		
+
 		sdao.create(song1);
 		sdao.create(song2);
 
@@ -53,6 +53,21 @@ public class PlaylistDaoTest {
 
 		Playlist actual = plstdao.read(expected.getId());
 		assertEquals(expected, actual);
+	}
+
+	@Test(expected = DataAccessException.class)
+	public void testUpdate_ThrowDataAccessExceptionBecauseOfNotExistingSongs()
+			throws DataAccessException {
+		WritablePlaylist expected = new WritablePlaylist("Test1");
+		plstdao.create(expected);
+
+		Song song1 = new Song("Song1", "Halo1", 3001, "C:\\music\\halo1");
+		Song song2 = new Song("Song2", "Halo2", 3002, "C:\\music\\halo2");
+
+		expected.add(song1);
+		expected.add(song2);
+
+		plstdao.update(expected);
 	}
 
 	@Test(expected = IllegalArgumentException.class)
@@ -166,7 +181,7 @@ public class PlaylistDaoTest {
 	public void testRename_ShouldRenamePlaylist() throws DataAccessException {
 		WritablePlaylist expected = new WritablePlaylist("Test1");
 		plstdao.create(expected);
-		
+
 		plstdao.rename(expected, "Test2");
 		Playlist actual = plstdao.read(expected.getId());
 		expected.setTitle("Test2");
