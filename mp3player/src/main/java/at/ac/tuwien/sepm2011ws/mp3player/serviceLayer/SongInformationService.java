@@ -39,8 +39,9 @@ public interface SongInformationService {
 	 * @param song
 	 *            The song to search for
 	 * @return a list of similar and/or corrected meta tags
+	 * @throws DataAccessException 
 	 */
-	public List<MetaTags> downloadMetaTags(Song song);
+	public List<MetaTags> downloadMetaTags(Song song) throws DataAccessException;
 
 	/**
 	 * Downloads a list of lyrics for the specified song.

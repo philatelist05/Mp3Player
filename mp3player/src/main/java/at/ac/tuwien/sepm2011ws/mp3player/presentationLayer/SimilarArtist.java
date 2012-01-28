@@ -32,6 +32,7 @@ import org.springframework.core.io.ClassPathResource;
 
 import at.ac.tuwien.sepm2011ws.mp3player.domainObjects.Playlist;
 import at.ac.tuwien.sepm2011ws.mp3player.domainObjects.Song;
+import at.ac.tuwien.sepm2011ws.mp3player.persistanceLayer.DataAccessException;
 import at.ac.tuwien.sepm2011ws.mp3player.serviceLayer.LastFmService;
 import at.ac.tuwien.sepm2011ws.mp3player.serviceLayer.ServiceFactory;
 
@@ -219,12 +220,17 @@ public class SimilarArtist extends JDialog implements ActionListener, Runnable {
 
 	@Override
 	public void run() {
-		List<Playlist> similarArtists;
+		List<Playlist> similarArtists = null;
 
 		logger.info("SimilarArtist(): Got into thread");
 		logger.info("SimilarArtist(): get List of playlists (similar artists and the best rated/most playled songs in the library)");
 
-		similarArtists = lfms.getSimilarArtistsWithSongs(song);
+		try {
+			similarArtists = lfms.getSimilarArtistsWithSongs(song);
+		} catch (DataAccessException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
 
 		if (similarArtists != null) {
 			if (similarArtists.size() > 0) {

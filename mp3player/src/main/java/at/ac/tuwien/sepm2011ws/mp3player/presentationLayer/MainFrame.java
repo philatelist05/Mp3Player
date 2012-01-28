@@ -940,10 +940,10 @@ public class MainFrame extends JFrame implements ActionListener, Runnable,
 
 		// TODO for Johannes: test for SimilarArtist
 
-//		ArrayList<Song> list = new ArrayList<Song>();
-//		list.add((Song) songTable.getValueAt(0, 0));
-//		list.add((Song) songTable.getValueAt(15, 0));
-//		new SimilarArtist(list);
+		// ArrayList<Song> list = new ArrayList<Song>();
+		// list.add((Song) songTable.getValueAt(0, 0));
+		// list.add((Song) songTable.getValueAt(15, 0));
+		// new SimilarArtist(list);
 
 	}
 
