@@ -92,9 +92,8 @@ public class SimilarArtist extends JDialog implements ActionListener, ListSelect
 	private ImageIcon loading;
 	private JLabel lblLoading = new JLabel();
 	
-	private PlaylistService ps;
 	private CoreInteractionService cis;
-	private SettingsService ss;
+
 	private SongInformationService sis;
 	private Playlist playlistMainFrame;
 	private SongTableRendererSimilarArtist songrenderer;
@@ -109,8 +108,6 @@ public class SimilarArtist extends JDialog implements ActionListener, ListSelect
 			ServiceFactory sf = ServiceFactory.getInstance();
 			lfms = sf.getLastFmService();
 			cis = sf.getCoreInteractionService();
-			ps = sf.getPlaylistService();
-			ss = sf.getSettingsService();
 			sis = sf.getSongInformationService();
 			playlistMainFrame = cis.getCurrentPlaylist();
 			
@@ -297,6 +294,8 @@ public class SimilarArtist extends JDialog implements ActionListener, ListSelect
 
 		try {
 			similarArtists = lfms.getSimilarArtistsWithSongs(song);
+			logger.info(similarArtists.get(0).getTitle());
+			
 		} catch (DataAccessException e1) {
 			// TODO Auto-generated catch block
 			e1.printStackTrace();
@@ -308,7 +307,7 @@ public class SimilarArtist extends JDialog implements ActionListener, ListSelect
 				for (Playlist x : similarArtists) {
 					artistModel.addElement(x);
 				}
-				
+				artistList.repaint();
 				checkDialog.dispose();
 			}
 
