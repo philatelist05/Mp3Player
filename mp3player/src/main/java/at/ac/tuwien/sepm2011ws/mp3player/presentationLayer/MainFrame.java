@@ -686,7 +686,7 @@ public class MainFrame extends JFrame implements ActionListener, Runnable,
 				Playlist currentPL = clicked.getNodePlaylist();
 				if (currentPlaylistGUI.getClass() == WritablePlaylist.class) {					
 					try {
-						ps.reloadPlaylist((WritablePlaylist) currentPL);
+						ps.reloadPlaylist(currentPL);
 					} catch (DataAccessException e) {
 						int response = JOptionPane.showConfirmDialog(null,
 								"DataAccessException", e.toString(),

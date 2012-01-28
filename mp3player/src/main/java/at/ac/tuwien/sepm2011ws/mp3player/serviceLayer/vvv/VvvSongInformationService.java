@@ -140,6 +140,8 @@ public class VvvSongInformationService implements SongInformationService {
 			throw new IllegalArgumentException(
 					"Song artist must not be null or empty");
 
+		//Liste von möglichen Einträgen zurückgeben
+		
 		// Track correctedTrack = Track.getCorrection(song.getArtist(),
 		// song.getTitle(), LastFmService.LastFmApiKey);
 		// Collection<Track> tracks = Track.getSimilar(song.getArtist(),

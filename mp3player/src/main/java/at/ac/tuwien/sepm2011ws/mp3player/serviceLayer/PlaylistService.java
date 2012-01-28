@@ -46,7 +46,7 @@ public interface PlaylistService {
 	 * @param p The playlist to reload
 	 * @throws DataAccessException
 	 */
-	public void reloadPlaylist(WritablePlaylist p) throws DataAccessException;
+	public Playlist reloadPlaylist(Playlist p) throws DataAccessException;
 
 	/**
 	 * Recursively adds all files in the specified folder and subfolders with
