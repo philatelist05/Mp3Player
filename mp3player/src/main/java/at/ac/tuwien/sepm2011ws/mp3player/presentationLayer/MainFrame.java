@@ -898,8 +898,8 @@ public class MainFrame extends JFrame implements ActionListener, Runnable,
 		Toolkit toolkit = Toolkit.getDefaultToolkit();
 		Dimension dim = toolkit.getScreenSize();
 
-		width = 1000;
-		height = 600;
+		width = 1160;
+		height = 700;
 		positionX = (int) Math.round(dim.getWidth() / 2 - width / 2);
 		positionY = (int) Math.round(dim.getHeight() / 2 - height / 2);
 
