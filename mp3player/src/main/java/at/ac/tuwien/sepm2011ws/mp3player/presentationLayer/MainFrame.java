@@ -422,14 +422,14 @@ public class MainFrame extends JFrame implements ActionListener, Runnable,
 
 		cis.setCurrentPlaylist(currentPlaylistGUI);
 		cis.playFromBeginning(songIndex);
-		progress.setEnabled(true);
+		/*progress.setEnabled(true);
 		lblPlayedTime.setText(getPlayedTimeInSeconds());
 		progress.setVisible(true);
 
 		lblCurrentStateSong.setVisible(true);
 		lblPlayedTime.setVisible(true);
 		lblDurationSeperator.setVisible(true);
-		lblDuration.setVisible(true);
+		lblDuration.setVisible(true);*/
 
 
 		if (cis.isPlaying()) {
@@ -925,10 +925,10 @@ public class MainFrame extends JFrame implements ActionListener, Runnable,
 
 		// TODO for Johannes: test for SimilarArtist
 
-//		 ArrayList<Song> list = new ArrayList<Song>();
-	//	 list.add((Song) songTable.getValueAt(3, 0));
-		// list.add((Song) songTable.getValueAt(4, 0));
-		// new SimilarArtist(list);
+		 ArrayList<Song> list = new ArrayList<Song>();
+		 list.add((Song) songTable.getValueAt(3, 0));
+		 list.add((Song) songTable.getValueAt(4, 0));
+		 new SimilarArtist(list);
 
 	}
 
@@ -1266,9 +1266,18 @@ public class MainFrame extends JFrame implements ActionListener, Runnable,
 
 				}
 				
+				progress.setEnabled(true);
+				lblPlayedTime.setText(getPlayedTimeInSeconds());
+				progress.setVisible(true);
+
+				lblCurrentStateSong.setVisible(true);
+				lblPlayedTime.setVisible(true);
+				lblDurationSeperator.setVisible(true);
+				lblDuration.setVisible(true);
+				
 				//fillSongTable(currentPlaylistGUI);			
 				songTable.repaint();
-				songTable.setRowSelectionInterval(cis.getCurrentSongIndex(), cis.getCurrentSongIndex());
+			//	songTable.setRowSelectionInterval(cis.getCurrentSongIndex(), cis.getCurrentSongIndex());
 				if (cis.isPlaying()) {
 					currentplaying = new String ("Currently playing: "
 							+ cis.getCurrentSong().getArtist() + " - " + cis.getCurrentSong().getTitle() + "");

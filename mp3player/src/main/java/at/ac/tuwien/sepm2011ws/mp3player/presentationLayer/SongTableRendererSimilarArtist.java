@@ -17,7 +17,7 @@ import at.ac.tuwien.sepm2011ws.mp3player.domainObjects.Playlist;
 import at.ac.tuwien.sepm2011ws.mp3player.serviceLayer.CoreInteractionService;
 import at.ac.tuwien.sepm2011ws.mp3player.serviceLayer.ServiceFactory;
 
-public class SongTableRenderer extends DefaultTableCellRenderer {
+public class SongTableRendererSimilarArtist extends DefaultTableCellRenderer {
 
 	/**
 	 * 
@@ -29,14 +29,8 @@ public class SongTableRenderer extends DefaultTableCellRenderer {
 
 	private static Playlist curPlaylist;
 
-	public SongTableRenderer(Playlist currentPlaylist) {
-		curPlaylist = currentPlaylist;
-		/*try {
-			nothing = new ImageIcon(new ClassPathResource("img/nothing_found.gif").getURL());
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}*/
+	public SongTableRendererSimilarArtist() {
+
 	}
 
 	public void setPlaylist(Playlist list) {
@@ -59,42 +53,7 @@ public class SongTableRenderer extends DefaultTableCellRenderer {
 
 		Component component = super.getTableCellRendererComponent(table, value,
 				isSelected, hasFocus, row, column);
-		// System.out.println(row);
-		// System.out.println(cis.getCurrentSongIndex());
-		// if ( table.getRowSorter().convertRowIndexToView(row) == row)
-		// if( table.getModel().getValueAt(row, 0).equals(cis.getCurrentSong()))
 
-		// table.set
-		// table.setSelectionBackground(Color.red);
-
-		/*
-		 * 
-		 * 
-		 * 
-		 * StarRating rating = new StarRating(5);
-		 * rating.addPropertyChangeListener(new PropertyChangeListener() {
-		 * 
-		 * @Override public void propertyChange(PropertyChangeEvent arg0) { //
-		 * 
-		 * }
-		 * 
-		 * });
-		 * 
-		 * System.out.println(table.getColumnName(3));
-		 * 
-		 * JComboBox combo = new JComboBox(); combo.addItem("Rating"); JButton
-		 * button = new JButton("Button"); JPanel panel = new JPanel();
-		 * panel.add(new JLabel("test")); panel.add(button); panel.add(rating);
-		 * //table.getColumnModel().getColumn(3).setCellEditor(new
-		 * DefaultCellEditor(combo)); // table.setEditingColumn(3); //
-		 * table.setEditingRow(2);
-		 * table.getColumnModel().getColumn(3).setCellEditor(new
-		 * SongCellEditor()); DefaultTableCellRenderer render = new
-		 * DefaultTableCellRenderer(); render.setToolTipText("Click for Ratin");
-		 * table.getColumnModel().getColumn(3).setCellRenderer(render); //
-		 * return component; //table.setValueAt(rating, row, 7);
-		 * //table.add(rating);
-		 */
 		
 		if (row % 2 == 0) {
 
@@ -107,9 +66,7 @@ public class SongTableRenderer extends DefaultTableCellRenderer {
 		table.setSelectionForeground(Color.red);
 		// table.setSelectionBackground(Color.red);
 
-		if (cis.getCurrentPlaylist().getTitle().equals(curPlaylist.getTitle()))
-		// if(cis.getCurrentPlaylist().equals(curPlaylist))
-		// if (cis.getCurrentSongIndex() > -1)
+		if (cis.getCurrentSongIndex() > -1)
 		{
 			/*if (cis.getCurrentSongIndex() > -1)
 			if

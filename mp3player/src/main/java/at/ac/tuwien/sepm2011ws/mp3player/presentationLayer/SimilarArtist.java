@@ -8,6 +8,8 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
 import java.io.IOException;
@@ -25,8 +27,10 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JSplitPane;
 import javax.swing.JTable;
+import javax.swing.ListSelectionModel;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
+import javax.swing.table.TableColumn;
 
 import net.miginfocom.swing.MigLayout;
 
@@ -36,8 +40,12 @@ import org.springframework.core.io.ClassPathResource;
 import at.ac.tuwien.sepm2011ws.mp3player.domainObjects.Playlist;
 import at.ac.tuwien.sepm2011ws.mp3player.domainObjects.Song;
 import at.ac.tuwien.sepm2011ws.mp3player.persistanceLayer.DataAccessException;
+import at.ac.tuwien.sepm2011ws.mp3player.serviceLayer.CoreInteractionService;
 import at.ac.tuwien.sepm2011ws.mp3player.serviceLayer.LastFmService;
+import at.ac.tuwien.sepm2011ws.mp3player.serviceLayer.PlaylistService;
 import at.ac.tuwien.sepm2011ws.mp3player.serviceLayer.ServiceFactory;
+import at.ac.tuwien.sepm2011ws.mp3player.serviceLayer.SettingsService;
+import at.ac.tuwien.sepm2011ws.mp3player.serviceLayer.SongInformationService;
 
 public class SimilarArtist extends JDialog implements ActionListener, ListSelectionListener, Runnable {
 
@@ -54,7 +62,7 @@ public class SimilarArtist extends JDialog implements ActionListener, ListSelect
 	private Dimension dim = toolkit.getScreenSize();
 	private Song song;
 	private Thread fred;
-
+	private List<Playlist> similarArtists = null;
 	private JPanel similarPanel = new JPanel(new MigLayout("", "[][grow]",
 			"[][][][]"));
 	private JDialog checkDialog;
@@ -81,11 +89,29 @@ public class SimilarArtist extends JDialog implements ActionListener, ListSelect
 	private LastFmService lfms;
 	private ImageIcon loading;
 	private JLabel lblLoading = new JLabel();
-
+	
+	private PlaylistService ps;
+	private CoreInteractionService cis;
+	private SettingsService ss;
+	private SongInformationService sis;
+	private Playlist playlistMainFrame;
+	private SongTableRendererSimilarArtist songrenderer;
+	
+	
 	public SimilarArtist(ArrayList<Song> songlist) {
+		
+
+		
 		if (!songlist.isEmpty()) {
+			
 			ServiceFactory sf = ServiceFactory.getInstance();
 			lfms = sf.getLastFmService();
+			cis = sf.getCoreInteractionService();
+			ps = sf.getPlaylistService();
+			ss = sf.getSettingsService();
+			sis = sf.getSongInformationService();
+			playlistMainFrame = cis.getCurrentPlaylist();
+			
 			width = 650;
 			height = 360;
 			positionX = (int) Math.round(dim.getWidth() / 2 - width / 2);
@@ -140,7 +166,31 @@ public class SimilarArtist extends JDialog implements ActionListener, ListSelect
 		
 		//similarPanel.add(songPane, "cell 1 2, grow");
 
+		songTable.getTableHeader().setReorderingAllowed(false);
+		songTable.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
+		songTable.setDragEnabled(true);
+		songTable.setTransferHandler(new JTableSongTransferHandler());
+		songTable.setRowSelectionAllowed(true);
+		songTable.setRowHeight(25);
+		TableColumn col = songTable.getColumnModel().getColumn(7);
+		int widthtable = 200;
+		col.setPreferredWidth(widthtable);
+		
+		songTable.addMouseListener(new MouseAdapter() {
+			public void mouseClicked(MouseEvent e) {
+				if (e.getClickCount() == 2) {
+					int row = songTable.getSelectedRow();
 
+					if (row > -1) {
+						//cis.setCurrentPlaylist(playlist)
+						cis.playFromBeginning(row);
+						songTable.repaint();
+	
+					}
+				}
+			}
+		});
+		
 		similarPanel.add(btnOK, "cell 1 3, alignx right, aligny center");
 		btnOK.addActionListener(this);
 		btnOK.setActionCommand("ok");
@@ -175,6 +225,7 @@ public class SimilarArtist extends JDialog implements ActionListener, ListSelect
 			}
 
 			public void windowClosing(WindowEvent arg0) {
+				cis.setCurrentPlaylist(playlistMainFrame);
 
 			}
 
@@ -237,7 +288,7 @@ public class SimilarArtist extends JDialog implements ActionListener, ListSelect
 
 	@Override
 	public void run() {
-		List<Playlist> similarArtists = null;
+		
 
 		logger.info("SimilarArtist(): Got into thread");
 		logger.info("SimilarArtist(): get List of playlists (similar artists and the best rated/most playled songs in the library)");
@@ -295,10 +346,46 @@ public class SimilarArtist extends JDialog implements ActionListener, ListSelect
 	}
 
 	@Override
-	public void valueChanged(ListSelectionEvent arg0) {
-		// TODO Auto-generated method stub
+	public void valueChanged(ListSelectionEvent e) {
+
+		
+		logger.info("valueChanged");
+		if ( e.getSource() instanceof JList)
+		{
+			JList jl = new JList();
+			jl = (JList) e.getSource();
+			fillSongTable(similarArtists.get(jl.getSelectedIndex()));
+			cis.setCurrentPlaylist(similarArtists.get(jl.getSelectedIndex()));
+			songrenderer = new SongTableRendererSimilarArtist();
+			for( int i = 0; i<songTable.getColumnCount(); i++)
+			{
+				songTable.getColumnModel().getColumn(i).setCellRenderer(songrenderer);
+				if(i == 7)
+					songTable.getColumnModel().getColumn(i).setCellEditor(new SongCellEditorSimilarArtist());	
+			}
+			
+		}
+		
+		
 		
 	}
+	protected void fillSongTable(Playlist list) {
+		String album = null;
+		songmodel.setRowCount(0);
+
+		for (Song x : list) {
+
+			if (x.getAlbum() != null)
+				album = x.getAlbum().getTitle();
+			else
+				album = "";
+
+			songmodel.addRow(new Object[] { x, x.getTitle(), x.getArtist(),
+					album, x.getYear(), x.getGenre(), x.getDuration(),
+					x.getRating(), x.getPlaycount() });
+		}
+	}
+
 
 	// TODO for Johannes: implement itemListener for selection change in
 	// songList (into initialize())
