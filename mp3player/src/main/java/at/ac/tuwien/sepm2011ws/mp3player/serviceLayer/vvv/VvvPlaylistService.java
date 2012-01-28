@@ -119,7 +119,7 @@ class VvvPlaylistService implements PlaylistService {
 			for (AbstractPlaylistComponent apc : plSeq.getComponents()) {
 				m = (Media) apc;
 				folder = file.getParent();
-				f = new File(m.getSource().getURI());
+				f = new File(m.getSource().getURL().getPath());
 				f = new File(folder + File.separator + f.getName());
 				addSongsToPlaylist(new File[] { f }, playlist);
 			}
@@ -127,9 +127,9 @@ class VvvPlaylistService implements PlaylistService {
 		} catch (IOException e) {
 			throw new DataAccessException("Error reading playlist "
 					+ file.getPath());
-		} catch (URISyntaxException e) {
-			throw new DataAccessException("Error reading playlist "
-					+ file.getPath());
+			// } catch (URISyntaxException e) {
+			// throw new DataAccessException("Error reading playlist "
+			// + file.getPath());
 		}
 
 		return playlist;
