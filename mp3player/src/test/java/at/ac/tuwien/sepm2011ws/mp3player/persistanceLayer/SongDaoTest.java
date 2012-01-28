@@ -16,6 +16,8 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
+import at.ac.tuwien.sepm2011ws.mp3player.domainObjects.Album;
+import at.ac.tuwien.sepm2011ws.mp3player.domainObjects.Lyric;
 import at.ac.tuwien.sepm2011ws.mp3player.domainObjects.Song;
 import at.ac.tuwien.sepm2011ws.mp3player.persistanceLayer.db.DaoFactory;
 
@@ -25,12 +27,14 @@ import at.ac.tuwien.sepm2011ws.mp3player.persistanceLayer.db.DaoFactory;
  */
 public class SongDaoTest {
 	private SongDao sd;
+	private AlbumDao ad;
 	private Connection con;
 
 	@Before
 	public void setUp() throws Exception {
 		DaoFactory factory = DaoFactory.getInstance();
 		sd = factory.getSongDao();
+		ad = factory.getAlbumDao();
 		con = sd.getConnection();
 		con.setAutoCommit(false);
 		clearSongTable();
@@ -47,11 +51,103 @@ public class SongDaoTest {
 		con.rollback();
 	}
 
+	@Test(expected = IllegalArgumentException.class)
+	public void testCreate_WithIllegalArgument()
+			throws IllegalArgumentException, DataAccessException {
+		sd.create(null);
+	}
+	
+	@Test(expected = IllegalArgumentException.class)
+	public void testRead_WithIllegalArgument()
+			throws IllegalArgumentException, DataAccessException {
+		sd.read(-1);
+	}
+
+	@Test(expected = IllegalArgumentException.class)
+	public void testGetTopRatedSongs_WithIllegalArgument()
+			throws IllegalArgumentException, DataAccessException {
+		sd.getTopRatedSongs(-1);
+	}
+
+	@Test(expected = IllegalArgumentException.class)
+	public void testGetTopPlayedSongs_WithIllegalArgument()
+			throws IllegalArgumentException, DataAccessException {
+		sd.getTopPlayedSongs(-1);
+	}
+
 	@Test
-	public void testReadAll_AtLeastOne() throws DataAccessException {
+	public void testCreate_ShouldCreateSongWithLyric()
+			throws DataAccessException {
+		Song expected = new Song("Machine Head", "Halo", 300, "C:\\music\\halo");
+		Lyric lyric = new Lyric("Das ist eine Lyric");
+		expected.setLyric(lyric);
+		sd.create(expected);
+
+		Song actual = sd.read(expected.getId());
+		assertEquals(expected, actual);
+	}
+
+	@Test
+	public void testCreate_ShouldCreateSongWithAlbum()
+			throws DataAccessException {
+		Song expected = new Song("Machine Head", "Halo", 300, "C:\\music\\halo");
+		Album album = new Album("Album1");
+		expected.setAlbum(album);
+		sd.create(expected);
+
+		Song actual = sd.read(expected.getId());
+		assertEquals(expected, actual);
+	}
+
+	@Test
+	public void testUpdate_ShouldUpdateSongWithLyric() throws DataAccessException {
+		Song expected = new Song("Machine Head", "Halo", 300, "C:\\music\\halo");
+		sd.create(expected);
+		
+		Lyric lyric = new Lyric("Das ist eine Lyric");
+		expected.setLyric(lyric);
+		sd.update(expected);
+
+		Song actual = sd.read(expected.getId());
+		assertEquals(expected, actual);
+	}
+	
+	@Test
+	public void testCreate_ShouldUpdateSongWithNoExistingAlbum()
+			throws DataAccessException {
+		Song expected = new Song("Machine Head", "Halo", 300, "C:\\music\\halo");
+		sd.create(expected);
+
+		Album album = new Album("Album1");
+		expected.setAlbum(album);
+		sd.update(expected);
+		
+		Song actual = sd.read(expected.getId());
+		assertEquals(expected, actual);
+	}
+
+	@Test
+	public void testReadAll_ShouldReadAllSongs() throws DataAccessException {
 		Song s = new Song("Machine Head", "Halo", 300, "C:\\music\\halo");
 		sd.create(s);
 		Song s1 = new Song("Machine Head", "Halo", 300, "C:\\music\\halo");
+		sd.create(s1);
+
+		List<Song> dList = sd.readAll();
+		assertTrue(dList.contains(s));
+		assertTrue(dList.contains(s1));
+	}
+	
+	@Test
+	public void testReadAll_ShouldReadAllSongsWithLyric() throws DataAccessException {
+		Song s = new Song("Machine Head", "Halo", 300, "C:\\music\\halo");
+		Lyric lyric1 = new Lyric("Lyric1");
+		s.setLyric(lyric1);
+		sd.create(s);
+		
+		Song s1 = new Song("Machine Head", "Halo", 300, "C:\\music\\halo");
+		Lyric lyric2 = new Lyric("Lyric2");
+		s1.setLyric(lyric2);
 		sd.create(s1);
 
 		List<Song> dList = sd.readAll();
