@@ -23,6 +23,7 @@ import java.awt.event.MouseMotionListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowStateListener;
+import java.awt.print.PrinterException;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -561,8 +562,8 @@ public class MainFrame extends JFrame implements ActionListener, Runnable,
 	public void setMediaTime(int value) {
 
 		if (cis.isPlaying() || cis.isPaused() == true)
-			cis.seekToMillis(value);
-			//	cis.seekToSecond(value);
+			// cis.seekToMillis(value);
+			cis.seekToSecond(value);
 		// cis.seek(value); // seek in percent
 	}
 
@@ -631,19 +632,14 @@ public class MainFrame extends JFrame implements ActionListener, Runnable,
 
 		while (!fred.isInterrupted()) {
 
-			// Song temp = cis.getCurrentSong();
-			
-			progress.setValue((int) cis.getPlayTimeInMillis());
-		/*	SwingUtilities.invokeLater(new Runnable() {
+			SwingUtilities.invokeLater(new Runnable() {
 
 				@Override
 				public void run() {
-					
+					progress.setValue((int) cis.getPlayTimeInSeconds());
 
 				}
-
-			});*/
-
+			});
 			lblPlayedTime.setText(getPlayedTimeInSeconds());
 			lblDuration.setText(getMediaTimeAt(100)); // in percent
 
@@ -653,11 +649,13 @@ public class MainFrame extends JFrame implements ActionListener, Runnable,
 			 * temp.getArtist() + " - " + temp.getTitle() + "");
 			 * btnPlayPause.setActionCommand("pause"); setPauseIcons(); }
 			 */
-		/*	try {
-				//Thread.sleep(1);
+
+			try {
+				Thread.sleep(100);
 			} catch (InterruptedException ex) {
 				fred.interrupt();
-			}*/
+			}
+
 		}
 	}
 
@@ -1252,7 +1250,7 @@ public class MainFrame extends JFrame implements ActionListener, Runnable,
 		// progress.setSnapToTicks(true);
 		progress.putClientProperty("JSlider.isFilled", Boolean.TRUE);
 
-		progress.addMouseListener(new MouseListener() {
+		progress.addMouseListener(new MouseAdapter() {
 			public void mouseReleased(MouseEvent evt) {
 
 				setMediaTime(progress.getValue());
@@ -1263,24 +1261,6 @@ public class MainFrame extends JFrame implements ActionListener, Runnable,
 
 				setMediaTime(progress.getValue());
 
-			}
-
-			@Override
-			public void mouseEntered(MouseEvent arg0) {
-
-				setMediaTime(progress.getValue());
-			}
-
-			@Override
-			public void mouseExited(MouseEvent arg0) {
-
-				setMediaTime(progress.getValue());
-			}
-
-			@Override
-			public void mousePressed(MouseEvent arg0) {
-
-				setMediaTime(progress.getValue());
 			}
 		});
 
@@ -1315,16 +1295,17 @@ public class MainFrame extends JFrame implements ActionListener, Runnable,
 				progress.setEnabled(true);
 				lblPlayedTime.setText(getPlayedTimeInSeconds());
 				progress.setVisible(true);
-				progress.setMaximum((int) cis.getDurationInMillis());
+				progress.setMaximum((int) cis.getDuration());
 				lblCurrentStateSong.setVisible(true);
 				lblPlayedTime.setVisible(true);
 				lblDurationSeperator.setVisible(true);
 				lblDuration.setVisible(true);
+				int row = songTable.getSelectedRow();
+				int playcountOld = cis.getCurrentSong().getPlaycount();
+				songTable.setValueAt(Integer.toString(playcountOld), row, 8);
 
-				fillSongTable(currentPlaylistGUI);
+				songTable.setRowSelectionInterval(row, row);
 				songTable.repaint();
-				songTable.setRowSelectionInterval(cis.getCurrentSongIndex(),
-						cis.getCurrentSongIndex());
 				if (cis.isPlaying()) {
 					currentplaying = new String("Currently playing: "
 							+ cis.getCurrentSong().getArtist() + " - "
@@ -1335,12 +1316,6 @@ public class MainFrame extends JFrame implements ActionListener, Runnable,
 						currentplaying = currentplaying.concat(" ...");
 					}
 					lblCurrentStateSong.setText(currentplaying);
-
-					/*
-					 * lblCurrentStateSong.setText("Currently playing: " +
-					 * cis.getCurrentSong().getArtist() + " - " +
-					 * cis.getCurrentSong().getTitle() + "");
-					 */
 					btnPlayPause.setActionCommand("pause");
 					setPauseIcons();
 				}
@@ -1353,10 +1328,11 @@ public class MainFrame extends JFrame implements ActionListener, Runnable,
 					fred.interrupt();
 				}
 
-				songTable.repaint();
-				songTable.setRowSelectionInterval(cis.getCurrentSongIndex(),
-						cis.getCurrentSongIndex());
-				fillSongTable(currentPlaylistGUI);
+				if (cis.hasNextSong()) {
+					int row = songTable.getSelectedRow() + 1;
+					songTable.setRowSelectionInterval(row, row);
+				}
+
 			}
 
 		});
@@ -2056,11 +2032,7 @@ public class MainFrame extends JFrame implements ActionListener, Runnable,
 		for (int i = 0; i < temp.size(); i++)
 			if (temp.get(i).equals(x))
 				cis.setCurrentSongIndex(i);
-		// if (cis.getCurrentSongIndex() > -1)
-		// cis.setCurrentSongIndex(sorter.convertRowIndexToView(cis
-		// .getCurrentSongIndex()));
 
-		// fillSongTable(temp);
 		currentPlaylistGUI = temp;
 		songTable.repaint();
 	}
