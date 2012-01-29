@@ -56,14 +56,14 @@ class DbAlbumDao implements AlbumDao {
 			sameStmt.setInt(2, a.getYear());
 			result = sameStmt.executeQuery();
 
-			if (result.next()) {
-				// Album already exists in db, so read it
-				Album a2 = read(result.getInt("id"));
-				a.setId(a2.getId());
-				a.setTitle(a2.getTitle());
-				a.setYear(a2.getYear());
-				a.setAlbumartPath(a2.getAlbumartPath());
-			} else {
+//			if (result.next()) {
+//				// Album already exists in db, so read it
+//				Album a2 = read(result.getInt("id"));
+//				a.setId(a2.getId());
+//				a.setTitle(a2.getTitle());
+//				a.setYear(a2.getYear());
+//				a.setAlbumartPath(a2.getAlbumartPath());
+//			} else {
 				// Album doesn't exist in db, so create
 				createStmt.setString(1, a.getTitle());
 				createStmt.setInt(2, a.getYear());
@@ -78,7 +78,7 @@ class DbAlbumDao implements AlbumDao {
 					throw new DataAccessException(
 							"Error creating album in database");
 				}
-			}
+//			}
 
 		} catch (SQLException e) {
 			throw new DataAccessException("Error creating album in database");

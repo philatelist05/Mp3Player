@@ -254,6 +254,7 @@ class VvvPlaylistService implements PlaylistService {
 			if (checkFileExtensionAccepted(file.getName(), userFileTypes)) {
 				s = new Song("Unknown Artist", "Unknown Title", 0,
 						file.getAbsolutePath());
+				
 				sd.create(s);
 				sis.getMetaTags(s);
 

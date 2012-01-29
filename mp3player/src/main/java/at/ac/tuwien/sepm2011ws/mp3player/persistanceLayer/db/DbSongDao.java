@@ -10,6 +10,7 @@ import java.util.List;
 
 import javax.sql.DataSource;
 
+import at.ac.tuwien.sepm2011ws.mp3player.domainObjects.Album;
 import at.ac.tuwien.sepm2011ws.mp3player.domainObjects.Lyric;
 import at.ac.tuwien.sepm2011ws.mp3player.domainObjects.Song;
 import at.ac.tuwien.sepm2011ws.mp3player.persistanceLayer.AlbumDao;
@@ -30,6 +31,7 @@ class DbSongDao implements SongDao {
 	private PreparedStatement readRatedStmt;
 	private PreparedStatement readPlayedStmt;
 	private PreparedStatement sameStmt;
+	private PreparedStatement updateAlbumInSongStmt;
 
 	DbSongDao(DataSource source, AlbumDao ad) throws DataAccessException {
 		this.ad = ad;
@@ -72,6 +74,9 @@ class DbSongDao implements SongDao {
 							+ "album FROM song LEFT JOIN is_on ON id = song ORDER BY playcount DESC LIMIT ?;");
 			sameStmt = con
 					.prepareStatement("SELECT id FROM song WHERE path=?;");
+			updateAlbumInSongStmt = con
+					.prepareStatement("UPDATE album SET "
+							+ "title=?, year=?, albumart_path=? WHERE id IN (SELECT album FROM is_on WHERE song=? );");
 
 		} catch (SQLException e) {
 			throw new DataAccessException(
@@ -189,7 +194,8 @@ class DbSongDao implements SongDao {
 
 					if (result.next()) {
 						// Album exists
-						ad.update(s.getAlbum());
+						updateAlbumInSong(s.getId(), s.getAlbum());
+
 					} else {
 						// Album doesn't exist, so create it
 						ad.create(s.getAlbum());
@@ -209,6 +215,20 @@ class DbSongDao implements SongDao {
 			throw new DataAccessException("Error updating song in database");
 		}
 
+	}
+
+	private void updateAlbumInSong(int songId, Album album)
+			throws DataAccessException {
+		
+		try {
+			updateAlbumInSongStmt.setString(1, album.getTitle());
+			updateAlbumInSongStmt.setInt(2, album.getYear());
+			updateAlbumInSongStmt.setString(3, album.getAlbumartPath());
+			updateAlbumInSongStmt.setInt(4, songId);
+			updateAlbumInSongStmt.executeUpdate();
+		} catch (SQLException e) {
+			throw new DataAccessException(e.getMessage());
+		}
 	}
 
 	public void delete(int id) throws DataAccessException {
