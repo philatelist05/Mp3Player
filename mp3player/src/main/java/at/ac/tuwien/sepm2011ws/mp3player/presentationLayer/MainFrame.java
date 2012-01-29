@@ -707,15 +707,15 @@ public class MainFrame extends JFrame implements ActionListener, Runnable,
 							JOptionPane.CLOSED_OPTION);
 				}
 				Playlist currentPL = clicked.getNodePlaylist();
-				if (currentPlaylistGUI.getClass() == WritablePlaylist.class) {
-					try {
-						ps.reloadPlaylist(currentPL);
-					} catch (DataAccessException e) {
-						int response = JOptionPane.showConfirmDialog(null,
-								"DataAccessException", e.toString(),
-								JOptionPane.CLOSED_OPTION);
-					}
+
+				try {
+					ps.reloadPlaylist(currentPL);
+				} catch (DataAccessException e) {
+					int response = JOptionPane.showConfirmDialog(null,
+							"DataAccessException", e.toString(),
+							JOptionPane.CLOSED_OPTION);
 				}
+
 				currentPlaylistGUI = currentPL;
 
 				fillSongTable(currentPL);
@@ -955,9 +955,9 @@ public class MainFrame extends JFrame implements ActionListener, Runnable,
 
 		// setExtendedState(JFrame.MAXIMIZED_BOTH);
 
-//		splash = SplashScreen.getSplash();
-//		splash.stop();
-		
+		// splash = SplashScreen.getSplash();
+		// splash.stop();
+
 		setVisible(true);
 		// setResizable(false);
 
@@ -1906,17 +1906,14 @@ public class MainFrame extends JFrame implements ActionListener, Runnable,
 				Playlist temp = new Playlist(currentPlaylistGUI.getId(),
 						currentPlaylistGUI.getTitle());
 				temp.addAll(currentPlaylistGUI);
-				
+
 				SimilarArtist sa = new SimilarArtist(selectedSongs);
-				if(cis.getCurrentPlaylist().size()>0)
-				{
+				if (cis.getCurrentPlaylist().size() > 0) {
 					currentPlaylistGUI = cis.getCurrentPlaylist();
 					fillSongTable(currentPlaylistGUI);
-				}	
-				else
-				{
+				} else {
 					cis.setCurrentPlaylist(currentPlaylistGUI);
-					//fillSongTable(temp);
+					// fillSongTable(temp);
 					currentPlaylistGUI = temp;
 				}
 			}
