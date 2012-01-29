@@ -5,8 +5,11 @@ import java.net.SocketException;
 import java.net.UnknownHostException;
 import java.rmi.RemoteException;
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Set;
 
 import javax.xml.rpc.ServiceException;
 
@@ -16,12 +19,14 @@ import at.ac.tuwien.sepm2011ws.mp3player.domainObjects.MetaTags;
 import at.ac.tuwien.sepm2011ws.mp3player.domainObjects.Song;
 import at.ac.tuwien.sepm2011ws.mp3player.persistanceLayer.DataAccessException;
 import at.ac.tuwien.sepm2011ws.mp3player.persistanceLayer.SongDao;
+import at.ac.tuwien.sepm2011ws.mp3player.serviceLayer.LastFmService;
 import at.ac.tuwien.sepm2011ws.mp3player.serviceLayer.SongInformationService;
 
 import com.chartlyrics.ChartLyricsLocator;
 import com.chartlyrics.ChartLyricsSoap;
 import com.chartlyrics.GetLyricResult;
 
+import de.umass.lastfm.Track;
 import entagged.audioformats.AudioFile;
 import entagged.audioformats.AudioFileIO;
 import entagged.audioformats.Tag;
@@ -139,17 +144,41 @@ public class VvvSongInformationService implements SongInformationService {
 		if (song.getArtist() == null || song.getArtist().isEmpty())
 			throw new IllegalArgumentException(
 					"Song artist must not be null or empty");
-
-		//Liste von möglichen Einträgen zurückgeben
 		
-		// Track correctedTrack = Track.getCorrection(song.getArtist(),
-		// song.getTitle(), LastFmService.LastFmApiKey);
-		// Collection<Track> tracks = Track.getSimilar(song.getArtist(),
-		// song.getTitle(), LastFmService.LastFmApiKey);
-		// Collection<Track> tracks2 = Track.search(song.getArtist(), song.getTitle(), 20, LastFmService.LastFmApiKey);
-
-		// TODO Auto-generated method stub
-		return null;
+		Set<MetaTags> metaTags = new HashSet<MetaTags>();
+		Track correctedTrack = Track.getCorrection(song.getArtist(), song.getTitle(), LastFmService.LastFmApiKey);
+		if(correctedTrack != null) {
+			Collection<Track> tracks = Track.search(correctedTrack.getArtist(), correctedTrack.getName(), 10, LastFmService.LastFmApiKey);
+			metaTags.addAll(mapTracksToMetaTag(tracks, song));
+		}
+		Collection<Track> tracks = Track.search(song.getArtist(), song.getTitle(), 10, LastFmService.LastFmApiKey);
+		metaTags.addAll(mapTracksToMetaTag(tracks, song));
+		
+		ArrayList<MetaTags> list = new ArrayList<MetaTags>();
+		list.addAll(metaTags);
+		return list;
+	}
+	
+	private Set<MetaTags> mapTracksToMetaTag(Collection<Track> tracks, Song song){
+		Set<MetaTags> list = new HashSet<MetaTags>();
+		for (Track track : tracks) {
+			Collection<de.umass.lastfm.Tag> genres = track.getTopTags(track.getArtist(), track.getMbid(), LastFmService.LastFmApiKey);
+			Iterator<de.umass.lastfm.Tag> iterator = genres.iterator();
+			
+			String genre = song.getGenre();
+			if(iterator.hasNext()) {
+				de.umass.lastfm.Tag genreTag = iterator.next();
+				genre = genreTag.getName();	
+			}
+			
+			Album album = new Album("Unknown");
+			String title = track.getAlbum();
+			if (title != null && !title.isEmpty())
+				album.setTitle(title);
+				
+			list.add(new MetaTags(track.getArtist(), track.getName(), track.getDuration(), song.getYear(), genre, album));
+		}
+		return list;
 	}
 
 	@SuppressWarnings("deprecation")

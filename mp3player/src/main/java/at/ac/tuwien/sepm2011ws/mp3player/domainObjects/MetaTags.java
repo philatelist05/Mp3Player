@@ -124,4 +124,33 @@ public class MetaTags {
 	public void setAlbum(Album album) {
 		this.album = album;
 	}
+	
+	@Override
+	public boolean equals(Object obj) {
+		if (obj != null && this.getClass() == obj.getClass()) {
+			MetaTags other = (MetaTags) obj;
+
+			return this.title.equals(other.title)
+					&& this.duration == other.duration
+					&& this.year == other.year
+					&& this.artist.equals(other.artist)
+					&& ((this.genre == null && other.genre == null) || (this.genre != null && this.genre
+							.equals(other.genre)))
+					&& ((this.album == null && other.album == null) || (this.album != null && this.album
+							.equals(other.album)));
+		}
+		return false;
+	}
+	
+	@Override
+	public int hashCode() {
+		int result = 0;
+		result = 31 * result ^ (title == null ? 0 : title.hashCode());
+		result = 31 * result ^ duration;
+		result = 31 * result ^ year;
+		result = 31 * result ^ (artist == null ? 0 : artist.hashCode());
+		result = 31 * result ^ (genre == null ? 0 : genre.hashCode());
+		result = 31 * result ^ (album == null ? 0 : album.hashCode());
+		return result;
+	}
 }
