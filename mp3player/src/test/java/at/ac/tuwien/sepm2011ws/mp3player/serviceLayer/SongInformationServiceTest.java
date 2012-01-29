@@ -39,7 +39,7 @@ public class SongInformationServiceTest {
 
 	@Test
 	public void testDownloadMetaTags_ShouldReturnAtLeastOneMetatag() throws DataAccessException {
-		Song song = new Song("Guns and Roses", "It’s So Easy", 0, "nil");
+		Song song = new Song("Blur", "Song2", 0, "nil");
 		List<MetaTags> metatags = songInformationService.downloadMetaTags(song);
 		assertTrue(metatags.size() > 0);
 	}
