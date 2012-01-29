@@ -75,6 +75,7 @@ import com.googlecode.starrating.*;
 import org.apache.log4j.Logger;
 import org.springframework.core.io.ClassPathResource;
 
+import at.ac.tuwien.sepm2011ws.mp3player.SplashScreen;
 import at.ac.tuwien.sepm2011ws.mp3player.domainObjects.PlayMode;
 import at.ac.tuwien.sepm2011ws.mp3player.domainObjects.WritablePlaylist;
 import at.ac.tuwien.sepm2011ws.mp3player.domainObjects.Playlist;
@@ -92,6 +93,7 @@ public class MainFrame extends JFrame implements ActionListener, Runnable,
 	/**
 	 * 
 	 */
+	private SplashScreen splash;
 	private static MainFrame mainframe;
 	private static final long serialVersionUID = -959319978002415594L;
 	private static Logger logger = Logger.getLogger(MainFrame.class);
@@ -953,6 +955,9 @@ public class MainFrame extends JFrame implements ActionListener, Runnable,
 
 		// setExtendedState(JFrame.MAXIMIZED_BOTH);
 
+//		splash = SplashScreen.getSplash();
+//		splash.stop();
+		
 		setVisible(true);
 		// setResizable(false);
 
