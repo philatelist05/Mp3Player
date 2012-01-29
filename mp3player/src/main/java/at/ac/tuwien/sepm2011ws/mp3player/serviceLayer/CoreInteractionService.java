@@ -106,6 +106,15 @@ public interface CoreInteractionService {
 	 *            The second to where the player should seek
 	 */
 	public void seekToSecond(int seconds);
+	
+	/**
+	 * Seeks the song to the given millisecond.
+	 * 
+	 * @param seconds
+	 *            The milli second to where the player should seek
+	 */
+	
+	public void seekToMillis (long millis);
 
 	/**
 	 * Gets the duration of the current song.
@@ -114,6 +123,14 @@ public interface CoreInteractionService {
 	 */
 	public double getDuration();
 
+	/**
+	 * Gets the duration of the current song.
+	 * 
+	 * @return the duration of the current song <b>in millisecond</b>
+	 */
+	
+	public long getDurationInMillis();
+	
 	/**
 	 * Gets the duration of the current song at x% of the song, where x is the
 	 * value of the parameter.
@@ -140,6 +157,13 @@ public interface CoreInteractionService {
 	 * @return the current play time <b>in seconds</b>
 	 */
 	public double getPlayTimeInSeconds();
+	
+	/**
+	 * Gets the play time of the current song.
+	 * 
+	 * @return the current play time <b>in milliseconds</b>
+	 */
+	public long getPlayTimeInMillis();
 
 	/**
 	 * Returns the current active song.

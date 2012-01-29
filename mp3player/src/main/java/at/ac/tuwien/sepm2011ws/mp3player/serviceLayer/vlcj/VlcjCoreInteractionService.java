@@ -205,6 +205,17 @@ public class VlcjCoreInteractionService implements CoreInteractionService {
 			this.mediaPlayer.setTime(seconds * 1000);
 		}
 	}
+	
+	public void seekToMillis(long millis) {
+		if (millis < 0 || millis > getDurationInMillis())
+			throw new IllegalArgumentException(
+					"Amount of seconds out of song duration");
+
+		if (this.mediaPlayer.isSeekable()) {
+			this.mediaPlayer.setTime(millis);
+		}
+	}
+	
 
 	public double getDuration() {
 		return getDurationAt(100);
@@ -217,6 +228,12 @@ public class VlcjCoreInteractionService implements CoreInteractionService {
 
 		return ((double) this.mediaPlayer.getLength() / 1000) * (percent / 100);
 	}
+	
+	public long getDurationInMillis() {
+
+
+		return this.mediaPlayer.getLength();
+	}
 
 	public double getPlayTime() {
 		double duration = getDuration();
@@ -226,6 +243,10 @@ public class VlcjCoreInteractionService implements CoreInteractionService {
 
 	public double getPlayTimeInSeconds() {
 		return this.mediaPlayer.getTime() / 1000;
+	}
+	
+	public long getPlayTimeInMillis() {
+		return this.mediaPlayer.getTime();
 	}
 
 	public Song getCurrentSong() {

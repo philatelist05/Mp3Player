@@ -563,7 +563,8 @@ public class MainFrame extends JFrame implements ActionListener, Runnable,
 	public void setMediaTime(int value) {
 
 		if (cis.isPlaying() || cis.isPaused() == true)
-			cis.seekToSecond(value);
+			cis.seekToMillis(value);
+			//	cis.seekToSecond(value);
 		// cis.seek(value); // seek in percent
 	}
 
@@ -633,15 +634,17 @@ public class MainFrame extends JFrame implements ActionListener, Runnable,
 		while (!fred.isInterrupted()) {
 
 			// Song temp = cis.getCurrentSong();
-			SwingUtilities.invokeLater(new Runnable() {
+			
+			progress.setValue((int) cis.getPlayTimeInMillis());
+		/*	SwingUtilities.invokeLater(new Runnable() {
 
 				@Override
 				public void run() {
-					progress.setValue((int) cis.getPlayTimeInSeconds());
+					
 
 				}
 
-			});
+			});*/
 
 			lblPlayedTime.setText(getPlayedTimeInSeconds());
 			lblDuration.setText(getMediaTimeAt(100)); // in percent
@@ -652,11 +655,11 @@ public class MainFrame extends JFrame implements ActionListener, Runnable,
 			 * temp.getArtist() + " - " + temp.getTitle() + "");
 			 * btnPlayPause.setActionCommand("pause"); setPauseIcons(); }
 			 */
-			try {
-				Thread.sleep(100);
+		/*	try {
+				//Thread.sleep(1);
 			} catch (InterruptedException ex) {
 				fred.interrupt();
-			}
+			}*/
 		}
 	}
 
@@ -1317,7 +1320,7 @@ public class MainFrame extends JFrame implements ActionListener, Runnable,
 				progress.setEnabled(true);
 				lblPlayedTime.setText(getPlayedTimeInSeconds());
 				progress.setVisible(true);
-				progress.setMaximum((int) cis.getDuration());
+				progress.setMaximum((int) cis.getDurationInMillis());
 				lblCurrentStateSong.setVisible(true);
 				lblPlayedTime.setVisible(true);
 				lblDurationSeperator.setVisible(true);
