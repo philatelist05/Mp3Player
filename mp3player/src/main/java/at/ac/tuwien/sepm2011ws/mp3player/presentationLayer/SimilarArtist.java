@@ -305,7 +305,6 @@ public class SimilarArtist extends JDialog implements ActionListener, ListSelect
 		} catch (DataAccessException e) {
 			JOptionPane.showConfirmDialog(null, e.getMessage(),
 					"Error", JOptionPane.CLOSED_OPTION);
-			e1.printStackTrace();
 		}
 
 
