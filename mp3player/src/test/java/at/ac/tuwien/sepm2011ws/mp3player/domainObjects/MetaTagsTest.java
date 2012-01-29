@@ -94,4 +94,15 @@ public class MetaTagsTest {
 		MetaTags.setAlbum(album);
 		assertEquals(album, MetaTags.getAlbum());
 	}
+	
+	@Test
+	public void testHashcode_ShouldBeTheEqual() {
+		Album album1 = new Album("title");
+		MetaTags metatags1 = new MetaTags("Artist", "Ttile", 3001, 2000, "Genre", album1);
+		
+		Album album2 = new Album("title");
+		MetaTags metatags2 = new MetaTags("Artist", "Ttile", 3001, 2000, "Genre", album2);
+		
+		assertEquals(metatags1.hashCode(), metatags2.hashCode());
+	}
 }
