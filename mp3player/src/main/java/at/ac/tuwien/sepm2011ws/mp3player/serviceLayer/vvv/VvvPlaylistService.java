@@ -68,43 +68,6 @@ class VvvPlaylistService implements PlaylistService {
 		}
 	}
 
-	// private boolean isFileExtensionAccepted(File file) {
-	// if (file == null) throw new
-	// IllegalArgumentException("File must not be null");
-	//
-	// for (String type : PlaylistFileTypes) {
-	// String actualFileExtension = getFileExtension(file.getName());
-	// if (type.toLowerCase().equals(actualFileExtension))
-	// return true;
-	// }
-	// return false;
-	// }
-	//
-	// private String getFileExtension(String fileName) {
-	// if (fileName == null || fileName.isEmpty())
-	// throw new IllegalArgumentException(
-	// "The file name must not be null or empty");
-	//
-	// int dotIndex = fileName.lastIndexOf(".");
-	// if (dotIndex == -1)
-	// return "";
-	// return fileName.substring(dotIndex + 1, fileName.length())
-	// .toLowerCase();
-	// }
-
-	private String getBasename(String fileName) {
-		if (fileName == null || fileName.isEmpty())
-			throw new IllegalArgumentException(
-					"The file name must not be null or empty");
-
-		// TODO: Remove the leading path if there is one.
-
-		int dotIndex = fileName.lastIndexOf(".");
-		if (dotIndex == -1)
-			return fileName;
-		return fileName.substring(0, dotIndex);
-	}
-
 	private WritablePlaylist importPlaylist(File file)
 			throws DataAccessException {
 		WritablePlaylist playlist;
@@ -115,7 +78,7 @@ class VvvPlaylistService implements PlaylistService {
 		}
 
 		// Initialize playlist
-		playlist = createPlaylist(getBasename(file.getName()));
+		playlist = createPlaylist(FilenameUtils.getBaseName(file.getName()));
 
 		try {
 			// Get song files from playlist file
@@ -137,9 +100,6 @@ class VvvPlaylistService implements PlaylistService {
 		} catch (IOException e) {
 			throw new DataAccessException("Error reading playlist "
 					+ file.getPath());
-			// } catch (URISyntaxException e) {
-			// throw new DataAccessException("Error reading playlist "
-			// + file.getPath());
 		}
 
 		return playlist;
