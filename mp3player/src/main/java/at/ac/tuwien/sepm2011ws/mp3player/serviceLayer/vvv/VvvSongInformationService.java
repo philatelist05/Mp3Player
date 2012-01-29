@@ -165,14 +165,19 @@ public class VvvSongInformationService implements SongInformationService {
 			Collection<de.umass.lastfm.Tag> genres = track.getTopTags(track.getArtist(), track.getMbid(), LastFmService.LastFmApiKey);
 			Iterator<de.umass.lastfm.Tag> iterator = genres.iterator();
 			
-			String genre = song.getGenre();
-			if(iterator.hasNext()) {
+			String genre = "";
+			while(iterator.hasNext()) {
 				de.umass.lastfm.Tag genreTag = iterator.next();
-				genre = genreTag.getName();	
+				genre += genreTag.getName();	
+				genre = iterator.hasNext() ? genre + "," : genre;
 			}
+			genre = genre.isEmpty() ? song.getGenre() : genre;
+			
+			//This is necessary due to fetching Albums
+			Track updatedTrack = Track.getInfo(track.getArtist(), track.getName(), LastFmService.LastFmApiKey);
 			
 			Album album = new Album("Unknown");
-			String title = track.getAlbum();
+			String title = updatedTrack.getAlbum();
 			if (title != null && !title.isEmpty())
 				album.setTitle(title);
 				
