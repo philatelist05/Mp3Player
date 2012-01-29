@@ -26,8 +26,8 @@ public class Main {
 					logger.info("Logger successfully initialized");
 					logger.info("Starting MainFrame...");
 					
-					splash = SplashScreen.getSplash();
-					splash.start();
+//					splash = SplashScreen.getSplash();
+//					splash.start();
 					
 					UIManager.setLookAndFeel(UIManager
 							.getSystemLookAndFeelClassName());

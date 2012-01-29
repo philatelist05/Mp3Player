@@ -957,8 +957,8 @@ public class MainFrame extends JFrame implements ActionListener, Runnable,
 
 		// setExtendedState(JFrame.MAXIMIZED_BOTH);
 
-		splash = SplashScreen.getSplash();
-		splash.stop();
+//		splash = SplashScreen.getSplash();
+//		splash.stop();
 		
 		setVisible(true);
 		// setResizable(false);
