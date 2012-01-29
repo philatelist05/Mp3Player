@@ -22,9 +22,9 @@ public class SongTableRendererSimilarArtist extends DefaultTableCellRenderer {
 	/**
 	 * 
 	 */
-	
-	private Icon nothing; 
-	
+
+	private Icon nothing;
+
 	private static final long serialVersionUID = 1L;
 
 	private static Playlist curPlaylist;
@@ -54,7 +54,6 @@ public class SongTableRendererSimilarArtist extends DefaultTableCellRenderer {
 		Component component = super.getTableCellRendererComponent(table, value,
 				isSelected, hasFocus, row, column);
 
-		
 		if (row % 2 == 0) {
 
 			setBackground(Color.white);
@@ -65,18 +64,20 @@ public class SongTableRendererSimilarArtist extends DefaultTableCellRenderer {
 		}
 		table.setSelectionForeground(Color.red);
 		// table.setSelectionBackground(Color.red);
-
-		if (cis.getCurrentSongIndex() > -1)
-		{
-			/*if (cis.getCurrentSongIndex() > -1)
-			if
-			 (table.getRowSorter().convertRowIndexToView(cis.getCurrentSongIndex())
-			 == row
-			 )*/
-			if (cis.getCurrentSongIndex() == row) 
-			{
-				// System.out.println(table.getRowSorter().convertRowIndexToView(cis.getCurrentSongIndex()));
-				component.setFont(component.getFont().deriveFont(Font.BOLD));
+		System.out.println("cis:" + cis.getCurrentPlaylist().getTitle());
+		System.out.println("cur:" + curPlaylist.getTitle());
+		if (cis.getCurrentPlaylist().equals(curPlaylist)) {
+			if (cis.getCurrentSongIndex() > -1) {
+				/*
+				 * if (cis.getCurrentSongIndex() > -1) if
+				 * (table.getRowSorter().convertRowIndexToView
+				 * (cis.getCurrentSongIndex()) == row )
+				 */
+				if (cis.getCurrentSongIndex() == row) {
+					// System.out.println(table.getRowSorter().convertRowIndexToView(cis.getCurrentSongIndex()));
+					component
+							.setFont(component.getFont().deriveFont(Font.BOLD));
+				}
 			}
 		}
 

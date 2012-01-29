@@ -85,7 +85,7 @@ public class SimilarArtist extends JDialog implements ActionListener, ListSelect
 
 	private JSplitPane jSongPaneSplit = new JSplitPane();
 	
-	private JButton btnOK = new JButton("OK");
+	private JButton btnEXIT = new JButton("EXIT");
 //	private JButton btnCancel = new JButton("Cancel");
 
 	private LastFmService lfms;
@@ -158,8 +158,12 @@ public class SimilarArtist extends JDialog implements ActionListener, ListSelect
 		similarPanel.add(lblSimilarArtist, "cell 0 1");
 		similarPanel.add(lblSimilarSong, "cell 2 1");
 		songPane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
+		
+		//jSongPaneSplit.setTopComponent(lblSimilarSong);
+		//jSongPaneSplit.setLeftComponent(lblSimilarArtist);
 		jSongPaneSplit.setLeftComponent(artistPane);
 		jSongPaneSplit.setDividerLocation(100);
+		//jSongPaneSplit.setRightComponent(lblSimilarSong);
 		jSongPaneSplit.setRightComponent(songPane);
 		similarPanel.add(jSongPaneSplit, "cell 0 2 3 0, grow");
 		
@@ -181,6 +185,7 @@ public class SimilarArtist extends JDialog implements ActionListener, ListSelect
 					int row = songTable.getSelectedRow();
 
 					if (row > -1) {
+						cis.setCurrentPlaylist(similarArtists.get(artistList.getSelectedIndex()));
 						//cis.setCurrentPlaylist(playlist)
 						cis.playFromBeginning(row);
 						songTable.repaint();
@@ -190,9 +195,9 @@ public class SimilarArtist extends JDialog implements ActionListener, ListSelect
 			}
 		});
 		
-		similarPanel.add(btnOK, "cell 1 3, alignx right, aligny center");
-		btnOK.addActionListener(this);
-		btnOK.setActionCommand("ok");
+		similarPanel.add(btnEXIT, "cell 1 3, alignx right, aligny center");
+		btnEXIT.addActionListener(this);
+		btnEXIT.setActionCommand("exit");
 		artistList.addListSelectionListener(this);
 
 	/*	similarPanel.add(btnCancel, "cell 1 3, alignx right, aligny center");
@@ -224,7 +229,7 @@ public class SimilarArtist extends JDialog implements ActionListener, ListSelect
 			}
 
 			public void windowClosing(WindowEvent arg0) {
-				cis.setCurrentPlaylist(playlistMainFrame);
+				//cis.setCurrentPlaylist(playlistMainFrame);
 
 			}
 
@@ -347,7 +352,7 @@ public class SimilarArtist extends JDialog implements ActionListener, ListSelect
 
 	@Override
 	public void actionPerformed(ActionEvent e) {
-		if (e.getActionCommand().equals("ok")) {
+		if (e.getActionCommand().equals("exit")) {
 			dispose();
 		}
 	}
@@ -360,8 +365,9 @@ public class SimilarArtist extends JDialog implements ActionListener, ListSelect
 			JList jl = new JList();
 			jl = (JList) e.getSource();
 			fillSongTable(similarArtists.get(jl.getSelectedIndex()));
-			cis.setCurrentPlaylist(similarArtists.get(jl.getSelectedIndex()));
+			//cis.setCurrentPlaylist(similarArtists.get(jl.getSelectedIndex()));
 			songrenderer = new SongTableRendererSimilarArtist();
+			songrenderer.setPlaylist(similarArtists.get(jl.getSelectedIndex()));
 			for( int i = 0; i<songTable.getColumnCount(); i++)
 			{
 				songTable.getColumnModel().getColumn(i).setCellRenderer(songrenderer);

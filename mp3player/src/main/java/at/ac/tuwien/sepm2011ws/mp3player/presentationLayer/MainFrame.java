@@ -1903,8 +1903,22 @@ public class MainFrame extends JFrame implements ActionListener, Runnable,
 						selectedSongs.add(x);
 					}
 				}
-				new SimilarArtist(selectedSongs);
-				// fillSongTable(currentPlaylistGUI);
+				Playlist temp = new Playlist(currentPlaylistGUI.getId(),
+						currentPlaylistGUI.getTitle());
+				temp.addAll(currentPlaylistGUI);
+				
+				SimilarArtist sa = new SimilarArtist(selectedSongs);
+				if(cis.getCurrentPlaylist().size()>0)
+				{
+					currentPlaylistGUI = cis.getCurrentPlaylist();
+					fillSongTable(currentPlaylistGUI);
+				}	
+				else
+				{
+					cis.setCurrentPlaylist(currentPlaylistGUI);
+					//fillSongTable(temp);
+					currentPlaylistGUI = temp;
+				}
 			}
 
 		}
