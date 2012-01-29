@@ -3,10 +3,14 @@ package at.ac.tuwien.sepm2011ws.mp3player.serviceLayer.vvv;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
+import java.io.FilenameFilter;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+
+import org.apache.commons.io.FilenameUtils;
+import org.apache.commons.io.filefilter.SuffixFileFilter;
 
 import at.ac.tuwien.sepm2011ws.mp3player.domainObjects.Playlist;
 import at.ac.tuwien.sepm2011ws.mp3player.domainObjects.Song;
@@ -50,44 +54,38 @@ class VvvPlaylistService implements PlaylistService {
 		if (files == null)
 			throw new IllegalArgumentException("File array must not be null");
 
+		FilenameFilter suffixFilter = new SuffixFileFilter(PlaylistFileTypes);
+
 		for (File file : files) {
-			if (file == null)
-				throw new IllegalArgumentException("File must not be null");
-			if (checkFileExtensionAccepted(file.getName(), PlaylistFileTypes)) {
-				importPlaylist(file);
+			for (File acceptedFile : file.listFiles((suffixFilter))) {
+				importPlaylist(acceptedFile);
 			}
 		}
 	}
 
-	private boolean checkFileExtensionAccepted(String fileName,
-			String[] acceptedExtensions) {
-		if (acceptedExtensions == null)
-			throw new IllegalArgumentException(
-					"The accepted extenstions must not be null");
-		if (fileName == null || fileName.isEmpty())
-			throw new IllegalArgumentException(
-					"The file name must not be null or empty");
-
-		for (int i = 0; i < acceptedExtensions.length; i++) {
-			if (acceptedExtensions[i].toLowerCase().equals(
-					getExtension(fileName).toLowerCase())) {
-				return true;
-			}
-		}
-
-		return false;
-	}
-
-	private String getExtension(String fileName) {
-		if (fileName == null || fileName.isEmpty())
-			throw new IllegalArgumentException(
-					"The file name must not be null or empty");
-
-		int dotIndex = fileName.lastIndexOf(".");
-		if (dotIndex == -1)
-			return "";
-		return fileName.substring(dotIndex + 1, fileName.length());
-	}
+	// private boolean isFileExtensionAccepted(File file) {
+	// if (file == null) throw new
+	// IllegalArgumentException("File must not be null");
+	//
+	// for (String type : PlaylistFileTypes) {
+	// String actualFileExtension = getFileExtension(file.getName());
+	// if (type.toLowerCase().equals(actualFileExtension))
+	// return true;
+	// }
+	// return false;
+	// }
+	//
+	// private String getFileExtension(String fileName) {
+	// if (fileName == null || fileName.isEmpty())
+	// throw new IllegalArgumentException(
+	// "The file name must not be null or empty");
+	//
+	// int dotIndex = fileName.lastIndexOf(".");
+	// if (dotIndex == -1)
+	// return "";
+	// return fileName.substring(dotIndex + 1, fileName.length())
+	// .toLowerCase();
+	// }
 
 	private String getBasename(String fileName) {
 		if (fileName == null || fileName.isEmpty())
@@ -95,9 +93,9 @@ class VvvPlaylistService implements PlaylistService {
 					"The file name must not be null or empty");
 
 		// TODO: Remove the leading path if there is one.
-		
+
 		int dotIndex = fileName.lastIndexOf(".");
-		if(dotIndex == -1)
+		if (dotIndex == -1)
 			return fileName;
 		return fileName.substring(0, dotIndex);
 	}
@@ -154,9 +152,9 @@ class VvvPlaylistService implements PlaylistService {
 
 		try {
 			String path = file.getAbsolutePath();
-			if(getExtension(path) != "m3u")
+			if (FilenameUtils.isExtension(path, "m3u"))
 				path += ".m3u";
-			
+
 			writer = new FileWriter(path);
 			bwriter = new BufferedWriter(writer);
 			for (Song song : playlist) {
@@ -249,12 +247,14 @@ class VvvPlaylistService implements PlaylistService {
 		Song s;
 
 		String[] userFileTypes = ss.getUserFileTypes();
-
+		
 		for (File file : files) {
-			if (checkFileExtensionAccepted(file.getName(), userFileTypes)) {
+			
+//			for (File acceptedFile : file.listFiles(((FilenameFilter)new SuffixFileFilter(userFileTypes)))) {
+				if(FilenameUtils.isExtension(file.getName(), userFileTypes)) {
 				s = new Song("Unknown Artist", "Unknown Title", 0,
 						file.getAbsolutePath());
-				
+
 				sd.create(s);
 				sis.getMetaTags(s);
 

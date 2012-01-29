@@ -4,7 +4,11 @@
 package at.ac.tuwien.sepm2011ws.mp3player.serviceLayer;
 
 import java.io.File;
+import java.net.MalformedURLException;
+import java.net.URI;
+import java.net.URL;
 import java.sql.Connection;
+import java.util.Collection;
 import java.util.List;
 
 import org.junit.After;
@@ -73,29 +77,71 @@ public class PlaylistServiceTest {
 
 		assertTrue(new File("music/dummyPlaylist.m3u").exists());
 	}
-
+	
 	@Test
-	public void testImportPlaylist_ShouldImportPlaylist() throws DataAccessException {
+	public void testImportPlaylist_ShouldImportPlaylist()
+			throws DataAccessException {
 		WritablePlaylist expected = new WritablePlaylist("Temp");
 
-		File sPath = new File("music/dummy-message.wav");
-		expected.add(new Song("dummy1", "dummy1", 300, sPath.getAbsolutePath()));
-		sPath = new File("music/The Other Thing.wav");
-		expected.add(new Song("dummy2", "dummy2", 300, sPath.getAbsolutePath()));
+		File path1 = new File("music/dummy-message.wav");
+		expected.add(new Song("dummy1", "dummy1", 300, path1.getAbsolutePath()));
+		File path2 = new File("music/The Other Thing.wav");
+		expected.add(new Song("dummy2", "dummy2", 300, path2.getAbsolutePath()));
 
 		ps.exportPlaylist(new File("music/dummyPlaylist"), expected);
-
 		File newFile = new File("music/dummyPlaylist.m3u");
-		ps.importPlaylist(new File[] {newFile});
-		
+		ps.importPlaylist(new File[] { newFile });
+
 		List<WritablePlaylist> playlists = playlistDao.readAll();
-		
-		expected.setTitle(newFile.getName());
-		int index = playlists.indexOf(expected);
-		
-		assertTrue(index >= 0);
-		assertEquals(expected, playlists.get(index));
+
+		expected.setTitle("dummyPlaylist");
+		expected.clear();
+		expected.add(new Song("Unknown Artist", "Unknown Title", 3, path1
+				.getAbsolutePath()));
+		expected.add(new Song("Unknown Artist", "Unknown Title", 0, path2
+				.getAbsolutePath()));
+
+		assertTrue(hasSamePaths(playlists, expected));
 	}
+
+	private boolean hasSamePaths(Collection<WritablePlaylist> playlists,
+			WritablePlaylist playlist) {
+		
+		for (WritablePlaylist writablePlaylist : playlists) {
+			if (writablePlaylist.getTitle().equals(playlist.getTitle())
+					&& writablePlaylist.size() == playlist.size())
+				return haveSamePaths(writablePlaylist, playlist);
+		}
+		return false;
+	}
+
+	private boolean haveSamePaths(List<Song> l1,
+			List<Song> l2) {
+		if(l1.size() != l2.size())
+			return false;
+		
+		int index = 0;
+		for (Song song1 : l1) {
+			Song song2 = l2.get(index++);
+			
+			String url = convertFilePathToURLPath(song2.getPath());
+			
+			if(!url.equals(song1.getPath()))
+				return false;
+		}
+		return true;
+	}
+	
+	private String convertFilePathToURLPath(String path) {
+		try {
+			String file = new File(path).toURI().toURL().getPath();
+			return file;
+		} catch (MalformedURLException e) {
+			return "";
+		}
+	}
+	
+	
 
 	// @Test
 	// public void testGetLibrary_AtLeastOneSong() {
