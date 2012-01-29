@@ -73,7 +73,7 @@ public class SimilarArtist extends JDialog implements ActionListener, ListSelect
 	private JLabel lblArtist = new JLabel("Artist:");
 	private JLabel lblArtistValue = new JLabel("");
 	private JLabel lblSimilarArtist = new JLabel("Similar Artists:");
-	private JLabel lblSimilarSong = new JLabel("Similar Songs:");
+	private JLabel lblSimilarSong = new JLabel("Songs in Library:");
 	private DefaultListModel artistModel = new DefaultListModel();
 	private JList artistList = new JList(artistModel);
 	private JScrollPane artistPane = new JScrollPane(artistList);
@@ -111,8 +111,8 @@ public class SimilarArtist extends JDialog implements ActionListener, ListSelect
 			sis = sf.getSongInformationService();
 			playlistMainFrame = cis.getCurrentPlaylist();
 			
-			width = 650;
-			height = 360;
+			width = 850;
+			height = 560;
 			positionX = (int) Math.round(dim.getWidth() / 2 - width / 2);
 			positionY = (int) Math.round(dim.getHeight() / 2 - height / 2);
 			setBounds(positionX, positionY, width, height);

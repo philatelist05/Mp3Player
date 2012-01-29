@@ -52,6 +52,7 @@ import javax.swing.JTree;
 import javax.swing.JViewport;
 import javax.swing.ListSelectionModel;
 import javax.swing.ScrollPaneConstants;
+import javax.swing.SwingUtilities;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import javax.swing.event.RowSorterEvent;
@@ -631,7 +632,16 @@ public class MainFrame extends JFrame implements ActionListener, Runnable,
 		while (!fred.isInterrupted()) {
 
 			// Song temp = cis.getCurrentSong();
-			progress.setValue((int) cis.getPlayTime());
+			SwingUtilities.invokeLater(new Runnable(){
+
+				@Override
+				public void run() {
+					progress.setValue((int) cis.getPlayTime());
+					
+				}
+				
+			});
+			
 			lblPlayedTime.setText(getPlayedTimeInSeconds());
 			lblDuration.setText(getMediaTimeAt(100)); // in percent
 
@@ -1243,15 +1253,22 @@ public class MainFrame extends JFrame implements ActionListener, Runnable,
 
 		progress.addMouseListener(new MouseAdapter() {
 			public void mouseReleased(MouseEvent evt) {
-				setMediaTime(progress.getValue());
+		
+						setMediaTime(progress.getValue()+1);
+
+				
 			}
 
 			public void mouseClicked(MouseEvent evt) {
-				setMediaTime(progress.getValue());
+	
+		//				setMediaTime(progress.getValue());
+	
 			}
 
 			public void mouseDragged(MouseEvent evt) {
-				setMediaTime(progress.getValue());
+		
+				//		setMediaTime(progress.getValue());
+		
 			}
 		});
 
@@ -1262,7 +1279,10 @@ public class MainFrame extends JFrame implements ActionListener, Runnable,
 			}
 
 			public void mouseDragged(MouseEvent e) {
-				setMediaTime(progress.getValue());
+				
+	
+						setMediaTime(progress.getValue());
+			
 				
 			}
 		});
@@ -1981,6 +2001,8 @@ public class MainFrame extends JFrame implements ActionListener, Runnable,
 		int row = songTable.getSelectedRow();
 		String Rating;
 		
+		Playlist temp = new Playlist(currentPlaylistGUI.getId(), currentPlaylistGUI.getTitle());
+		temp.addAll(currentPlaylistGUI);
 		 logger.info("tableChanged");
 		 
 		if (e.getColumn() == 7) {
@@ -1997,10 +2019,11 @@ public class MainFrame extends JFrame implements ActionListener, Runnable,
 			}
 
 		} else {
-			if (currentPlaylistGUI != null)
-				songrendi.setPlaylist(currentPlaylistGUI);
+			if (temp != null)
+				songrendi.setPlaylist(temp);
 			sorter.setSortKeys(null);
 		}
+		currentPlaylistGUI = temp;
 //		fillSongTable(currentPlaylistGUI);
 		songTable.repaint();
 	}
@@ -2008,18 +2031,22 @@ public class MainFrame extends JFrame implements ActionListener, Runnable,
 	@Override
 	public void sorterChanged(RowSorterEvent e) {
 		 logger.info("sorterChanged");
-		
+		Playlist temp = new Playlist(currentPlaylistGUI.getId(), currentPlaylistGUI.getTitle());
+		temp.addAll(currentPlaylistGUI);
+		 
+		 
 		 Song x = cis.getCurrentSong();
-		currentPlaylistGUI = parseSongTable(currentPlaylistGUI);
-		cis.setCurrentPlaylist(currentPlaylistGUI);
-		for(int i=0; i < currentPlaylistGUI.size(); i ++ )
-			if(currentPlaylistGUI.get(i).equals(x))
+		 temp = parseSongTable(temp);
+		cis.setCurrentPlaylist(temp);
+		for(int i=0; i < temp.size(); i ++ )
+			if(temp.get(i).equals(x))
 				cis.setCurrentSongIndex(i);
 	//	if (cis.getCurrentSongIndex() > -1)
 	//		cis.setCurrentSongIndex(sorter.convertRowIndexToView(cis
 		//			.getCurrentSongIndex()));
 
-		//fillSongTable(currentPlaylistGUI);
+		//fillSongTable(temp);
+		currentPlaylistGUI = temp;
 		songTable.repaint();
 	}
 }
