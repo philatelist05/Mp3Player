@@ -7,6 +7,7 @@ import java.io.IOException;
 
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
+import javax.swing.JOptionPane;
 import javax.swing.JTable;
 import javax.swing.table.DefaultTableCellRenderer;
 
@@ -34,7 +35,8 @@ public class SongTableRenderer extends DefaultTableCellRenderer {
 		/*try {
 			nothing = new ImageIcon(new ClassPathResource("img/nothing_found.gif").getURL());
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
+			JOptionPane.showConfirmDialog(null, e.getMessage(),
+					"Error", JOptionPane.CLOSED_OPTION);
 			e.printStackTrace();
 		}*/
 	}

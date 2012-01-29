@@ -302,8 +302,9 @@ public class SimilarArtist extends JDialog implements ActionListener, ListSelect
 			similarArtists = lfms.getSimilarArtistsWithSongs(song);
 			// logger.info(similarArtists.get(0).getTitle());
 			
-		} catch (DataAccessException e1) {
-			// TODO Auto-generated catch block
+		} catch (DataAccessException e) {
+			JOptionPane.showConfirmDialog(null, e.getMessage(),
+					"Error", JOptionPane.CLOSED_OPTION);
 			e1.printStackTrace();
 		}
 
