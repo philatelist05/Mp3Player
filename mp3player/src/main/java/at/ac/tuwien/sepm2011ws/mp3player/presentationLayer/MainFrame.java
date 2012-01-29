@@ -1255,17 +1255,35 @@ public class MainFrame extends JFrame implements ActionListener, Runnable,
 		// progress.setSnapToTicks(true);
 		progress.putClientProperty("JSlider.isFilled", Boolean.TRUE);
 
-		progress.addMouseListener(new MouseAdapter() {
+		progress.addMouseListener(new MouseListener() {
 			public void mouseReleased(MouseEvent evt) {
 
-				setMediaTime(progress.getValue());
+				// setMediaTime(progress.getValue());
 
 			}
 
 			public void mouseClicked(MouseEvent evt) {
 
-				setMediaTime(progress.getValue());
+			//	setMediaTime(progress.getValue());
 
+			}
+
+			@Override
+			public void mouseEntered(MouseEvent arg0) {
+			//	setMediaTime(progress.getValue());
+				
+			}
+
+			@Override
+			public void mouseExited(MouseEvent arg0) {
+			//	setMediaTime(progress.getValue());
+				
+			}
+
+			@Override
+			public void mousePressed(MouseEvent arg0) {
+				setMediaTime(progress.getValue());
+				
 			}
 		});
 
@@ -1281,12 +1299,6 @@ public class MainFrame extends JFrame implements ActionListener, Runnable,
 
 			}
 		});
-
-		/*
-		 * progress.addChangeListener(new ChangeListener() { public void
-		 * stateChanged(ChangeEvent e) { setMediaTime(progress.getValue()); }
-		 * });
-		 */
 
 		cis.setPlayerListener(new PlayerListener() {
 

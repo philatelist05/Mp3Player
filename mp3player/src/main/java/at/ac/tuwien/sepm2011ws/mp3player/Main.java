@@ -1,6 +1,8 @@
 package at.ac.tuwien.sepm2011ws.mp3player;
 
 import java.awt.EventQueue;
+
+import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
 import org.apache.log4j.Logger;
 import org.apache.log4j.xml.DOMConfigurator;
@@ -20,7 +22,7 @@ public class Main {
 	private static SplashScreen splash;
 
 	private static void startMainFrame() {
-		EventQueue.invokeLater(new Runnable() {
+		SwingUtilities.invokeLater(new Runnable() {
 			public void run() {
 				try {
 					logger.info("Logger successfully initialized");
@@ -31,7 +33,10 @@ public class Main {
 					
 					UIManager.setLookAndFeel(UIManager
 							.getSystemLookAndFeelClassName());
-					new MainFrame();
+		
+							new MainFrame();
+
+					
 				} catch (Exception e) {
 					logger.error(e.getMessage());
 				}
