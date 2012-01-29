@@ -701,9 +701,8 @@ public class MainFrame extends JFrame implements ActionListener, Runnable,
 					if (currentPlaylistGUI.getClass() == WritablePlaylist.class)
 						ps.updatePlaylist((WritablePlaylist) currentPlaylistGUI);
 				} catch (DataAccessException e) {
-					// TODO: Show error dialog
-					int response = JOptionPane.showConfirmDialog(null,
-							"DataAccessException", e.toString(),
+					JOptionPane.showConfirmDialog(null,
+							"Error", e.toString(),
 							JOptionPane.CLOSED_OPTION);
 				}
 				Playlist currentPL = clicked.getNodePlaylist();
@@ -711,9 +710,8 @@ public class MainFrame extends JFrame implements ActionListener, Runnable,
 				try {
 					ps.reloadPlaylist(currentPL);
 				} catch (DataAccessException e) {
-					int response = JOptionPane.showConfirmDialog(null,
-							"DataAccessException", e.toString(),
-							JOptionPane.CLOSED_OPTION);
+					JOptionPane.showConfirmDialog(null, e.getMessage(),
+							"Error", JOptionPane.CLOSED_OPTION);
 				}
 
 				currentPlaylistGUI = currentPL;

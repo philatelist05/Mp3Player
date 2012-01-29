@@ -2,6 +2,7 @@ package at.ac.tuwien.sepm2011ws.mp3player.presentationLayer;
 
 import java.awt.datatransfer.DataFlavor;
 import javax.swing.JComponent;
+import javax.swing.JOptionPane;
 import javax.swing.JTree;
 import javax.swing.TransferHandler;
 import javax.swing.tree.DefaultTreeModel;
@@ -50,7 +51,8 @@ public class JTreeSongTransferHandler extends SongTransferHandler {
 						if (cp.getClass() == WritablePlaylist.class)
 							ps.updatePlaylist((WritablePlaylist) cp);
 					} catch (DataAccessException e) {
-						// TODO: ErrorDialog
+						JOptionPane.showConfirmDialog(null, e.getMessage(),
+								"Error", JOptionPane.CLOSED_OPTION);
 					}
 				}
 			}
