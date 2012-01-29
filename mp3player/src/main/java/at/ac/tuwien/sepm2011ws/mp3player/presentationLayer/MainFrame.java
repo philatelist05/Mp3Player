@@ -2014,7 +2014,7 @@ public class MainFrame extends JFrame implements ActionListener, Runnable,
 		Playlist temp = new Playlist(currentPlaylistGUI.getId(),
 				currentPlaylistGUI.getTitle());
 		temp.addAll(currentPlaylistGUI);
-		logger.info("tableChanged");
+		// logger.info("tableChanged");
 
 		if (e.getColumn() == 7) {
 
@@ -2040,7 +2040,7 @@ public class MainFrame extends JFrame implements ActionListener, Runnable,
 
 	@Override
 	public void sorterChanged(RowSorterEvent e) {
-		logger.info("sorterChanged");
+		// logger.info("sorterChanged");
 		Playlist temp = new Playlist(currentPlaylistGUI.getId(),
 				currentPlaylistGUI.getTitle());
 		temp.addAll(currentPlaylistGUI);
