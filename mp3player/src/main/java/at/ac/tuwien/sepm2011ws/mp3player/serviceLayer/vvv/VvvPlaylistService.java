@@ -55,11 +55,16 @@ class VvvPlaylistService implements PlaylistService {
 			throw new IllegalArgumentException("File array must not be null");
 
 		FilenameFilter suffixFilter = new SuffixFileFilter(PlaylistFileTypes);
-
+		try {
 		for (File file : files) {
+			if(file == null) throw new IllegalArgumentException("File must not be null");
+			
 			for (File acceptedFile : file.listFiles((suffixFilter))) {
 				importPlaylist(acceptedFile);
 			}
+		}
+		}catch(NullPointerException e) {
+			e.printStackTrace();
 		}
 	}
 
@@ -152,7 +157,7 @@ class VvvPlaylistService implements PlaylistService {
 
 		try {
 			String path = file.getAbsolutePath();
-			if (FilenameUtils.isExtension(path, "m3u"))
+			if (!FilenameUtils.isExtension(path, "m3u"))
 				path += ".m3u";
 
 			writer = new FileWriter(path);
