@@ -28,7 +28,7 @@ public class SongInformationServiceTest {
 		DaoFactory factory = DaoFactory.getInstance();
 		playlistDao = factory.getPlaylistDao();
 		songDao = factory.getSongDao();
-		con = playlistDao.getConnection();
+		con = factory.getDbConnection().getSqlConnection();
 		con.setAutoCommit(false);
 	}
 
