@@ -53,9 +53,10 @@ class VvvPlaylistService implements PlaylistService {
 			throw new IllegalArgumentException("File array must not be null");
 
 		for (File file : files) {
-			if(file == null) throw new IllegalArgumentException("File must not be null");
-			
-			if(FilenameUtils.isExtension(file.getName(), PlaylistFileTypes))
+			if (file == null)
+				throw new IllegalArgumentException("File must not be null");
+
+			if (FilenameUtils.isExtension(file.getName(), PlaylistFileTypes))
 				importPlaylist(file);
 		}
 	}
@@ -80,12 +81,12 @@ class VvvPlaylistService implements PlaylistService {
 
 			Media m;
 			File f;
-			String folder;
+			// String folder;
 			for (AbstractPlaylistComponent apc : plSeq.getComponents()) {
 				m = (Media) apc;
-				folder = file.getParent();
+				// folder = file.getParent();
 				f = new File(m.getSource().getURL().getPath());
-				f = new File(folder + File.separator + f.getName());
+				// f = new File(folder + File.separator + f.getName());
 				addSongsToPlaylist(new File[] { f }, playlist);
 			}
 
