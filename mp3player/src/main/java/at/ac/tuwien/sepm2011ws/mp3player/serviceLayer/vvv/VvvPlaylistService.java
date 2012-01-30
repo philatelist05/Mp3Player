@@ -4,6 +4,7 @@ import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.net.URLDecoder;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -19,6 +20,7 @@ import at.ac.tuwien.sepm2011ws.mp3player.persistanceLayer.SongDao;
 import at.ac.tuwien.sepm2011ws.mp3player.serviceLayer.PlaylistService;
 import at.ac.tuwien.sepm2011ws.mp3player.serviceLayer.SettingsService;
 import at.ac.tuwien.sepm2011ws.mp3player.serviceLayer.SongInformationService;
+import christophedelory.content.Content;
 import christophedelory.playlist.AbstractPlaylistComponent;
 import christophedelory.playlist.Media;
 import christophedelory.playlist.Sequence;
@@ -61,6 +63,7 @@ class VvvPlaylistService implements PlaylistService {
 		}
 	}
 
+	@SuppressWarnings("deprecation")
 	private WritablePlaylist importPlaylist(File file)
 			throws DataAccessException {
 		WritablePlaylist playlist;
@@ -79,13 +82,13 @@ class VvvPlaylistService implements PlaylistService {
 			SpecificPlaylist specificPlaylist = spf.readFrom(file);
 			Sequence plSeq = specificPlaylist.toPlaylist().getRootSequence();
 
-			Media m;
+			Content c;
 			File f;
 			// String folder;
 			for (AbstractPlaylistComponent apc : plSeq.getComponents()) {
-				m = (Media) apc;
+				c = ((Media) apc).getSource();
 				// folder = file.getParent();
-				f = new File(m.getSource().getURL().getPath());
+				f = new File(URLDecoder.decode(c.getURL().getPath()));
 				// f = new File(folder + File.separator + f.getName());
 				addSongsToPlaylist(new File[] { f }, playlist);
 			}
