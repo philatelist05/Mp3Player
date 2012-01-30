@@ -706,8 +706,8 @@ public class MainFrame extends JFrame implements ActionListener, Runnable,
 					if (currentPlaylistGUI.getClass() == WritablePlaylist.class)
 						ps.updatePlaylist((WritablePlaylist) currentPlaylistGUI);
 				} catch (DataAccessException e) {
-					JOptionPane.showConfirmDialog(null,  e.toString(),"Error",
-							JOptionPane.CLOSED_OPTION);
+				//	JOptionPane.showConfirmDialog(null,  e.toString(),"Error",
+					//		JOptionPane.CLOSED_OPTION);
 				}
 				Playlist currentPL = clicked.getNodePlaylist();
 				if (currentPL.getClass() == WritablePlaylist.class) {
