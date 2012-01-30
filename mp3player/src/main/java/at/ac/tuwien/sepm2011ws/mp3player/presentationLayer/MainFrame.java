@@ -701,19 +701,31 @@ public class MainFrame extends JFrame implements ActionListener, Runnable,
 					if (currentPlaylistGUI.getClass() == WritablePlaylist.class)
 						ps.updatePlaylist((WritablePlaylist) currentPlaylistGUI);
 				} catch (DataAccessException e) {
-					JOptionPane.showConfirmDialog(null,
-							"Error", e.toString(),
+					JOptionPane.showConfirmDialog(null, "Error", e.toString(),
 							JOptionPane.CLOSED_OPTION);
 				}
 				Playlist currentPL = clicked.getNodePlaylist();
-
-				try {
-					ps.reloadPlaylist(currentPL);
-				} catch (DataAccessException e) {
-					JOptionPane.showConfirmDialog(null, e.getMessage(),
-							"Error", JOptionPane.CLOSED_OPTION);
+				if (currentPlaylistGUI.getClass() == WritablePlaylist.class) {
+					try {
+						ps.reloadPlaylist((WritablePlaylist) currentPL);
+					} catch (DataAccessException e) {
+						JOptionPane.showConfirmDialog(null, e.getMessage(),
+								"Error", JOptionPane.CLOSED_OPTION);
+					}
+				} else {
+					try {
+					if(currentPL.getTitle()=="Library") {
+						currentPL=ps.getLibrary();
+					} else if(currentPL.getTitle()=="TopRated") {
+						currentPL=ps.getTopRated();
+					} else if(currentPL.getTitle()=="TopPlayed") {
+						currentPL=ps.getTopPlayed();
+					}
+					} catch(DataAccessException aa) {
+						JOptionPane.showConfirmDialog(null, aa.getMessage(),
+								"Error", JOptionPane.CLOSED_OPTION);
+					}
 				}
-
 				currentPlaylistGUI = currentPL;
 
 				fillSongTable(currentPL);
