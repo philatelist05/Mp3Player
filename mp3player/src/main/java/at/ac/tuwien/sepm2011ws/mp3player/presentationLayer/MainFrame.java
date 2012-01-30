@@ -323,8 +323,8 @@ public class MainFrame extends JFrame implements ActionListener, Runnable,
 					getMediaTime(x.getDuration()), x.getRating(),
 					x.getPlaycount() });
 		}
-		songTable.setModel(songmodel);
-		songTable.repaint();
+		//songTable.setModel(songmodel);
+		//songTable.repaint();
 		
 		// songTable.setRowSelectionInterval(25, 26);
 		// restoreTableView(25, 0);
