@@ -54,17 +54,11 @@ class VvvPlaylistService implements PlaylistService {
 		if (files == null)
 			throw new IllegalArgumentException("File array must not be null");
 
-		FilenameFilter suffixFilter = new SuffixFileFilter(PlaylistFileTypes);
-		try {
 		for (File file : files) {
 			if(file == null) throw new IllegalArgumentException("File must not be null");
 			
-			for (File acceptedFile : file.listFiles((suffixFilter))) {
-				importPlaylist(acceptedFile);
-			}
-		}
-		}catch(NullPointerException e) {
-			e.printStackTrace();
+			if(FilenameUtils.isExtension(file.getName(), PlaylistFileTypes))
+				importPlaylist(file);
 		}
 	}
 
@@ -212,11 +206,12 @@ class VvvPlaylistService implements PlaylistService {
 		Song s;
 
 		String[] userFileTypes = ss.getUserFileTypes();
-		
+
 		for (File file : files) {
-			
-//			for (File acceptedFile : file.listFiles(((FilenameFilter)new SuffixFileFilter(userFileTypes)))) {
-				if(FilenameUtils.isExtension(file.getName(), userFileTypes)) {
+
+			// for (File acceptedFile : file.listFiles(((FilenameFilter)new
+			// SuffixFileFilter(userFileTypes)))) {
+			if (FilenameUtils.isExtension(file.getName(), userFileTypes)) {
 				s = new Song("Unknown Artist", "Unknown Title", 0,
 						file.getAbsolutePath());
 

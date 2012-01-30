@@ -1944,7 +1944,7 @@ public class MainFrame extends JFrame implements ActionListener, Runnable,
 				// PlaylistTreeNode selectedNode = (PlaylistTreeNode) pl_tree
 				// .getLastSelectedPathComponent();
 				TreePath[] treePaths = pl_tree.getSelectionPaths();
-				if (treePaths.length != 0) {
+				if (treePaths != null && treePaths.length != 0) {
 					for (int i = 0; i < treePaths.length; i++) {
 						TreePath currentPath = treePaths[i];
 						PlaylistTreeNode selectedNode = (PlaylistTreeNode) currentPath
@@ -1968,7 +1968,7 @@ public class MainFrame extends JFrame implements ActionListener, Runnable,
 				// PlaylistTreeNode selectedNode = (PlaylistTreeNode) pl_tree
 				// .getLastSelectedPathComponent();
 				TreePath[] treePaths = pl_tree.getSelectionPaths();
-				if (treePaths.length != 0) {
+				if (treePaths != null && treePaths.length != 0) {
 					for (int i = 0; i < treePaths.length; i++) {
 						TreePath currentPath = treePaths[i];
 						PlaylistTreeNode selectedNode = (PlaylistTreeNode) currentPath
@@ -1990,7 +1990,7 @@ public class MainFrame extends JFrame implements ActionListener, Runnable,
 				// PlaylistTreeNode selectedNode = (PlaylistTreeNode) pl_tree
 				// .getLastSelectedPathComponent();
 				TreePath[] treePaths = pl_tree.getSelectionPaths();
-				if (treePaths.length != 0) {
+				if (treePaths != null && treePaths.length != 0) {
 					for (int i = 0; i < treePaths.length; i++) {
 						TreePath currentPath = treePaths[i];
 						PlaylistTreeNode selectedNode = (PlaylistTreeNode) currentPath
