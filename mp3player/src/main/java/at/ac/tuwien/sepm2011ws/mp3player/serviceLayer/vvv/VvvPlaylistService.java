@@ -206,20 +206,15 @@ class VvvPlaylistService implements PlaylistService {
 		String[] userFileTypes = ss.getUserFileTypes();
 
 		for (File file : files) {
-
-			// for (File acceptedFile : file.listFiles(((FilenameFilter)new
-			// SuffixFileFilter(userFileTypes)))) {
 			if (FilenameUtils.isExtension(file.getName(), userFileTypes)) {
 				s = new Song("Unknown Artist", "Unknown Title", 0,
 						file.getAbsolutePath());
 
 				sd.create(s);
 				sis.getMetaTags(s);
-
 				songs.add(s);
 			}
 		}
-
 		return songs;
 	}
 
