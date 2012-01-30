@@ -3,14 +3,12 @@ package at.ac.tuwien.sepm2011ws.mp3player.serviceLayer.vvv;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
-import java.io.FilenameFilter;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
 import org.apache.commons.io.FilenameUtils;
-import org.apache.commons.io.filefilter.SuffixFileFilter;
 
 import at.ac.tuwien.sepm2011ws.mp3player.domainObjects.Playlist;
 import at.ac.tuwien.sepm2011ws.mp3player.domainObjects.Song;
@@ -208,20 +206,15 @@ class VvvPlaylistService implements PlaylistService {
 		String[] userFileTypes = ss.getUserFileTypes();
 
 		for (File file : files) {
-
-			// for (File acceptedFile : file.listFiles(((FilenameFilter)new
-			// SuffixFileFilter(userFileTypes)))) {
 			if (FilenameUtils.isExtension(file.getName(), userFileTypes)) {
 				s = new Song("Unknown Artist", "Unknown Title", 0,
 						file.getAbsolutePath());
 
 				sd.create(s);
 				sis.getMetaTags(s);
-
 				songs.add(s);
 			}
 		}
-
 		return songs;
 	}
 

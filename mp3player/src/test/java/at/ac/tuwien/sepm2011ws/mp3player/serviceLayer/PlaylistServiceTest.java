@@ -9,6 +9,7 @@ import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URL;
 import java.sql.Connection;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
@@ -16,6 +17,7 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.springframework.core.io.ClassPathResource;
+import org.springframework.core.io.Resource;
 
 import static org.junit.Assert.*;
 
@@ -54,8 +56,11 @@ public class PlaylistServiceTest {
 	public void tearDown() throws Exception {
 		con1.rollback();
 		con2.rollback();
-		File playlist = new ClassPathResource("dummyPlaylist.m3u").getFile();
-		playlist.delete();
+		Resource resource = new ClassPathResource("dummyPlaylist.m3u");
+		if (resource.exists()) {
+			File playlist = resource.getFile();
+			playlist.delete();
+		}
 	}
 
 	@Test(expected = IllegalArgumentException.class)
@@ -80,20 +85,19 @@ public class PlaylistServiceTest {
 		sPath = new ClassPathResource("The Other Thing.wav").getFile();
 		temp.add(new Song("dummy2", "dummy2", 300, sPath.getAbsolutePath()));
 
-		ps.exportPlaylist(new File("music/dummyPlaylist"), temp);
+		ps.exportPlaylist(new File("dummyPlaylist"), temp);
 
-		assertTrue(new File("music/dummyPlaylist.m3u").exists());
+		assertTrue(new File("dummyPlaylist.m3u").exists());
 	}
 
 	@Test(expected = IllegalArgumentException.class)
-	public void testImportPlaylist_ShouldThrowIllegalArgumentException()
-			throws IllegalArgumentException, DataAccessException {
-		ps.importPlaylist(new File[] { new File("") });
-	}
-
-	@Test(expected = IllegalArgumentException.class)
-	public void testExportPlaylist_ShouldThrowIllegalArgumentException() {
+	public void testExportPlaylist_ShouldThrowIllegalArgumentException1() {
 		ps.exportPlaylist(null, null);
+	}
+
+	@Test(expected = IllegalArgumentException.class)
+	public void testExportPlaylist_ShouldThrowIllegalArgumentException2() {
+		ps.exportPlaylist(new File("."), null);
 	}
 
 	@Test
@@ -106,8 +110,8 @@ public class PlaylistServiceTest {
 		File path2 = new ClassPathResource("The Other Thing.wav").getFile();
 		expected.add(new Song("dummy2", "dummy2", 300, path2.getAbsolutePath()));
 
-		ps.exportPlaylist(new ClassPathResource("dummyPlaylist").getFile(), expected);
-		File newFile = new ClassPathResource("dummyPlaylist.m3u").getFile();
+		ps.exportPlaylist(new File("dummyPlaylist"), expected);
+		File newFile = new File("dummyPlaylist.m3u");
 		ps.importPlaylist(new File[] { newFile });
 
 		List<WritablePlaylist> playlists = playlistDao.readAll();
@@ -151,21 +155,24 @@ public class PlaylistServiceTest {
 
 	private String convertFilePathToURLPath(String path) {
 		try {
-			String file = new File(path).toURI().toURL().getPath();
+			String file = new ClassPathResource(path).getFile().toURI().toURL()
+					.getPath();
 			return file;
 		} catch (MalformedURLException e) {
+			return "";
+		} catch (IOException e) {
 			return "";
 		}
 	}
 
 	@Test
 	public void testGetAllPlaylists_ShouldGetAllPlaylists()
-			throws DataAccessException {
+			throws DataAccessException, IOException {
 		WritablePlaylist temp = new WritablePlaylist("Temp");
 
-		File sPath = new File("music/dummy-message.wav");
+		File sPath = new ClassPathResource("dummy-message.wav").getFile();
 		temp.add(new Song("dummy1", "dummy1", 300, sPath.getAbsolutePath()));
-		sPath = new File("music/The Other Thing.wav");
+		sPath = new ClassPathResource("The Other Thing.wav").getFile();
 		temp.add(new Song("dummy2", "dummy2", 300, sPath.getAbsolutePath()));
 
 		List<WritablePlaylist> playlists = ps.getAllPlaylists();
@@ -180,19 +187,20 @@ public class PlaylistServiceTest {
 
 	@Test
 	public void testAddFolder_ShouldAddFolderToLibrary()
-			throws DataAccessException {
+			throws DataAccessException, IOException {
 		Playlist oldPl = ps.getLibrary();
-		ps.addFolder(new File("music"));
+		ps.addFolder(new ClassPathResource(".").getFile());
 		Playlist newPl = ps.getLibrary();
 		assertEquals(2, newPl.size() - oldPl.size());
 	}
 
 	@Test
 	public void testAddSongs_ShouldAddListOfSongsToLibrary()
-			throws DataAccessException {
+			throws DataAccessException, IOException {
 		Playlist oldPl = ps.getLibrary();
-		ps.addSongs(new File[] { new File("music/dummy-message.wav"),
-				new File("music/The Other Thing.wav") });
+		ps.addSongs(new File[] {
+				new ClassPathResource("dummy-message.wav").getFile(),
+				new ClassPathResource("The Other Thing.wav").getFile() });
 		Playlist newPl = ps.getLibrary();
 		assertEquals(2, newPl.size() - oldPl.size());
 	}
@@ -204,8 +212,86 @@ public class PlaylistServiceTest {
 	}
 
 	@Test(expected = IllegalArgumentException.class)
-	public void testAddSongsToPlaylist_ShouldThrowIllegalArgumentException()
+	public void testAddSongsToPlaylist_ShouldThrowIllegalArgumentException1()
 			throws IllegalArgumentException, DataAccessException {
 		ps.addSongsToPlaylist(null, null);
 	}
+
+	@Test(expected = IllegalArgumentException.class)
+	public void testAddSongsToPlaylist_ShouldThrowIllegalArgumentException2()
+			throws IllegalArgumentException, DataAccessException {
+		ps.addSongsToPlaylist(new File[] { null }, null);
+	}
+
+	@Test(expected = IllegalArgumentException.class)
+	public void testDeleteSongs_ShouldThrowIllegalArgumentException1()
+			throws DataAccessException, IllegalArgumentException {
+		ps.deleteSongs(null, null);
+	}
+
+	@Test(expected = IllegalArgumentException.class)
+	public void testDeleteSongs_ShouldThrowIllegalArgumentException2()
+			throws DataAccessException, IllegalArgumentException {
+		ps.deleteSongs(new ArrayList<Song>(), null);
+	}
+
+	@Test
+	public void testDeleteSongs_ShouldDeleteSongInPlaylist()
+			throws DataAccessException {
+		WritablePlaylist playlist = new WritablePlaylist("");
+
+		List<Song> songs = new ArrayList<Song>();
+		Song song = new Song("Artist", "Title", 0, "Path");
+		songs.add(song);
+
+		playlist.add(song);
+		ps.deleteSongs(songs, playlist);
+
+		assertFalse(playlist.containsAll(songs));
+	}
+
+	@Test(expected = IllegalArgumentException.class)
+	public void testCreatePlaylist_ShouldThrowIllegalArgumentException()
+			throws IllegalArgumentException, DataAccessException {
+		ps.createPlaylist(null);
+	}
+
+	@Test(expected = IllegalArgumentException.class)
+	public void testDeletePlaylist_ShouldThrowIllegalArgumentException()
+			throws IllegalArgumentException, DataAccessException {
+		ps.deletePlaylist(null);
+	}
+
+	@Test(expected = IllegalArgumentException.class)
+	public void testUpdatePlaylist_ShouldThrowIllegalArgumentException()
+			throws IllegalArgumentException, DataAccessException {
+		ps.updatePlaylist(null);
+	}
+
+	@Test(expected = IllegalArgumentException.class)
+	public void testRenamePlaylist_ShouldThrowIllegalArgumentException1()
+			throws IllegalArgumentException, DataAccessException {
+		ps.renamePlaylist(null, null);
+	}
+
+	@Test(expected = IllegalArgumentException.class)
+	public void testRenamePlaylist_ShouldThrowIllegalArgumentException2()
+			throws IllegalArgumentException, DataAccessException {
+		ps.renamePlaylist(new WritablePlaylist(""), null);
+	}
+
+	@Test
+	public void testRenamePlaylist_ShouldRenamePlaylist()
+			throws IllegalArgumentException, DataAccessException {
+		WritablePlaylist playlist = new WritablePlaylist("Test");
+		ps.renamePlaylist(playlist, "Test1");
+		assertEquals("Test1", playlist.getTitle());
+	}
+	
+	@Test
+	public void testGlobalSearch_ShouldSearchForSong() {
+		
+	}
+	
+
 }

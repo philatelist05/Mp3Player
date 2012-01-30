@@ -52,9 +52,9 @@ class DbAlbumDao implements AlbumDao {
 			throw new IllegalArgumentException("Album must not be null");
 
 		try {
-			sameStmt.setString(1, a.getTitle());
-			sameStmt.setInt(2, a.getYear());
-			result = sameStmt.executeQuery();
+//			sameStmt.setString(1, a.getTitle());
+//			sameStmt.setInt(2, a.getYear());
+//			result = sameStmt.executeQuery();
 
 //			if (result.next()) {
 //				// Album already exists in db, so read it

@@ -151,6 +151,6 @@ public class SongTest {
 	public void testToString_ShouldReturnCallsign() {
 		Song song = new Song("Song1", "Halo1", 3001, "C:\\music\\halo1");
 		song.setPathOk(false);
-		assertEquals(" ! Datei nicht gefunden !", song.toString());
+		assertEquals("Datei nicht gefunden!", song.toString());
 	}
 }

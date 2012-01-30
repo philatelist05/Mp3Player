@@ -719,12 +719,14 @@ public class MainFrame extends JFrame implements ActionListener, Runnable,
 					}
 				} else {
 					try {
-						if (currentPL.getTitle() == "Library") {
-							currentPL = ps.getLibrary();
-						} else if (currentPL.getTitle() == "TopRated") {
-							currentPL = ps.getTopRated();
-						} else if (currentPL.getTitle() == "TopPlayed") {
-							currentPL = ps.getTopPlayed();
+						if (currentPL.getTitle() != null) {
+							if (currentPL.getTitle().equals("Library")) {
+								currentPL = ps.getLibrary();
+							} else if (currentPL.getTitle().equals("TopRated")) {
+								currentPL = ps.getTopRated();
+							} else if (currentPL.getTitle().equals("TopPlayed")) {
+								currentPL = ps.getTopPlayed();
+							}
 						}
 					} catch (DataAccessException aa) {
 						JOptionPane.showConfirmDialog(null, aa.getMessage(),
