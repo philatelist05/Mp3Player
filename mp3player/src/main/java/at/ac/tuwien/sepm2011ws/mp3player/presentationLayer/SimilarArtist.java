@@ -44,9 +44,9 @@ import at.ac.tuwien.sepm2011ws.mp3player.domainObjects.Song;
 import at.ac.tuwien.sepm2011ws.mp3player.persistanceLayer.DataAccessException;
 import at.ac.tuwien.sepm2011ws.mp3player.serviceLayer.CoreInteractionService;
 import at.ac.tuwien.sepm2011ws.mp3player.serviceLayer.LastFmService;
-import at.ac.tuwien.sepm2011ws.mp3player.serviceLayer.PlaylistService;
+
 import at.ac.tuwien.sepm2011ws.mp3player.serviceLayer.ServiceFactory;
-import at.ac.tuwien.sepm2011ws.mp3player.serviceLayer.SettingsService;
+
 import at.ac.tuwien.sepm2011ws.mp3player.serviceLayer.SongInformationService;
 
 public class SimilarArtist extends JDialog implements ActionListener, ListSelectionListener, TableModelListener, Runnable {
@@ -95,7 +95,7 @@ public class SimilarArtist extends JDialog implements ActionListener, ListSelect
 	private CoreInteractionService cis;
 
 	private SongInformationService sis;
-	private Playlist playlistMainFrame;
+	//private Playlist playlistMainFrame;
 	private SongTableRendererSimilarArtist songrenderer;
 	
 	
@@ -109,7 +109,7 @@ public class SimilarArtist extends JDialog implements ActionListener, ListSelect
 			lfms = sf.getLastFmService();
 			cis = sf.getCoreInteractionService();
 			sis = sf.getSongInformationService();
-			playlistMainFrame = cis.getCurrentPlaylist();
+			//playlistMainFrame = cis.getCurrentPlaylist();
 			
 			width = 850;
 			height = 560;
@@ -412,7 +412,7 @@ public class SimilarArtist extends JDialog implements ActionListener, ListSelect
 			Rating = songTable.getValueAt(row, column).toString();
 			double rg = Double.parseDouble(Rating);
 			try {
-				sis.setRating(cis.getCurrentPlaylist().get(row), rg);
+				sis.setRating((Song) songmodel.getValueAt(row, 0), rg);
 			} catch (DataAccessException e1) {
 				JOptionPane.showConfirmDialog(null, "No Song found!",
 						"No Song found!" + e1, JOptionPane.CLOSED_OPTION);
