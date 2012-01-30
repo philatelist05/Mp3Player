@@ -206,11 +206,12 @@ class VvvPlaylistService implements PlaylistService {
 		Song s;
 
 		String[] userFileTypes = ss.getUserFileTypes();
-		
+
 		for (File file : files) {
-			
-//			for (File acceptedFile : file.listFiles(((FilenameFilter)new SuffixFileFilter(userFileTypes)))) {
-				if(FilenameUtils.isExtension(file.getName(), userFileTypes)) {
+
+			// for (File acceptedFile : file.listFiles(((FilenameFilter)new
+			// SuffixFileFilter(userFileTypes)))) {
+			if (FilenameUtils.isExtension(file.getName(), userFileTypes)) {
 				s = new Song("Unknown Artist", "Unknown Title", 0,
 						file.getAbsolutePath());
 
@@ -344,11 +345,13 @@ class VvvPlaylistService implements PlaylistService {
 	}
 
 	@Override
-	public Playlist reloadPlaylist(Playlist p) throws DataAccessException {
+	public void reloadPlaylist(WritablePlaylist p) throws DataAccessException {
 		if (p == null)
 			throw new IllegalArgumentException("The playlist must not be null");
 
-		Playlist np = pd.read(p.getId());
-		return np;
+		WritablePlaylist np = pd.read(p.getId());
+		p.setTitle(np.getTitle());
+		p.clear();
+		p.addAll(np);
 	}
 }

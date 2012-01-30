@@ -18,7 +18,7 @@ public interface PlaylistService {
 	 * @param files
 	 *            Array of playlist files (m3u files)
 	 * @return a playlist object corresponding to the parsed file
-	 * @throws DataAccessException 
+	 * @throws DataAccessException
 	 */
 	public void importPlaylist(File[] files) throws DataAccessException;
 
@@ -36,17 +36,18 @@ public interface PlaylistService {
 	 * Gets all saved playlists from the library.
 	 * 
 	 * @return all playlists currently available
-	 * @throws DataAccessException 
-	 */
-	public List<WritablePlaylist> getAllPlaylists() throws DataAccessException;
-	
-	/**
-	 * Reloads and sets the specified playlist. 
-	 * 
-	 * @param p The playlist to reload
 	 * @throws DataAccessException
 	 */
-	public Playlist reloadPlaylist(Playlist p) throws DataAccessException;
+	public List<WritablePlaylist> getAllPlaylists() throws DataAccessException;
+
+	/**
+	 * Reloads and sets the specified playlist.
+	 * 
+	 * @param p
+	 *            The playlist to reload
+	 * @throws DataAccessException
+	 */
+	public void reloadPlaylist(WritablePlaylist p) throws DataAccessException;
 
 	/**
 	 * Recursively adds all files in the specified folder and subfolders with
@@ -54,7 +55,7 @@ public interface PlaylistService {
 	 * 
 	 * @param folder
 	 *            The folder which will be added
-	 * @throws DataAccessException 
+	 * @throws DataAccessException
 	 */
 	public void addFolder(File folder) throws DataAccessException;
 
@@ -64,7 +65,7 @@ public interface PlaylistService {
 	 * 
 	 * @param files
 	 *            The files which will be added
-	 * @throws DataAccessException 
+	 * @throws DataAccessException
 	 */
 	public void addSongs(File[] files) throws DataAccessException;
 
@@ -76,9 +77,10 @@ public interface PlaylistService {
 	 *            The files which will be added
 	 * @param playlist
 	 *            The playlist to which the files will be added
-	 * @throws DataAccessException 
+	 * @throws DataAccessException
 	 */
-	public void addSongsToPlaylist(File[] files, WritablePlaylist playlist) throws DataAccessException;
+	public void addSongsToPlaylist(File[] files, WritablePlaylist playlist)
+			throws DataAccessException;
 
 	/**
 	 * Deletes the given songs from the playlist.
@@ -87,9 +89,10 @@ public interface PlaylistService {
 	 *            The songs to delete
 	 * @param playlist
 	 *            The playlist from which to delete
-	 * @throws DataAccessException 
+	 * @throws DataAccessException
 	 */
-	public void deleteSongs(List<Song> songs, WritablePlaylist playlist) throws DataAccessException;
+	public void deleteSongs(List<Song> songs, WritablePlaylist playlist)
+			throws DataAccessException;
 
 	/**
 	 * Creates an empty playlist with the specitied name.
@@ -97,26 +100,29 @@ public interface PlaylistService {
 	 * @param name
 	 *            The name of the playlist
 	 * @return the created playlist
-	 * @throws DataAccessException 
+	 * @throws DataAccessException
 	 */
-	public WritablePlaylist createPlaylist(String name) throws DataAccessException;
+	public WritablePlaylist createPlaylist(String name)
+			throws DataAccessException;
 
 	/**
 	 * Deletes the specified playlist from the library.
 	 * 
 	 * @param playlist
 	 *            The playlist to delete
-	 * @throws DataAccessException 
+	 * @throws DataAccessException
 	 */
-	public void deletePlaylist(WritablePlaylist playlist) throws DataAccessException;
+	public void deletePlaylist(WritablePlaylist playlist)
+			throws DataAccessException;
 
 	/**
 	 * Updates the specified playlist in the library.
 	 * 
 	 * @param playlist
-	 * @throws DataAccessException 
+	 * @throws DataAccessException
 	 */
-	public void updatePlaylist(WritablePlaylist playlist) throws DataAccessException;
+	public void updatePlaylist(WritablePlaylist playlist)
+			throws DataAccessException;
 
 	/**
 	 * Renames the playlist in the library.
@@ -125,15 +131,16 @@ public interface PlaylistService {
 	 *            The playlist with the old name
 	 * @param name
 	 *            The new name of the playlist
-	 * @throws DataAccessException 
+	 * @throws DataAccessException
 	 */
-	public void renamePlaylist(WritablePlaylist playlist, String name) throws DataAccessException;
+	public void renamePlaylist(WritablePlaylist playlist, String name)
+			throws DataAccessException;
 
 	/**
 	 * Generates the magic TopXXRated playlist.
 	 * 
 	 * @return the magic playlist
-	 * @throws DataAccessException 
+	 * @throws DataAccessException
 	 */
 	public Playlist getTopRated() throws DataAccessException;
 
@@ -141,7 +148,7 @@ public interface PlaylistService {
 	 * Generates the magic TopXXPlayed playlist.
 	 * 
 	 * @return the magic playlist
-	 * @throws DataAccessException 
+	 * @throws DataAccessException
 	 */
 	public Playlist getTopPlayed() throws DataAccessException;
 
@@ -156,14 +163,15 @@ public interface PlaylistService {
 	 *            The search pattern
 	 * @return a playlist named "Search Results" which contains the search
 	 *         results
-	 * @throws DataAccessException 
+	 * @throws DataAccessException
 	 */
 	public Playlist globalSearch(String pattern) throws DataAccessException;
 
 	/**
 	 * Checks the song paths of all songs of the library and sets their
 	 * <code>pathOk</code> field.
-	 * @throws DataAccessException 
+	 * 
+	 * @throws DataAccessException
 	 */
 	public void checkSongPaths() throws DataAccessException;
 

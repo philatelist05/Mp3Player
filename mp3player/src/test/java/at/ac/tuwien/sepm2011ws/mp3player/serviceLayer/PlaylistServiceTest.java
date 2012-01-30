@@ -4,6 +4,7 @@
 package at.ac.tuwien.sepm2011ws.mp3player.serviceLayer;
 
 import java.io.File;
+import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URL;
@@ -14,6 +15,8 @@ import java.util.List;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
+import org.springframework.core.io.ClassPathResource;
+
 import static org.junit.Assert.*;
 
 import at.ac.tuwien.sepm2011ws.mp3player.domainObjects.Playlist;
@@ -30,7 +33,7 @@ import at.ac.tuwien.sepm2011ws.mp3player.persistanceLayer.db.DaoFactory;
  */
 public class PlaylistServiceTest {
 	private PlaylistService ps;
-	private Connection con;
+	private Connection con1, con2;
 	private PlaylistDao playlistDao;
 	private SongDao songDao;
 
@@ -41,14 +44,17 @@ public class PlaylistServiceTest {
 		DaoFactory factory = DaoFactory.getInstance();
 		playlistDao = factory.getPlaylistDao();
 		songDao = factory.getSongDao();
-		con = playlistDao.getConnection();
-		con.setAutoCommit(false);
+		con1 = playlistDao.getConnection();
+		con1.setAutoCommit(false);
+		con2 = playlistDao.getConnection();
+		con2.setAutoCommit(false);
 	}
 
 	@After
 	public void tearDown() throws Exception {
-		con.rollback();
-		File playlist = new File("music/dummyPlaylist.m3u");
+		con1.rollback();
+		con2.rollback();
+		File playlist = new ClassPathResource("dummyPlaylist.m3u").getFile();
 		playlist.delete();
 	}
 
@@ -66,12 +72,12 @@ public class PlaylistServiceTest {
 	}
 
 	@Test
-	public void testExportPlaylist_ValidFile() {
+	public void testExportPlaylist_ValidFile() throws IOException {
 		WritablePlaylist temp = new WritablePlaylist("Temp");
 
-		File sPath = new File("music/dummy-message.wav");
+		File sPath = new ClassPathResource("dummy-message.wav").getFile();
 		temp.add(new Song("dummy1", "dummy1", 300, sPath.getAbsolutePath()));
-		sPath = new File("music/The Other Thing.wav");
+		sPath = new ClassPathResource("The Other Thing.wav").getFile();
 		temp.add(new Song("dummy2", "dummy2", 300, sPath.getAbsolutePath()));
 
 		ps.exportPlaylist(new File("music/dummyPlaylist"), temp);
@@ -92,16 +98,16 @@ public class PlaylistServiceTest {
 
 	@Test
 	public void testImportPlaylist_ShouldImportPlaylist()
-			throws DataAccessException {
+			throws DataAccessException, IOException {
 		WritablePlaylist expected = new WritablePlaylist("Temp");
 
-		File path1 = new File("music/dummy-message.wav");
+		File path1 = new ClassPathResource("dummy-message.wav").getFile();
 		expected.add(new Song("dummy1", "dummy1", 300, path1.getAbsolutePath()));
-		File path2 = new File("music/The Other Thing.wav");
+		File path2 = new ClassPathResource("The Other Thing.wav").getFile();
 		expected.add(new Song("dummy2", "dummy2", 300, path2.getAbsolutePath()));
 
-		ps.exportPlaylist(new File("music/dummyPlaylist"), expected);
-		File newFile = new File("music/dummyPlaylist.m3u");
+		ps.exportPlaylist(new ClassPathResource("dummyPlaylist").getFile(), expected);
+		File newFile = new ClassPathResource("dummyPlaylist.m3u").getFile();
 		ps.importPlaylist(new File[] { newFile });
 
 		List<WritablePlaylist> playlists = playlistDao.readAll();
