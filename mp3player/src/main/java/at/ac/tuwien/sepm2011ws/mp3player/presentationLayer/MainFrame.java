@@ -52,6 +52,7 @@ import javax.swing.JTable;
 import javax.swing.JTree;
 import javax.swing.JViewport;
 import javax.swing.ListSelectionModel;
+import javax.swing.RowSorter;
 import javax.swing.ScrollPaneConstants;
 import javax.swing.SwingUtilities;
 import javax.swing.event.ChangeEvent;
@@ -176,6 +177,8 @@ public class MainFrame extends JFrame implements ActionListener, Runnable,
 	private CoreInteractionService cis;
 	private SettingsService ss;
 	private SongInformationService sis;
+	
+	private List sortKeys;
 
 	private void initIcons() throws IOException {
 		l1 = new ImageIcon(new ClassPathResource("img/left_blue.png").getURL());
@@ -304,8 +307,7 @@ public class MainFrame extends JFrame implements ActionListener, Runnable,
 	 *            containing song items
 	 */
 	protected void fillSongTable(Playlist list) {
-		Playlist temp = new Playlist(list.getId(), list.getTitle());
-		temp.addAll(list);
+		Playlist temp = (Playlist) list.clone();
 		String album = null;
 		songmodel.setRowCount(0);
 
@@ -714,14 +716,14 @@ public class MainFrame extends JFrame implements ActionListener, Runnable,
 					}
 				} else {
 					try {
-					if(currentPL.getTitle()=="Library") {
-						currentPL=ps.getLibrary();
-					} else if(currentPL.getTitle()=="TopRated") {
-						currentPL=ps.getTopRated();
-					} else if(currentPL.getTitle()=="TopPlayed") {
-						currentPL=ps.getTopPlayed();
-					}
-					} catch(DataAccessException aa) {
+						if (currentPL.getTitle() == "Library") {
+							currentPL = ps.getLibrary();
+						} else if (currentPL.getTitle() == "TopRated") {
+							currentPL = ps.getTopRated();
+						} else if (currentPL.getTitle() == "TopPlayed") {
+							currentPL = ps.getTopPlayed();
+						}
+					} catch (DataAccessException aa) {
 						JOptionPane.showConfirmDialog(null, aa.getMessage(),
 								"Error", JOptionPane.CLOSED_OPTION);
 					}
@@ -1128,6 +1130,7 @@ public class MainFrame extends JFrame implements ActionListener, Runnable,
 
 		pl_tree.addMouseListener(new MouseAdapter() {
 			public void mouseClicked(MouseEvent me) {
+				sorter.setSortKeys(null);
 				doPlaylistClicked(me);
 			}
 		});
@@ -1274,26 +1277,26 @@ public class MainFrame extends JFrame implements ActionListener, Runnable,
 
 			public void mouseClicked(MouseEvent evt) {
 
-			//	setMediaTime(progress.getValue());
+				// setMediaTime(progress.getValue());
 
 			}
 
 			@Override
 			public void mouseEntered(MouseEvent arg0) {
-			//	setMediaTime(progress.getValue());
-				
+				// setMediaTime(progress.getValue());
+
 			}
 
 			@Override
 			public void mouseExited(MouseEvent arg0) {
-			//	setMediaTime(progress.getValue());
-				
+				// setMediaTime(progress.getValue());
+
 			}
 
 			@Override
 			public void mousePressed(MouseEvent arg0) {
 				setMediaTime(progress.getValue());
-				
+
 			}
 		});
 
@@ -1329,9 +1332,9 @@ public class MainFrame extends JFrame implements ActionListener, Runnable,
 				lblDuration.setVisible(true);
 				int row = songTable.getSelectedRow();
 				int playcountOld = cis.getCurrentSong().getPlaycount();
-				songTable.setValueAt(Integer.toString(playcountOld), row, 8);
+				songTable.setValueAt(Integer.toString(playcountOld), cis.getCurrentSongIndex(), 8);
 
-				songTable.setRowSelectionInterval(row, row);
+				songTable.setRowSelectionInterval(cis.getCurrentSongIndex(), cis.getCurrentSongIndex());
 				songTable.repaint();
 				if (cis.isPlaying()) {
 					currentplaying = new String("Currently playing: "
@@ -1925,9 +1928,8 @@ public class MainFrame extends JFrame implements ActionListener, Runnable,
 						selectedSongs.add(x);
 					}
 				}
-				Playlist temp = new Playlist(currentPlaylistGUI.getId(),
-						currentPlaylistGUI.getTitle());
-				temp.addAll(currentPlaylistGUI);
+				Playlist temp = (Playlist) currentPlaylistGUI.clone();
+
 
 				SimilarArtist sa = new SimilarArtist(selectedSongs);
 				if (cis.getCurrentPlaylist().size() > 0) {
@@ -2030,11 +2032,23 @@ public class MainFrame extends JFrame implements ActionListener, Runnable,
 		int row = songTable.getSelectedRow();
 		String Rating;
 
-		Playlist temp = new Playlist(currentPlaylistGUI.getId(),
-				currentPlaylistGUI.getTitle());
-		temp.addAll(currentPlaylistGUI);
-		// logger.info("tableChanged");
+		Playlist temp = (Playlist) currentPlaylistGUI.clone();
 
+
+//		logger.info("tableChanged");
+
+//		logger.info("cis cur: " + cis.getCurrentPlaylist());
+//		logger.info("gui cur: " + currentPlaylistGUI);
+
+	/*	if(cis.getCurrentPlaylist().getTitle().equals(temp.getTitle()))
+			sortKeys = sorter.getSortKeys();
+		if (!cis.getCurrentPlaylist().getTitle().equals(temp.getTitle()))
+		{
+			sorter.setSortKeys(null);
+		}*/
+	
+		if (temp != null)
+			songrendi.setPlaylist(temp);
 		if (e.getColumn() == 7) {
 
 			Rating = songTable.getValueAt(row, column).toString();
@@ -2047,11 +2061,12 @@ public class MainFrame extends JFrame implements ActionListener, Runnable,
 
 			}
 
-		} else {
-			if (temp != null)
-				songrendi.setPlaylist(temp);
-			sorter.setSortKeys(null);
 		}
+
+		
+
+		
+
 		currentPlaylistGUI = temp;
 		// fillSongTable(currentPlaylistGUI);
 		songTable.repaint();
@@ -2059,19 +2074,20 @@ public class MainFrame extends JFrame implements ActionListener, Runnable,
 
 	@Override
 	public void sorterChanged(RowSorterEvent e) {
-		// logger.info("sorterChanged");
-		Playlist temp = new Playlist(currentPlaylistGUI.getId(),
-				currentPlaylistGUI.getTitle());
-		temp.addAll(currentPlaylistGUI);
-
+		//logger.info("sorterChanged");
+		Playlist temp = (Playlist) currentPlaylistGUI.clone();
+		//logger.info("gui : " + temp.getTitle());
 		Song x = cis.getCurrentSong();
 		temp = parseSongTable(temp);
 		cis.setCurrentPlaylist(temp);
-		for (int i = 0; i < temp.size(); i++)
-			if (temp.get(i).equals(x))
-				cis.setCurrentSongIndex(i);
+		//logger.info("cis cur: " + cis.getCurrentPlaylist().getTitle());
+		if (cis.getCurrentPlaylist().getTitle().equals(temp.getTitle()))
+			for (int i = 0; i < temp.size(); i++)
+				if (temp.get(i).equals(x))
+					cis.setCurrentSongIndex(i);
 
 		currentPlaylistGUI = temp;
 		songTable.repaint();
 	}
+
 }
