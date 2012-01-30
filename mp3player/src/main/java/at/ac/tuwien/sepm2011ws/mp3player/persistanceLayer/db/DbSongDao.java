@@ -8,8 +8,6 @@ import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.sql.DataSource;
-
 import at.ac.tuwien.sepm2011ws.mp3player.domainObjects.Album;
 import at.ac.tuwien.sepm2011ws.mp3player.domainObjects.Lyric;
 import at.ac.tuwien.sepm2011ws.mp3player.domainObjects.Song;
@@ -18,7 +16,6 @@ import at.ac.tuwien.sepm2011ws.mp3player.persistanceLayer.DataAccessException;
 import at.ac.tuwien.sepm2011ws.mp3player.persistanceLayer.SongDao;
 
 class DbSongDao implements SongDao {
-	private Connection con;
 	private AlbumDao ad;
 
 	private PreparedStatement createStmt;
@@ -33,11 +30,11 @@ class DbSongDao implements SongDao {
 	private PreparedStatement sameStmt;
 	private PreparedStatement updateAlbumInSongStmt;
 
-	DbSongDao(DataSource source, AlbumDao ad) throws DataAccessException {
+	DbSongDao(DbConnection dbCon, AlbumDao ad) throws DataAccessException {
 		this.ad = ad;
 		try {
 
-			con = source.getConnection();
+			Connection con = dbCon.getSqlConnection();
 			createStmt = con.prepareStatement("INSERT INTO song ( "
 					+ "title, artist, path, year, duration, "
 					+ "playcount, rating, genre, pathOk, lyric) "
@@ -401,10 +398,6 @@ class DbSongDao implements SongDao {
 		} catch (SQLException e) {
 			throw new DataAccessException("Error reading song from database");
 		}
-	}
-
-	public Connection getConnection() {
-		return this.con;
 	}
 
 }

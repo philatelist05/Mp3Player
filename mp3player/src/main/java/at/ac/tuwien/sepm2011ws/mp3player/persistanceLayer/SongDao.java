@@ -1,6 +1,5 @@
 package at.ac.tuwien.sepm2011ws.mp3player.persistanceLayer;
 
-import java.sql.Connection;
 import java.util.List;
 
 import at.ac.tuwien.sepm2011ws.mp3player.domainObjects.Song;
@@ -70,9 +69,4 @@ public interface SongDao {
 	 * @throws DataAccessException 
 	 */
 	public List<Song> getTopPlayedSongs(int number) throws DataAccessException;
-	
-	/**
-	 * @return the connection used by this DAO
-	 */
-	public Connection getConnection();
 }

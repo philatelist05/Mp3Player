@@ -1,7 +1,5 @@
 package at.ac.tuwien.sepm2011ws.mp3player.persistanceLayer;
 
-import java.sql.Connection;
-
 import at.ac.tuwien.sepm2011ws.mp3player.domainObjects.Album;
 
 public interface AlbumDao {
@@ -41,9 +39,4 @@ public interface AlbumDao {
 	 * @throws DataAccessException
 	 */
 	public Album read(int id) throws DataAccessException;
-
-	/**
-	 * @return the connection used by this DAO
-	 */
-	public Connection getConnection();
 }

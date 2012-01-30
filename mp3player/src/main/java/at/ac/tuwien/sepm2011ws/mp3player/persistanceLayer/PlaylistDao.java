@@ -1,6 +1,5 @@
 package at.ac.tuwien.sepm2011ws.mp3player.persistanceLayer;
 
-import java.sql.Connection;
 import java.util.List;
 
 import at.ac.tuwien.sepm2011ws.mp3player.domainObjects.WritablePlaylist;
@@ -63,9 +62,4 @@ public interface PlaylistDao {
 	 * @throws DataAccessException
 	 */
 	public void rename(WritablePlaylist p, String name) throws DataAccessException;
-
-	/**
-	 * @return the connection used by this DAO
-	 */
-	public Connection getConnection();
 }

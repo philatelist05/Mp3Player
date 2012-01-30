@@ -8,8 +8,6 @@ import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.sql.DataSource;
-
 import at.ac.tuwien.sepm2011ws.mp3player.domainObjects.Song;
 import at.ac.tuwien.sepm2011ws.mp3player.domainObjects.WritablePlaylist;
 import at.ac.tuwien.sepm2011ws.mp3player.persistanceLayer.DataAccessException;
@@ -17,7 +15,6 @@ import at.ac.tuwien.sepm2011ws.mp3player.persistanceLayer.PlaylistDao;
 import at.ac.tuwien.sepm2011ws.mp3player.persistanceLayer.SongDao;
 
 class DbPlaylistDao implements PlaylistDao {
-	private Connection con;
 	private SongDao sd;
 
 	private PreparedStatement createStmt;
@@ -29,11 +26,11 @@ class DbPlaylistDao implements PlaylistDao {
 	private PreparedStatement deleteContainsStmt;
 	private PreparedStatement deleteStmt;
 
-	DbPlaylistDao(DataSource source, SongDao sd) throws DataAccessException {
+	DbPlaylistDao(DbConnection dbCon, SongDao sd) throws DataAccessException {
 		try {
 			this.sd = sd;
 
-			con = source.getConnection();
+			Connection con = dbCon.getSqlConnection();
 			createStmt = con.prepareStatement("INSERT INTO playlist (name) "
 					+ "VALUES (?);", Statement.RETURN_GENERATED_KEYS);
 			createContainsStmt = con.prepareStatement("INSERT INTO contains ( "
@@ -239,13 +236,5 @@ class DbPlaylistDao implements PlaylistDao {
 		} catch (SQLException e) {
 			throw new DataAccessException("Error renaming playlist in database");
 		}
-	}
-
-	/**
-	 * @return the connection
-	 */
-	@Override
-	public Connection getConnection() {
-		return this.con;
 	}
 }
