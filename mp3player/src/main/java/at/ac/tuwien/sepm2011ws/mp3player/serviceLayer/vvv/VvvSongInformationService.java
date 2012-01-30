@@ -109,6 +109,8 @@ public class VvvSongInformationService implements SongInformationService {
 					"The song object and its path field must not be null");
 
 		try {
+			//TODO: error message: "ApicId3Frame-> No space for picture data left."
+			// Keep look at: http://entagged.sourcearchive.com/documentation/0.35/ApicId3Frame_8java-source.html
 			AudioFile file = AudioFileIO.read(new File(song.getPath()));
 			Tag tags = file.getTag();
 
