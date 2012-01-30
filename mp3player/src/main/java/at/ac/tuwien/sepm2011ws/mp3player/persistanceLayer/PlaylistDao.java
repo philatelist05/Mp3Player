@@ -4,7 +4,6 @@ import java.sql.Connection;
 import java.util.List;
 
 import at.ac.tuwien.sepm2011ws.mp3player.domainObjects.WritablePlaylist;
-import at.ac.tuwien.sepm2011ws.mp3player.domainObjects.Playlist;
 
 public interface PlaylistDao {
 	/**
@@ -43,7 +42,7 @@ public interface PlaylistDao {
 	 * @return The playlist from the DB.
 	 * @throws DataAccessException
 	 */
-	public Playlist read(int id) throws DataAccessException;
+	public WritablePlaylist read(int id) throws DataAccessException;
 
 	/**
 	 * Reads all playlists from the DB.
