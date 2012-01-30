@@ -3,11 +3,11 @@
  */
 package at.ac.tuwien.sepm2011ws.mp3player.serviceLayer;
 
+import static org.junit.Assert.*;
+
 import java.io.File;
 import java.io.IOException;
 import java.net.MalformedURLException;
-import java.net.URI;
-import java.net.URL;
 import java.sql.Connection;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -18,8 +18,6 @@ import org.junit.Before;
 import org.junit.Test;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;
-
-import static org.junit.Assert.*;
 
 import at.ac.tuwien.sepm2011ws.mp3player.domainObjects.Playlist;
 import at.ac.tuwien.sepm2011ws.mp3player.domainObjects.Song;
@@ -287,11 +285,10 @@ public class PlaylistServiceTest {
 		ps.renamePlaylist(playlist, "Test1");
 		assertEquals("Test1", playlist.getTitle());
 	}
-	
+
 	@Test
 	public void testGlobalSearch_ShouldSearchForSong() {
-		
+
 	}
-	
 
 }
