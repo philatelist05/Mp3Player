@@ -3,14 +3,11 @@ package at.ac.tuwien.sepm2011ws.mp3player.presentationLayer;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Font;
-import java.io.IOException;
 
-import javax.swing.Icon;
-import javax.swing.ImageIcon;
 import javax.swing.JTable;
 import javax.swing.table.DefaultTableCellRenderer;
 
-import org.springframework.core.io.ClassPathResource;
+
 
 import at.ac.tuwien.sepm2011ws.mp3player.domainObjects.Playlist;
 
@@ -23,7 +20,7 @@ public class SongTableRendererSimilarArtist extends DefaultTableCellRenderer {
 	 * 
 	 */
 
-	private Icon nothing;
+	//private Icon nothing;
 
 	private static final long serialVersionUID = 1L;
 
@@ -63,9 +60,7 @@ public class SongTableRendererSimilarArtist extends DefaultTableCellRenderer {
 
 		}
 		table.setSelectionForeground(Color.red);
-		// table.setSelectionBackground(Color.red);
-		System.out.println("cis:" + cis.getCurrentPlaylist().getTitle());
-		System.out.println("cur:" + curPlaylist.getTitle());
+
 		if (cis.getCurrentPlaylist().equals(curPlaylist)) {
 			if (cis.getCurrentSongIndex() > -1) {
 				/*
