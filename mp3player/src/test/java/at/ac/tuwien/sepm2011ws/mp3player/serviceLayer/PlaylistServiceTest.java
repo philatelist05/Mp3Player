@@ -135,24 +135,10 @@ public class PlaylistServiceTest {
 		for (Song song1 : l1) {
 			Song song2 = l2.get(index++);
 
-			String url = convertFilePathToURLPath(song2.getPath());
-
-			if (!url.equals(song1.getPath()))
+			if (!song2.getPath().equals(song1.getPath()))
 				return false;
 		}
 		return true;
-	}
-
-	private String convertFilePathToURLPath(String path) {
-		try {
-			String file = new ClassPathResource(path).getFile().toURI().toURL()
-					.getPath();
-			return file;
-		} catch (MalformedURLException e) {
-			return "";
-		} catch (IOException e) {
-			return "";
-		}
 	}
 
 	@Test
