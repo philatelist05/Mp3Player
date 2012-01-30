@@ -24,36 +24,28 @@ import at.ac.tuwien.sepm2011ws.mp3player.domainObjects.Song;
 import at.ac.tuwien.sepm2011ws.mp3player.domainObjects.WritablePlaylist;
 import at.ac.tuwien.sepm2011ws.mp3player.persistanceLayer.DataAccessException;
 import at.ac.tuwien.sepm2011ws.mp3player.persistanceLayer.PlaylistDao;
-import at.ac.tuwien.sepm2011ws.mp3player.persistanceLayer.SongDao;
 import at.ac.tuwien.sepm2011ws.mp3player.persistanceLayer.db.DaoFactory;
 
-/**
- * @author klaus
- * 
- */
 public class PlaylistServiceTest {
 	private PlaylistService ps;
-	private Connection con1, con2;
+	private Connection conn;
 	private PlaylistDao playlistDao;
-	private SongDao songDao;
-
+	
 	@Before
 	public void setUp() throws Exception {
 		ServiceFactory sf = ServiceFactory.getInstance();
 		ps = sf.getPlaylistService();
 		DaoFactory factory = DaoFactory.getInstance();
 		playlistDao = factory.getPlaylistDao();
-		songDao = factory.getSongDao();
-		con1 = playlistDao.getConnection();
-		con1.setAutoCommit(false);
-		con2 = playlistDao.getConnection();
-		con2.setAutoCommit(false);
+		factory.getSongDao();
+		
+		this.conn =  factory.getDbConnection().getSqlConnection();
+		this.conn.setAutoCommit(false);
 	}
 
 	@After
 	public void tearDown() throws Exception {
-		con1.rollback();
-		con2.rollback();
+		conn.rollback();
 		Resource resource = new ClassPathResource("dummyPlaylist.m3u");
 		if (resource.exists()) {
 			File playlist = resource.getFile();
