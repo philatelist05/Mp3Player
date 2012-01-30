@@ -20,7 +20,7 @@ class DbAlbumDao implements AlbumDao {
 	private PreparedStatement updateStmt;
 	private PreparedStatement deleteStmt;
 
-	private PreparedStatement sameStmt;
+//	private PreparedStatement sameStmt;
 
 	DbAlbumDao(DataSource source) throws DataAccessException {
 
@@ -36,8 +36,8 @@ class DbAlbumDao implements AlbumDao {
 					+ "title=?, year=?, albumart_path=? WHERE id = ?;");
 			deleteStmt = con.prepareStatement("DELETE FROM album "
 					+ "WHERE id = ?;");
-			sameStmt = con.prepareStatement("SELECT id FROM album WHERE "
-					+ "title=? AND year=?;");
+//			sameStmt = con.prepareStatement("SELECT id FROM album WHERE "
+//					+ "title=? AND year=?;");
 
 		} catch (SQLException e) {
 			throw new DataAccessException(

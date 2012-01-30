@@ -241,21 +241,19 @@ public class GetMetaTag extends JDialog implements ActionListener,
 	@Override
 	public void actionPerformed(ActionEvent e) {
 		if (e.getActionCommand().equals("save")) {
-			if (textYear.getText().trim().matches("^[0-9]+$")) {
-				song.setArtist("untitled");
-				song.setTitle("untitled");
-				if (song.getAlbum() != null) {
-					if (textAlbum.getText().trim().length() > 0)
+			if (textYear.getText().trim().matches("^[0-9]+$")
+					&& textArtist.getText().trim().length() > 0
+					&& textTitle.getText().trim().length() > 0) {
+				
+				if (textAlbum.getText().trim().length() > 0) {
+					if (song.getAlbum() != null)
 						song.getAlbum().setTitle(textAlbum.getText().trim());
 					else
-						song.getAlbum().setTitle("untitled");
-				}
-
-				else {
-					if (textAlbum.getText().trim().length() > 0)
 						song.setAlbum(new Album(textAlbum.getText().trim()));
-					else
-						song.setAlbum(new Album(""));
+				}
+					
+				else {
+					song.setAlbum(null);	
 				}
 
 				if (textArtist.getText().trim().length() > 0)
