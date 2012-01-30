@@ -7,11 +7,13 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
 import java.io.File;
+import java.io.IOException;
 
 import org.junit.After;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
+import org.springframework.core.io.ClassPathResource;
 
 import at.ac.tuwien.sepm2011ws.mp3player.domainObjects.PlayMode;
 import at.ac.tuwien.sepm2011ws.mp3player.domainObjects.Playlist;
@@ -39,12 +41,13 @@ public class CoreInteractionServiceTest {
 	}
 
 	@Test
-	public void testEndOfMedia_ShouldPlayNext() throws InterruptedException {
+	public void testEndOfMedia_ShouldPlayNext() throws InterruptedException,
+			IOException {
 		WritablePlaylist temp = new WritablePlaylist("Temp");
 
-		File sPath = new File("music/dummy-message.wav");
+		File sPath = new ClassPathResource("dummy-message.wav").getFile();
 		temp.add(new Song("dummy1", "dummy1", 300, sPath.getAbsolutePath()));
-		sPath = new File("music/The Other Thing.wav");
+		sPath = new ClassPathResource("The Other Thing.wav").getFile();
 		temp.add(new Song("dummy2", "dummy2", 300, sPath.getAbsolutePath()));
 
 		cs.setCurrentPlaylist(temp);
@@ -63,8 +66,8 @@ public class CoreInteractionServiceTest {
 	}
 
 	@Test
-	public void testPlayPause_ShouldPlay() throws InterruptedException {
-		File sPath = new File("music/dummy-message.wav");
+	public void testPlayPause_ShouldPlay() throws InterruptedException, IOException {
+		File sPath = new ClassPathResource("dummy-message.wav").getFile();
 		Song s = new Song("dummy", "dummy", 300, sPath.getAbsolutePath());
 		Playlist p = new Playlist("Test");
 		p.add(s);
@@ -75,8 +78,8 @@ public class CoreInteractionServiceTest {
 	}
 
 	@Test
-	public void testSeek_ShouldSeek() throws InterruptedException {
-		File sPath = new File("music/The Other Thing.wav");
+	public void testSeek_ShouldSeek() throws InterruptedException, IOException {
+		File sPath = new ClassPathResource("The Other Thing.wav").getFile();
 		Song s = new Song("dummy", "dummy", 300, sPath.getAbsolutePath());
 		Playlist p = new Playlist("Test");
 		p.add(s);
@@ -92,8 +95,8 @@ public class CoreInteractionServiceTest {
 
 	@Test
 	public void testPlayPause_ShouldIncrementPlayTime()
-			throws InterruptedException {
-		File sPath = new File("music/dummy-message.wav");
+			throws InterruptedException, IOException {
+		File sPath = new ClassPathResource("dummy-message.wav").getFile();
 		Song s = new Song("dummy", "dummy", 300, sPath.getAbsolutePath());
 		Playlist p = new Playlist("Test");
 		p.add(s);

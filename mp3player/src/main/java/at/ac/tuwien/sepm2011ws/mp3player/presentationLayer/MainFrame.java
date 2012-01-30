@@ -1850,11 +1850,14 @@ public class MainFrame extends JFrame implements ActionListener, Runnable,
 				}
 
 				try {
-					ps.deleteSongs(deleteSongs,
-							(WritablePlaylist) currentPlaylistGUI);
-					currentPlaylistGUI.removeAll(deleteSongs);
+					if (currentPlaylistGUI.getClass() == WritablePlaylist.class) {
+						ps.deleteSongs(deleteSongs, (WritablePlaylist) currentPlaylistGUI);
+						currentPlaylistGUI.removeAll(deleteSongs);
+					}
 				} catch (DataAccessException e1) {
-					new DynamicDialog("ERROR", e1.toString());
+					int response = JOptionPane.showConfirmDialog(null,
+							"Error", e1.toString(),
+							JOptionPane.CLOSED_OPTION);
 				}
 				fillSongTable(currentPlaylistGUI);
 			} else if (e.getActionCommand().equals("getLyrics")) {
@@ -1955,7 +1958,7 @@ public class MainFrame extends JFrame implements ActionListener, Runnable,
 				// PlaylistTreeNode selectedNode = (PlaylistTreeNode) pl_tree
 				// .getLastSelectedPathComponent();
 				TreePath[] treePaths = pl_tree.getSelectionPaths();
-				if (treePaths.length != 0) {
+				if (treePaths != null && treePaths.length != 0) {
 					for (int i = 0; i < treePaths.length; i++) {
 						TreePath currentPath = treePaths[i];
 						PlaylistTreeNode selectedNode = (PlaylistTreeNode) currentPath
@@ -1979,7 +1982,7 @@ public class MainFrame extends JFrame implements ActionListener, Runnable,
 				// PlaylistTreeNode selectedNode = (PlaylistTreeNode) pl_tree
 				// .getLastSelectedPathComponent();
 				TreePath[] treePaths = pl_tree.getSelectionPaths();
-				if (treePaths.length != 0) {
+				if (treePaths != null && treePaths.length != 0) {
 					for (int i = 0; i < treePaths.length; i++) {
 						TreePath currentPath = treePaths[i];
 						PlaylistTreeNode selectedNode = (PlaylistTreeNode) currentPath
@@ -2001,7 +2004,7 @@ public class MainFrame extends JFrame implements ActionListener, Runnable,
 				// PlaylistTreeNode selectedNode = (PlaylistTreeNode) pl_tree
 				// .getLastSelectedPathComponent();
 				TreePath[] treePaths = pl_tree.getSelectionPaths();
-				if (treePaths.length != 0) {
+				if (treePaths != null && treePaths.length != 0) {
 					for (int i = 0; i < treePaths.length; i++) {
 						TreePath currentPath = treePaths[i];
 						PlaylistTreeNode selectedNode = (PlaylistTreeNode) currentPath
