@@ -714,14 +714,14 @@ public class MainFrame extends JFrame implements ActionListener, Runnable,
 					}
 				} else {
 					try {
-					if(currentPL.getTitle()=="Library") {
-						currentPL=ps.getLibrary();
-					} else if(currentPL.getTitle()=="TopRated") {
-						currentPL=ps.getTopRated();
-					} else if(currentPL.getTitle()=="TopPlayed") {
-						currentPL=ps.getTopPlayed();
-					}
-					} catch(DataAccessException aa) {
+						if (currentPL.getTitle() == "Library") {
+							currentPL = ps.getLibrary();
+						} else if (currentPL.getTitle() == "TopRated") {
+							currentPL = ps.getTopRated();
+						} else if (currentPL.getTitle() == "TopPlayed") {
+							currentPL = ps.getTopPlayed();
+						}
+					} catch (DataAccessException aa) {
 						JOptionPane.showConfirmDialog(null, aa.getMessage(),
 								"Error", JOptionPane.CLOSED_OPTION);
 					}
@@ -1835,11 +1835,14 @@ public class MainFrame extends JFrame implements ActionListener, Runnable,
 				}
 
 				try {
-					ps.deleteSongs(deleteSongs,
-							(WritablePlaylist) currentPlaylistGUI);
-					currentPlaylistGUI.removeAll(deleteSongs);
+					if (currentPlaylistGUI.getClass() == WritablePlaylist.class) {
+						ps.deleteSongs(deleteSongs, (WritablePlaylist) currentPlaylistGUI);
+						currentPlaylistGUI.removeAll(deleteSongs);
+					}
 				} catch (DataAccessException e1) {
-					new DynamicDialog("ERROR", e1.toString());
+					int response = JOptionPane.showConfirmDialog(null,
+							"Error", e1.toString(),
+							JOptionPane.CLOSED_OPTION);
 				}
 				fillSongTable(currentPlaylistGUI);
 			} else if (e.getActionCommand().equals("getLyrics")) {
