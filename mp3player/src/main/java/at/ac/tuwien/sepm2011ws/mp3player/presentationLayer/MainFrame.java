@@ -707,7 +707,7 @@ public class MainFrame extends JFrame implements ActionListener, Runnable,
 							JOptionPane.CLOSED_OPTION);
 				}
 				Playlist currentPL = clicked.getNodePlaylist();
-				if (currentPlaylistGUI.getClass() == WritablePlaylist.class) {
+				if (currentPL.getClass() == WritablePlaylist.class) {
 					try {
 						ps.reloadPlaylist((WritablePlaylist) currentPL);
 					} catch (DataAccessException e) {
