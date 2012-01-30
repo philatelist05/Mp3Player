@@ -7,27 +7,33 @@ http://www.springframework.org/schema/beans/spring-beans-3.0.xsd">
 	<import resource="DBSettings.xml" />
 
 
-
-	<bean id="AlbumDao"
-		class="at.ac.tuwien.sepm2011ws.mp3player.persistanceLayer.db.DbAlbumDao"
+	<bean id="DbConnection"
+		class="at.ac.tuwien.sepm2011ws.mp3player.persistanceLayer.db.DbConnection"
 		depends-on="DataSource">
 		
 		<constructor-arg ref="DataSource" />
 	</bean>
+
+	<bean id="AlbumDao"
+		class="at.ac.tuwien.sepm2011ws.mp3player.persistanceLayer.db.DbAlbumDao"
+		depends-on="DbConnection">
+		
+		<constructor-arg ref="DbConnection" />
+	</bean>
 	
 	<bean id="SongDao"
 		class="at.ac.tuwien.sepm2011ws.mp3player.persistanceLayer.db.DbSongDao"
-		depends-on="DataSource,AlbumDao">
+		depends-on="DbConnection,AlbumDao">
 		
-		<constructor-arg ref="DataSource" />
+		<constructor-arg ref="DbConnection" />
 		<constructor-arg ref="AlbumDao" />
 	</bean>
 
 	<bean id="PlaylistDao"
 		class="at.ac.tuwien.sepm2011ws.mp3player.persistanceLayer.db.DbPlaylistDao"
-		depends-on="DataSource,SongDao">
+		depends-on="DbConnection,SongDao">
 		
-		<constructor-arg ref="DataSource" />
+		<constructor-arg ref="DbConnection" />
 		<constructor-arg ref="SongDao" />
 	</bean>
 
