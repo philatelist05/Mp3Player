@@ -323,6 +323,9 @@ public class MainFrame extends JFrame implements ActionListener, Runnable,
 					getMediaTime(x.getDuration()), x.getRating(),
 					x.getPlaycount() });
 		}
+		songTable.setModel(songmodel);
+		songTable.repaint();
+		
 		// songTable.setRowSelectionInterval(25, 26);
 		// restoreTableView(25, 0);
 
@@ -1134,6 +1137,7 @@ public class MainFrame extends JFrame implements ActionListener, Runnable,
 			public void mouseClicked(MouseEvent me) {
 				sorter.setSortKeys(null);
 				doPlaylistClicked(me);
+				songTable.repaint();
 			}
 		});
 
@@ -2040,11 +2044,6 @@ public class MainFrame extends JFrame implements ActionListener, Runnable,
 
 		Playlist temp = (Playlist) currentPlaylistGUI.clone();
 
-		// logger.info("tableChanged");
-
-		// logger.info("cis cur: " + cis.getCurrentPlaylist());
-		// logger.info("gui cur: " + currentPlaylistGUI);
-
 		/*
 		 * if(cis.getCurrentPlaylist().getTitle().equals(temp.getTitle()))
 		 * sortKeys = sorter.getSortKeys(); if
@@ -2057,13 +2056,15 @@ public class MainFrame extends JFrame implements ActionListener, Runnable,
 		if (e.getColumn() == 7) {
 
 			Rating = songTable.getValueAt(row, column).toString();
-			double rg = Double.parseDouble(Rating);
-			try {
-				sis.setRating(cis.getCurrentPlaylist().get(row), rg);
-			} catch (DataAccessException e1) {
-				JOptionPane.showConfirmDialog(null, "No Song found!",
-						"No Song found!" + e1, JOptionPane.CLOSED_OPTION);
+			if (Rating != null) {
+				double rg = Double.parseDouble(Rating);
+				try {
+					sis.setRating((Song) songmodel.getValueAt(row, 0), rg);
+				} catch (DataAccessException e1) {
+					JOptionPane.showConfirmDialog(null, "No Song found!",
+							"No Song found!" + e1, JOptionPane.CLOSED_OPTION);
 
+				}
 			}
 
 		}

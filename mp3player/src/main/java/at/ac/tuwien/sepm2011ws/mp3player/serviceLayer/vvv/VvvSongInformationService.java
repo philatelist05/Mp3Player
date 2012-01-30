@@ -165,7 +165,7 @@ public class VvvSongInformationService implements SongInformationService {
 	private Set<MetaTags> mapTracksToMetaTag(Collection<Track> tracks, Song song){
 		Set<MetaTags> list = new HashSet<MetaTags>();
 		for (Track track : tracks) {
-			Collection<de.umass.lastfm.Tag> genres = track.getTopTags(track.getArtist(), track.getMbid(), LastFmService.LastFmApiKey);
+			Collection<de.umass.lastfm.Tag> genres = Track.getTopTags(track.getArtist(), track.getMbid(), LastFmService.LastFmApiKey);
 			Iterator<de.umass.lastfm.Tag> iterator = genres.iterator();
 			
 			String genre = "";
