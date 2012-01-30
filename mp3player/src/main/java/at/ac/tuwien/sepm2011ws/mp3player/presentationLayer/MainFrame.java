@@ -706,7 +706,7 @@ public class MainFrame extends JFrame implements ActionListener, Runnable,
 					if (currentPlaylistGUI.getClass() == WritablePlaylist.class)
 						ps.updatePlaylist((WritablePlaylist) currentPlaylistGUI);
 				} catch (DataAccessException e) {
-					JOptionPane.showConfirmDialog(null, "Error", e.toString(),
+					JOptionPane.showConfirmDialog(null,  e.toString(),"Error",
 							JOptionPane.CLOSED_OPTION);
 				}
 				Playlist currentPL = clicked.getNodePlaylist();
@@ -714,8 +714,8 @@ public class MainFrame extends JFrame implements ActionListener, Runnable,
 					try {
 						ps.reloadPlaylist((WritablePlaylist) currentPL);
 					} catch (DataAccessException e) {
-						JOptionPane.showConfirmDialog(null, e.getMessage(),
-								"Error", JOptionPane.CLOSED_OPTION);
+						JOptionPane.showConfirmDialog(null, e.getMessage(),"Error",
+								 JOptionPane.CLOSED_OPTION);
 					}
 				} else {
 					try {
@@ -729,8 +729,8 @@ public class MainFrame extends JFrame implements ActionListener, Runnable,
 							}
 						}
 					} catch (DataAccessException aa) {
-						JOptionPane.showConfirmDialog(null, aa.getMessage(),
-								"Error", JOptionPane.CLOSED_OPTION);
+						JOptionPane.showConfirmDialog(null, aa.getMessage(),"Error",
+								 JOptionPane.CLOSED_OPTION);
 					}
 				}
 				currentPlaylistGUI = currentPL;
@@ -1666,7 +1666,7 @@ public class MainFrame extends JFrame implements ActionListener, Runnable,
 		else if (e.getActionCommand().equals("about")) {
 			logger.info("About: Going to show About dialog");
 			JOptionPane.showConfirmDialog(null,
-					"mp3@Player Beta Version by SEPM team VVV",
+					"mp3@Player Final Version by SEPM team Veni Vidi Vici",
 					"About mp3@Player...", JOptionPane.CLOSED_OPTION);
 		}
 
@@ -1864,8 +1864,8 @@ public class MainFrame extends JFrame implements ActionListener, Runnable,
 						currentPlaylistGUI.removeAll(deleteSongs);
 					}
 				} catch (DataAccessException e1) {
-					int response = JOptionPane.showConfirmDialog(null, "Error",
-							e1.toString(), JOptionPane.CLOSED_OPTION);
+					int response = JOptionPane.showConfirmDialog(null, e1.toString(),
+							"Error", JOptionPane.CLOSED_OPTION);
 				}
 				fillSongTable(currentPlaylistGUI);
 			} else if (e.getActionCommand().equals("getLyrics")) {
