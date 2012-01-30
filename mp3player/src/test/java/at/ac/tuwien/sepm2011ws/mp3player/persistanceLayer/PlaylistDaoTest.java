@@ -18,23 +18,20 @@ import static org.junit.Assert.*;
 public class PlaylistDaoTest {
 	private PlaylistDao plstdao;
 	private SongDao sdao;
-	private Connection con1, con2;
+	private Connection con;
 
 	@Before
 	public void setUp() throws Exception {
 		DaoFactory factory = DaoFactory.getInstance();
 		plstdao = factory.getPlaylistDao();
 		sdao = factory.getSongDao();
-		con1 = plstdao.getConnection();
-		con1.setAutoCommit(false);
-		con2 = sdao.getConnection();
-		con2.setAutoCommit(false);
+		con = factory.getDbConnection().getSqlConnection();
+		con.setAutoCommit(false);
 	}
 
 	@After
 	public void tearDown() throws Exception {
-		con1.rollback();
-		con2.rollback();
+		con.rollback();
 	}
 
 	@Test

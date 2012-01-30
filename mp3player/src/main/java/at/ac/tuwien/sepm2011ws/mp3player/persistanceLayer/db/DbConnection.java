@@ -5,7 +5,7 @@ import java.sql.SQLException;
 
 import javax.sql.DataSource;
 
-class DbConnection {
+public class DbConnection {
 
 	private Connection sqlConnection;
 

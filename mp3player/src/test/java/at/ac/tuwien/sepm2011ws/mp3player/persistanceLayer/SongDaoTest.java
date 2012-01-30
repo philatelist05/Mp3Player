@@ -33,8 +33,7 @@ public class SongDaoTest {
 	public void setUp() throws Exception {
 		DaoFactory factory = DaoFactory.getInstance();
 		sd = factory.getSongDao();
-		factory.getAlbumDao();
-		con = sd.getConnection();
+		con = factory.getDbConnection().getSqlConnection();
 		con.setAutoCommit(false);
 		clearSongTable();
 	}

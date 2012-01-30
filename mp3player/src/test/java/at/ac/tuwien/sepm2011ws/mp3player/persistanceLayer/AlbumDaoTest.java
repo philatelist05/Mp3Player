@@ -21,7 +21,7 @@ public class AlbumDaoTest {
 	public void setUp() throws Exception {
 		DaoFactory factory = DaoFactory.getInstance();
 		ad = factory.getAlbumDao();
-		con = ad.getConnection();
+		con = factory.getDbConnection().getSqlConnection();
 		con.setAutoCommit(false);
 	}
 
