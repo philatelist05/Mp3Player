@@ -3,14 +3,12 @@ package at.ac.tuwien.sepm2011ws.mp3player.serviceLayer.vvv;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
-import java.io.FilenameFilter;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
 import org.apache.commons.io.FilenameUtils;
-import org.apache.commons.io.filefilter.SuffixFileFilter;
 
 import at.ac.tuwien.sepm2011ws.mp3player.domainObjects.Playlist;
 import at.ac.tuwien.sepm2011ws.mp3player.domainObjects.Song;

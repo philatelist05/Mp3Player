@@ -20,6 +20,9 @@ public class Playlist extends ArrayList<Song> {
 	 * @param title
 	 */
 	public Playlist(int id, String title) {
+		if(title == null)
+			throw new IllegalArgumentException("Title must not be null");
+		
 		this.id = id;
 		this.title = title;
 	}
