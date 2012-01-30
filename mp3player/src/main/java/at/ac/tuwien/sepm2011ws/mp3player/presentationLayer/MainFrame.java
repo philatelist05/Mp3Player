@@ -177,7 +177,7 @@ public class MainFrame extends JFrame implements ActionListener, Runnable,
 	private CoreInteractionService cis;
 	private SettingsService ss;
 	private SongInformationService sis;
-	
+
 	private List sortKeys;
 
 	private void initIcons() throws IOException {
@@ -323,6 +323,9 @@ public class MainFrame extends JFrame implements ActionListener, Runnable,
 					getMediaTime(x.getDuration()), x.getRating(),
 					x.getPlaycount() });
 		}
+		songTable.setModel(songmodel);
+		songTable.repaint();
+		
 		// songTable.setRowSelectionInterval(25, 26);
 		// restoreTableView(25, 0);
 
@@ -1132,6 +1135,7 @@ public class MainFrame extends JFrame implements ActionListener, Runnable,
 			public void mouseClicked(MouseEvent me) {
 				sorter.setSortKeys(null);
 				doPlaylistClicked(me);
+				songTable.repaint();
 			}
 		});
 
@@ -1332,9 +1336,11 @@ public class MainFrame extends JFrame implements ActionListener, Runnable,
 				lblDuration.setVisible(true);
 				int row = songTable.getSelectedRow();
 				int playcountOld = cis.getCurrentSong().getPlaycount();
-				songTable.setValueAt(Integer.toString(playcountOld), cis.getCurrentSongIndex(), 8);
+				songTable.setValueAt(Integer.toString(playcountOld),
+						cis.getCurrentSongIndex(), 8);
 
-				songTable.setRowSelectionInterval(cis.getCurrentSongIndex(), cis.getCurrentSongIndex());
+				songTable.setRowSelectionInterval(cis.getCurrentSongIndex(),
+						cis.getCurrentSongIndex());
 				songTable.repaint();
 				if (cis.isPlaying()) {
 					currentplaying = new String("Currently playing: "
@@ -1851,13 +1857,13 @@ public class MainFrame extends JFrame implements ActionListener, Runnable,
 
 				try {
 					if (currentPlaylistGUI.getClass() == WritablePlaylist.class) {
-						ps.deleteSongs(deleteSongs, (WritablePlaylist) currentPlaylistGUI);
+						ps.deleteSongs(deleteSongs,
+								(WritablePlaylist) currentPlaylistGUI);
 						currentPlaylistGUI.removeAll(deleteSongs);
 					}
 				} catch (DataAccessException e1) {
-					int response = JOptionPane.showConfirmDialog(null,
-							"Error", e1.toString(),
-							JOptionPane.CLOSED_OPTION);
+					int response = JOptionPane.showConfirmDialog(null, "Error",
+							e1.toString(), JOptionPane.CLOSED_OPTION);
 				}
 				fillSongTable(currentPlaylistGUI);
 			} else if (e.getActionCommand().equals("getLyrics")) {
@@ -1932,7 +1938,6 @@ public class MainFrame extends JFrame implements ActionListener, Runnable,
 					}
 				}
 				Playlist temp = (Playlist) currentPlaylistGUI.clone();
-
 
 				SimilarArtist sa = new SimilarArtist(selectedSongs);
 				if (cis.getCurrentPlaylist().size() > 0) {
@@ -2037,38 +2042,30 @@ public class MainFrame extends JFrame implements ActionListener, Runnable,
 
 		Playlist temp = (Playlist) currentPlaylistGUI.clone();
 
+		/*
+		 * if(cis.getCurrentPlaylist().getTitle().equals(temp.getTitle()))
+		 * sortKeys = sorter.getSortKeys(); if
+		 * (!cis.getCurrentPlaylist().getTitle().equals(temp.getTitle())) {
+		 * sorter.setSortKeys(null); }
+		 */
 
-//		logger.info("tableChanged");
-
-//		logger.info("cis cur: " + cis.getCurrentPlaylist());
-//		logger.info("gui cur: " + currentPlaylistGUI);
-
-	/*	if(cis.getCurrentPlaylist().getTitle().equals(temp.getTitle()))
-			sortKeys = sorter.getSortKeys();
-		if (!cis.getCurrentPlaylist().getTitle().equals(temp.getTitle()))
-		{
-			sorter.setSortKeys(null);
-		}*/
-	
 		if (temp != null)
 			songrendi.setPlaylist(temp);
 		if (e.getColumn() == 7) {
 
 			Rating = songTable.getValueAt(row, column).toString();
-			double rg = Double.parseDouble(Rating);
-			try {
-				sis.setRating(cis.getCurrentPlaylist().get(row), rg);
-			} catch (DataAccessException e1) {
-				JOptionPane.showConfirmDialog(null, "No Song found!",
-						"No Song found!" + e1, JOptionPane.CLOSED_OPTION);
+			if (Rating != null) {
+				double rg = Double.parseDouble(Rating);
+				try {
+					sis.setRating((Song) songmodel.getValueAt(row, 0), rg);
+				} catch (DataAccessException e1) {
+					JOptionPane.showConfirmDialog(null, "No Song found!",
+							"No Song found!" + e1, JOptionPane.CLOSED_OPTION);
 
+				}
 			}
 
 		}
-
-		
-
-		
 
 		currentPlaylistGUI = temp;
 		// fillSongTable(currentPlaylistGUI);
@@ -2077,13 +2074,13 @@ public class MainFrame extends JFrame implements ActionListener, Runnable,
 
 	@Override
 	public void sorterChanged(RowSorterEvent e) {
-		//logger.info("sorterChanged");
+		// logger.info("sorterChanged");
 		Playlist temp = (Playlist) currentPlaylistGUI.clone();
-		//logger.info("gui : " + temp.getTitle());
+		// logger.info("gui : " + temp.getTitle());
 		Song x = cis.getCurrentSong();
 		temp = parseSongTable(temp);
 		cis.setCurrentPlaylist(temp);
-		//logger.info("cis cur: " + cis.getCurrentPlaylist().getTitle());
+		// logger.info("cis cur: " + cis.getCurrentPlaylist().getTitle());
 		if (cis.getCurrentPlaylist().getTitle().equals(temp.getTitle()))
 			for (int i = 0; i < temp.size(); i++)
 				if (temp.get(i).equals(x))
