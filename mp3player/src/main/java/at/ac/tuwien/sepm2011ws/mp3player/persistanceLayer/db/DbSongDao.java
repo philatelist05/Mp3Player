@@ -134,11 +134,12 @@ class DbSongDao implements SongDao {
 
 					if (s.getAlbum() != null) {
 						// Create album if it doesn't exist
-						ad.create(s.getAlbum());
+						Album album = s.getAlbum();
+						ad.create(album);
 
 						// Create album song association
 						createIsOnStmt.setInt(1, s.getId());
-						createIsOnStmt.setInt(2, s.getAlbum().getId());
+						createIsOnStmt.setInt(2, album.getId());
 
 						createIsOnStmt.executeUpdate();
 					}
@@ -149,6 +150,7 @@ class DbSongDao implements SongDao {
 				}
 			}
 		} catch (SQLException e) {
+			e.printStackTrace();
 			throw new DataAccessException("Error creating song in database");
 		} finally {
 			try {
@@ -160,7 +162,6 @@ class DbSongDao implements SongDao {
 	}
 
 	public void update(Song s) throws DataAccessException {
-
 		if (s == null) {
 			throw new IllegalArgumentException("Song must not be null");
 		}
@@ -193,16 +194,17 @@ class DbSongDao implements SongDao {
 					result = readIsOnStmt.executeQuery();
 
 					if (result.next()) {
-						// Album exists
+						// Album exists:q
 						updateAlbumInSong(s.getId(), s.getAlbum());
 
 					} else {
 						// Album doesn't exist, so create it
-						ad.create(s.getAlbum());
+						Album album = s.getAlbum();
+						ad.create(album);
 
 						// Create album song association
 						createIsOnStmt.setInt(1, s.getId());
-						createIsOnStmt.setInt(2, s.getAlbum().getId());
+						createIsOnStmt.setInt(2, album.getId());
 
 						createIsOnStmt.executeUpdate();
 					}
@@ -212,6 +214,7 @@ class DbSongDao implements SongDao {
 			}
 
 		} catch (SQLException e) {
+			e.printStackTrace();
 			throw new DataAccessException("Error updating song in database");
 		}
 
