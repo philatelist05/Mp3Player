@@ -10,7 +10,7 @@ public class Album {
 	/**
 	 * @param title
 	 */
-	public Album(String title) {
+	public Album(String title) {                       git
 		this.setTitle(title);
 	}
 
