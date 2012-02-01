@@ -1,17 +1,14 @@
 package at.ac.tuwien.sepm2011ws.mp3player.persistanceLayer;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
-
-import java.sql.Connection;
-
+import at.ac.tuwien.sepm2011ws.mp3player.domainObjects.Album;
+import at.ac.tuwien.sepm2011ws.mp3player.persistanceLayer.db.DaoFactory;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
-import at.ac.tuwien.sepm2011ws.mp3player.domainObjects.Album;
-import at.ac.tuwien.sepm2011ws.mp3player.persistanceLayer.db.DaoFactory;
+import java.sql.Connection;
+
+import static org.junit.Assert.*;
 
 public class AlbumDaoTest {
 	private AlbumDao ad;
@@ -21,7 +18,7 @@ public class AlbumDaoTest {
 	public void setUp() throws Exception {
 		DaoFactory factory = DaoFactory.getInstance();
 		ad = factory.getAlbumDao();
-		con = factory.getDbConnection().getSqlConnection();
+		con = ad.getDbConnection();
 		con.setAutoCommit(false);
 	}
 

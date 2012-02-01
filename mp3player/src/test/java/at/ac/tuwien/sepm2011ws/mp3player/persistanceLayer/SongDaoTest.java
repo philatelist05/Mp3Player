@@ -3,23 +3,18 @@
  */
 package at.ac.tuwien.sepm2011ws.mp3player.persistanceLayer;
 
-import static org.junit.Assert.*;
-
-import java.sql.Connection;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.Iterator;
-import java.util.List;
-
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
-
 import at.ac.tuwien.sepm2011ws.mp3player.domainObjects.Album;
 import at.ac.tuwien.sepm2011ws.mp3player.domainObjects.Lyric;
 import at.ac.tuwien.sepm2011ws.mp3player.domainObjects.Song;
 import at.ac.tuwien.sepm2011ws.mp3player.persistanceLayer.db.DaoFactory;
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
+
+import java.sql.Connection;
+import java.util.*;
+
+import static org.junit.Assert.*;
 
 /**
  * @author klaus
@@ -33,7 +28,7 @@ public class SongDaoTest {
 	public void setUp() throws Exception {
 		DaoFactory factory = DaoFactory.getInstance();
 		sd = factory.getSongDao();
-		con = factory.getDbConnection().getSqlConnection();
+		con = sd.getDbConnection();
 		con.setAutoCommit(false);
 		clearSongTable();
 	}

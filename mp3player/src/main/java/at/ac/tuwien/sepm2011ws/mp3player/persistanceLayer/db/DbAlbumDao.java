@@ -1,14 +1,11 @@
 package at.ac.tuwien.sepm2011ws.mp3player.persistanceLayer.db;
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Statement;
-
 import at.ac.tuwien.sepm2011ws.mp3player.domainObjects.Album;
 import at.ac.tuwien.sepm2011ws.mp3player.persistanceLayer.AlbumDao;
 import at.ac.tuwien.sepm2011ws.mp3player.persistanceLayer.DataAccessException;
+
+import javax.sql.DataSource;
+import java.sql.*;
 
 class DbAlbumDao implements AlbumDao {
 
@@ -16,14 +13,15 @@ class DbAlbumDao implements AlbumDao {
 	private PreparedStatement readStmt;
 	private PreparedStatement updateStmt;
 	private PreparedStatement deleteStmt;
+    private Connection con;
 
 //	private PreparedStatement sameStmt;
 
-	DbAlbumDao(DbConnection dbCon) throws DataAccessException {
+	DbAlbumDao(DataSource dataSource) throws DataAccessException {
 
 		try {
 
-			Connection con = dbCon.getSqlConnection();
+			con = dataSource.getConnection();
 			createStmt = con.prepareStatement("INSERT INTO album ( "
 					+ "title, year, albumart_path) " + "VALUES (?, ?, ?);",
 					Statement.RETURN_GENERATED_KEYS);
@@ -158,4 +156,9 @@ class DbAlbumDao implements AlbumDao {
 
 		return a;
 	}
+
+    @Override
+    public Connection getDbConnection() {
+        return this.con;
+    }
 }

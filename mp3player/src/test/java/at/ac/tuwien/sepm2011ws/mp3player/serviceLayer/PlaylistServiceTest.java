@@ -3,28 +3,26 @@
  */
 package at.ac.tuwien.sepm2011ws.mp3player.serviceLayer;
 
-import static org.junit.Assert.*;
-
-import java.io.File;
-import java.io.IOException;
-import java.net.MalformedURLException;
-import java.sql.Connection;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
-import org.springframework.core.io.ClassPathResource;
-import org.springframework.core.io.Resource;
-
 import at.ac.tuwien.sepm2011ws.mp3player.domainObjects.Playlist;
 import at.ac.tuwien.sepm2011ws.mp3player.domainObjects.Song;
 import at.ac.tuwien.sepm2011ws.mp3player.domainObjects.WritablePlaylist;
 import at.ac.tuwien.sepm2011ws.mp3player.persistanceLayer.DataAccessException;
 import at.ac.tuwien.sepm2011ws.mp3player.persistanceLayer.PlaylistDao;
 import at.ac.tuwien.sepm2011ws.mp3player.persistanceLayer.db.DaoFactory;
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
+import org.springframework.core.io.ClassPathResource;
+import org.springframework.core.io.Resource;
+
+import java.io.File;
+import java.io.IOException;
+import java.sql.Connection;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
+
+import static org.junit.Assert.*;
 
 public class PlaylistServiceTest {
 	private PlaylistService ps;
@@ -39,7 +37,7 @@ public class PlaylistServiceTest {
 		playlistDao = factory.getPlaylistDao();
 		factory.getSongDao();
 		
-		this.conn =  factory.getDbConnection().getSqlConnection();
+		this.conn =  playlistDao.getDbConnection();
 		this.conn.setAutoCommit(false);
 	}
 

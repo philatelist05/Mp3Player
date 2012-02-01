@@ -32,8 +32,4 @@ public class DaoFactory {
 	public PlaylistDao getPlaylistDao() {
 		return (PlaylistDao) context.getBean("PlaylistDao");
 	}
-
-	public DbConnection getDbConnection() {
-		return (DbConnection) context.getBean("DbConnection");
-	}
 }

@@ -1,13 +1,5 @@
 package at.ac.tuwien.sepm2011ws.mp3player.persistanceLayer.db;
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Statement;
-import java.util.ArrayList;
-import java.util.List;
-
 import at.ac.tuwien.sepm2011ws.mp3player.domainObjects.Album;
 import at.ac.tuwien.sepm2011ws.mp3player.domainObjects.Lyric;
 import at.ac.tuwien.sepm2011ws.mp3player.domainObjects.Song;
@@ -15,8 +7,14 @@ import at.ac.tuwien.sepm2011ws.mp3player.persistanceLayer.AlbumDao;
 import at.ac.tuwien.sepm2011ws.mp3player.persistanceLayer.DataAccessException;
 import at.ac.tuwien.sepm2011ws.mp3player.persistanceLayer.SongDao;
 
+import javax.sql.DataSource;
+import java.sql.*;
+import java.util.ArrayList;
+import java.util.List;
+
 class DbSongDao implements SongDao {
 	private AlbumDao ad;
+    private Connection con;
 
 	private PreparedStatement createStmt;
 	private PreparedStatement createIsOnStmt;
@@ -30,11 +28,11 @@ class DbSongDao implements SongDao {
 	private PreparedStatement sameStmt;
 	private PreparedStatement updateAlbumInSongStmt;
 
-	DbSongDao(DbConnection dbCon, AlbumDao ad) throws DataAccessException {
+	DbSongDao(DataSource dataSource, AlbumDao ad) throws DataAccessException {
 		this.ad = ad;
 		try {
 
-			Connection con = dbCon.getSqlConnection();
+			con = dataSource.getConnection();
 			createStmt = con.prepareStatement("INSERT INTO song ( "
 					+ "title, artist, path, year, duration, "
 					+ "playcount, rating, genre, pathOk, lyric) "
@@ -399,5 +397,10 @@ class DbSongDao implements SongDao {
 			throw new DataAccessException("Error reading song from database");
 		}
 	}
+
+    @Override
+    public Connection getDbConnection() {
+        return con;
+    }
 
 }

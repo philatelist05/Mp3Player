@@ -1,21 +1,19 @@
 package at.ac.tuwien.sepm2011ws.mp3player.persistanceLayer.db;
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Statement;
-import java.util.ArrayList;
-import java.util.List;
-
 import at.ac.tuwien.sepm2011ws.mp3player.domainObjects.Song;
 import at.ac.tuwien.sepm2011ws.mp3player.domainObjects.WritablePlaylist;
 import at.ac.tuwien.sepm2011ws.mp3player.persistanceLayer.DataAccessException;
 import at.ac.tuwien.sepm2011ws.mp3player.persistanceLayer.PlaylistDao;
 import at.ac.tuwien.sepm2011ws.mp3player.persistanceLayer.SongDao;
 
+import javax.sql.DataSource;
+import java.sql.*;
+import java.util.ArrayList;
+import java.util.List;
+
 class DbPlaylistDao implements PlaylistDao {
 	private SongDao sd;
+    private Connection con;
 
 	private PreparedStatement createStmt;
 	private PreparedStatement createContainsStmt;
@@ -26,11 +24,11 @@ class DbPlaylistDao implements PlaylistDao {
 	private PreparedStatement deleteContainsStmt;
 	private PreparedStatement deleteStmt;
 
-	DbPlaylistDao(DbConnection dbCon, SongDao sd) throws DataAccessException {
+	DbPlaylistDao(DataSource dataSource, SongDao sd) throws DataAccessException {
 		try {
 			this.sd = sd;
 
-			Connection con = dbCon.getSqlConnection();
+			con = dataSource.getConnection();
 			createStmt = con.prepareStatement("INSERT INTO playlist (name) "
 					+ "VALUES (?);", Statement.RETURN_GENERATED_KEYS);
 			createContainsStmt = con.prepareStatement("INSERT INTO contains ( "
@@ -237,4 +235,9 @@ class DbPlaylistDao implements PlaylistDao {
 			throw new DataAccessException("Error renaming playlist in database");
 		}
 	}
+
+    @Override
+    public Connection getDbConnection() {
+             return con;
+    }
 }
