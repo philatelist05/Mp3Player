@@ -13,7 +13,7 @@ import at.ac.tuwien.sepm2011ws.mp3player.serviceLayer.LastFmService;
 import at.ac.tuwien.sepm2011ws.mp3player.serviceLayer.PlaylistService;
 import de.umass.lastfm.Artist;
 
-public class VvvLastFmService implements LastFmService {
+class VvvLastFmService implements LastFmService {
 
 	private PlaylistService ps;
 

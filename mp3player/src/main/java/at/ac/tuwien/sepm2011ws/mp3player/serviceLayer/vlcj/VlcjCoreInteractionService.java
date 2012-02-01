@@ -22,7 +22,7 @@ import at.ac.tuwien.sepm2011ws.mp3player.serviceLayer.PlayerListener;
 
 import com.sun.jna.Platform;
 
-public class VlcjCoreInteractionService implements CoreInteractionService {
+class VlcjCoreInteractionService implements CoreInteractionService {
 
 	private static final Logger logger = Logger
 			.getLogger(VlcjCoreInteractionService.class);

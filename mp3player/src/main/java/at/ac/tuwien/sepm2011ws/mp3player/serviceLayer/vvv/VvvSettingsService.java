@@ -12,7 +12,7 @@ import org.apache.log4j.Logger;
 
 import at.ac.tuwien.sepm2011ws.mp3player.serviceLayer.SettingsService;
 
-public class VvvSettingsService implements SettingsService {
+class VvvSettingsService implements SettingsService {
 
 	private XMLConfiguration userConfig;
 	private static final Logger logger = Logger

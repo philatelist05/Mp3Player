@@ -33,7 +33,7 @@ import entagged.audioformats.Tag;
 import entagged.audioformats.exceptions.CannotReadException;
 import entagged.audioformats.exceptions.CannotWriteException;
 
-public class VvvSongInformationService implements SongInformationService {
+class VvvSongInformationService implements SongInformationService {
 
 	private final SongDao sd;
 
