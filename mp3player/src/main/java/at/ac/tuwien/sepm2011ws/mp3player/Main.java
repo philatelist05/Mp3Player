@@ -19,7 +19,6 @@ public class Main {
 		DOMConfigurator.configureAndWatch("src/main/resources/log4j-4.xml", 60 * 1000);
 		startMainFrame();
 	}
-	private static SplashScreen splash;
 
 	private static void startMainFrame() {
 		SwingUtilities.invokeLater(new Runnable() {
@@ -27,9 +26,7 @@ public class Main {
 				try {
 					logger.info("Logger successfully initialized");
 					logger.info("Starting MainFrame...");
-					
-//					splash = SplashScreen.getSplash();
-//					splash.start();
+
 					
 					UIManager.setLookAndFeel(UIManager
 							.getSystemLookAndFeelClassName());
