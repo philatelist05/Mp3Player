@@ -10,8 +10,6 @@ import org.springframework.jdbc.core.simple.SimpleJdbcInsert;
 import org.springframework.jdbc.core.simple.SimpleJdbcTemplate;
 
 import javax.sql.DataSource;
-import java.sql.Connection;
-import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.HashMap;
@@ -20,20 +18,9 @@ import java.util.Map;
 
 class DbSongDao implements SongDao {
     private AlbumDao ad;
-    private Connection con;
     private SimpleJdbcTemplate jdbcTemplate;
-
     private SimpleJdbcInsert createStmt;
     private SimpleJdbcInsert createIsOnStmt;
-    private PreparedStatement readStmt;
-    private PreparedStatement readIsOnStmt;
-    private PreparedStatement readAllStmt;
-    private PreparedStatement updateStmt;
-    private PreparedStatement deleteStmt;
-    private PreparedStatement readRatedStmt;
-    private PreparedStatement readPlayedStmt;
-    private PreparedStatement sameStmt;
-    private PreparedStatement updateAlbumInSongStmt;
 
     DbSongDao(DataSource dataSource, AlbumDao ad) {
         this.ad = ad;
@@ -179,11 +166,6 @@ class DbSongDao implements SongDao {
             }
         };
         return jdbcTemplate.query(sql, mapper, number);
-    }
-
-    @Override
-    public Connection getDbConnection() {
-        return con;
     }
 
     private Song mapResultSetToSong(ResultSet resultSet) throws SQLException {

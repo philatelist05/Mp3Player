@@ -7,11 +7,9 @@ import at.ac.tuwien.sepm2011ws.mp3player.domainObjects.Album;
 import at.ac.tuwien.sepm2011ws.mp3player.domainObjects.Lyric;
 import at.ac.tuwien.sepm2011ws.mp3player.domainObjects.Song;
 import at.ac.tuwien.sepm2011ws.mp3player.persistanceLayer.db.DaoFactory;
-import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
-import java.sql.Connection;
 import java.util.*;
 
 import static org.junit.Assert.*;
@@ -22,26 +20,11 @@ import static org.junit.Assert.*;
  */
 public class SongDaoTest {
 	private SongDao sd;
-	private Connection con;
 
 	@Before
 	public void setUp() throws Exception {
 		DaoFactory factory = DaoFactory.getInstance();
 		sd = factory.getSongDao();
-		con = sd.getDbConnection();
-		con.setAutoCommit(false);
-		clearSongTable();
-	}
-
-	private void clearSongTable() throws Exception {
-		for (Song song : sd.readAll()) {
-			sd.delete(song.getId());
-		}
-	}
-
-	@After
-	public void tearDown() throws Exception {
-		con.rollback();
 	}
 
 	@Test(expected = IllegalArgumentException.class)

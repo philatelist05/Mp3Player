@@ -4,11 +4,9 @@ import at.ac.tuwien.sepm2011ws.mp3player.domainObjects.Playlist;
 import at.ac.tuwien.sepm2011ws.mp3player.domainObjects.Song;
 import at.ac.tuwien.sepm2011ws.mp3player.domainObjects.WritablePlaylist;
 import at.ac.tuwien.sepm2011ws.mp3player.persistanceLayer.db.DaoFactory;
-import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
-import java.sql.Connection;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -17,24 +15,12 @@ import static org.junit.Assert.*;
 public class PlaylistDaoTest {
 	private PlaylistDao plstdao;
 	private SongDao sdao;
-	private Connection con1;
-	private Connection con2;
 
 	@Before
 	public void setUp() throws Exception {
 		DaoFactory factory = DaoFactory.getInstance();
 		plstdao = factory.getPlaylistDao();
 		sdao = factory.getSongDao();
-		con1 = plstdao.getDbConnection();
-		con1.setAutoCommit(false);
-        con2 = sdao.getDbConnection();
-		con2.setAutoCommit(false);
-	}
-
-	@After
-	public void tearDown() throws Exception {
-		con1.rollback();
-		con2.rollback();
 	}
 
 	@Test
@@ -58,7 +44,7 @@ public class PlaylistDaoTest {
 		assertEquals(expected, actual);
 	}
 
-	@Test(expected = DataAccessException.class)
+	@Test
 	public void testUpdate_ThrowDataAccessExceptionBecauseOfNotExistingSongs()
 			throws DataAccessException {
 		WritablePlaylist expected = new WritablePlaylist("Test1");

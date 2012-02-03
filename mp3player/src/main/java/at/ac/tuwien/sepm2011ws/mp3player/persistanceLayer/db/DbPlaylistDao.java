@@ -9,7 +9,6 @@ import org.springframework.jdbc.core.simple.SimpleJdbcInsert;
 import org.springframework.jdbc.core.simple.SimpleJdbcTemplate;
 
 import javax.sql.DataSource;
-import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.HashMap;
@@ -18,7 +17,6 @@ import java.util.Map;
 
 class DbPlaylistDao implements PlaylistDao {
     private SongDao sd;
-    private Connection con;
     private SimpleJdbcInsert createStmt;
     private SimpleJdbcInsert createContainsStmt;
     private SimpleJdbcTemplate jdbcTemplate;
@@ -26,6 +24,8 @@ class DbPlaylistDao implements PlaylistDao {
     DbPlaylistDao(DataSource dataSource, SongDao sd) {
         this.createStmt = new SimpleJdbcInsert(dataSource).withTableName("playlist").usingColumns("name").usingGeneratedKeyColumns("id");
         this.createContainsStmt = new SimpleJdbcInsert(dataSource).withTableName("contains").usingColumns("position", "playlist", "song");
+        this.jdbcTemplate = new SimpleJdbcTemplate(dataSource);
+        this.sd = sd;
     }
 
     @Override
@@ -57,6 +57,7 @@ class DbPlaylistDao implements PlaylistDao {
             parameters.put("position", i++);
             parameters.put("playlist", playlist.getId());
             parameters.put("song", s.getId());
+            parameters.put("name", playlist.getTitle());
             this.createStmt.execute(parameters);
         }
     }
@@ -79,7 +80,7 @@ class DbPlaylistDao implements PlaylistDao {
                 return new WritablePlaylist(id, resultSet.getString("name"));
             }
         };
-        List<WritablePlaylist> playlists = jdbcTemplate.query(sql, mapper, id);
+        List<WritablePlaylist> playlists = this.jdbcTemplate.query(sql, mapper, id);
 
         if (playlists.size() != 1)
             return null;
@@ -99,7 +100,7 @@ class DbPlaylistDao implements PlaylistDao {
                 return sd.read(resultSet.getInt("song"));
             }
         };
-        return jdbcTemplate.query(sql, mapper, playlist.getId());
+        return this.jdbcTemplate.query(sql, mapper, playlist.getId());
     }
 
     @Override
@@ -123,10 +124,5 @@ class DbPlaylistDao implements PlaylistDao {
         }
 
         this.jdbcTemplate.update("UPDATE playlist SET name=? WHERE id = ?", name, p.getId());
-    }
-
-    @Override
-    public Connection getDbConnection() {
-        return con;
     }
 }

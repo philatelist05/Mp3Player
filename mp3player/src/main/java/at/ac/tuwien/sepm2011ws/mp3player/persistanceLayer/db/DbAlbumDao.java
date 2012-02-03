@@ -2,13 +2,11 @@ package at.ac.tuwien.sepm2011ws.mp3player.persistanceLayer.db;
 
 import at.ac.tuwien.sepm2011ws.mp3player.domainObjects.Album;
 import at.ac.tuwien.sepm2011ws.mp3player.persistanceLayer.AlbumDao;
-import at.ac.tuwien.sepm2011ws.mp3player.persistanceLayer.DataAccessException;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.simple.SimpleJdbcInsert;
 import org.springframework.jdbc.core.simple.SimpleJdbcTemplate;
 
 import javax.sql.DataSource;
-import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.HashMap;
@@ -18,20 +16,11 @@ import java.util.Map;
 class DbAlbumDao implements AlbumDao {
 
 	private SimpleJdbcInsert createStmt;
-    private Connection con;
     private SimpleJdbcTemplate jdbcTemplate;
 
-	DbAlbumDao(DataSource dataSource) throws DataAccessException {
+	DbAlbumDao(DataSource dataSource)  {
         this.jdbcTemplate = new SimpleJdbcTemplate(dataSource);
         this.createStmt = new SimpleJdbcInsert(dataSource).withTableName("album").usingColumns("title", "year", "albumart_path").usingGeneratedKeyColumns("id");
-
-        try {
-
-			con = dataSource.getConnection();
-		} catch (SQLException e) {
-			throw new DataAccessException(
-					"Error initializing database commands");
-		}
 	}
 
 	public void create(Album a)  {
@@ -80,9 +69,4 @@ class DbAlbumDao implements AlbumDao {
             return albums.get(0);
         return null;
 	}
-
-    @Override
-    public Connection getDbConnection() {
-        return this.con;
-    }
 }

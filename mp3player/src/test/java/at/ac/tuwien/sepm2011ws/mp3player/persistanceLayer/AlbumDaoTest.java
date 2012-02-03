@@ -2,29 +2,18 @@ package at.ac.tuwien.sepm2011ws.mp3player.persistanceLayer;
 
 import at.ac.tuwien.sepm2011ws.mp3player.domainObjects.Album;
 import at.ac.tuwien.sepm2011ws.mp3player.persistanceLayer.db.DaoFactory;
-import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
-
-import java.sql.Connection;
 
 import static org.junit.Assert.*;
 
 public class AlbumDaoTest {
 	private AlbumDao ad;
-	private Connection con;
 
 	@Before
 	public void setUp() throws Exception {
 		DaoFactory factory = DaoFactory.getInstance();
 		ad = factory.getAlbumDao();
-		con = ad.getDbConnection();
-		con.setAutoCommit(false);
-	}
-
-	@After
-	public void tearDown() throws Exception {
-		con.rollback();
 	}
 
 	@Test
