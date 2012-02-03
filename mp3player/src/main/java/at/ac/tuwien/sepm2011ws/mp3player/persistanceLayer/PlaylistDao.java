@@ -13,7 +13,7 @@ public interface PlaylistDao {
 	 *            The playlist which will be created.
 	 * @throws DataAccessException
 	 */
-	public void create(WritablePlaylist p) throws DataAccessException;
+	public void create(WritablePlaylist p);
 
 	/**
 	 * Updates a playlist but doesn't rename it.
@@ -23,7 +23,7 @@ public interface PlaylistDao {
 	 *            playlist.
 	 * @throws DataAccessException
 	 */
-	public void update(WritablePlaylist p) throws DataAccessException;
+	public void update(WritablePlaylist p);
 
 	/**
 	 * Deletes a playlist.
@@ -32,7 +32,7 @@ public interface PlaylistDao {
 	 *            The id of the playlist which should be deleted.
 	 * @throws DataAccessException
 	 */
-	public void delete(int id) throws DataAccessException;
+	public void delete(int id);
 
 	/**
 	 * Reads a playlist with the given id.
@@ -42,7 +42,7 @@ public interface PlaylistDao {
 	 * @return The playlist from the DB.
 	 * @throws DataAccessException
 	 */
-	public WritablePlaylist read(int id) throws DataAccessException;
+	public WritablePlaylist read(int id);
 
 	/**
 	 * Reads all playlists from the DB.
@@ -50,7 +50,7 @@ public interface PlaylistDao {
 	 * @return A list of all playlists from the DB.
 	 * @throws DataAccessException
 	 */
-	public List<WritablePlaylist> readAll() throws DataAccessException;
+	public List<WritablePlaylist> readAll();
 
 	/**
 	 * Only renames the playlist to the new name in opposition to
@@ -62,7 +62,7 @@ public interface PlaylistDao {
 	 *            The new name of the playlist
 	 * @throws DataAccessException
 	 */
-	public void rename(WritablePlaylist p, String name) throws DataAccessException;
+	public void rename(WritablePlaylist p, String name);
 
     public Connection getDbConnection();
 }

@@ -13,7 +13,7 @@ public interface SongDao {
 	 *            The song which will be created.
 	 * @throws DataAccessException 
 	 */
-	public void create(Song s) throws DataAccessException;
+	public void create(Song s) ;
 	
 	/**
 	 * Updates a song.
@@ -23,7 +23,7 @@ public interface SongDao {
 	 *            song.
 	 * @throws DataAccessException 
 	 */
-	public void update(Song s) throws DataAccessException;
+	public void update(Song s) ;
 
 	/**
 	 * Deletes a song.
@@ -32,7 +32,7 @@ public interface SongDao {
 	 *            The id of the song which should be deleted.
 	 * @throws DataAccessException 
 	 */
-	public void delete(int id) throws DataAccessException;
+	public void delete(int id) ;
 	
 
 	/**
@@ -43,7 +43,7 @@ public interface SongDao {
 	 * @return The song from the DB.
 	 * @throws DataAccessException 
 	 */
-	public Song read(int id) throws DataAccessException;
+	public Song read(int id) ;
 
 	/**
 	 * Reads all songs from the DB.
@@ -51,7 +51,7 @@ public interface SongDao {
 	 * @return A list of all songs from the DB.
 	 * @throws DataAccessException 
 	 */
-	public List<Song> readAll() throws DataAccessException;
+	public List<Song> readAll() ;
 	
 	/**
 	 * Reads all top xx rated songs from the DB.
@@ -60,7 +60,7 @@ public interface SongDao {
 	 * @return A list of all xx rated songs from the DB.
 	 * @throws DataAccessException 
 	 */
-	public List<Song> getTopRatedSongs(int number) throws DataAccessException;
+	public List<Song> getTopRatedSongs(int number) ;
 	
 	/**
 	 * Reads all top xx played songs from the DB.
@@ -69,7 +69,7 @@ public interface SongDao {
 	 * @return A list of all xx played songs from the DB.
 	 * @throws DataAccessException 
 	 */
-	public List<Song> getTopPlayedSongs(int number) throws DataAccessException;
+	public List<Song> getTopPlayedSongs(int number) ;
 
     public Connection getDbConnection();
 }

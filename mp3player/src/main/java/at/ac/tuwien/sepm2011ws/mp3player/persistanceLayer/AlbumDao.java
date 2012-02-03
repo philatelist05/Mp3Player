@@ -12,7 +12,7 @@ public interface AlbumDao {
 	 *            The album which will be created.
 	 * @throws DataAccessException
 	 */
-	public void create(Album a) throws DataAccessException;
+	public void create(Album a) ;
 
 	/**
 	 * Updates a album.
@@ -21,7 +21,7 @@ public interface AlbumDao {
 	 *            The album with the new values and the id of the old album.
 	 * @throws DataAccessException
 	 */
-	public void update(Album a) throws DataAccessException;
+	public void update(Album a) ;
 
 	/**
 	 * Deletes a album.
@@ -30,7 +30,7 @@ public interface AlbumDao {
 	 *            The id of the album which should be deleted.
 	 * @throws DataAccessException
 	 */
-	public void delete(int id) throws DataAccessException;
+	public void delete(int id) ;
 
 	/**
 	 * Reads a album with the given id.
@@ -40,7 +40,7 @@ public interface AlbumDao {
 	 * @return The album from the DB.
 	 * @throws DataAccessException
 	 */
-	public Album read(int id) throws DataAccessException;
+	public Album read(int id) ;
 
     public Connection getDbConnection();
 }

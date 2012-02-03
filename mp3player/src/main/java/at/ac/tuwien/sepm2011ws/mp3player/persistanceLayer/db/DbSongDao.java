@@ -4,403 +4,205 @@ import at.ac.tuwien.sepm2011ws.mp3player.domainObjects.Album;
 import at.ac.tuwien.sepm2011ws.mp3player.domainObjects.Lyric;
 import at.ac.tuwien.sepm2011ws.mp3player.domainObjects.Song;
 import at.ac.tuwien.sepm2011ws.mp3player.persistanceLayer.AlbumDao;
-import at.ac.tuwien.sepm2011ws.mp3player.persistanceLayer.DataAccessException;
 import at.ac.tuwien.sepm2011ws.mp3player.persistanceLayer.SongDao;
+import org.springframework.jdbc.core.RowMapper;
+import org.springframework.jdbc.core.simple.SimpleJdbcInsert;
+import org.springframework.jdbc.core.simple.SimpleJdbcTemplate;
 
 import javax.sql.DataSource;
-import java.sql.*;
-import java.util.ArrayList;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 class DbSongDao implements SongDao {
-	private AlbumDao ad;
+    private AlbumDao ad;
     private Connection con;
+    private SimpleJdbcTemplate jdbcTemplate;
 
-	private PreparedStatement createStmt;
-	private PreparedStatement createIsOnStmt;
-	private PreparedStatement readStmt;
-	private PreparedStatement readIsOnStmt;
-	private PreparedStatement readAllStmt;
-	private PreparedStatement updateStmt;
-	private PreparedStatement deleteStmt;
-	private PreparedStatement readRatedStmt;
-	private PreparedStatement readPlayedStmt;
-	private PreparedStatement sameStmt;
-	private PreparedStatement updateAlbumInSongStmt;
+    private SimpleJdbcInsert createStmt;
+    private SimpleJdbcInsert createIsOnStmt;
+    private PreparedStatement readStmt;
+    private PreparedStatement readIsOnStmt;
+    private PreparedStatement readAllStmt;
+    private PreparedStatement updateStmt;
+    private PreparedStatement deleteStmt;
+    private PreparedStatement readRatedStmt;
+    private PreparedStatement readPlayedStmt;
+    private PreparedStatement sameStmt;
+    private PreparedStatement updateAlbumInSongStmt;
 
-	DbSongDao(DataSource dataSource, AlbumDao ad) throws DataAccessException {
-		this.ad = ad;
-		try {
+    DbSongDao(DataSource dataSource, AlbumDao ad) {
+        this.ad = ad;
+        this.jdbcTemplate = new SimpleJdbcTemplate(dataSource);
+        this.createStmt = new SimpleJdbcInsert(dataSource).withTableName("song").usingColumns("title", "artist", "path", "year", "duration", "playcount", "rating", "genre", "pathOk", "lyric").usingGeneratedKeyColumns("id");
+        this.createIsOnStmt = new SimpleJdbcInsert(dataSource).withTableName("is_on").usingColumns("song", "album");
+    }
 
-			con = dataSource.getConnection();
-			createStmt = con.prepareStatement("INSERT INTO song ( "
-					+ "title, artist, path, year, duration, "
-					+ "playcount, rating, genre, pathOk, lyric) "
-					+ "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?);",
-					Statement.RETURN_GENERATED_KEYS);
-			createIsOnStmt = con.prepareStatement("INSERT INTO is_on ( "
-					+ "song, album) " + "VALUES (?, ?);");
-			readStmt = con.prepareStatement("SELECT "
-					+ "title, artist, path, year, "
-					+ "duration, playcount, rating, genre, pathOk, lyric, "
-					+ "album FROM song LEFT JOIN is_on ON id=song WHERE id=?;");
-			readIsOnStmt = con
-					.prepareStatement("SELECT album FROM is_on WHERE song=?;");
-			readAllStmt = con
-					.prepareStatement("SELECT id, "
-							+ "title, artist, path, year, "
-							+ "duration, playcount, rating, genre, pathOk, lyric, "
-							+ "album FROM song LEFT JOIN is_on ON id = song ORDER BY id;");
-			updateStmt = con.prepareStatement("UPDATE song SET "
-					+ "title=?, artist=?, path=?, year=?, duration=?, "
-					+ "playcount=?, rating=?, genre=?, pathOk=?, lyric=? "
-					+ "WHERE id = ?;");
-			deleteStmt = con.prepareStatement("DELETE FROM song "
-					+ "WHERE id = ?;");
-			readRatedStmt = con
-					.prepareStatement("SELECT id, "
-							+ "title, artist, path, year, "
-							+ "duration, playcount, rating, genre, pathOk, lyric, "
-							+ "album FROM song LEFT JOIN is_on ON id = song ORDER BY rating DESC LIMIT ?;");
-			readPlayedStmt = con
-					.prepareStatement("SELECT id, "
-							+ "title, artist, path, year, "
-							+ "duration, playcount, rating, genre, pathOk, lyric, "
-							+ "album FROM song LEFT JOIN is_on ON id = song ORDER BY playcount DESC LIMIT ?;");
-			sameStmt = con
-					.prepareStatement("SELECT id FROM song WHERE path=?;");
-			updateAlbumInSongStmt = con
-					.prepareStatement("UPDATE album SET "
-							+ "title=?, year=?, albumart_path=? WHERE id IN (SELECT album FROM is_on WHERE song=? );");
+    public void create(Song s) {
+        if (s == null)
+            throw new IllegalArgumentException("Song must not be null");
 
-		} catch (SQLException e) {
-			throw new DataAccessException(
-					"Error initializing database commands");
-		}
-	}
+        Map<String, Object> parameters = new HashMap<String, Object>(10);
+        parameters.put("title", s.getTitle());
+        parameters.put("artist", s.getArtist());
+        parameters.put("path", s.getPath());
+        parameters.put("year", s.getYear());
+        parameters.put("duration", s.getDuration());
+        parameters.put("playcount", s.getPlaycount());
+        parameters.put("rating", s.getRating());
+        parameters.put("genre", s.getGenre());
+        parameters.put("pathOk", s.isPathOk());
 
-	public void create(Song s) throws DataAccessException {
-		ResultSet result = null;
+        if (s.getLyric() != null)
+            parameters.put("lyric", s.getLyric());
+        else
+            parameters.put("lyric", null);
 
-		if (s == null)
-			throw new IllegalArgumentException("Song must not be null");
+        Number newId = this.createStmt.executeAndReturnKey(parameters);
+        s.setId(newId.intValue());
 
-		try {
-			sameStmt.setString(1, s.getPath());
-			result = sameStmt.executeQuery();
 
-			if (result.next()) {
-				// Song already exists in db, so read it
-				Song s2 = read(result.getInt("id"));
-				s.setId(s2.getId());
-				s.setTitle(s2.getTitle());
-				s.setArtist(s2.getArtist());
-				s.setPath(s2.getPath());
-				s.setYear(s2.getYear());
-				s.setDuration(s2.getDuration());
-				s.setPlaycount(s2.getPlaycount());
-				s.setRating(s2.getRating());
-				s.setGenre(s2.getGenre());
-				s.setPathOk(s2.isPathOk());
-				s.setLyric(s2.getLyric());
-				s.setAlbum(s2.getAlbum());
-			} else {
-				// Song doesn't exist in db, so create
-				createStmt.setString(1, s.getTitle());
-				createStmt.setString(2, s.getArtist());
-				createStmt.setString(3, s.getPath());
-				createStmt.setInt(4, s.getYear());
-				createStmt.setInt(5, s.getDuration());
-				createStmt.setInt(6, s.getPlaycount());
-				createStmt.setDouble(7, s.getRating());
-				createStmt.setString(8, s.getGenre());
-				createStmt.setBoolean(9, s.isPathOk());
+        if (s.getAlbum() != null) {
+            createAlbumAssociation(s);
+        }
+    }
 
-				if (s.getLyric() != null)
-					createStmt.setString(10, s.getLyric().getText());
-				else
-					createStmt.setString(10, null);
 
-				createStmt.executeUpdate();
+    public void update(Song s) {
+        if (s == null) {
+            throw new IllegalArgumentException("Song must not be null");
+        }
+        String lyric = (s.getLyric() != null) ? s.getLyric().getText() : null;
+        this.jdbcTemplate.update("UPDATE song SET title=?, artist=?, path=?, year=?, duration=?, playcount=?, rating=?, genre=?, pathOk=?, lyric=? WHERE id = ?", s.getTitle(), s.getArtist(), s.getPath(), s.getYear(), s.getDuration(), s.getPlaycount(), s.getRating(), s.getGenre(), s.isPathOk(), lyric, s.getId());
 
-				result = createStmt.getGeneratedKeys();
-				if (result.next()) {
-					s.setId(result.getInt(1));
+        if (s.getAlbum() != null) {
+            ResultSet result = null;
 
-					if (s.getAlbum() != null) {
-						// Create album if it doesn't exist
-						Album album = s.getAlbum();
-						ad.create(album);
+            int anzahl = this.jdbcTemplate.queryForInt("SELECT COUNT(*) AS anzahl FROM is_on WHERE song=?", s.getId());
+            if (anzahl <= 0)
+                updateAlbumInSong(s.getId(), s.getAlbum());
+            else {
+                createAlbumAssociation(s);
+            }
+        }
+    }
 
-						// Create album song association
-						createIsOnStmt.setInt(1, s.getId());
-						createIsOnStmt.setInt(2, album.getId());
+    private void createAlbumAssociation(Song s) {
+        Map<String, Object> parameters;// Create album if it doesn't exist
+        Album album = s.getAlbum();
+        ad.create(album);
 
-						createIsOnStmt.executeUpdate();
-					}
+        // Create album song association
+        parameters = new HashMap<String, Object>(2);
+        parameters.put("song", s.getId());
+        parameters.put("album", album.getId());
+        this.createIsOnStmt.execute(parameters);
+    }
 
-				} else {
-					throw new DataAccessException(
-							"Error creating song in database");
-				}
-			}
-		} catch (SQLException e) {
-			e.printStackTrace();
-			throw new DataAccessException("Error creating song in database");
-		} finally {
-			try {
-				if (result != null)
-					result.close();
-			} catch (SQLException e) {
-			}
-		}
-	}
+    private void updateAlbumInSong(int songId, Album album) {
+        this.jdbcTemplate.update("UPDATE album SET title=?, year=?, albumart_path=? WHERE id IN (SELECT album FROM is_on WHERE song=?)", album.getTitle(), album.getYear(), album.getAlbumartPath(), songId);
 
-	public void update(Song s) throws DataAccessException {
-		if (s == null) {
-			throw new IllegalArgumentException("Song must not be null");
-		}
+    }
 
-		try {
-			updateStmt.setString(1, s.getTitle());
-			updateStmt.setString(2, s.getArtist());
-			updateStmt.setString(3, s.getPath());
-			updateStmt.setInt(4, s.getYear());
-			updateStmt.setInt(5, s.getDuration());
-			updateStmt.setInt(6, s.getPlaycount());
-			updateStmt.setDouble(7, s.getRating());
-			updateStmt.setString(8, s.getGenre());
-			updateStmt.setBoolean(9, s.isPathOk());
+    public void delete(int id) {
 
-			if (s.getLyric() != null)
-				updateStmt.setString(10, s.getLyric().getText());
-			else
-				updateStmt.setString(10, null);
+        if (id < 0) {
+            throw new IllegalArgumentException("ID must be greater or equal 0");
+        }
+        this.jdbcTemplate.update("DELETE FROM song WHERE id = ?", id);
+    }
 
-			updateStmt.setInt(11, s.getId());
+    @Override
+    public Song read(int id) {
+        ResultSet result = null;
 
-			updateStmt.executeUpdate();
+        if (id < 0) {
+            throw new IllegalArgumentException("ID must be greater or equal 0");
+        }
 
-			if (s.getAlbum() != null) {
-				ResultSet result = null;
-				try {
-					// Read albums id if any exists
-					readIsOnStmt.setInt(1, s.getId());
-					result = readIsOnStmt.executeQuery();
+        String sql = "SELECT id, title, artist, path, year, duration, playcount, rating, genre, pathOk, lyric, album FROM song LEFT JOIN is_on ON id=song WHERE id=?";
+        RowMapper<Song> songMapper = new RowMapper<Song>() {
+            @Override
+            public Song mapRow(ResultSet resultSet, int i) throws SQLException {
+                return mapResultSetToSong(resultSet);
+            }
+        };
+        List<Song> songs = jdbcTemplate.query(sql, songMapper, id);
+        if (songs.size() != 1)
+            return null;
+        return songs.get(0);
+    }
 
-					if (result.next()) {
-						// Album exists:q
-						updateAlbumInSong(s.getId(), s.getAlbum());
+    @Override
+    public List<Song> readAll() {
+        String sql = "SELECT id, title, artist, path, year, duration, playcount, rating, genre, pathOk, lyric, album FROM song LEFT JOIN is_on ON id=song";
+        RowMapper<Song> songMapper = new RowMapper<Song>() {
+            @Override
+            public Song mapRow(ResultSet resultSet, int i) throws SQLException {
+                return mapResultSetToSong(resultSet);
+            }
+        };
+        return jdbcTemplate.query(sql, songMapper);
+    }
 
-					} else {
-						// Album doesn't exist, so create it
-						Album album = s.getAlbum();
-						ad.create(album);
+    @Override
+    public List<Song> getTopRatedSongs(int number) {
+        if (number < 1)
+            throw new IllegalArgumentException(
+                    "The number XX stands for in TopXX... playlist must be greater than zero");
 
-						// Create album song association
-						createIsOnStmt.setInt(1, s.getId());
-						createIsOnStmt.setInt(2, album.getId());
+        String sql = "SELECT id, title, artist, path, year, duration, playcount, rating, genre, pathOk, lyric, album FROM song LEFT JOIN is_on ON id = song ORDER BY rating DESC LIMIT ?";
+        RowMapper<Song> mapper = new RowMapper<Song>() {
+            @Override
+            public Song mapRow(ResultSet resultSet, int i) throws SQLException {
+                return mapResultSetToSong(resultSet);
+            }
+        };
+        return jdbcTemplate.query(sql, mapper, number);
+    }
 
-						createIsOnStmt.executeUpdate();
-					}
-				} finally {
-					result.close();
-				}
-			}
+    @Override
+    public List<Song> getTopPlayedSongs(int number) {
+        if (number < 1)
+            throw new IllegalArgumentException(
+                    "The number XX stands for in TopXX... playlist must be greater than zero");
 
-		} catch (SQLException e) {
-			e.printStackTrace();
-			throw new DataAccessException("Error updating song in database");
-		}
-
-	}
-
-	private void updateAlbumInSong(int songId, Album album)
-			throws DataAccessException {
-		
-		try {
-			updateAlbumInSongStmt.setString(1, album.getTitle());
-			updateAlbumInSongStmt.setInt(2, album.getYear());
-			updateAlbumInSongStmt.setString(3, album.getAlbumartPath());
-			updateAlbumInSongStmt.setInt(4, songId);
-			updateAlbumInSongStmt.executeUpdate();
-		} catch (SQLException e) {
-			throw new DataAccessException(e.getMessage());
-		}
-	}
-
-	public void delete(int id) throws DataAccessException {
-
-		if (id < 0) {
-			throw new IllegalArgumentException("ID must be greater or equal 0");
-		}
-
-		try {
-
-			deleteStmt.setInt(1, id);
-			deleteStmt.executeUpdate();
-
-			// TODO: Delete album too if there are no more songs of it;
-			// I guess this should actually do ON DELETE CASCASE ????? <- NO!
-		} catch (SQLException e) {
-			throw new DataAccessException("Error deleting song in database");
-		}
-
-	}
-
-	public Song read(int id) throws DataAccessException {
-		ResultSet result = null;
-
-		if (id < 0) {
-			throw new IllegalArgumentException("ID must be greater or equal 0");
-		}
-
-		Song s;
-		String lyric;
-
-		try {
-			readStmt.setInt(1, id);
-			result = readStmt.executeQuery();
-			if (!result.next()) {
-				result.close();
-				return null;
-			}
-
-			s = new Song(result.getString("artist"), result.getString("title"),
-					result.getInt("duration"), result.getString("path"));
-			s.setId(id);
-			s.setYear(result.getInt("year"));
-			s.setPlaycount(result.getInt("playcount"));
-			s.setRating(result.getDouble("rating"));
-			s.setGenre(result.getString("genre"));
-			s.setPathOk(result.getBoolean("pathOk"));
-
-			// Read lyric
-			lyric = result.getString("lyric");
-			if (lyric != null) {
-				s.setLyric(new Lyric(lyric));
-			} else {
-				s.setLyric(null);
-			}
-
-			// Read album
-			readIsOnStmt.setInt(1, id);
-			result = readIsOnStmt.executeQuery();
-
-			if (!result.next()) {
-				s.setAlbum(null);
-			} else {
-				int albumId = result.getInt("album");
-				s.setAlbum(ad.read(albumId));
-			}
-
-		} catch (SQLException e) {
-			throw new DataAccessException("Error reading song from database");
-		} finally {
-			try {
-				if (result != null)
-					result.close();
-			} catch (SQLException e) {
-			}
-		}
-
-		return s;
-	}
-
-	public List<Song> readAll() throws DataAccessException {
-		return executeSelect(readAllStmt);
-	}
-
-	private List<Song> executeSelect(PreparedStatement statement)
-			throws DataAccessException {
-		ResultSet result = null;
-		ResultSet result2 = null;
-		ArrayList<Song> sList = new ArrayList<Song>();
-		Song s;
-		String lyric;
-		try {
-			result = statement.executeQuery();
-
-			while (result.next()) {
-				s = new Song(result.getString("artist"),
-						result.getString("title"), result.getInt("duration"),
-						result.getString("path"));
-
-				s.setId(result.getInt("id"));
-				s.setYear(result.getInt("year"));
-				s.setPlaycount(result.getInt("playcount"));
-				s.setRating(result.getDouble("rating"));
-				s.setGenre(result.getString("genre"));
-				s.setPathOk(result.getBoolean("pathOk"));
-
-				// Read lyric
-				lyric = result.getString("lyric");
-				if (lyric != null) {
-					s.setLyric(new Lyric(lyric));
-				} else {
-					s.setLyric(null);
-				}
-
-				// Read album
-				readIsOnStmt.setInt(1, s.getId());
-				result2 = readIsOnStmt.executeQuery();
-
-				if (!result2.next()) {
-					s.setAlbum(null);
-				} else {
-					int albumId = result2.getInt("album");
-					s.setAlbum(ad.read(albumId));
-				}
-
-				sList.add(s);
-			}
-
-		} catch (SQLException e) {
-			throw new DataAccessException(
-					"Error reading all songs from database");
-		} finally {
-			try {
-				if (result != null)
-					result.close();
-				if (result2 != null)
-					result2.close();
-			} catch (SQLException e) {
-			}
-		}
-		return sList;
-	}
-
-	@Override
-	public List<Song> getTopRatedSongs(int number) throws DataAccessException {
-		if (number < 1)
-			throw new IllegalArgumentException(
-					"The number XX stands for in TopXX... playlist must be greater than zero");
-
-		try {
-			readRatedStmt.setInt(1, number);
-			return executeSelect(readRatedStmt);
-		} catch (SQLException e) {
-			throw new DataAccessException("Error reading song from database");
-		}
-	}
-
-	@Override
-	public List<Song> getTopPlayedSongs(int number) throws DataAccessException {
-		if (number < 1)
-			throw new IllegalArgumentException(
-					"The number XX stands for in TopXX... playlist must be greater than zero");
-
-		try {
-			readPlayedStmt.setInt(1, number);
-			return executeSelect(readPlayedStmt);
-		} catch (SQLException e) {
-			throw new DataAccessException("Error reading song from database");
-		}
-	}
+        String sql = "SELECT id, title, artist, path, year, duration, playcount, rating, genre, pathOk, lyric, album FROM song LEFT JOIN is_on ON id = song ORDER BY playcount DESC LIMIT ?";
+        RowMapper<Song> mapper = new RowMapper<Song>() {
+            @Override
+            public Song mapRow(ResultSet resultSet, int i) throws SQLException {
+                return mapResultSetToSong(resultSet);
+            }
+        };
+        return jdbcTemplate.query(sql, mapper, number);
+    }
 
     @Override
     public Connection getDbConnection() {
         return con;
     }
 
+    private Song mapResultSetToSong(ResultSet resultSet) throws SQLException {
+        Song s = new Song(resultSet.getString("artist"), resultSet.getString("title"),
+                resultSet.getInt("duration"), resultSet.getString("path"));
+        s.setPlaycount(resultSet.getInt("playcount"));
+        s.setRating(resultSet.getInt("rating"));
+        s.setGenre(resultSet.getString("genre"));
+        s.setArtist(resultSet.getString("artist"));
+        s.setPathOk(resultSet.getBoolean("pathOk"));
+        s.setId(resultSet.getInt("id"));
+
+        String lyric = resultSet.getString("lyric");
+        if (lyric != null)
+            s.setLyric(new Lyric(lyric));
+        else
+            s.setLyric(null);
+
+        s.setAlbum(ad.read(resultSet.getInt("album")));
+        return s;
+    }
 }

@@ -1,26 +1,23 @@
 package at.ac.tuwien.sepm2011ws.mp3player.serviceLayer.vlcj;
 
-import java.io.File;
-import java.io.IOException;
-
+import at.ac.tuwien.sepm2011ws.mp3player.domainObjects.PlayDirection;
+import at.ac.tuwien.sepm2011ws.mp3player.domainObjects.PlayMode;
+import at.ac.tuwien.sepm2011ws.mp3player.domainObjects.Playlist;
+import at.ac.tuwien.sepm2011ws.mp3player.domainObjects.Song;
+import at.ac.tuwien.sepm2011ws.mp3player.persistanceLayer.SongDao;
+import at.ac.tuwien.sepm2011ws.mp3player.serviceLayer.CoreInteractionService;
+import at.ac.tuwien.sepm2011ws.mp3player.serviceLayer.PlayerListener;
+import com.sun.jna.Platform;
 import org.apache.log4j.Logger;
 import org.springframework.core.io.ClassPathResource;
-
 import uk.co.caprica.vlcj.player.MediaPlayer;
 import uk.co.caprica.vlcj.player.MediaPlayerEventListener;
 import uk.co.caprica.vlcj.player.MediaPlayerFactory;
 import uk.co.caprica.vlcj.player.VideoMetaData;
 import uk.co.caprica.vlcj.runtime.RuntimeUtil;
-import at.ac.tuwien.sepm2011ws.mp3player.domainObjects.PlayDirection;
-import at.ac.tuwien.sepm2011ws.mp3player.domainObjects.PlayMode;
-import at.ac.tuwien.sepm2011ws.mp3player.domainObjects.Playlist;
-import at.ac.tuwien.sepm2011ws.mp3player.domainObjects.Song;
-import at.ac.tuwien.sepm2011ws.mp3player.persistanceLayer.DataAccessException;
-import at.ac.tuwien.sepm2011ws.mp3player.persistanceLayer.SongDao;
-import at.ac.tuwien.sepm2011ws.mp3player.serviceLayer.CoreInteractionService;
-import at.ac.tuwien.sepm2011ws.mp3player.serviceLayer.PlayerListener;
 
-import com.sun.jna.Platform;
+import java.io.File;
+import java.io.IOException;
 
 class VlcjCoreInteractionService implements CoreInteractionService {
 
@@ -422,11 +419,11 @@ class VlcjCoreInteractionService implements CoreInteractionService {
 		@Override
 		public void error(MediaPlayer arg0) {
 			currentSong.setPathOk(false);
-			try {
+//			try {
 				sd.update(currentSong);
-			} catch (DataAccessException e) {
-				logger.error(e.getMessage());
-			}
+//			} catch (DataAccessException e) {
+//				logger.error(e.getMessage());
+//			}
 			if (playerListener != null) {
 				playerListener.songBeginnEvent();
 				playerListener.songEndEvent();
@@ -483,15 +480,15 @@ class VlcjCoreInteractionService implements CoreInteractionService {
 		public void playing(MediaPlayer arg0) {
 			currentSong.setPlaycount(currentSong.getPlaycount() + 1);
 			currentSong.setPathOk(true);
-			try {
+//			try {
 				sd.update(currentSong);
 
 				// ServiceFactory sf = ServiceFactory.getInstance();
 				// SongInformationService sis = sf.getSongInformationService();
 				// sis.getMetaTags(currentSong);
-			} catch (DataAccessException e) {
-				logger.error(e.getMessage());
-			}
+//			} catch (DataAccessException e) {
+//				logger.error(e.getMessage());
+//			}
 			if (playerListener != null)
 				playerListener.songBeginnEvent();
 		}

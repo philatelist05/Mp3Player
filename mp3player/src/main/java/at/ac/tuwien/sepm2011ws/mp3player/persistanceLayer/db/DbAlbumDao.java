@@ -3,158 +3,82 @@ package at.ac.tuwien.sepm2011ws.mp3player.persistanceLayer.db;
 import at.ac.tuwien.sepm2011ws.mp3player.domainObjects.Album;
 import at.ac.tuwien.sepm2011ws.mp3player.persistanceLayer.AlbumDao;
 import at.ac.tuwien.sepm2011ws.mp3player.persistanceLayer.DataAccessException;
+import org.springframework.jdbc.core.RowMapper;
+import org.springframework.jdbc.core.simple.SimpleJdbcInsert;
+import org.springframework.jdbc.core.simple.SimpleJdbcTemplate;
 
 import javax.sql.DataSource;
-import java.sql.*;
+import java.sql.Connection;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 class DbAlbumDao implements AlbumDao {
 
-	private PreparedStatement createStmt;
-	private PreparedStatement readStmt;
-	private PreparedStatement updateStmt;
-	private PreparedStatement deleteStmt;
+	private SimpleJdbcInsert createStmt;
     private Connection con;
-
-//	private PreparedStatement sameStmt;
+    private SimpleJdbcTemplate jdbcTemplate;
 
 	DbAlbumDao(DataSource dataSource) throws DataAccessException {
+        this.jdbcTemplate = new SimpleJdbcTemplate(dataSource);
+        this.createStmt = new SimpleJdbcInsert(dataSource).withTableName("album").usingColumns("title", "year", "albumart_path").usingGeneratedKeyColumns("id");
 
-		try {
+        try {
 
 			con = dataSource.getConnection();
-			createStmt = con.prepareStatement("INSERT INTO album ( "
-					+ "title, year, albumart_path) " + "VALUES (?, ?, ?);",
-					Statement.RETURN_GENERATED_KEYS);
-			readStmt = con.prepareStatement("SELECT "
-					+ "title, year, albumart_path FROM album WHERE id=?;");
-			updateStmt = con.prepareStatement("UPDATE album SET "
-					+ "title=?, year=?, albumart_path=? WHERE id = ?;");
-			deleteStmt = con.prepareStatement("DELETE FROM album "
-					+ "WHERE id = ?;");
-//			sameStmt = con.prepareStatement("SELECT id FROM album WHERE "
-//					+ "title=? AND year=?;");
-
 		} catch (SQLException e) {
 			throw new DataAccessException(
 					"Error initializing database commands");
 		}
 	}
 
-	public void create(Album a) throws DataAccessException {
-		ResultSet result = null;
-
+	public void create(Album a)  {
 		if (a == null)
 			throw new IllegalArgumentException("Album must not be null");
 
-		try {
-//			sameStmt.setString(1, a.getTitle());
-//			sameStmt.setInt(2, a.getYear());
-//			result = sameStmt.executeQuery();
-
-//			if (result.next()) {
-//				// Album already exists in db, so read it
-//				Album a2 = read(result.getInt("id"));
-//				a.setId(a2.getId());
-//				a.setTitle(a2.getTitle());
-//				a.setYear(a2.getYear());
-//				a.setAlbumartPath(a2.getAlbumartPath());
-//			} else {
-				// Album doesn't exist in db, so create
-				createStmt.setString(1, a.getTitle());
-				createStmt.setInt(2, a.getYear());
-				createStmt.setString(3, a.getAlbumartPath());
-
-				createStmt.executeUpdate();
-
-				result = createStmt.getGeneratedKeys();
-				if (result.next()) {
-					a.setId(result.getInt(1));
-				} else {
-					throw new DataAccessException(
-							"Error creating album in database");
-				}
-//			}
-
-		} catch (SQLException e) {
-			throw new DataAccessException("Error creating album in database");
-		} finally {
-			try {
-				if (result != null)
-					result.close();
-			} catch (SQLException e) {
-			}
-		}
+        Map<String, Object> parameters = new HashMap<String, Object>(3);
+        parameters.put("title", a.getTitle());
+        parameters.put("year", a.getYear());
+        parameters.put("albumart_path", a.getAlbumartPath());
+        Number newId = this.createStmt.executeAndReturnKey(parameters);
+        a.setId(newId.intValue());
 	}
 
-	public void update(Album a) throws DataAccessException {
-
+	public void update(Album a) {
 		if (a == null) {
 			throw new IllegalArgumentException("Album must not be null");
 		}
-
-		try {
-			updateStmt.setString(1, a.getTitle());
-			updateStmt.setInt(2, a.getYear());
-			updateStmt.setString(3, a.getAlbumartPath());
-			updateStmt.setInt(4, a.getId());
-
-			updateStmt.executeUpdate();
-
-		} catch (SQLException e) {
-			throw new DataAccessException("Error updating album in database");
-		}
-
+        this.jdbcTemplate.update("UPDATE album SET title=?, year=?, albumart_path=? WHERE id = ?",a.getTitle(),a.getYear(),a.getAlbumartPath(),a.getId());
 	}
 
-	public void delete(int id) throws DataAccessException {
-
+	public void delete(int id)  {
 		if (id < 0) {
 			throw new IllegalArgumentException("ID must be greater or equal 0");
 		}
-
-		try {
-
-			deleteStmt.setInt(1, id);
-			deleteStmt.executeUpdate();
-		} catch (SQLException e) {
-			throw new DataAccessException("Error deleting album in database");
-		}
+        this.jdbcTemplate.update("DELETE FROM album WHERE id = ?", id);
 
 	}
 
-	public Album read(int id) throws DataAccessException {
-		ResultSet result = null;
-
+	public Album read(final int id)  {
 		if (id < 0) {
 			throw new IllegalArgumentException("ID must be greater or equal 0");
 		}
+        String sql =  "SELECT title, year, albumart_path FROM album WHERE id=?";
+        RowMapper<Album> mapper = new RowMapper<Album>() {
+            @Override
+            public Album mapRow(ResultSet resultSet, int i) throws SQLException {
+                return new Album(id, resultSet.getString("title"), resultSet.getInt("year"),
+                        resultSet.getString("albumart_path"));
 
-		Album a;
+            }
+        };
+        List<Album> albums = jdbcTemplate.query(sql, mapper, id);
 
-		try {
-			readStmt.setInt(1, id);
-			result = readStmt.executeQuery();
-			if (!result.next()) {
-				result.close();
-				return null;
-			}
-
-			a = new Album(id, result.getString("title"), result.getInt("year"),
-					result.getString("albumart_path"));
-
-			result.close();
-
-		} catch (SQLException e) {
-			throw new DataAccessException("Error reading album from database");
-		} finally {
-			try {
-				if (result != null)
-					result.close();
-			} catch (SQLException e) {
-			}
-		}
-
-		return a;
+        if(albums.size() == 1)
+            return albums.get(0);
+        return null;
 	}
 
     @Override
