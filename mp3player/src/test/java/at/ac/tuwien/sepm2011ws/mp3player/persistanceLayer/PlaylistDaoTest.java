@@ -44,21 +44,6 @@ public class PlaylistDaoTest {
 		assertEquals(expected, actual);
 	}
 
-	@Test
-	public void testUpdate_ThrowDataAccessExceptionBecauseOfNotExistingSongs()
-			throws DataAccessException {
-		WritablePlaylist expected = new WritablePlaylist("Test1");
-		plstdao.create(expected);
-
-		Song song1 = new Song("Song1", "Halo1", 3001, "C:\\music\\halo1");
-		Song song2 = new Song("Song2", "Halo2", 3002, "C:\\music\\halo2");
-
-		expected.add(song1);
-		expected.add(song2);
-
-		plstdao.update(expected);
-	}
-
 	@Test(expected = IllegalArgumentException.class)
 	public void testRead_InvalidIdShouldThrowIllegalArgumentException()
 			throws IllegalArgumentException, DataAccessException {
@@ -66,7 +51,7 @@ public class PlaylistDaoTest {
 	}
 
 	@Test
-	public void testReplstdao_ReplstdaosExistingSimplePlaylist()
+	public void testPlaylistDao_ShouldCreateExistingSimplePlaylist()
 			throws DataAccessException {
 		WritablePlaylist expected = new WritablePlaylist("Test1");
 		plstdao.create(expected);
@@ -76,7 +61,7 @@ public class PlaylistDaoTest {
 	}
 
 	@Test
-	public void testReplstdao_ReplstdaosExistingComplexPlaylist()
+	public void testPlaylistDao_ShouldCreateExistingComplexPlaylist()
 			throws DataAccessException {
 		WritablePlaylist expected = new WritablePlaylist("Test1");
 
@@ -101,7 +86,7 @@ public class PlaylistDaoTest {
 	}
 
 	@Test
-	public void testReplstdao_ReplstdaosUnexistingSong()
+	public void testPlaylistDao_ShouldCreateUnexistingSong()
 			throws DataAccessException {
 		Playlist a = plstdao.read(Integer.MAX_VALUE);
 		assertNull(a);

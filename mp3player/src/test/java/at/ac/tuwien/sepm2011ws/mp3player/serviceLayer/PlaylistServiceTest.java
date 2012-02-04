@@ -17,7 +17,6 @@ import org.springframework.core.io.Resource;
 
 import java.io.File;
 import java.io.IOException;
-import java.sql.Connection;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -26,7 +25,6 @@ import static org.junit.Assert.*;
 
 public class PlaylistServiceTest {
 	private PlaylistService ps;
-	private Connection conn;
 	private PlaylistDao playlistDao;
 	
 	@Before
@@ -37,13 +35,10 @@ public class PlaylistServiceTest {
 		playlistDao = factory.getPlaylistDao();
 		factory.getSongDao();
 		
-		this.conn =  playlistDao.getDbConnection();
-		this.conn.setAutoCommit(false);
 	}
 
 	@After
 	public void tearDown() throws Exception {
-		conn.rollback();
 		Resource resource = new ClassPathResource("dummyPlaylist.m3u");
 		if (resource.exists()) {
 			File playlist = resource.getFile();

@@ -14,10 +14,6 @@ import java.util.*;
 
 import static org.junit.Assert.*;
 
-/**
- * @author klaus
- * 
- */
 public class SongDaoTest {
 	private SongDao sd;
 

@@ -53,13 +53,21 @@ class DbPlaylistDao implements PlaylistDao {
         Map<String, Object> parameters;
         int i = 0;
         for (Song s : playlist) {
+            createOrUpdateSong(s);
             parameters = new HashMap<String, Object>(3);
             parameters.put("position", i++);
             parameters.put("playlist", playlist.getId());
             parameters.put("song", s.getId());
-            parameters.put("name", playlist.getTitle());
-            this.createStmt.execute(parameters);
+            this.createContainsStmt.execute(parameters);
         }
+    }
+
+    private void createOrUpdateSong(Song song) {
+        Song songInDb = this.sd.read(song.getId());
+        if(songInDb == null)
+            sd.create(song);
+        else
+            sd.update(song);
     }
 
     @Override
@@ -77,7 +85,10 @@ class DbPlaylistDao implements PlaylistDao {
         RowMapper<WritablePlaylist> mapper = new RowMapper<WritablePlaylist>() {
             @Override
             public WritablePlaylist mapRow(ResultSet resultSet, int i) throws SQLException {
-                return new WritablePlaylist(id, resultSet.getString("name"));
+                WritablePlaylist playlist = new WritablePlaylist(id, resultSet.getString("name"));
+                List<Song> songs = readSongsFromPlaylist(playlist);
+                playlist.addAll(songs);
+                return playlist;
             }
         };
         List<WritablePlaylist> playlists = this.jdbcTemplate.query(sql, mapper, id);
@@ -97,7 +108,8 @@ class DbPlaylistDao implements PlaylistDao {
         RowMapper<Song> mapper = new RowMapper<Song>() {
             @Override
             public Song mapRow(ResultSet resultSet, int i) throws SQLException {
-                return sd.read(resultSet.getInt("song"));
+                Song song = sd.read(resultSet.getInt("song"));
+                return song;
             }
         };
         return this.jdbcTemplate.query(sql, mapper, playlist.getId());

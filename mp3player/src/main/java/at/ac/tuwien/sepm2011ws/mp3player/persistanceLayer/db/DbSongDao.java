@@ -45,7 +45,7 @@ class DbSongDao implements SongDao {
         parameters.put("pathOk", s.isPathOk());
 
         if (s.getLyric() != null)
-            parameters.put("lyric", s.getLyric());
+            parameters.put("lyric", s.getLyric().getText());
         else
             parameters.put("lyric", null);
 
@@ -59,31 +59,29 @@ class DbSongDao implements SongDao {
     }
 
 
-    public void update(Song s) {
-        if (s == null) {
+    public void update(Song song) {
+        if (song == null) {
             throw new IllegalArgumentException("Song must not be null");
         }
-        String lyric = (s.getLyric() != null) ? s.getLyric().getText() : null;
-        this.jdbcTemplate.update("UPDATE song SET title=?, artist=?, path=?, year=?, duration=?, playcount=?, rating=?, genre=?, pathOk=?, lyric=? WHERE id = ?", s.getTitle(), s.getArtist(), s.getPath(), s.getYear(), s.getDuration(), s.getPlaycount(), s.getRating(), s.getGenre(), s.isPathOk(), lyric, s.getId());
+        String lyric = (song.getLyric() != null) ? song.getLyric().getText() : null;
+        this.jdbcTemplate.update("UPDATE song SET title=?, artist=?, path=?, year=?, duration=?, playcount=?, rating=?, genre=?, pathOk=?, lyric=? WHERE id = ?", song.getTitle(), song.getArtist(), song.getPath(), song.getYear(), song.getDuration(), song.getPlaycount(), song.getRating(), song.getGenre(), song.isPathOk(), lyric, song.getId());
 
-        if (s.getAlbum() != null) {
-            ResultSet result = null;
-
-            int anzahl = this.jdbcTemplate.queryForInt("SELECT COUNT(*) AS anzahl FROM is_on WHERE song=?", s.getId());
-            if (anzahl <= 0)
-                updateAlbumInSong(s.getId(), s.getAlbum());
-            else {
-                createAlbumAssociation(s);
-            }
+        if (song.getAlbum() != null) {
+            int anzahlAlbum = this.jdbcTemplate.queryForInt("SELECT COUNT(*) AS anzahl FROM is_on WHERE song=?", song.getId());
+            if (anzahlAlbum > 0)
+                updateAlbumInSong(song.getId(), song.getAlbum());
+            else
+                createAlbumAssociation(song);
         }
     }
 
     private void createAlbumAssociation(Song s) {
-        Map<String, Object> parameters;// Create album if it doesn't exist
+        // Create album if it doesn't exist
         Album album = s.getAlbum();
         ad.create(album);
 
         // Create album song association
+        Map<String, Object> parameters;
         parameters = new HashMap<String, Object>(2);
         parameters.put("song", s.getId());
         parameters.put("album", album.getId());
