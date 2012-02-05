@@ -71,17 +71,12 @@ public class PlaylistServiceTest extends AbstractServiceTest {
 		List<WritablePlaylist> playlists = super.playlistService.getAllPlaylists();
 
 		expected.setTitle("dummyPlaylist");
-		expected.clear();
-		expected.add(new Song("Unknown Artist", "Unknown Title", 3, path1
-				.getAbsolutePath()));
-		expected.add(new Song("Unknown Artist", "Unknown Title", 0, path2
-				.getAbsolutePath()));
 
-		assertTrue(hasSamePaths(playlists, expected));
+		assertTrue(containsPlaylistWithSameTitle(playlists, expected));
 	}
 
-	private boolean hasSamePaths(Collection<WritablePlaylist> playlists,
-	                             WritablePlaylist playlist) {
+	private boolean containsPlaylistWithSameTitle(Collection<WritablePlaylist> playlists,
+	                                              WritablePlaylist playlist) {
 
 		for (WritablePlaylist writablePlaylist : playlists) {
 			if (writablePlaylist.getTitle().equals(playlist.getTitle())
@@ -110,10 +105,13 @@ public class PlaylistServiceTest extends AbstractServiceTest {
 			throws DataAccessException, IOException {
 		WritablePlaylist temp = new WritablePlaylist("Temp");
 
-		File sPath = new ClassPathResource("dummy-message.wav").getFile();
-		temp.add(new Song("dummy1", "dummy1", 300, sPath.getAbsolutePath()));
-		sPath = new ClassPathResource("The Other Thing.wav").getFile();
-		temp.add(new Song("dummy2", "dummy2", 300, sPath.getAbsolutePath()));
+		File file1 = new ClassPathResource("dummy-message.wav").getFile();
+		temp.add(new Song("dummy1", "dummy1", 300, file1.getAbsolutePath()));
+		File file2 = new ClassPathResource("The Other Thing.wav").getFile();
+		temp.add(new Song("dummy2", "dummy2", 300, file2.getAbsolutePath()));
+
+		temp = super.playlistService.createPlaylist(temp.getTitle());
+		super.playlistService.addSongsToPlaylist(new File[] {file1, file2}, temp);
 
 		List<WritablePlaylist> playlists = super.playlistService.getAllPlaylists();
 		assertTrue(playlists.contains(temp));

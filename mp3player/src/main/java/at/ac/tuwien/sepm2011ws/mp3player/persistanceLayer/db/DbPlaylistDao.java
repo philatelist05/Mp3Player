@@ -98,10 +98,7 @@ class DbPlaylistDao implements PlaylistDao {
         if (playlists.size() != 1)
             return null;
 
-        WritablePlaylist playlist = playlists.get(0);
-
-        playlist.addAll(readSongsFromPlaylist(playlist));
-        return playlist;
+        return playlists.get(0);
     }
 
     private List<Song> readSongsFromPlaylist(WritablePlaylist playlist) {

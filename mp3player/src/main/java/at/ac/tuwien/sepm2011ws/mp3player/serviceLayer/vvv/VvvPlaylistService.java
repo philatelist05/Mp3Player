@@ -1,16 +1,5 @@
 package at.ac.tuwien.sepm2011ws.mp3player.serviceLayer.vvv;
 
-import java.io.BufferedWriter;
-import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.net.URLDecoder;
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
-
-import org.apache.commons.io.FilenameUtils;
-
 import at.ac.tuwien.sepm2011ws.mp3player.domainObjects.Playlist;
 import at.ac.tuwien.sepm2011ws.mp3player.domainObjects.Song;
 import at.ac.tuwien.sepm2011ws.mp3player.domainObjects.WritablePlaylist;
@@ -21,31 +10,37 @@ import at.ac.tuwien.sepm2011ws.mp3player.serviceLayer.PlaylistService;
 import at.ac.tuwien.sepm2011ws.mp3player.serviceLayer.SettingsService;
 import at.ac.tuwien.sepm2011ws.mp3player.serviceLayer.SongInformationService;
 import christophedelory.content.Content;
-import christophedelory.playlist.AbstractPlaylistComponent;
-import christophedelory.playlist.Media;
-import christophedelory.playlist.Sequence;
-import christophedelory.playlist.SpecificPlaylist;
-import christophedelory.playlist.SpecificPlaylistFactory;
+import christophedelory.playlist.*;
+import org.apache.commons.io.FilenameUtils;
+
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.net.URLDecoder;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
 
 class VvvPlaylistService implements PlaylistService {
 
-	private final PlaylistDao pd;
-	private final SongDao sd;
-	private final SettingsService ss;
-	private final SongInformationService sis;
+	private final PlaylistDao playlistDao;
+	private final SongDao songDao;
+	private final SettingsService settingsService;
+	private final SongInformationService songInformationService;
 
-	VvvPlaylistService(SongDao sd, PlaylistDao pd, SettingsService ss,
-			SongInformationService sis) {
-		this.pd = pd;
-		this.sd = sd;
-		this.ss = ss;
-		this.sis = sis;
+	VvvPlaylistService(SongDao songDao, PlaylistDao playlistDao, SettingsService settingsService,
+			SongInformationService songInformationService) {
+		this.playlistDao = playlistDao;
+		this.songDao = songDao;
+		this.settingsService = settingsService;
+		this.songInformationService = songInformationService;
 	}
 
 	@Override
 	public Playlist getLibrary() throws DataAccessException {
 		Playlist lib = new Playlist("Library");
-		lib.addAll(this.sd.readAll());
+		lib.addAll(this.songDao.readAll());
 		return lib;
 	}
 
@@ -139,7 +134,7 @@ class VvvPlaylistService implements PlaylistService {
 
 	@Override
 	public List<WritablePlaylist> getAllPlaylists() throws DataAccessException {
-		return this.pd.readAll();
+		return this.playlistDao.readAll();
 	}
 
 	@Override
@@ -207,15 +202,15 @@ class VvvPlaylistService implements PlaylistService {
 		List<Song> songs = new ArrayList<Song>();
 		Song s;
 
-		String[] userFileTypes = ss.getUserFileTypes();
+		String[] userFileTypes = settingsService.getUserFileTypes();
 
 		for (File file : files) {
 			if (FilenameUtils.isExtension(file.getName(), userFileTypes)) {
 				s = new Song("Unknown Artist", "Unknown Title", 0,
 						file.getAbsolutePath());
 
-				sd.create(s);
-				sis.getMetaTags(s);
+				songDao.create(s);
+				songInformationService.getMetaTags(s);
 				songs.add(s);
 			}
 		}
@@ -250,7 +245,7 @@ class VvvPlaylistService implements PlaylistService {
 					"The name of the playlist must not be null or empty");
 
 		WritablePlaylist playlist = new WritablePlaylist(name);
-		this.pd.create(playlist);
+		this.playlistDao.create(playlist);
 		return playlist;
 	}
 
@@ -260,7 +255,7 @@ class VvvPlaylistService implements PlaylistService {
 		if (playlist == null)
 			throw new IllegalArgumentException("The playlist must not be null");
 
-		this.pd.delete(playlist.getId());
+		this.playlistDao.delete(playlist.getId());
 	}
 
 	@Override
@@ -269,7 +264,7 @@ class VvvPlaylistService implements PlaylistService {
 		if (playlist == null)
 			throw new IllegalArgumentException("The playlist must not be null");
 
-		this.pd.update(playlist);
+		this.playlistDao.update(playlist);
 	}
 
 	@Override
@@ -282,13 +277,13 @@ class VvvPlaylistService implements PlaylistService {
 			throw new IllegalArgumentException("The playlist must not be null");
 
 		playlist.setTitle(name);
-		pd.rename(playlist, name);
+		playlistDao.rename(playlist, name);
 	}
 
 	@Override
 	public Playlist getTopRated() throws DataAccessException {
 		Playlist playlist = new Playlist("TopRated");
-		playlist.addAll(sd.getTopRatedSongs(ss.getTopXXRatedCount()));
+		playlist.addAll(songDao.getTopRatedSongs(settingsService.getTopXXRatedCount()));
 
 		return playlist;
 	}
@@ -296,7 +291,7 @@ class VvvPlaylistService implements PlaylistService {
 	@Override
 	public Playlist getTopPlayed() throws DataAccessException {
 		Playlist playlist = new Playlist("TopPlayed");
-		playlist.addAll(sd.getTopPlayedSongs(ss.getTopXXPlayedCount()));
+		playlist.addAll(songDao.getTopPlayedSongs(settingsService.getTopXXPlayedCount()));
 
 		return playlist;
 	}
@@ -334,10 +329,10 @@ class VvvPlaylistService implements PlaylistService {
 
 	@Override
 	public void checkSongPaths() throws DataAccessException {
-		List<Song> songs = this.sd.readAll();
+		List<Song> songs = this.songDao.readAll();
 		for (Song song : songs) {
 			song.setPathOk(new File(song.getPath()).isFile());
-			sd.update(song);
+			songDao.update(song);
 		}
 	}
 
@@ -346,7 +341,7 @@ class VvvPlaylistService implements PlaylistService {
 		if (p == null)
 			throw new IllegalArgumentException("The playlist must not be null");
 
-		WritablePlaylist np = pd.read(p.getId());
+		WritablePlaylist np = playlistDao.read(p.getId());
 		p.setTitle(np.getTitle());
 		p.clear();
 		p.addAll(np);
