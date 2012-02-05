@@ -1,21 +1,42 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <beans xmlns="http://www.springframework.org/schema/beans"
-	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://www.springframework.org/schema/beans
-http://www.springframework.org/schema/beans/spring-beans-3.0.xsd">
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:aop="http://www.springframework.org/schema/aop"
+       xmlns:tx="http://www.springframework.org/schema/tx"
+       xsi:schemaLocation="
+     http://www.springframework.org/schema/beans
+     http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
+     http://www.springframework.org/schema/tx
+     http://www.springframework.org/schema/tx/spring-tx-3.0.xsd
+     http://www.springframework.org/schema/aop
+     http://www.springframework.org/schema/aop/spring-aop-3.0.xsd
+     http://www.springframework.org/schema/context
+     http://www.springframework.org/schema/context/spring-context-3.0.xsd"
+       xmlns:context="http://www.springframework.org/schema/context">
 
 	<import resource="DBSettings.xml" />
+
+    <tx:annotation-driven transaction-manager="transactionManager"/>
+
+    <context:annotation-config/>
+
+    <bean id="transactionManager"
+          class="org.springframework.jdbc.datasource.DataSourceTransactionManager"
+          depends-on="DataSource">
+
+        <property name="dataSource" ref="DataSource"/>
+    </bean>
 
 	<bean id="AlbumDao"
 		class="at.ac.tuwien.sepm2011ws.mp3player.persistanceLayer.db.DbAlbumDao">
 
 		<constructor-arg ref="DataSource" />
 	</bean>
-	
+
 	<bean id="SongDao"
 		class="at.ac.tuwien.sepm2011ws.mp3player.persistanceLayer.db.DbSongDao"
 		depends-on="DataSource,AlbumDao">
-		
+
 		<constructor-arg ref="DataSource" />
 		<constructor-arg ref="AlbumDao" />
 	</bean>
@@ -23,7 +44,7 @@ http://www.springframework.org/schema/beans/spring-beans-3.0.xsd">
 	<bean id="PlaylistDao"
 		class="at.ac.tuwien.sepm2011ws.mp3player.persistanceLayer.db.DbPlaylistDao"
 		depends-on="DataSource,SongDao">
-		
+
 		<constructor-arg ref="DataSource" />
 		<constructor-arg ref="SongDao" />
 	</bean>

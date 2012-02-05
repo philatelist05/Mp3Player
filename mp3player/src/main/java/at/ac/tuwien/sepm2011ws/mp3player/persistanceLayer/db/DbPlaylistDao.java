@@ -4,6 +4,7 @@ import at.ac.tuwien.sepm2011ws.mp3player.domainObjects.Song;
 import at.ac.tuwien.sepm2011ws.mp3player.domainObjects.WritablePlaylist;
 import at.ac.tuwien.sepm2011ws.mp3player.persistanceLayer.PlaylistDao;
 import at.ac.tuwien.sepm2011ws.mp3player.persistanceLayer.SongDao;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.simple.SimpleJdbcInsert;
 import org.springframework.jdbc.core.simple.SimpleJdbcTemplate;
@@ -21,6 +22,7 @@ class DbPlaylistDao implements PlaylistDao {
     private SimpleJdbcInsert createContainsStmt;
     private SimpleJdbcTemplate jdbcTemplate;
 
+	@Autowired
     DbPlaylistDao(DataSource dataSource, SongDao sd) {
         this.createStmt = new SimpleJdbcInsert(dataSource).withTableName("playlist").usingColumns("name").usingGeneratedKeyColumns("id");
         this.createContainsStmt = new SimpleJdbcInsert(dataSource).withTableName("contains").usingColumns("position", "playlist", "song");

@@ -1,34 +1,25 @@
 package at.ac.tuwien.sepm2011ws.mp3player.persistanceLayer;
 
 import at.ac.tuwien.sepm2011ws.mp3player.domainObjects.Album;
-import at.ac.tuwien.sepm2011ws.mp3player.persistanceLayer.db.DaoFactory;
-import org.junit.Before;
 import org.junit.Test;
 
 import static org.junit.Assert.*;
 
-public class AlbumDaoTest {
-	private AlbumDao ad;
-
-	@Before
-	public void setUp() throws Exception {
-		DaoFactory factory = DaoFactory.getInstance();
-		ad = factory.getAlbumDao();
-	}
+public class AlbumDaoTest extends AbstractDaoTest {
 
 	@Test
 	public void testRead_ReadsExistingSimpleAlbum() throws DataAccessException {
 		Album expected = new Album("Test1");
-		ad.create(expected);
+		super.albumDao.create(expected);
 
-		Album actual = ad.read(expected.getId());
+		Album actual = super.albumDao.read(expected.getId());
 		assertEquals(expected, actual);
 	}
 
 	@Test(expected = IllegalArgumentException.class)
 	public void testCreate_ShouldThrowIllegalArgumentException()
 			throws IllegalArgumentException, DataAccessException {
-		ad.create(null);
+		super.albumDao.create(null);
 	}
 
 	@Test
@@ -37,18 +28,18 @@ public class AlbumDaoTest {
 		Album existingAlbum = new Album("Test1");
 		existingAlbum.setTitle("Test");
 		existingAlbum.setYear(2001);
-		ad.create(existingAlbum);
+		super.albumDao.create(existingAlbum);
 
 		Album newAlbum = new Album("Test1");
 		newAlbum.setTitle("Test");
 		newAlbum.setYear(2001);
-		ad.create(newAlbum);
+		super.albumDao.create(newAlbum);
 	}
 
 	@Test(expected = IllegalArgumentException.class)
 	public void testRead_InvalidId() throws IllegalArgumentException,
 			DataAccessException {
-		ad.read(-10);
+		super.albumDao.read(-10);
 	}
 
 	@Test
@@ -56,22 +47,22 @@ public class AlbumDaoTest {
 		Album expected = new Album("Test1");
 		expected.setYear(9999);
 		expected.setAlbumartPath("/myPath/p.mp3");
-		ad.create(expected);
+		super.albumDao.create(expected);
 
-		Album actual = ad.read(expected.getId());
+		Album actual = super.albumDao.read(expected.getId());
 		assertEquals(expected, actual);
 	}
 
 	@Test
 	public void testRead_ReadsUnexistingSong() throws DataAccessException {
-		Album a = ad.read(Integer.MAX_VALUE);
+		Album a = super.albumDao.read(Integer.MAX_VALUE);
 		assertNull(a);
 	}
 
 	@Test
 	public void testCreate_CreateValidAlbum() throws DataAccessException {
 		Album expected = new Album("Test1");
-		ad.create(expected);
+		super.albumDao.create(expected);
 		assertTrue(expected.getId() > 0);
 	}
 
@@ -79,36 +70,36 @@ public class AlbumDaoTest {
 	public void testCreate_CreateSongWithInvalidTitle()
 			throws DataAccessException {
 		Album expected = new Album(null);
-		ad.create(expected);
+		super.albumDao.create(expected);
 	}
 
 	@Test
 	public void testUpdate_TestsValidUpdate() throws DataAccessException {
 		Album expected = new Album("Test1");
-		ad.create(expected);
+		super.albumDao.create(expected);
 		expected.setTitle("Test2");
-		ad.update(expected);
-		Album actual = ad.read(expected.getId());
+		super.albumDao.update(expected);
+		Album actual = super.albumDao.read(expected.getId());
 		assertEquals(expected, actual);
 	}
 
 	@Test(expected = IllegalArgumentException.class)
 	public void testUpdate_TestsInvalidSong() throws DataAccessException {
-		ad.update(null);
+		super.albumDao.update(null);
 	}
 
 	@Test
 	public void testDelete_TestsValidDelete() throws DataAccessException {
 		Album a = new Album("Test1");
-		ad.create(a);
-		ad.delete(a.getId());
-		Album actual = ad.read(a.getId());
+		super.albumDao.create(a);
+		super.albumDao.delete(a.getId());
+		Album actual = super.albumDao.read(a.getId());
 		assertNull(actual);
 	}
 
 	@Test(expected = IllegalArgumentException.class)
 	public void testDelete_TestsInvalidId() throws DataAccessException {
-		ad.delete(-1);
+		super.albumDao.delete(-1);
 	}
 
 }

@@ -1,11 +1,5 @@
 package at.ac.tuwien.sepm2011ws.mp3player.serviceLayer.vvv;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.List;
-
 import at.ac.tuwien.sepm2011ws.mp3player.domainObjects.Playlist;
 import at.ac.tuwien.sepm2011ws.mp3player.domainObjects.Song;
 import at.ac.tuwien.sepm2011ws.mp3player.persistanceLayer.DataAccessException;
@@ -13,8 +7,9 @@ import at.ac.tuwien.sepm2011ws.mp3player.serviceLayer.LastFmService;
 import at.ac.tuwien.sepm2011ws.mp3player.serviceLayer.PlaylistService;
 import de.umass.lastfm.Artist;
 
-class VvvLastFmService implements LastFmService {
+import java.util.*;
 
+class VvvLastFmService implements LastFmService {
 	private PlaylistService ps;
 
 	VvvLastFmService(PlaylistService ps) {

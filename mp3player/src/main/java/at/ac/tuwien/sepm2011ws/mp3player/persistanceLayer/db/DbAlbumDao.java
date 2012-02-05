@@ -2,6 +2,7 @@ package at.ac.tuwien.sepm2011ws.mp3player.persistanceLayer.db;
 
 import at.ac.tuwien.sepm2011ws.mp3player.domainObjects.Album;
 import at.ac.tuwien.sepm2011ws.mp3player.persistanceLayer.AlbumDao;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.simple.SimpleJdbcInsert;
 import org.springframework.jdbc.core.simple.SimpleJdbcTemplate;
@@ -18,6 +19,7 @@ class DbAlbumDao implements AlbumDao {
 	private SimpleJdbcInsert createStmt;
     private SimpleJdbcTemplate jdbcTemplate;
 
+	@Autowired
 	DbAlbumDao(DataSource dataSource)  {
         this.jdbcTemplate = new SimpleJdbcTemplate(dataSource);
         this.createStmt = new SimpleJdbcInsert(dataSource).withTableName("album").usingColumns("title", "year", "albumart_path").usingGeneratedKeyColumns("id");
