@@ -1,43 +1,26 @@
-/**
- * 
- */
 package at.ac.tuwien.sepm2011ws.mp3player.serviceLayer;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import at.ac.tuwien.sepm2011ws.mp3player.domainObjects.PlayMode;
+import at.ac.tuwien.sepm2011ws.mp3player.domainObjects.Playlist;
+import at.ac.tuwien.sepm2011ws.mp3player.domainObjects.Song;
+import at.ac.tuwien.sepm2011ws.mp3player.domainObjects.WritablePlaylist;
+import org.junit.After;
+import org.junit.Test;
+import org.springframework.core.io.ClassPathResource;
 
 import java.io.File;
 import java.io.IOException;
 
-import org.junit.After;
-import org.junit.Before;
-import org.junit.BeforeClass;
-import org.junit.Test;
-import org.springframework.core.io.ClassPathResource;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
-import at.ac.tuwien.sepm2011ws.mp3player.domainObjects.PlayMode;
-import at.ac.tuwien.sepm2011ws.mp3player.domainObjects.Playlist;
-import at.ac.tuwien.sepm2011ws.mp3player.domainObjects.WritablePlaylist;
-import at.ac.tuwien.sepm2011ws.mp3player.domainObjects.Song;
-
-/**
- * @author klaus
- * 
- */
-public class CoreInteractionServiceTest {
-	private CoreInteractionService cs;
-
-	@Before
-	public void setUp() throws Exception {
-		ServiceFactory sf = ServiceFactory.getInstance();
-		cs = sf.getCoreInteractionService();
-	}
+public class CoreInteractionServiceTest extends AbstractServiceTest {
 
 	@After
 	public void tearDown() throws Exception {
-		cs.stop();
-		cs.setCurrentPlaylist(new Playlist(""));
-		cs.setPlayMode(PlayMode.NORMAL);
+		super.coreInteractionService.stop();
+		super.coreInteractionService.setCurrentPlaylist(new Playlist(""));
+		super.coreInteractionService.setPlayMode(PlayMode.NORMAL);
 	}
 
 	@Test
@@ -50,16 +33,16 @@ public class CoreInteractionServiceTest {
 		sPath = new ClassPathResource("The Other Thing.wav").getFile();
 		temp.add(new Song("dummy2", "dummy2", 300, sPath.getAbsolutePath()));
 
-		cs.setCurrentPlaylist(temp);
+		super.coreInteractionService.setCurrentPlaylist(temp);
 
 		// now start playing
-		cs.playPause();
+		super.coreInteractionService.playPause();
 		Thread.sleep(500);
-		assertEquals(cs.getCurrentSong(), temp.get(0));
+		assertEquals(super.coreInteractionService.getCurrentSong(), temp.get(0));
 		// Here the endOfMediaEvent should be fired
 		Thread.sleep(3500); // The player needs a bit time to realize that the
-							// song is at the end... -,-
-		Song actual = cs.getCurrentSong();
+		// song is at the end... -,-
+		Song actual = super.coreInteractionService.getCurrentSong();
 		Song expected = temp.get(1);
 
 		assertEquals(actual, expected);
@@ -71,9 +54,9 @@ public class CoreInteractionServiceTest {
 		Song s = new Song("dummy", "dummy", 300, sPath.getAbsolutePath());
 		Playlist p = new Playlist("Test");
 		p.add(s);
-		cs.setCurrentPlaylist(p);
+		super.coreInteractionService.setCurrentPlaylist(p);
 
-		cs.playPause(0);
+		super.coreInteractionService.playPause(0);
 		Thread.sleep(1000);
 	}
 
@@ -83,13 +66,13 @@ public class CoreInteractionServiceTest {
 		Song s = new Song("dummy", "dummy", 300, sPath.getAbsolutePath());
 		Playlist p = new Playlist("Test");
 		p.add(s);
-		cs.setCurrentPlaylist(p);
+		super.coreInteractionService.setCurrentPlaylist(p);
 
-		cs.playPause(0);
+		super.coreInteractionService.playPause(0);
 		Thread.sleep(500);
-		cs.seek(20);
+		super.coreInteractionService.seek(20);
 		Thread.sleep(1000);
-		cs.seek(50);
+		super.coreInteractionService.seek(50);
 		Thread.sleep(1000);
 	}
 
@@ -100,15 +83,15 @@ public class CoreInteractionServiceTest {
 		Song s = new Song("dummy", "dummy", 300, sPath.getAbsolutePath());
 		Playlist p = new Playlist("Test");
 		p.add(s);
-		cs.setCurrentPlaylist(p);
+		super.coreInteractionService.setCurrentPlaylist(p);
 
 		// play
-		cs.playFromBeginning(0);
+		super.coreInteractionService.playFromBeginning(0);
 		Thread.sleep(500);
-		double then = cs.getPlayTime();
+		double then = super.coreInteractionService.getPlayTime();
 		Thread.sleep(1000);
 		// Now has to be greater than then
-		double actual = cs.getPlayTime();
+		double actual = super.coreInteractionService.getPlayTime();
 		assertTrue(actual > then);
 	}
 }
