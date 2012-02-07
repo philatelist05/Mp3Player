@@ -5,7 +5,7 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.AbstractTransactionalJUnit4SpringContextTests;
 
 @ContextConfiguration(locations = {"classpath:DaoSettings.xml"})
-class AbstractDaoTest extends AbstractTransactionalJUnit4SpringContextTests {
+abstract class AbstractDaoTest extends AbstractTransactionalJUnit4SpringContextTests {
 	protected AlbumDao albumDao;
 	protected PlaylistDao playlistDao;
 	protected SongDao songDao;

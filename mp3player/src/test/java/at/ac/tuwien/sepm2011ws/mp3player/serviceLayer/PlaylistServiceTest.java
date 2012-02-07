@@ -103,6 +103,13 @@ public class PlaylistServiceTest extends AbstractServiceTest {
 	@Test
 	public void testGetAllPlaylists_ShouldGetAllPlaylists()
 			throws DataAccessException, IOException {
+		WritablePlaylist temp = createPlaylist();
+
+		List<WritablePlaylist> playlists = super.playlistService.getAllPlaylists();
+		assertTrue(playlists.contains(temp));
+	}
+
+	private WritablePlaylist createPlaylist() throws IOException, DataAccessException {
 		WritablePlaylist temp = new WritablePlaylist("Temp");
 
 		File file1 = new ClassPathResource("dummy-message.wav").getFile();
@@ -112,9 +119,7 @@ public class PlaylistServiceTest extends AbstractServiceTest {
 
 		temp = super.playlistService.createPlaylist(temp.getTitle());
 		super.playlistService.addSongsToPlaylist(new File[] {file1, file2}, temp);
-
-		List<WritablePlaylist> playlists = super.playlistService.getAllPlaylists();
-		assertTrue(playlists.contains(temp));
+		return temp;
 	}
 
 	@Test(expected = IllegalArgumentException.class)
@@ -200,6 +205,15 @@ public class PlaylistServiceTest extends AbstractServiceTest {
 		super.playlistService.deletePlaylist(null);
 	}
 
+	@Test
+	public void testDeletePlaylist_ShouldDeleteLegalPlaylist() throws DataAccessException {
+		super.playlistService.createPlaylist("Playlist1");
+		WritablePlaylist playlist = new WritablePlaylist("Playlist1");
+		super.playlistService.deletePlaylist(playlist);
+		List<WritablePlaylist> actual = super.playlistService.getAllPlaylists();
+		assertFalse(actual.contains(playlist));
+	}
+
 	@Test(expected = IllegalArgumentException.class)
 	public void testUpdatePlaylist_ShouldThrowIllegalArgumentException()
 			throws IllegalArgumentException, DataAccessException {
@@ -209,7 +223,7 @@ public class PlaylistServiceTest extends AbstractServiceTest {
 	@Test(expected = IllegalArgumentException.class)
 	public void testRenamePlaylist_ShouldThrowIllegalArgumentException1()
 			throws IllegalArgumentException, DataAccessException {
-		super.playlistService.renamePlaylist(null, null);
+		super.playlistService.renamePlaylist(null, "Name");
 	}
 
 	@Test(expected = IllegalArgumentException.class)
@@ -227,8 +241,28 @@ public class PlaylistServiceTest extends AbstractServiceTest {
 	}
 
 	@Test
-	public void testGlobalSearch_ShouldSearchForSong() {
-
+	public void testGetTopRated_ShouldReturnTopRatedPlaylists() throws DataAccessException {
+		Playlist playlist = super.playlistService.getTopRated();
+		int ratedCount = super.settingsService.getTopXXRatedCount();
+		assertTrue(playlist.size() <= ratedCount);
 	}
 
+	@Test
+	public void testGetTopPlayed_ShouldReturnTopPlayedPlaylists() throws DataAccessException {
+		Playlist playlist = super.playlistService.getTopPlayed();
+		int playedCount = super.settingsService.getTopXXPlayedCount();
+		assertTrue(playlist.size() <= playedCount);
+	}
+
+	@Test(expected = IllegalArgumentException.class)
+	public void testGlobalSearch_ShouldThrowIllegalArgumentException() throws DataAccessException {
+		super.playlistService.globalSearch(null);
+	}
+
+	@Test
+	public void testGlobalSearch_ShouldReturnSearchedSongs() throws DataAccessException, IOException {
+		WritablePlaylist temp = createPlaylist();
+		Playlist result = super.playlistService.globalSearch("dummy1");
+		assertEquals(1, result.size());
+	}
 }
